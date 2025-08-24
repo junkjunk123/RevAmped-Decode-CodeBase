@@ -1,0 +1,38 @@
+package revAmped.config;
+
+public interface CenterStageConstants {
+    float INTAKE_DOOR_OPEN = 240/255f, INTAKE_DOOR_CLOSE = 219/255f;
+    float INTAKE_TWOBAR_COLLECT = 187/255f, INTAKE_TWOBAR_IN = 35/255f, INTAKE_TWOBAR_MIDDLE = 140/255f;
+    float TWOBAR_IN = 208/255f, TWOBAR_DEPO = 86/255f,  TWOBAR_DEPO_AUTO = 52/255f, TWOBAR_DEPO_TURNED = 105/255f, TWOBAR_FIXED = 187/255f;
+    float INTAKE_TILT_DOWN = 82/255f, INTAKE_TILT_DEPO = 215/255f, INTAKE_TILT_UP = 253/255f;
+    float POWER_SPINNER = 1f;
+
+    int LEVELONE = 450, LEVELTWO = 700, LEVELFOUR = 1100, LEVELTHREE = 2000, INIT = -30, AUTO_SLIDES = 350, MINIMUMSLIDE = 400;
+    float MINIMUM_INTAKE_TWOBAR_VOLTAGE = 2.41f, MAXIMUM_IDLE_VOLTAGE = 1.735f;
+    float MINIMUM_TWOBAR_VOLTAGE = 0f;
+    float DRONE_LAUNCH = 167/255f, DRONE_REST = 219/255f;
+    float PURPLERIGHTOUT = 24/255f, PURPLERIGHTIN = 240/255f, PURPLELEFTOUT = 240/255f, PURPLELEFTIN = 24/255f;
+
+    //left = blue, right = red
+    float DEPO_TURN_INIT = 239/255f, DEPO_TURN_MIDDLE = 147/255f, DEPO_TURN_RIGHT = 198/255f, DEPO_TURN_LEFT = 93/255f, DEPO_TURN_LEFT_EXTREME = 57/255f, DEPO_TURN_RIGHT_EXTREME = 237/255f;
+    float DEPO_FCLAW_CLOSE = 82/255f, DEPO_FCLAW_OPEN = 170/255f;
+    float DEPO_BCLAW_CLOSE = 186/255f, DEPO_BCLAW_OPEN = 95/255f;
+    int AUTO_HSLIDES_OUT = 1600, HSLIDES_MAX = 3800;
+    int TELEOP_HSLIDES_OUT = 1500, TELEOP_HSLIDES_MAX = 2600;
+    double maxdistance = 22, mindistance = 15, mindelta = 0, maxdelta = 0;
+    //pixel positions for auto
+    float INTAKE_TWOBAR_5STACK = 176/255f, INTAKE_TILT_5STACK = 54/255f;
+    float INTAKE_TWOBAR_TOP = 168/255f, INTAKE_TILT_TOP = 70/255f;
+    float INTAKE_TWOBAR_AUTO_UP = 150/255f, INTAKE_TILT_AUTO_UP = 50/255f;
+    float INTAKE_TWOBAR_3STACK = 190/255f, INTAKE_TILT_3STACK = 67/255f;
+    float INTAKE_TWOBAR_3AND4 = 179/255f, INTAKE_TILT_3AND4 = 69/255f;
+    float INTAKE_TWOBAR_2STACK = 201/255f, INTAKE_TILT_2STACK = 86/255f;
+    float INTAKE_TWOBAR_FLOOR = 201/255f, INTAKE_TILT_FLOOR = 86/255f;
+    float HANGUP = 250/255f, HANGDOWN = 175/255f;
+    long intakeSensorTimeUp = 200, intakeSensorTimeDown = 200, intakeSensorTimeUp2 = 200;
+    double distance_left_y = 0.0, distance_right_y = 6.5, distance_back_y = 7.225, distance_front_y = 0.0, distance_encoderleft_encoderright = 14.5;
+
+    double distance_between_encoders = 0.0;
+
+    double TICKS_PER_METER = 1212.19716;
+}
