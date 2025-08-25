@@ -1,9 +1,9 @@
 package revAmped.components.Misc;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto.ITDAutonomousActionExecutor;
+import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto.DecodeAutonomousActionExecutor;
+import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.DecodeConstants;
 
-import revAmped.components.Architecture.AutonomousActionExecutor;
 import revAmped.components.Pedro.FollowerManager;
 
 /**
@@ -22,6 +22,8 @@ public final class Globals {
     public static boolean testing = false;
     public static boolean disableDrive = false;
     public static Telemetry telemetry;
+
+    public static Constants constants = new DecodeConstants();
 
     /**
      * Enum representing the alliance color.
@@ -42,10 +44,11 @@ public final class Globals {
      * @param telemetry the Telemetry instance to use for logging
      */
     public static void init(Telemetry telemetry) {
+        constants.build();
         Globals.telemetry = telemetry;
     }
 
-    public static ITDAutonomousActionExecutor aae;
+    public static DecodeAutonomousActionExecutor aae;
 
     public static FollowerManager followerManager;
 }

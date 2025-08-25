@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto;
 
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.ITDRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Robot;
 
 import java.util.List;
@@ -9,10 +9,10 @@ import revAmped.components.Architecture.AutonomousEnumeratedAction;
 import revAmped.components.Pedro.FollowerManager;
 import revAmped.components.Pedro.PathSupplier;
 
-public abstract class ITDRevAmpedAutonomous extends ITDRevAmpedOpMode {
+public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     protected Robot robot;
     private FollowerManager followerManager;
-    private ITDAutonomousActionExecutor aee;
+    private DecodeAutonomousActionExecutor aee;
     protected PathSupplier paths;
     protected List<AutonomousEnumeratedAction> autoActions;
 
@@ -31,9 +31,9 @@ public abstract class ITDRevAmpedAutonomous extends ITDRevAmpedOpMode {
 
         followerManager = new FollowerManager(hardwareMap, paths);
 
-        ITDAutonomousActionExecutor.ITDAutonomousParameters parameters = new ITDAutonomousActionExecutor.ITDAutonomousParameters(robot, followerManager);
+        DecodeAutonomousActionExecutor.DecodeAutonomousParameters parameters = new DecodeAutonomousActionExecutor.DecodeAutonomousParameters(robot, followerManager);
 
-        aee = new ITDAutonomousActionExecutor(parameters) {
+        aee = new DecodeAutonomousActionExecutor(parameters) {
             @Override
             public void buildActions() {
                 actions = autoActions;

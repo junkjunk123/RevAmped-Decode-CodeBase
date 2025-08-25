@@ -6,14 +6,14 @@ import revAmped.components.Architecture.AutonomousActionExecutor;
 import revAmped.components.Pedro.FollowerManager;
 import revAmped.components.Misc.Globals;
 
-public abstract class ITDAutonomousActionExecutor extends AutonomousActionExecutor {
-    public ITDAutonomousParameters parameters;
+public abstract class DecodeAutonomousActionExecutor extends AutonomousActionExecutor {
+    public DecodeAutonomousParameters parameters;
 
-    public static class ITDAutonomousParameters {
+    public static class DecodeAutonomousParameters {
         private Robot robot;
         private FollowerManager followerManager;
 
-        public ITDAutonomousParameters(Robot robot, FollowerManager follower) {
+        public DecodeAutonomousParameters(Robot robot, FollowerManager follower) {
             this.robot = robot;
             this.followerManager = follower;
         }
@@ -27,10 +27,10 @@ public abstract class ITDAutonomousActionExecutor extends AutonomousActionExecut
         }
     }
 
-    public ITDAutonomousActionExecutor(ITDAutonomousParameters parameters) {
+    public DecodeAutonomousActionExecutor(DecodeAutonomousParameters parameters) {
         super();
         this.parameters = parameters;
-        ITDSpecAutonomousMethods.initialize();
+        DecodeAutonomousMethods.initialize();
         Globals.aae = this;
     }
 }

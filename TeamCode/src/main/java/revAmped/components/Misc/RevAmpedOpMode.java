@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import java.util.Objects;
+
 import revAmped.components.CommandScheduler.Scheduler;
 
 /**
@@ -96,9 +98,9 @@ public abstract class RevAmpedOpMode extends LinearOpMode {
     public String getDriverStationName() {
         Class<?> opClass = this.getClass();
         if (opClass.isAnnotationPresent(TeleOp.class)) {
-            return opClass.getAnnotation(TeleOp.class).name();
+            return Objects.requireNonNull(opClass.getAnnotation(TeleOp.class)).name();
         } else if (opClass.isAnnotationPresent(Autonomous.class)) {
-            return opClass.getAnnotation(Autonomous.class).name();
+            return Objects.requireNonNull(opClass.getAnnotation(Autonomous.class)).name();
         }
 
         throw new RuntimeException("getDriverStationName() on an un-annotated opMode");
