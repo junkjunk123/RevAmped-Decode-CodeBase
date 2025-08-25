@@ -111,8 +111,18 @@ public class FollowerManager {
         currentPathIndex = follower.getChainIndex();
         heading.update();
         position.update();
+    }
 
-        if (obstacleAvoider != null) {
+    /**
+     * Updates the Follower's state.
+     */
+    public void update(boolean useObstacleAvoidance) {
+        if (!Globals.disableDrive) follower.update();
+        currentPathIndex = follower.getChainIndex();
+        heading.update();
+        position.update();
+
+        if (useObstacleAvoidance && obstacleAvoider != null) {
             obstacleAvoider.update();
         }
     }
@@ -252,21 +262,13 @@ public class FollowerManager {
      */
     public boolean finished(boolean parametricEnd) {
         if (follower.getCurrentPath() == null) return false;
+        if (follower.getCurrentPathChain().getLastPoint().distanceFrom(getCurrentPathChain().getLastPoint()) > 0.5) return false;
         if (!follower.isBusy()) return true;
         if (follower.atParametricEnd() && parametricEnd) return true;
         if (follower.getVelocity().getMagnitude() > FollowerConstants.pathEndVelocityConstraint) return false;
         if (follower.poseUpdater.getAngularVelocity() > FollowerConstants.pathEndHeadingConstraint) return false;
         if (!(position.evaluate() && distanceFromTarget() < 1.5) && !(follower.atParametricEnd() || follower.getTranslationalError().getMagnitude() > FollowerConstants.pathEndTranslationalConstraint)) return false;
         return (parametricEnd || heading.evaluate() && headingFromTarget() < 0.055 || follower.getHeadingError() < FollowerConstants.pathEndHeadingConstraint);
-    }
-
-    public boolean atParametricEnd() {
-        if (follower.getCurrentPath() == null) return false;
-        return follower.atParametricEnd() && follower.getCurrentPath().getLastControlPoint().distanceFrom(getCurrentPathChain().getLastPoint()) < 0.1;
-    }
-
-    public boolean isBusy() {
-        return follower.isBusy() && follower.getCurrentPath().getLastControlPoint().distanceFrom(getCurrentPathChain().getLastPoint()) < 0.1;
     }
 
     public void setPlayingField(PlayingField field) {

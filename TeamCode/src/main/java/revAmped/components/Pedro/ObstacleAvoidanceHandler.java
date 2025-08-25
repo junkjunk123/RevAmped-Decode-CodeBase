@@ -2,6 +2,7 @@ package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
+import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
@@ -36,19 +37,11 @@ public class ObstacleAvoidanceHandler {
         return !navigatingAroundObstacle;
     }
 
-    public void pausePathFollowing(BezierCurve bezierCurve) {
+    public void pausePathFollowing(Pose pose) {
         // Placeholder for pausing path following
         follower.breakFollowing();
-        follower.followPath(new Path(bezierCurve));
-        Scheduler.getInstance().add(new Delay(() -> !follower.isBusy(), this::resumePathFollowing));
-        navigatingAroundObstacle = true;
-    }
-
-    public void pausePathFollowing(PathChain pathChain) {
-        // Placeholder for pausing path following
-        follower.breakFollowing();
-        follower.followPath(pathChain);
-        Scheduler.getInstance().add(new Delay(() -> !follower.isBusy(), this::resumePathFollowing));
+        follower.holdPoint(pose);
+        Scheduler.getInstance().add(new Delay(() -> follower.getTranslationalError().getMagnitude() < 0.5, this::resumePathFollowing));
         navigatingAroundObstacle = true;
     }
 
@@ -73,10 +66,10 @@ public class ObstacleAvoidanceHandler {
         if (obstacle == null) return;
 
         if (!obstacle.intersection(follower.getPose(), follower.getClosestPose())) {
-            pausePathFollowing(new BezierLine(follower.getPose(), follower.getClosestPose()));
+            pausePathFollowing(obstacle.safestPoint(follower.getCurrentTValue(), follower.getPose(), follower.getCurrentPath()));
         }
 
-        pausePathFollowing(new BezierLine(follower.getPose(), obstacle.safestPoint(follower.getCurrentTValue(), follower.getPose(), follower.getCurrentPath())));
+        pausePathFollowing(obstacle.safestPoint(follower.getCurrentTValue(), follower.getPose(), follower.getCurrentPath()));
     }
 
     public void setField(PlayingField field) {
