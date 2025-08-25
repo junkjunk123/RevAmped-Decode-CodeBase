@@ -3,6 +3,8 @@ package revAmped.components.Architecture;
 import com.pedropathing.follower.Follower;
 
 import java.util.function.BooleanSupplier;
+
+import revAmped.components.CommandScheduler.AutonomousCommandAction;
 import revAmped.components.Misc.Globals;
 
 import revAmped.components.CommandScheduler.RunnableTask;
@@ -89,5 +91,25 @@ public abstract class AutonomousEnumeratedAction {
      */
     public boolean isCompleted() {
         return completed;
+    }
+
+    public RunnableTask toRunnableTask() {
+        AutonomousEnumeratedAction parent = this;
+        return new AutonomousCommandAction() {
+            @Override
+            protected void init() {
+                parent.init();
+            }
+
+            @Override
+            protected void loop() {
+                parent.loop();
+            }
+
+            @Override
+            public int nextState(int currentState) {
+                return parent.nextStateGenerator().nextState(currentState);
+            }
+        };
     }
 }

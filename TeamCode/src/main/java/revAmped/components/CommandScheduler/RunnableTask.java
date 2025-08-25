@@ -21,4 +21,9 @@ public interface RunnableTask {
      * @return true if the task is completed, false otherwise
      */
     boolean isCompleted();
+
+    /**
+     * The next state to transition to after this task is completed.
+     */
+    default int nextState(int currentState) {return currentState + 1;}
 }

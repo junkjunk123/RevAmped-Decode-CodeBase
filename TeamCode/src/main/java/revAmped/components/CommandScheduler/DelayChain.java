@@ -49,7 +49,7 @@ public class DelayChain implements RunnableTask {
         current.update();
 
         if (current.isCompleted()) {
-            currentIndex++;
+            currentIndex = current.nextState(currentIndex);
             if (currentIndex >= delays.size()) {
                 completed = true;
             }
