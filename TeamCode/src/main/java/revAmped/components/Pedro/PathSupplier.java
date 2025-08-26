@@ -3,6 +3,7 @@ package revAmped.components.Pedro;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.PathChain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,5 +25,32 @@ public interface PathSupplier {
 
     default PlayingField getPlayingField() {
         return null;
+    }
+
+    static ArrayList<Pose> mirror(boolean mirrorX, boolean mirrorY, ArrayList<Pose> points) {
+        ArrayList<Pose> point = new ArrayList<>(points);
+        for (int i = 0; i < points.size(); i++) {
+            Pose pose = points.get(i);
+            double x = pose.getX();
+            double y = pose.getY();
+
+            if (mirrorX) x = 144 - x;
+            if (mirrorY) y = 144 - y;
+
+            point.set(i, new Pose(x, y, mirrorX || mirrorY ? pose.getHeading() : Math.PI + pose.getHeading()));
+        }
+
+        return point;
+    }
+
+    static ArrayList<Double> mirrorInterpolations(boolean mirrorX, boolean mirrorY, ArrayList<Double> headingInterpolations) {
+        ArrayList<Double> headingInterpol = new ArrayList<>(headingInterpolations);
+        for (int i = 0; i < headingInterpolations.size(); i++) {
+            double interpol = headingInterpolations.get(i);
+            if (mirrorX || mirrorY) interpol += Math.PI;
+            headingInterpol.set(i, interpol);
+        }
+
+        return headingInterpol;
     }
 }

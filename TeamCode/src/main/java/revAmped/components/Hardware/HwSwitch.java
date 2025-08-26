@@ -48,13 +48,13 @@ public class HwSwitch implements HwDevice, HwSlide2.SlideRetractionDetector {
     }
 
     @Override
-    public boolean fullyRetracted() {
-        return isTouch();
+    public void update(){
+        isTouch = null;
     }
 
     @Override
-    public void update(){
-        isTouch = null;
+    public Boolean getReading() {
+        return isTouch();
     }
 
     public boolean isTouch () {
