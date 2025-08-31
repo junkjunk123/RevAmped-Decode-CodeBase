@@ -1,9 +1,9 @@
 package revAmped.components.SlideController.PIDF;
 
-import com.pedropathing.util.CustomPIDFCoefficients;
+import com.pedropathing.control.PIDFCoefficients;
 
 public class PIDFController {
-    private CustomPIDFCoefficients coefficients;
+    private PIDFCoefficients coefficients;
     private double previousError;
     private double error;
     private double position;
@@ -14,7 +14,7 @@ public class PIDFController {
     private long previousUpdateTimeNano;
     private long deltaTimeNano;
 
-    public PIDFController(CustomPIDFCoefficients set) {
+    public PIDFController(PIDFCoefficients set) {
         this.setCoefficients(set);
         this.reset();
     }
@@ -64,11 +64,11 @@ public class PIDFController {
         return this.targetPosition;
     }
 
-    public void setCoefficients(CustomPIDFCoefficients set) {
+    public void setCoefficients(PIDFCoefficients set) {
         this.coefficients = set;
     }
 
-    public CustomPIDFCoefficients getCoefficients() {
+    public PIDFCoefficients getCoefficients() {
         return this.coefficients;
     }
 
@@ -108,7 +108,7 @@ public class PIDFController {
         return this.error;
     }
 
-    public void updateConstants(CustomPIDFCoefficients coefficients) {
+    public void updateConstants(PIDFCoefficients coefficients) {
         setCoefficients(coefficients);
     }
 

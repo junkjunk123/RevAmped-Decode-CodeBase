@@ -2,6 +2,7 @@ package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.function.BooleanSupplier;
@@ -53,7 +54,7 @@ public class Stuck {
      * @param follower the Follower instance to monitor
      */
     public Stuck(Follower follower) {
-        this(follower, FollowerConstants.pathEndVelocityConstraint, 500);
+        this(follower, PathConstraints.defaultConstraints.getVelocityConstraint(), 500);
     }
 
     /**

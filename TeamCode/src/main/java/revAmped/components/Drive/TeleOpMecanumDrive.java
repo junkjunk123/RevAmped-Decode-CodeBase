@@ -1,7 +1,6 @@
 package revAmped.components.Drive;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,6 +15,7 @@ import java.util.function.DoubleSupplier;
 import revAmped.components.GamepadDevices.Button;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 import revAmped.components.Hardware.Util.Drivetrain;
+import revAmped.components.MathUtil.Vector2D;
 
 /**
  * TeleOpMecanumDrive is a class that extends the Drivetrain class to provide
@@ -65,17 +65,17 @@ public class TeleOpMecanumDrive extends Drivetrain {
      * @param x the x-value
      * @param y the y-value
      * @param zeroAngle the angle at which the gamepad is considered to be at zero
-     * @return a Point representing the smoothed x and y values
+     * @return a Vector2D representing the smoothed x and y values
      */
-    private Point smoothGamepadAngle(double x, double y, double zeroAngle) {
+    private Vector2D smoothGamepadAngle(double x, double y, double zeroAngle) {
         if (x == 0 || y==0) {
-            return new Point(x,y);
+            return new Vector2D(x,y);
         } else if (Math.abs(y/x) < zeroAngle) {
-            return new Point(x, 0);
+            return new Vector2D(x, 0);
         } else if (Math.abs(x/y) < zeroAngle) {
-            return new Point(0,y);
+            return new Vector2D(0,y);
         } else {
-            return new Point(x,y);
+            return new Vector2D(x,y);
         }
     }
 
@@ -95,7 +95,7 @@ public class TeleOpMecanumDrive extends Drivetrain {
         double robotHeading;
 
         if (Math.abs(y) > DZ || Math.abs(x) > DZ || Math.abs(rx) > DZ) {
-            Point movementVector = smoothGamepadAngle(x, y, angleZero);
+            Vector2D movementVector = smoothGamepadAngle(x, y, angleZero);
 
             if (Math.abs(y) > DZ) {
                 y = -0.5 * Math.tan(movementVector.getY() * 1.12); // Remember, this is reversed!

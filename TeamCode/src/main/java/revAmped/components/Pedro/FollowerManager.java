@@ -2,13 +2,12 @@ package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,14 +67,14 @@ public class FollowerManager {
      * @param pathSupplier the PathSupplier that provides the paths to be followed
      */
     public FollowerManager(HardwareMap hardwareMap, PathSupplier pathSupplier) {
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = Constants.createFollower(hardwareMap);
         this.pathSupplier = pathSupplier;
         setStartingPose();
         buildPaths();
         position = new Stuck(follower);
         heading = new Stuck(() -> {
             if (follower.getCurrentPath() == null) return false;
-            return follower.poseUpdater.getAngularVelocity() < 0.007;
+            return follower.poseTracker.getAngularVelocity() < 0.007;
         }, 400);
 
         if (pathSupplier.getPlayingField() != null) {
@@ -213,7 +212,7 @@ public class FollowerManager {
      * @return the distance to the target position
      */
     public double distanceFromTarget() {
-        return new Point(follower.getPose()).distanceFrom(follower.getCurrentPathChain().getLastPoint());
+        return follower.getPose().distanceFrom(follower.getCurrentPathChain().endPoint());
     }
 
     /**
@@ -243,7 +242,7 @@ public class FollowerManager {
      * @param pathChain the PathChain from which to get the last point
      * @return the last control point of the last path in the PathChain
      */
-    public Point getLastPoint(PathChain pathChain) {
+    public Pose getLastPoint(PathChain pathChain) {
         return pathChain.getPath(pathChain.size() - 1).getLastControlPoint();
     }
 
@@ -262,13 +261,13 @@ public class FollowerManager {
      */
     public boolean finished(boolean parametricEnd) {
         if (follower.getCurrentPath() == null) return false;
-        if (follower.getCurrentPathChain().getLastPoint().distanceFrom(getCurrentPathChain().getLastPoint()) > 0.5) return false;
+        if (follower.getCurrentPathChain().endPoint().distanceFrom(getCurrentPathChain().endPoint()) > 0.5) return false;
         if (!follower.isBusy()) return true;
         if (follower.atParametricEnd() && parametricEnd) return true;
-        if (follower.getVelocity().getMagnitude() > FollowerConstants.pathEndVelocityConstraint) return false;
-        if (follower.poseUpdater.getAngularVelocity() > FollowerConstants.pathEndHeadingConstraint) return false;
-        if (!(position.evaluate() && distanceFromTarget() < 1.5) && !(follower.atParametricEnd() || follower.getTranslationalError().getMagnitude() > FollowerConstants.pathEndTranslationalConstraint)) return false;
-        return (parametricEnd || heading.evaluate() && headingFromTarget() < 0.055 || follower.getHeadingError() < FollowerConstants.pathEndHeadingConstraint);
+        if (follower.getVelocity().getMagnitude() > follower.getCurrentPath().getConstraints().getVelocityConstraint()) return false;
+        if (follower.getAngularVelocity() > follower.getCurrentPath().getConstraints().getVelocityConstraint()) return false;
+        if (!(position.evaluate() && distanceFromTarget() < 1.5) && !(follower.atParametricEnd() || follower.getTranslationalError().getMagnitude() > follower.getCurrentPath().getConstraints().getTranslationalConstraint())) return false;
+        return (parametricEnd || heading.evaluate() && headingFromTarget() < 0.055 || follower.getHeadingError() < follower.getCurrentPath().getConstraints().getHeadingConstraint());
     }
 
     public void setPlayingField(PlayingField field) {

@@ -1,6 +1,6 @@
 package revAmped.components.Pedro;
 
-import com.pedropathing.localization.Pose;
+import com.pedropathing.geometry.Pose;
 
 import java.util.Collections;
 import java.util.List;

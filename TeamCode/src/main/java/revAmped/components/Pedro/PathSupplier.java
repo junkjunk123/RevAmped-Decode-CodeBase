@@ -1,7 +1,7 @@
 package revAmped.components.Pedro;
 
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.PathChain;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathChain;
 
 import java.util.ArrayList;
 import java.util.List;

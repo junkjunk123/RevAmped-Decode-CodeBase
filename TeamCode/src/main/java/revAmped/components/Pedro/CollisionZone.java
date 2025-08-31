@@ -1,8 +1,8 @@
 package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.Path;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 
 public interface CollisionZone {
     Pose center();

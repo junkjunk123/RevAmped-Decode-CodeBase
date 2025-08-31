@@ -2,12 +2,9 @@ package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.PathChain;
-import com.pedropathing.pathgen.Point;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 
 import revAmped.components.CommandScheduler.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
@@ -22,8 +19,8 @@ public class ObstacleAvoidanceHandler {
     public ObstacleAvoidanceHandler(Follower follower, PlayingField field) {
         // Initialize the Stuck instance with a Follower, velocity threshold, and time threshold
         // This will be used to detect if the robot is stuck due to an obstacle
-        this.detectCollision = new Stuck(() -> follower.getVelocity().getMagnitude() < FollowerConstants.pathEndVelocityConstraint
-                && follower.getCurrentPath().getLastControlPoint().distanceFrom(new Point(follower.getPose())) < 0.5, 2000);
+        this.detectCollision = new Stuck(() -> follower.getVelocity().getMagnitude() < follower.getCurrentPath().getConstraints().getVelocityConstraint()
+                && follower.getCurrentPath().getLastControlPoint().distanceFrom(follower.getPose()) < 0.5, 2000);
         this.follower = follower;
         this.field = field;
     }
@@ -38,16 +35,14 @@ public class ObstacleAvoidanceHandler {
     }
 
     public void pausePathFollowing(Pose pose) {
-        // Placeholder for pausing path following
-        follower.breakFollowing();
+        follower.pausePathFollowing();
         follower.holdPoint(pose);
         Scheduler.getInstance().add(new Delay(() -> follower.getTranslationalError().getMagnitude() < 0.5, this::resumePathFollowing));
         navigatingAroundObstacle = true;
     }
 
     public void resumePathFollowing() {
-        //Placeholder for resuming path following
-        follower.followPath(Globals.followerManager.getCurrentPathChain());
+        follower.resumePathFollowing();
     }
 
     public void checkObstacles() {
@@ -65,7 +60,7 @@ public class ObstacleAvoidanceHandler {
 
         if (obstacle == null) return;
 
-        if (!obstacle.intersection(follower.getPose(), follower.getClosestPose())) {
+        if (!obstacle.intersection(follower.getPose(), follower.getClosestPose().getPose())) {
             pausePathFollowing(obstacle.safestPoint(follower.getCurrentTValue(), follower.getPose(), follower.getCurrentPath()));
         }
 

@@ -1,6 +1,6 @@
 package revAmped.components.SlideController.LQR;
 
-import com.pedropathing.localization.Matrix;
+import com.pedropathing.math.Matrix;
 
 public class SlideLQR {
     private Matrix A_d, B_d, Q, Rmat, K;

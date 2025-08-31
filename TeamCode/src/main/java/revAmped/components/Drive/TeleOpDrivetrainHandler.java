@@ -1,6 +1,6 @@
 package revAmped.components.Drive;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
-import com.pedropathing.localization.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.List;

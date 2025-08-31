@@ -1,7 +1,7 @@
 package revAmped.components.Pedro;
 
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierLine;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
 
 public interface RectangularCollisionZone extends CollisionZone {
     @Override

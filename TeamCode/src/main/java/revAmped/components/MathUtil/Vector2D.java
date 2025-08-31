@@ -70,4 +70,12 @@ public class Vector2D extends Vector {
     public double getTheta() {
         return Math.atan2(get(1), get(0));
     }
+
+    public double getX() {
+        return get(0);
+    }
+
+    public double getY() {
+        return get(1);
+    }
 }
