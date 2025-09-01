@@ -2,6 +2,7 @@ package revAmped.components.MathUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Time-invariant, zero-tuning extrapolator using finite differences.
@@ -12,6 +13,7 @@ public class TimeInvariantDiscretizedExtrapolator {
     private int head = 0;               // index of newest value
     private final double[] coefficients;
     private final int order;
+    private int size = 0;               // number of values added so far
 
     private static final HashMap<Integer, double[]> coefficientsCache = new HashMap<>();
     static {
@@ -54,18 +56,35 @@ public class TimeInvariantDiscretizedExtrapolator {
         return coeffs;
     }
 
+    public void update(double newValue) {
+        if (size < order) size++;
+        buffer[head] = newValue;
+        head = (head + 1) % order; // move head forward
+    }
+
     /**
      * Adds a new value and computes the extrapolated next value.
      */
-    public double extrapolate(double newValue) {
-        buffer[head] = newValue;
+    public double extrapolate() {
+        if (size < 2) return Double.NaN;
+        if (size < order) {
+            int s = Math.min(size, 5);
+            int index = (head - 1 + order) % order;
+            double result = 0.0;
+            double[] coeffs = coefficientsCache.get(s);
+            for (int i = 0; i < s; i++) {
+                result += Objects.requireNonNull(coeffs)[i] * buffer[index];
+                index = (index - 1 + order) % order; // circular decrement
+            }
+            return result;
+        }
+
         double result = 0.0;
-        int index = head;
+        int index = (head - 1 + order) % order;
         for (double coeff : coefficients) {
             result += coeff * buffer[index];
             index = (index - 1 + order) % order; // circular decrement
         }
-        head = (head + 1) % order; // move head forward
         return result;
     }
 
@@ -73,6 +92,7 @@ public class TimeInvariantDiscretizedExtrapolator {
     public void reset() {
         Arrays.fill(buffer, 0.0);
         head = 0;
+        size = 0;
     }
 
     /** Returns the most recent value added. */

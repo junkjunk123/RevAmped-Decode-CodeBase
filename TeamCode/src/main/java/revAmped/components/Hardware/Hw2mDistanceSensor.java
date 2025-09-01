@@ -11,14 +11,12 @@ import revAmped.components.MathUtil.LinearFunction;
 public class Hw2mDistanceSensor extends revAmped.components.Hardware.DistanceSensor implements HwDevice {
     protected DistanceSensor distanceSensor;
 
-    protected Hw2mDistanceSensor(HardwareMap hardwareMap, String id, DistanceSensor distanceSensor) {
+    protected Hw2mDistanceSensor(HardwareMap hardwareMap, String id) {
         super(hardwareMap, id);
-        this.distanceSensor = distanceSensor;
     }
 
-    protected Hw2mDistanceSensor(HardwareMap hardwareMap, String id, LinearFunction sensorConversion, DistanceSensor distanceSensor) {
+    protected Hw2mDistanceSensor(HardwareMap hardwareMap, String id, LinearFunction sensorConversion) {
         super(hardwareMap, id, sensorConversion);
-        this.distanceSensor = distanceSensor;
     }
 
     @Override

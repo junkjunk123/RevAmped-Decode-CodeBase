@@ -8,13 +8,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
-public class HwAnalogEncoder implements HwDevice, HwDevice.Sensor<Double> {
+public class HwAnalogEncoder extends CachedSensor.CachedNumericalSensor implements HwDevice, HwDevice.Sensor<Double> {
     private final AnalogInput voltageSensor;
     private Double voltage;
-    private final String id;
 
     public HwAnalogEncoder(HardwareMap hardwareMap, String id) {
-        this.id = id;
+        super(id);
         if (!testing) {
             try {
                 this.voltageSensor = hardwareMap.get(AnalogInput.class, id);
@@ -27,35 +26,15 @@ public class HwAnalogEncoder implements HwDevice, HwDevice.Sensor<Double> {
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    public void update() {
-        voltage = null;
+    protected Double getRaw() {
+        return voltageSensor.getVoltage();
     }
 
     public double getVoltage() {
-        if (voltage == null) {
-            if (!testing) voltage = voltageSensor.getVoltage();
-            else return 1.0;
-        }
-
-        return voltage;
+        return getReading();
     }
 
     public AnalogInput getVoltageSensor() {
         return voltageSensor;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return getId();
-    }
-
-    @Override
-    public Double getReading() {
-        return getVoltage();
     }
 }

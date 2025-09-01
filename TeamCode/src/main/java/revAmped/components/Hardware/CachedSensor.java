@@ -1,8 +1,11 @@
 package revAmped.components.Hardware;
 import androidx.annotation.NonNull;
+
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import revAmped.components.MathUtil.KalmanFilter.KalmanFilterParameters;
+import revAmped.components.MathUtil.TimeInvariantDiscretizedExtrapolator;
 
 /**
  * Abstract class for a cached sensor that retrieves its value from a supplier.
@@ -98,7 +101,7 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
 
             if (sensorClass.isAnnotationPresent(LowPassFilter.class)) {
                 LowPassFilter filterConstants = sensorClass.getAnnotation(LowPassFilter.class);
-                lowPassFilter = filterConstants.scale() ? t -> t * filterConstants.weight() : t -> filterConstants.weight();
+                lowPassFilter = filterConstants.scale() ? t -> t * filterConstants.alpha() : t -> filterConstants.alpha();
             } else if (sensorClass.isAnnotationPresent(KalmanFilter.class)) {
                 KalmanFilter filterConstants = sensorClass.getAnnotation(KalmanFilter.class);
                 kalmanFilter = new revAmped.components.MathUtil.KalmanFilter(new KalmanFilterParameters(
@@ -140,10 +143,9 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
     }
 
     public static abstract class CachedNumericalSensor extends CachedSensor<Double> {
-        private Double prevValue;
-        private Double prevPrevValue;
         private revAmped.components.MathUtil.KalmanFilter kalmanFilter;
         private Function<Double, Double> lowPassFilter;
+        private final TimeInvariantDiscretizedExtrapolator extrapolator;
 
         /**
          * Constructor for CachedSensor.
@@ -157,33 +159,32 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
 
             if (sensorClass.isAnnotationPresent(LowPassFilter.class)) {
                 LowPassFilter filterConstants = sensorClass.getAnnotation(LowPassFilter.class);
-                lowPassFilter = filterConstants.scale() ? t -> t * filterConstants.weight() : t -> filterConstants.weight();
+                lowPassFilter = Objects.requireNonNull(filterConstants).scale() ? t -> t * filterConstants.alpha() : t -> filterConstants.alpha();
+                extrapolator = new TimeInvariantDiscretizedExtrapolator(filterConstants.order());
             } else if (sensorClass.isAnnotationPresent(KalmanFilter.class)) {
                 KalmanFilter filterConstants = sensorClass.getAnnotation(KalmanFilter.class);
                 kalmanFilter = new revAmped.components.MathUtil.KalmanFilter(new KalmanFilterParameters(
-                        filterConstants.modelCovariance(), filterConstants.dataCovariance()));
+                        Objects.requireNonNull(filterConstants).modelCovariance(), filterConstants.dataCovariance()));
+                extrapolator = new TimeInvariantDiscretizedExtrapolator(filterConstants.order());
+            } else {
+                extrapolator = null;
             }
         }
 
         @Override
         public Double getReading() {
             if (cachedValue == null) {
-                Double val = getRaw();
+                double val = getRaw();
 
-                if (lowPassFilter == null && kalmanFilter == null || prevPrevValue == null)  {
-                    cachedValue = val;
-                    return cachedValue;
+                if (extrapolator == null) {
+                    return returnUnfilteredValue(val, false);
                 }
 
-                if (prevValue == null) {
-                    if (kalmanFilter != null) kalmanFilter.reset();
-                    cachedValue = val;
-                    return cachedValue;
-                }
+                double projection = extrapolator.extrapolate();
 
-                double projection = prevValue * 2 - prevPrevValue;
-                prevPrevValue = prevValue;
-                prevValue = cachedValue;
+                if (Double.isNaN(projection)) {
+                    return returnUnfilteredValue(val, true);
+                }
 
                 if (kalmanFilter == null) {
                     double filterScalar = lowPassFilter.apply(val);
@@ -192,8 +193,16 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
                     kalmanFilter.update(val, projection);
                     cachedValue = kalmanFilter.getState();
                 }
+
+                extrapolator.update(cachedValue);
             }
 
+            return cachedValue;
+        }
+
+        private double returnUnfilteredValue(double val, boolean updateFilter) {
+            cachedValue = val;
+            if (updateFilter && extrapolator != null) extrapolator.update(cachedValue);
             return cachedValue;
         }
     }

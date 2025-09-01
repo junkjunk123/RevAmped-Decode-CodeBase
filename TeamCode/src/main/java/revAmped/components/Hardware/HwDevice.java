@@ -1,5 +1,7 @@
 package revAmped.components.Hardware;
 
+import android.nfc.tech.Ndef;
+
 import androidx.annotation.NonNull;
 
 import java.lang.annotation.ElementType;
@@ -58,20 +60,6 @@ public interface HwDevice {
          * @return the current power
          */
         float getPower();
-    }
-
-    @Target(ElementType.TYPE)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface LowPassFilter {
-        double weight();
-        boolean scale() default false;
-    }
-
-    @Target(ElementType.TYPE)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface KalmanFilter {
-        double modelCovariance();
-        double dataCovariance();
     }
 
     default String getType() {
