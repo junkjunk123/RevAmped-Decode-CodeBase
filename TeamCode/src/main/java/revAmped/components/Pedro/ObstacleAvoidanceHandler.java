@@ -2,6 +2,7 @@ package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
+import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -36,7 +37,7 @@ public class ObstacleAvoidanceHandler {
 
     public void pausePathFollowing(Pose pose) {
         follower.pausePathFollowing();
-        follower.holdPoint(pose);
+        follower.holdPoint(new BezierPoint(pose), pose.getHeading(), false);
         Scheduler.getInstance().add(new Delay(() -> follower.getTranslationalError().getMagnitude() < 0.5, this::resumePathFollowing));
         navigatingAroundObstacle = true;
     }
