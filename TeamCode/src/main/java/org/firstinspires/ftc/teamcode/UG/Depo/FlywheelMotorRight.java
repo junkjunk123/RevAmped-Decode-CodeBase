@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.HwMotor2;
 
-public class FlywheelMotor extends HwMotor2<FlywheelMotor.FlywheelMotorState> {
+public class FlywheelMotorRight extends HwMotor2<FlywheelMotorRight.FlywheelMotorState> {
     public enum FlywheelMotorState implements MotorState{
         MAX_POWER(1.0f),
         HIGH_POWER(0.7f),
@@ -25,14 +25,14 @@ public class FlywheelMotor extends HwMotor2<FlywheelMotor.FlywheelMotorState> {
         }
     }
 
-    public FlywheelMotor(HardwareMap hardwareMap, FlywheelMotorState flywheelMotorState) throws IllegalArgumentException{
+    public FlywheelMotorRight(HardwareMap hardwareMap, FlywheelMotorState flywheelMotorState) throws IllegalArgumentException{
         super(hardwareMap, "motor", DcMotorSimple.Direction.FORWARD, flywheelMotorState);
     }
-    public FlywheelMotor(HardwareMap hardwareMap, DcMotor.RunMode runMode, FlywheelMotorState flywheelMotorState) throws IllegalArgumentException {
+    public FlywheelMotorRight(HardwareMap hardwareMap, DcMotor.RunMode runMode, FlywheelMotorState flywheelMotorState) throws IllegalArgumentException {
         super(hardwareMap, "motor", DcMotorSimple.Direction.FORWARD, runMode, flywheelMotorState);
     }
 
-    public FlywheelMotor(HardwareMap hardwareMap, double maxPower, FlywheelMotorState flywheelMotorState) throws IllegalArgumentException {
+    public FlywheelMotorRight(HardwareMap hardwareMap, double maxPower, FlywheelMotorState flywheelMotorState) throws IllegalArgumentException {
         super(hardwareMap, "motor", DcMotorSimple.Direction.FORWARD, maxPower, flywheelMotorState);
     }
 }

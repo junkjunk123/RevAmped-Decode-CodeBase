@@ -25,13 +25,13 @@ public class IntakeMotor extends HwMotor2<IntakeMotor.IntakeMotorState> {
     }
 
     public IntakeMotor(HardwareMap hardwareMap, IntakeMotorState intakeMotorState) throws IllegalArgumentException{
-        super(hardwareMap, "motor", DcMotorSimple.Direction.FORWARD, intakeMotorState);
+        super(hardwareMap, "motor", DcMotorSimple.Direction.REVERSE, intakeMotorState);
     }
     public IntakeMotor(HardwareMap hardwareMap, DcMotor.RunMode runMode, IntakeMotorState intakeMotorState) throws IllegalArgumentException {
-        super(hardwareMap, "motor", DcMotorSimple.Direction.FORWARD, runMode, intakeMotorState);
+        super(hardwareMap, "motor", DcMotorSimple.Direction.REVERSE, runMode, intakeMotorState);
     }
 
     public IntakeMotor(HardwareMap hardwareMap, double maxPower, IntakeMotorState intakeMotorState) throws IllegalArgumentException {
-        super(hardwareMap, "motor", DcMotorSimple.Direction.FORWARD, maxPower, intakeMotorState);
+        super(hardwareMap, "motor", DcMotorSimple.Direction.REVERSE, maxPower, intakeMotorState);
     }
 }

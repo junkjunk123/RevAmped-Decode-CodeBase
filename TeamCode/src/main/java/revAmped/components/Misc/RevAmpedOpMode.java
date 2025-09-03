@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.UG.UltimateGoalConstants;
+
 import java.util.Objects;
 
 import revAmped.components.CommandScheduler.Scheduler;
@@ -24,6 +26,7 @@ public abstract class RevAmpedOpMode extends LinearOpMode {
         Globals.testing = false;
         Globals.disableDrive = false;
         Globals.init(telemetry);
+        Globals.constants.build();
         Logger.reset();
         RevAmpedInit();
 

@@ -3,6 +3,7 @@ package revAmped.components.Misc;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto.DecodeAutonomousActionExecutor;
 import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.DecodeConstants;
+import org.firstinspires.ftc.teamcode.UG.UltimateGoalConstants;
 
 import revAmped.components.Pedro.FollowerManager;
 
@@ -23,7 +24,7 @@ public final class Globals {
     public static boolean disableDrive = false;
     public static Telemetry telemetry;
 
-    public static Constants constants = new DecodeConstants();
+    public static Constants constants = new UltimateGoalConstants();
 
     /**
      * Enum representing the alliance color.
