@@ -37,13 +37,19 @@ public class ServoCalibrator extends RevAmpedOpMode {
     public void RevAmpedLoop(){
         switch (currentServo){
             case GATE -> gateServo.setPosition(position);
-            case TILT -> gateServo.setPosition(position);
+            case TILT -> intakeTiltServo.setPosition(position);
         }
         if(gp1.left_bumper.isPress()){
-
+            currentServo = CurrentServo.values()[currentServo.ordinal()-1];
         }
         if(gp1.right_bumper.isPress()){
-
+            currentServo = CurrentServo.values()[currentServo.ordinal()+1];
+        }
+        if(gp1.a.isPress()){
+            position+=1/255f;
+        }
+        if(gp1.b.isPress()){
+            position-=1/255f;
         }
     }
     @Override
