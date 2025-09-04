@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.RevAmped.Robot;
 
@@ -17,6 +20,7 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedInit() {
         robot = new Robot(this);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     @Override
@@ -38,6 +42,7 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedLoop() {
         if (gamepad1.aWasPressed()) {
+            deviceType = HwDevice.DeviceType.MOTOR;
             for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(HwDevice.DeviceType.MOTOR))) {
                 if (device instanceof HwSlide2<?> slide) {
                     DelayedResult<Integer> result = slide.testEncodersAndSwitch();
@@ -56,6 +61,7 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
     @Override
     public void update() {
         robot.update();
+        Logger.update(telemetry);
         telemetry.update();
     }
 
