@@ -26,9 +26,10 @@ public class Intake {
     public enum IntakeState{
         INTAKE((servos,scheduler) -> {
             servos.tilt().setCurrentState(IntakeTiltServo.TiltState.DOWN);
+
         }),
         NEUTRAL((servos, scheduler) -> {
-            servos.tilt().setCurrentState(IntakeTiltServo.TiltState.DOWN);
+            servos.tilt().setCurrentState(IntakeTiltServo.TiltState.UP);
         });
 
 

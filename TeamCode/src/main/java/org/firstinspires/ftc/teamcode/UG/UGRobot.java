@@ -6,6 +6,13 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto.DecodeRevAmpedAutonomous;
+import org.firstinspires.ftc.teamcode.UG.Depo.Depo;
+import org.firstinspires.ftc.teamcode.UG.Depo.FlywheelMotorLeft;
+import org.firstinspires.ftc.teamcode.UG.Depo.FlywheelMotorRight;
+import org.firstinspires.ftc.teamcode.UG.Depo.GateServo;
+import org.firstinspires.ftc.teamcode.UG.Intake.Intake;
+import org.firstinspires.ftc.teamcode.UG.Intake.IntakeMotor;
+import org.firstinspires.ftc.teamcode.UG.Intake.IntakeTiltServo;
 
 import java.util.List;
 
@@ -17,6 +24,8 @@ import revAmped.components.Misc.RevAmpedOpMode;
 
 public class UGRobot {
     public static UGRobot INSTANCE;
+    public Intake intake;
+    public Depo depo;
     public TeleOpMecanumDrive drivetrain;
     private List<LynxModule> allHubs;
     private final Scheduler scheduler;
@@ -97,7 +106,15 @@ public class UGRobot {
         setAllianceColor(AllianceColor.values()[allianceColorOrdinal]);
     }
 
-    public OpModeType getOpModeType() {
-        return opModeType;
-    }
+    public IntakeTiltServo intakeTilt(){return intake.servos.tilt();}
+
+    public GateServo gate(){return depo.servos.gate();}
+
+    public IntakeMotor topIntake(){return intake.intakeTop;}
+
+    public IntakeMotor bottomIntake(){return intake.intakeBottom;}
+
+    public FlywheelMotorLeft flywheelLeft(){return depo.flywheelMotorLeft;}
+
+    public FlywheelMotorRight flywheelRight(){return depo.flywheelMotorRight;}
 }
