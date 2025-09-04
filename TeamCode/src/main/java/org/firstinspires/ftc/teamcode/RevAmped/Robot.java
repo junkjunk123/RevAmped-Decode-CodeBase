@@ -1,16 +1,19 @@
-package org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms;
+package org.firstinspires.ftc.teamcode.RevAmped;
 
 import static revAmped.components.Misc.Globals.allianceColor;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto.DecodeRevAmpedAutonomous;
+import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
 
+import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Drive.TeleOpMecanumDrive;
+import revAmped.components.Hardware.HwDevice;
 import revAmped.components.Misc.Globals;
 import revAmped.components.Misc.Globals.AllianceColor;
 import revAmped.components.Misc.RevAmpedOpMode;
@@ -42,6 +45,8 @@ public class Robot {
         }
     }
 
+    public final EnumMap<HwDevice.DeviceType, HashSet<HwDevice>> allDevices = new EnumMap<>(HwDevice.DeviceType.class);
+
     private OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
@@ -51,6 +56,10 @@ public class Robot {
         opModeType = (OpModeType) opMode.getOpModeType();
         init(opMode, hardwareMap);
         INSTANCE = this;
+    }
+
+    public Robot(RevAmpedOpMode opMode) {
+        this(opMode, Globals.AllianceColor.None);
     }
 
     public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {

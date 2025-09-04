@@ -91,4 +91,9 @@ public abstract class DistanceSensor extends CachedSensor.CachedNumericalSensor 
     protected Double getRaw() {
         return sensorConversion.evaluateAtInput(updateSensorRead());
     }
+
+    @Override
+    public DeviceType getDeviceType() {
+        return DeviceType.DISTANCE_SENSOR;
+    }
 }

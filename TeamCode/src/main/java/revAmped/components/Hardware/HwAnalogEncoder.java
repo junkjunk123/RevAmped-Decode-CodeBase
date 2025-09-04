@@ -37,4 +37,9 @@ public class HwAnalogEncoder extends CachedSensor.CachedNumericalSensor implemen
     public AnalogInput getVoltageSensor() {
         return voltageSensor;
     }
+
+    @Override
+    public DeviceType getDeviceType() {
+        return DeviceType.ANALOG;
+    }
 }

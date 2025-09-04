@@ -239,6 +239,11 @@ public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implemen
         return (maxRadPos - pos) + minRadPos;
     }
 
+    @Override
+    public boolean testResponse() {
+        return servo.isPwmEnabled();
+    }
+
     @NonNull
     @Override
     public String toString() {

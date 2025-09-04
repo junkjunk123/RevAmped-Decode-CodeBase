@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto;
+package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto;
 
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Robot;
 
 import revAmped.components.Architecture.AutonomousActionExecutor;
 import revAmped.components.Pedro.FollowerManager;

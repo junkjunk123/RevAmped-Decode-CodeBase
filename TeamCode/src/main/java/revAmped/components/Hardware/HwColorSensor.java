@@ -127,4 +127,9 @@ public class HwColorSensor implements HwDevice, HwDevice.Sensor<HSVValue> {
     public HSVValue getReading() {
         return getHSVValues();
     }
+
+    @Override
+    public DeviceType getDeviceType() {
+        return DeviceType.COLOR_SENSOR;
+    }
 }

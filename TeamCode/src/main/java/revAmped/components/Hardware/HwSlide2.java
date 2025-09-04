@@ -6,10 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.EnumMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import revAmped.components.CommandScheduler.Delay;
+import revAmped.components.CommandScheduler.DelayedResult;
+import revAmped.components.CommandScheduler.DelayedSupplier;
 import revAmped.components.CommandScheduler.Scheduler;
+import revAmped.components.MathUtil.MathUtil;
 
 public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends HwMotor {
     protected SlideRetractionDetector retractionDetector;
@@ -239,4 +244,30 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
     }
 
     protected abstract void retraction();
+
+    public DelayedResult<Integer> testEncodersAndSwitch() {
+        motor.setPower(0.75f);
+        AtomicBoolean encoders = new AtomicBoolean(false);
+        AtomicBoolean limitSwitch = new AtomicBoolean(false);
+        Scheduler.getInstance().add(new Delay(400, () -> {
+            encoders.set(motor.getCurrentPosition() > 20);
+            retract(800, () -> limitSwitch.set(false));
+            Scheduler.getInstance().add(new Delay(retractionDetector::getReading, () -> limitSwitch.set(true)));
+        }));
+        BooleanSupplier set = MathUtil.boleanSupplierfromTimeDelay(1400);
+        return new DelayedSupplier<>(() -> limitSwitch.get() || set.getAsBoolean(), () -> {
+            motor.setPower(0f);
+            if (!encoders.get()) {
+                return -1; // encoders failed
+            } else if (!limitSwitch.get()) {
+                return -2; // limit switch failed
+            } else {
+                return 1; // all good
+            }
+        }).setMaxTime(1400).get();
+    }
+
+    public SlideRetractionDetector getRetractionDetector() {
+        return retractionDetector;
+    }
 }

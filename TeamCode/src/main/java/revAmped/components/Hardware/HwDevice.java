@@ -46,6 +46,11 @@ public interface HwDevice {
          * @return the current position
          */
         float getPosition();
+
+        @Override
+        default DeviceType getDeviceType() {
+            return DeviceType.SERVO;
+        };
     }
 
     interface Motor extends HwDevice {
@@ -60,7 +65,30 @@ public interface HwDevice {
          * @return the current power
          */
         float getPower();
+
+        @Override
+        default DeviceType getDeviceType() {
+            return DeviceType.MOTOR;
+        };
     }
+
+    enum DeviceType {
+        DIGITAL,
+        SERVO,
+        MOTOR,
+        ANALOG,
+        COLOR_SENSOR,
+        DISTANCE_SENSOR,
+        IMU,
+        PINPOINT,
+        UNKNOWN
+    }
+
+    DeviceType getDeviceType();
+
+    default boolean testResponse() {
+        return true;
+    };
 
     default String getType() {
         if (this instanceof Sensor) {

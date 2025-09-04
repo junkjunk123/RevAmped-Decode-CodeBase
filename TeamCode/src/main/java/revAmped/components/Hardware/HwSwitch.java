@@ -57,6 +57,11 @@ public class HwSwitch implements HwDevice, HwSlide2.SlideRetractionDetector {
         return isTouch();
     }
 
+    @Override
+    public DeviceType getDeviceType() {
+        return isDigital ? DeviceType.DIGITAL : DeviceType.ANALOG;
+    }
+
     public boolean isTouch () {
         if (isTouch == null) {
             isTouch = touchingUncached();

@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms;
+package org.firstinspires.ftc.teamcode.RevAmped.OpModes;
+
+import org.firstinspires.ftc.teamcode.RevAmped.Robot;
 
 import revAmped.components.Misc.RevAmpedOpMode;
 

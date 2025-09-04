@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto;
+package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Robot;
 
 import revAmped.components.Pedro.FollowerManager;
 import revAmped.components.CommandScheduler.Scheduler;

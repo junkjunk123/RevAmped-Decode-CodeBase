@@ -1,8 +1,8 @@
 package revAmped.components.Misc;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.Auto.DecodeAutonomousActionExecutor;
-import org.firstinspires.ftc.teamcode.RevAmped2024.offseason.mechanisms.DecodeConstants;
+import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActionExecutor;
+import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 
 import revAmped.components.Pedro.FollowerManager;
 
