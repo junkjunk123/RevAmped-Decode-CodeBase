@@ -142,25 +142,6 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
     }
 
     /**
-     * @return motor encoder value
-     */
-    public int getCurrentPosition() {
-        if (currentPos == null) {
-            if (!testing) currentPos = motor.getCurrentPosition() - encoderBase;
-            else currentPos = 15;
-        }
-
-        return currentPos;
-    }
-
-    /**
-     * reset the motor encoder value
-     */
-    public void resetPosition() {
-        if (!testing) encoderBase = motor.getCurrentPosition();
-    }
-
-    /**
      * set the motor target position
      * @param position target position
      */

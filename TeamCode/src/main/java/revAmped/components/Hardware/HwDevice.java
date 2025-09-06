@@ -88,17 +88,5 @@ public interface HwDevice {
 
     default boolean testResponse() {
         return true;
-    };
-
-    default String getType() {
-        if (this instanceof Sensor) {
-            return "Sensor";
-        } else if (this instanceof Servo) {
-            return "Servo";
-        } else if (this instanceof Motor) {
-            return "Motor";
-        } else {
-            return "Unknown";
-        }
     }
 }
