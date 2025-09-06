@@ -246,11 +246,13 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
     protected abstract void retraction();
 
     public DelayedResult<Integer> testEncodersAndSwitch() {
-        motor.setPower(0.75f);
+        InitActions initActions = initMap.get(getTestState());
+        initActions.action().run();
+        motor.setPower(0.75);
         AtomicBoolean encoders = new AtomicBoolean(false);
         AtomicBoolean limitSwitch = new AtomicBoolean(false);
         Scheduler.getInstance().add(new Delay(400, () -> {
-            encoders.set(motor.getCurrentPosition() > 20);
+            encoders.set(motor.getCurrentPosition() > 50);
             retract(800, () -> limitSwitch.set(false));
             Scheduler.getInstance().add(new Delay(retractionDetector::getReading, () -> limitSwitch.set(true)));
         }));
@@ -270,4 +272,6 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
     public SlideRetractionDetector getRetractionDetector() {
         return retractionDetector;
     }
+
+    public abstract T getTestState();
 }

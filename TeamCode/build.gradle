@@ -50,7 +50,5 @@ dependencies {
     implementation 'org.openftc:easyopencv:1.7.3'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
-    implementation "com.bylazar:ftcontrol:0.6.8"
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
-    implementation fileTree(include: ['limelight-proxy-0.1.1.jar'], dir: 'libs')
 }

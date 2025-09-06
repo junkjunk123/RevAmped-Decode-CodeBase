@@ -34,6 +34,11 @@ public class HwVoltageSensor implements HwDevice, HwDevice.Sensor<Float> {
         voltage = null;
     }
 
+    @Override
+    public DeviceType getDeviceType() {
+        return DeviceType.ANALOG;
+    }
+
     public float getVoltage() {
         if (voltage == null ) {
             if (!testing) voltage = (float) voltageSensor.getVoltage();

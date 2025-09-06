@@ -36,6 +36,11 @@ public class HwLed implements HwDevice {
         draw();
     }
 
+    @Override
+    public DeviceType getDeviceType() {
+        return DeviceType.DIGITAL;
+    }
+
     public enum ELedStatus
     {
         LED_ON,
