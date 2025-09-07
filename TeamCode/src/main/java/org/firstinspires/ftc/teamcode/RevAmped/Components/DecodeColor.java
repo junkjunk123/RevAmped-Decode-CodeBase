@@ -19,9 +19,7 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
     }
 
     @Override
-    public boolean testResponse() {
-        return getColor() == neutralColor;
-    }
+    public abstract boolean testResponse();
 
     public T getColor() {
         if (currentColor == null) {

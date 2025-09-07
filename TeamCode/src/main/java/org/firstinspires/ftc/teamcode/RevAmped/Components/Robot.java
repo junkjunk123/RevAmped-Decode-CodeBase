@@ -13,15 +13,16 @@ import java.util.HashSet;
 import java.util.List;
 
 import revAmped.components.CommandScheduler.Scheduler;
+import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.Drive.TeleOpMecanumDrive;
 import revAmped.components.Hardware.HwDevice;
+import revAmped.components.Hardware.HwServo2;
 import revAmped.components.Misc.Globals;
 import revAmped.components.Misc.Globals.AllianceColor;
 import revAmped.components.Misc.RevAmpedOpMode;
 
 public class Robot {
     public static Robot INSTANCE;
-    public TeleOpMecanumDrive drivetrain;
     private List<LynxModule> allHubs;
     private final Scheduler scheduler;
 
@@ -51,6 +52,7 @@ public class Robot {
     private OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
+        Globals.OpModeType = opModeType;
         Globals.allianceColor = allianceColor;
         scheduler = opMode.scheduler;
         HardwareMap hardwareMap = opMode.hardwareMap;
@@ -64,6 +66,7 @@ public class Robot {
     }
 
     public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+        Globals.OpModeType = opModeType;
         Globals.allianceColor = allianceColor;
         scheduler = opMode.scheduler;
         HardwareMap hardwareMap = opMode.hardwareMap;
@@ -74,7 +77,6 @@ public class Robot {
 
     public void init(RevAmpedOpMode opMode, HardwareMap hardwareMap) {
         allHubs = hardwareMap.getAll(LynxModule.class);
-        drivetrain = new TeleOpMecanumDrive(opMode, DecodeConstants.DRIVE_DIRECTIONS);
         setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
     }
 
@@ -109,5 +111,13 @@ public class Robot {
 
     public OpModeType getOpModeType() {
         return opModeType;
+    }
+
+    public void teleopInitialize() {
+        for (HwDevice servo : allDevices.get(HwDevice.DeviceType.SERVO)) {
+            if (servo instanceof HwServo2<?> s) {
+                s.setPosition(s.getInitialPosition());
+            }
+        }
     }
 }

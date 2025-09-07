@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.HwServo2;
 import revAmped.components.MathUtil.ProjectileMath;
+import revAmped.components.Misc.Globals;
 
 public class HoodServo extends HwServo2<HoodServo.HoodState> {
     public HoodServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
@@ -14,7 +16,7 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
         super(hardwareMap, "hood", initialPosition, HoodState.REST, ServoBrand.AXON_MAX);
     }
 
-    public enum HoodState implements ServoState{
+    public enum HoodState implements ServoState {
         REST(HOOD_REST),
         TRACKING(HOOD_REST);
 
@@ -31,11 +33,8 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
     }
 
     public static float HOOD_REST;
-
-    @Override
-    public void update() {
-        if (getCurrentState() == HoodState.TRACKING) {
-
-        }
-    }
+    public static float HOOD_MAX_POS;
+    public static float HOOD_MIN_POS;
+    public static float HOOD_MAX_RAD;
+    public static float HOOD_MIN_RAD;
 }
