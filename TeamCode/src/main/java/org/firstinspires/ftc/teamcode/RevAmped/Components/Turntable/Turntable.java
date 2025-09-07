@@ -34,18 +34,18 @@ public class Turntable {
         NEUTRAL(0,255);
 
         @Override
-        public double getMinHue() {
+        public float getMinHue() {
             return minHue;
         }
 
         @Override
-        public double getMaxHue() {
+        public float getMaxHue() {
             return maxHue;
         }
-        double minHue;
-        double maxHue;
+        float minHue;
+        float maxHue;
 
-        Color(double minHue, double maxHue){
+        Color(float minHue, float maxHue){
             this.minHue = minHue;
             this.maxHue = maxHue;
         }
