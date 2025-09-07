@@ -1,11 +1,10 @@
 package revAmped.components.Hardware;
 
 import com.pedropathing.math.MathFunctions;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.MotorState> extends CRServoInternal<T> {
+public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.ServoState> extends CRServoInternal<T> {
     public HwSlide2.SlideRetractionDetector retractionDetector;
 
     protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, T motorState, HwSlide2.SlideRetractionDetector detector, Encoder encoder) throws IllegalArgumentException {
@@ -17,7 +16,7 @@ public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.MotorState>
         super.update();
         retractionDetector.update();
 
-        if ((!motorState.useComputePower() && Math.abs(motorState.power()) > 0.05) || (Math.abs(motorState.computePower().get()) > 0.05)) {
+        if ((Math.abs(statePowerMap.get(servoState).power()) > 0.05)) {
             if (retractionDetector != null && retractionDetector.getReading()) {
                 resetPosition();
             }

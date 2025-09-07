@@ -1,4 +1,12 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components;
 
-public class TurretServo {
+import revAmped.components.Hardware.Turret;
+
+public class TurretServo extends Turret<TurretServo.TurretState> {
+    public enum TurretState implements MotorState {
+        IDLE(0f),
+        TRACKING()
+    }
+
+    public
 }

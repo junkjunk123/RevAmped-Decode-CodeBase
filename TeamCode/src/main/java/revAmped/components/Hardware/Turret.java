@@ -27,7 +27,7 @@ public abstract class Turret<T extends Enum<T> & HwMotor2.MotorState> extends Hw
         super.update();
         retractionDetector.update();
 
-        if ((!motorState.useComputePower() && Math.abs(motorState.power()) > 0.05) || (Math.abs(motorState.computePower().get()) > 0.05)) {
+        if ((Math.abs(statePowerMap.get(motorState).power()) > 0.05)) {
             if (retractionDetector != null && retractionDetector.getReading()) {
                 resetPosition();
             }

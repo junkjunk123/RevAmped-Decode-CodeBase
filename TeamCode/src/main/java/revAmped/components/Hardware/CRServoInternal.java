@@ -3,48 +3,64 @@ package revAmped.components.Hardware;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import java.util.HashMap;
 
-import java.util.function.Supplier;
+public abstract class CRServoInternal<T extends Enum<T> & CRServoInternal.ServoState> extends HwCRServo {
+    protected final HashMap<ServoState, ServoPower> statePowerMap = new HashMap<>();
 
-public abstract class CRServoInternal<T extends Enum<T> & CRServoInternal.MotorState> extends HwCRServo {
-    public T getMotorState() {
-        return motorState;
+    public T getServoState() {
+        return servoState;
     }
 
-    public void setMotorState(T motorState) {
-        this.motorState = motorState;
-        if (!motorState.useComputePower()) setPower(motorState.power());
-        else servo.setPower(motorState.computePower().get());
+    public void setServoState(T servoState) {
+        this.servoState = servoState;
+        servo.setPower(statePowerMap.get(this.servoState).power());
     }
 
-    public void setMotorState(T motorState, float power) {
-        this.motorState = motorState;
+    public void setServoState(T servoState, float power) {
+        this.servoState = servoState;
         setPower(power);
     }
 
+    protected interface ServoState {}
+
     @FunctionalInterface
-    protected interface MotorState {
+    protected interface ServoPower {
         float power();
-        default Supplier<Float> computePower() {
-            return () -> null;
-        };
-        default boolean useComputePower() {
+        default boolean constant() {
             return false;
+        };
+
+        static ServoPower constant(float power) {
+            return new ServoPower() {
+                @Override
+                public float power() {
+                    return power;
+                }
+
+                @Override
+                public boolean constant() {
+                    return true;
+                }
+            };
         }
     }
 
-    protected T motorState;
+    protected T servoState;
 
-    protected CRServoInternal(HardwareMap hardwareMap, String id, DcMotor.Direction direction, T motorState, Encoder encoder) throws IllegalArgumentException {
+    protected CRServoInternal(HardwareMap hardwareMap, String id, DcMotor.Direction direction, T servoState, Encoder encoder) throws IllegalArgumentException {
         super(hardwareMap, id, direction, encoder);
-        this.motorState = motorState;
+        this.servoState = servoState;
+        buildStatePowerMap();
     }
+
+    public abstract void buildStatePowerMap();
 
     @Override
     public void update() {
         super.update();
 
-        if (motorState.useComputePower()) servo.setPower(motorState.computePower().get());
+        ServoPower power = statePowerMap.get(servoState);
+        if(!power.constant()) servo.setPower(power.power());
     }
 }

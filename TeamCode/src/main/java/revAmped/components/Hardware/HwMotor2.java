@@ -5,17 +5,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import java.util.HashMap;
 import java.util.function.Supplier;
 
 public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends HwMotor {
+    protected final HashMap<MotorState, MotorPower> statePowerMap = new HashMap<>();
+
     public T getMotorState() {
         return motorState;
     }
 
     public void setMotorState(T motorState) {
         this.motorState = motorState;
-        if (!motorState.useComputePower()) setPower(motorState.power());
-        else motor.setPower(motorState.computePower().get());
+        motor.setPower(statePowerMap.get(motorState).power());
     }
 
     public void setMotorState(T motorState, float power) {
@@ -23,14 +25,27 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
         setPower(power);
     }
 
+    protected interface MotorState { }
+
     @FunctionalInterface
-    protected interface MotorState {
+    protected interface MotorPower {
         float power();
-        default Supplier<Float> computePower() {
-            return () -> null;
-        };
-        default boolean useComputePower() {
+        default boolean constant() {
             return false;
+        };
+
+        static MotorPower constant(float power) {
+            return new MotorPower() {
+                @Override
+                public float power() {
+                    return power;
+                }
+
+                @Override
+                public boolean constant() {
+                    return true;
+                }
+            };
         }
     }
 
@@ -39,16 +54,19 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
     protected HwMotor2(HardwareMap hardwareMap, String id, DcMotor.Direction direction, T motorState) throws IllegalArgumentException {
         super(hardwareMap, id, direction);
         this.motorState = motorState;
+        buildStatePowerMap();
     }
 
     protected HwMotor2(HardwareMap hardwareMap, String id, DcMotor.Direction direction, DcMotor.RunMode runMode, T motorState) throws IllegalArgumentException {
         super(hardwareMap, id, direction, runMode);
         this.motorState = motorState;
+        buildStatePowerMap();
     }
 
     protected HwMotor2(HardwareMap hardwareMap, String id, DcMotor.Direction direction, double maxPower, T motorState) throws IllegalArgumentException {
         super(hardwareMap, id, direction, maxPower);
         this.motorState = motorState;
+        buildStatePowerMap();
     }
 
     @Override
@@ -56,10 +74,13 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
         return motor.getCurrent(CurrentUnit.AMPS) > 0.1;
     }
 
+    public abstract void buildStatePowerMap();
+
     @Override
     public void update() {
         super.update();
 
-        if (motorState.useComputePower()) motor.setPower(motorState.computePower().get());
+        MotorPower power = statePowerMap.get(motorState);
+        if(!power.constant()) motor.setPower(power.power());
     }
 }
