@@ -8,18 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.MotorState> extends CRServoInternal<T> {
     public HwSlide2.SlideRetractionDetector retractionDetector;
 
-    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, T motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
-        super(hardwareMap, id, direction, motorState);
-        this.retractionDetector = detector;
-    }
-
-    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, DcMotor.RunMode runMode, T motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
-        super(hardwareMap, id, direction, runMode, motorState);
-        this.retractionDetector = detector;
-    }
-
-    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, double maxPower, T motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
-        super(hardwareMap, id, direction, maxPower, motorState);
+    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, T motorState, HwSlide2.SlideRetractionDetector detector, Encoder encoder) throws IllegalArgumentException {
+        super(hardwareMap, id, direction, motorState, encoder);
         this.retractionDetector = detector;
     }
 
