@@ -1,5 +1,7 @@
 package revAmped.components.MathUtil;
 
+import java.util.Arrays;
+
 public class ProjectileMath {
     private static final double g = -386.0885; // in/s^2
 
@@ -13,9 +15,9 @@ public class ProjectileMath {
      * @param y target height
      * @return array of positive solutions (length 0, 1, or 2) in radians
      */
-    public static double[] solveTheta(double v, double h, double x, double y) {
+    public static double solveTheta(double v, double h, double x, double y) {
         if (x == 0) {
-            return new double[0]; // avoid division by zero
+            return -1; // avoid division by zero
         }
 
         // coefficients
@@ -25,7 +27,7 @@ public class ProjectileMath {
         // discriminant
         double disc = x * x - 4 * A * C;
         if (disc < 0) {
-            return new double[0]; // no real solution
+            return -1; // no real solution
         }
 
         double sqrtDisc = Math.sqrt(disc);
@@ -53,6 +55,6 @@ public class ProjectileMath {
             result[i] = solutions.get(i);
         }
 
-        return result;
+        return Arrays.stream(result).min().orElse(-1);
     }
 }

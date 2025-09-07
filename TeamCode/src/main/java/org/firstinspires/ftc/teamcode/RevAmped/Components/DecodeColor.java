@@ -6,11 +6,12 @@ import revAmped.components.Hardware.HwColorSensor;
 
 public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor> extends HwColorSensor {
     public interface DetectionColor {
-        double getMinHue();
-        double getMaxHue();
+        float getMinHue();
+        float getMaxHue();
     }
 
     public T neutralColor;
+    private T currentColor;
 
     public DecodeColor(HardwareMap hardwareMap, String id, T neutral) {
         super(hardwareMap, id);
@@ -23,15 +24,18 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
     }
 
     public T getColor() {
-        updateHSVValues();
-        double hue = getHSVValues().getH();
-        for (T color : neutralColor.getDeclaringClass().getEnumConstants()) {
-            if (color != neutralColor) {
-                if (hue >= color.getMinHue() && hue <= color.getMaxHue()) {
-                    return color;
+        if (currentColor == null) {
+            updateHSVValues();
+            double hue = getHSVValues().getH();
+            for (T color : neutralColor.getDeclaringClass().getEnumConstants()) {
+                if (color != neutralColor) {
+                    if (hue >= color.getMinHue() && hue <= color.getMaxHue()) {
+                        currentColor = color;
+                        return currentColor;
+                    }
                 }
             }
         }
-        return neutralColor;
+        return currentColor;
     }
 }
