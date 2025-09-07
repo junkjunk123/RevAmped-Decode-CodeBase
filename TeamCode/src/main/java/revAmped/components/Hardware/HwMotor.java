@@ -29,7 +29,7 @@ public class HwMotor implements HwDevice, HwDevice.Motor {
     private final String id;
     private DcMotor.RunMode currentMode;
     private DcMotor.ZeroPowerBehavior currentZPB = ZeroPowerBehavior.FLOAT;
-    private Double current = 0.0;
+    protected Double current = 0.0;
 
     /**
      * initialize the motor

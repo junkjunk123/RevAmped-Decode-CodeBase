@@ -4,21 +4,19 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import revAmped.components.Hardware.HwMotor;
 import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Hardware.Turret;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
-public class TurretServo extends Turret<TurretServo.TurretState> {
-    public TurretServo(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, TurretState motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
-        super(hardwareMap, id, direction, motorState, detector);
+public class TurretMotor extends Turret<TurretMotor.TurretState> {
+    public TurretMotor(HardwareMap hardwareMap, TurretState motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
+        super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState, detector);
     }
 
     public static PIDFCoefficients TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);
     public final PIDFController controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     public static int TURRET_TICKS_PER_ROTATION = 0;
-    public static int TURRET_MAX_RAD = 0;
-    public static int TURRET_MIN_RAD = 0;
-    public static int TURRET_MAX_POS = 0;
     private int targetPosition;
 
     @Override
@@ -29,11 +27,13 @@ public class TurretServo extends Turret<TurretServo.TurretState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
+        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runPIDF());
         statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runPIDF());
     }
 
     public enum TurretState implements MotorState {
         IDLE (0),
+        HOLD(0),
         TRACKING (0);
 
         final int pos;
@@ -64,7 +64,14 @@ public class TurretServo extends Turret<TurretServo.TurretState> {
 
     @Override
     public void update() {
-        super.update();
-        controller.updateError(getError(targetPosition));
+        currentPos = -1;
+        current = null;
+        if (motorState != TurretState.IDLE) controller.updateError(getError(targetPosition));
+        MotorPower power = statePowerMap.get(motorState);
+        if(!power.constant()) motor.setPower(power.power());
+    }
+    
+    public void finetuneAngle(double rad) {
+        setMotorState(TurretState.TRACKING, (int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)));
     }
 }

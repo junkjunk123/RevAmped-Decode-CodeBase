@@ -18,9 +18,13 @@ public class Shooter {
     private boolean trackHood = false;
     private boolean trackTurret = false;
 
-    public record HardwareComponents(HoodServo hoodServo) {
-
+    public record HardwareComponents(HoodServo hoodServo, TurretMotor turretServo) {
+        public void update() {
+            hoodServo.update();
+            turretServo.update();
+        }
     }
+
     public final HardwareComponents hardware;
 
     public enum ShooterState {
@@ -40,7 +44,8 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
-        hardware = new HardwareComponents(hoodServo);
+        TurretMotor turretServo = new TurretMotor(hardwareMap, TurretMotor.TurretState.IDLE, null);
+        hardware = new HardwareComponents(hoodServo, turretServo);
     }
 
     public Localizer pinpoint() {
@@ -53,6 +58,8 @@ public class Shooter {
     }
 
     public void update() {
+        hardware.update();
+
         switch (currentState) {
             case TRACKING -> {
                 Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
@@ -71,8 +78,7 @@ public class Shooter {
                     double targetAngle = offset.getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
                     double deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
-                    HwServo2.getPositionFromRad(deltaAngle, TurretServo.TURRET_MIN_RAD, TurretServo.TURRET_MAX_RAD,
-                            TurretServo.TURRET_MIN_POS, TurretServo.TURRET_MAX_POS);
+                    hardware.turretServo().finetuneAngle(deltaAngle);
                 }
             }
         }
