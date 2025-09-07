@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.sun.tools.javac.util.Position;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.DecodeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Intake.IntakeColor;
@@ -13,9 +12,9 @@ import java.util.function.BiConsumer;
 import revAmped.components.CommandScheduler.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 
-public class Turntable {
+public class TurnTable {
     private final Scheduler scheduler;
-    private HashMap <TableState,Color> tableMap = new HashMap<>();
+    private HashMap <TurnTableState,Color> tableMap = new HashMap<>();
 
     public record Servos(TableServo turntable, Popper popper) {
         public void update() {
@@ -50,15 +49,15 @@ public class Turntable {
             this.maxHue = maxHue;
         }
     }
-    public enum TableState {
+    public enum TurnTableState {
         BALL1((servos,scheduler) -> {
-            servos.turntable.setCurrentState(TableServo.TableState.BALL1);
+            servos.turntable.setServoState(TableServo.TableState.BALL1);
         }),
         BALL2((servos,scheduler) -> {
-            servos.turntable.setCurrentState(TableServo.TableState.BALL2);
+            servos.turntable.setServoState(TableServo.TableState.BALL2);
         }),
         BALL3((servos,scheduler) -> {
-            servos.turntable.setCurrentState(TableServo.TableState.BALL3);
+            servos.turntable.setServoState(TableServo.TableState.BALL3);
         }),
         POP((servos,scheduler) -> {
             servos.popper.setCurrentState(Popper.PopperState.POP);
@@ -66,32 +65,32 @@ public class Turntable {
         });
         private BiConsumer<Servos, Scheduler> initialize;
 
-        TableState(BiConsumer<Servos, Scheduler> initialize){this.initialize = initialize;}
+        TurnTableState(BiConsumer<Servos, Scheduler> initialize){this.initialize = initialize;}
 
         public void initialize(Servos servos, Scheduler scheduler){
             initialize.accept(servos, scheduler);
         }
         }
-    private TableState currentState;
+    private TurnTableState currentState;
 
-    public Turntable(Scheduler scheduler, HardwareMap hardwareMap){
+    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap){
         this.scheduler = scheduler;
-        TableServo turntable = new TableServo(hardwareMap);
-        Popper popper = new Popper(hardwareMap,"",true);
+        TableServo turntable = new TableServo(hardwareMap, setPositions ? TableServo.TableState.BALL1 : TableServo.TableState.REST);
+        Popper popper = new Popper(hardwareMap,"",setPositions);
         intakeColor = new IntakeColor(hardwareMap,"",Color.NEUTRAL);
         servos = new Servos(turntable,popper);
-        currentState = TableState.BALL1;
+        currentState = TurnTableState.BALL1;
     }
-     public void setCurrentState(TableState currentState){
+     public void setCurrentState(TurnTableState currentState){
         this.currentState = currentState;
         currentState.initialize(servos,scheduler);
      }
-     public void setCurrentState(TableState currentState, boolean init){
+     public void setCurrentState(TurnTableState currentState, boolean init){
         this.currentState = currentState;
         if (init) currentState.initialize(servos, scheduler);
      }
 
-     public TableState getCurrentState(){
+     public TurnTableState getCurrentState(){
         return currentState;
     }
 
@@ -99,21 +98,21 @@ public class Turntable {
         servos.update();
     }
 
-    public void addToMap(TableState currentState){ //updates the hashmap based on the current table pos and color from color sensor
+    public void addToMap(TurnTableState currentState){ //updates the hashmap based on the current table pos and color from color sensor
         tableMap.put(currentState, intakeColor.getColor());
     }
-    public void removeFromMap(TableState currentState){
+    public void removeFromMap(TurnTableState currentState){
         tableMap.remove(currentState);
     }
     public void PreparePurple(){
-        for (Map.Entry<TableState,Color> entry : tableMap.entrySet()){
+        for (Map.Entry<TurnTableState,Color> entry : tableMap.entrySet()){
             if (entry.getValue() == Color.PURPLE){
                 setCurrentState(entry.getKey());
             }
         }
     }
     public void PrepareGreen(){
-        for (Map.Entry<TableState,Color> entry : tableMap.entrySet()){
+        for (Map.Entry<TurnTableState,Color> entry : tableMap.entrySet()){
             if (entry.getValue() == Color.GREEN){
                 setCurrentState(entry.getKey());
             }

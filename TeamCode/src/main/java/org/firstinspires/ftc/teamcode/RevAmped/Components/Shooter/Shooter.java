@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter;
 
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
@@ -9,7 +9,6 @@ import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.Hardware.HwServo2;
 import revAmped.components.MathUtil.MathUtil;
 import revAmped.components.MathUtil.ProjectileMath;
-import revAmped.components.MathUtil.Vector;
 import revAmped.components.MathUtil.Vector2D;
 import revAmped.components.Misc.Globals;
 
@@ -18,7 +17,7 @@ public class Shooter {
     private boolean trackHood = false;
     private boolean trackTurret = false;
 
-    public record HardwareComponents(HoodServo hoodServo, TurretMotor turretServo) {
+    public record HardwareComponents(HoodServo hoodServo, TurretMotor turretServo, Flywheel flywheel) {
         public void update() {
             hoodServo.update();
             turretServo.update();
@@ -44,8 +43,9 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
-        TurretMotor turretServo = new TurretMotor(hardwareMap, TurretMotor.TurretState.IDLE, null);
-        hardware = new HardwareComponents(hoodServo, turretServo);
+        TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? TurretMotor.TurretState.HOLD : TurretMotor.TurretState.IDLE, null);
+        Flywheel flywheel = new Flywheel(hardwareMap, Flywheel.FlywheelState.STOPPED);
+        hardware = new HardwareComponents(hoodServo, turretServo, flywheel);
     }
 
     public Localizer pinpoint() {
@@ -68,7 +68,7 @@ public class Shooter {
 
                 if (trackHood) {
                     double theta = ProjectileMath.solveTheta(Shooter.FLYWHEEL_MAX_VELOCITY, Shooter.LAUNCH_HEIGHT,
-                            offset.magnitude(), Shooter.LAUNCH_HEIGHT);
+                            offset.magnitude(), Shooter.TARGET_LAUNCH_HEIGHT);
                     float hoodAngle = HwServo2.getPositionFromRad(theta, HoodServo.HOOD_MIN_RAD, HoodServo.HOOD_MAX_RAD,
                             HoodServo.HOOD_MIN_POS, HoodServo.HOOD_MAX_POS);
                     hardware.hoodServo().setCurrentState(HoodServo.HoodState.TRACKING, hoodAngle);
@@ -102,5 +102,18 @@ public class Shooter {
 
     public void setTrackTurret(boolean trackTurret) {
         this.trackTurret = trackTurret;
+    }
+
+    public void stopAll(){
+        hardware.flywheel().setMotorState(Flywheel.FlywheelState.STOPPED);
+        hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST);
+        hardware.turretServo().setMotorState(TurretMotor.TurretState.IDLE);
+        setCurrentState(ShooterState.REST);
+        setTrackHood(false);
+        setTrackTurret(false);
+    }
+
+    public void shoot() {
+        hardware.flywheel().run(FLYWHEEL_MAX_VELOCITY);
     }
 }

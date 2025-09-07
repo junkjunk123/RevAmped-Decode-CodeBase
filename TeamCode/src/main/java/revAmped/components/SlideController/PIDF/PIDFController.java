@@ -122,6 +122,12 @@ public class PIDFController {
         return runPIDF();
     }
 
+    public double runWithError(double error) {
+        updateFeedForwardInput(Math.signum(error));
+        updateError(error);
+        return runPIDF();
+    }
+
     public double getErrorDerivative() {
         return errorDerivative;
     }

@@ -1,11 +1,8 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.HwServo2;
-import revAmped.components.MathUtil.ProjectileMath;
-import revAmped.components.Misc.Globals;
 
 public class HoodServo extends HwServo2<HoodServo.HoodState> {
     public HoodServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {

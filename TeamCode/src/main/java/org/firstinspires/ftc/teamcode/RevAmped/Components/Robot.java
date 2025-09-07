@@ -5,6 +5,8 @@ import static revAmped.components.Misc.Globals.allianceColor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTable;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
 
@@ -25,6 +27,8 @@ public class Robot {
     public static Robot INSTANCE;
     private List<LynxModule> allHubs;
     private final Scheduler scheduler;
+    public TurnTable turnTable;
+    public Shooter shooter;
 
     public enum OpModeType implements revAmped.components.Misc.OpModeType {
         TELEOP,
@@ -57,7 +61,7 @@ public class Robot {
         scheduler = opMode.scheduler;
         HardwareMap hardwareMap = opMode.hardwareMap;
         opModeType = (OpModeType) opMode.getOpModeType();
-        init(opMode, hardwareMap);
+        init(hardwareMap);
         INSTANCE = this;
     }
 
@@ -71,17 +75,22 @@ public class Robot {
         scheduler = opMode.scheduler;
         HardwareMap hardwareMap = opMode.hardwareMap;
         this.opModeType = opModeType;
-        init(opMode, hardwareMap);
+        init(hardwareMap);
         INSTANCE = this;
     }
 
-    public void init(RevAmpedOpMode opMode, HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap) {
         allHubs = hardwareMap.getAll(LynxModule.class);
         setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
+        boolean setPositions = !opModeType.isTeleOp();
+        turnTable = new TurnTable(scheduler, setPositions, hardwareMap);
+        shooter = new Shooter(hardwareMap, setPositions, scheduler);
     }
 
     public void update() {
         clearBulkCache();
+        turnTable.update();
+        shooter.update();
     }
 
     public void setBulkReadMode(LynxModule.BulkCachingMode mode) {

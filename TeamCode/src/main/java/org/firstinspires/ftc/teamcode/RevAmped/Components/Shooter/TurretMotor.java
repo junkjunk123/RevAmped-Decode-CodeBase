@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import revAmped.components.Hardware.HwMotor;
 import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Hardware.Turret;
 import revAmped.components.SlideController.PIDF.PIDFController;
@@ -27,8 +26,8 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
-        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runPIDF());
-        statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runPIDF());
+        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runWithError(getError(targetPosition)));
+        statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(getError(targetPosition)));
     }
 
     public enum TurretState implements MotorState {
@@ -52,23 +51,12 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
         super.setMotorState(motorState);
         targetPosition = motorState.getPos();
         controller.reset();
-        controller.setTargetPosition(targetPosition);
     }
 
     public void setMotorState(TurretState motorState, int targetPosition) {
         super.setMotorState(motorState);
         this.targetPosition = targetPosition;
         controller.reset();
-        controller.setTargetPosition(targetPosition);
-    }
-
-    @Override
-    public void update() {
-        currentPos = -1;
-        current = null;
-        if (motorState != TurretState.IDLE) controller.updateError(getError(targetPosition));
-        MotorPower power = statePowerMap.get(motorState);
-        if(!power.constant()) motor.setPower(power.power());
     }
     
     public void finetuneAngle(double rad) {
