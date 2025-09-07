@@ -63,12 +63,14 @@ public class TurnTable {
     public void setCycleState(TurnTableCycleState newState){
         if (newState != currentState.getCycleState()) {
             currentState.setCycleState(newState);
+            compartments.resetPopHistory();
         }
     }
 
     public void setCycleState(TurnTableCycleState newState, boolean init){
         if (newState != currentState.getCycleState()) {
             currentState.setCycleState(newState, init);
+            compartments.resetPopHistory();
         }
     }
 
