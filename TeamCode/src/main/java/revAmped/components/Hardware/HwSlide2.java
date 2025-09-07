@@ -35,12 +35,16 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
         default boolean isRetraction() {return false;}
     }
 
+    @FunctionalInterface
     public interface SlideRetractionDetector extends Sensor<Boolean> {
         default void update() {}
-        Boolean getReading();
-
         @Override
         default String getId() {return "";}
+
+        @Override
+        default DeviceType getDeviceType() {
+            return DeviceType.DIGITAL;
+        };
     }
 
     protected T slideState;

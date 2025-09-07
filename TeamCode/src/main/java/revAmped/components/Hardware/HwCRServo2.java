@@ -1,8 +1,5 @@
 package revAmped.components.Hardware;
 
-import static revAmped.components.Misc.Globals.testing;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -17,26 +14,28 @@ import revAmped.components.CommandScheduler.DelayedSupplier;
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.MathUtil.MathUtil;
 
-public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extends HwCRServo {
-    protected HwSlide2.SlideRetractionDetector retractionDetector;
+public abstract class HwCRServo2<T extends Enum<T> & HwCRServo2.ServoState> extends HwCRServo {
+    protected HwSlide2.SlideRetractionDetector resetDetector;
     private Integer currentPos = null;
     private int encoderBase = 0;
     private int targetPosition;
+
     public record InitActions(Runnable action, double waitMillis) {
         public InitActions() {
-            this(() -> {}, 0);
+            this(() -> {
+            }, 0);
         }
     }
 
     protected EnumMap<T, DoubleSupplier> powerMap;
-    protected EnumMap<T, HwSlide2.InitActions> initMap;
+    protected EnumMap<T, HwCRServo2.InitActions> initMap;
 
-    protected interface SlideState {
+    protected interface ServoState {
         int position();
         default boolean isRetraction() {return false;}
     }
 
-    public interface SlideRetractionDetector extends HwDevice.Sensor<Boolean> {
+    public interface ServoResetDetector extends HwDevice.Sensor<Boolean> {
         default void update() {}
         Boolean getReading();
 
@@ -44,66 +43,66 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
         default String getId() {return "";}
     }
 
-    protected T slideState;
+    protected T servoState;
     private final T restState;
     private Integer prevPos = 0;
     private long prevTimeNano = 0;
     private long currentTimeNano = 0;
     private Double velocity = null;
     public T getCurrentState() {
-        return slideState;
+        return servoState;
     }
     private final boolean isLimSwitch;
 
-    public void setCurrentState(T slideState) {
-        setCurrentState(slideState, true);
+    public void setCurrentState(T servoState) {
+        setCurrentState(servoState, true);
     }
 
-    public void setCurrentState(T slideState, int position) {
-        this.slideState = slideState;
-        HwSlide2.InitActions initActions = initMap.get(slideState);
+    public void setCurrentState(T servoState, int position) {
+        this.servoState = servoState;
+        HwCRServo2.InitActions initActions = initMap.get(servoState);
         initActions.action().run();
         Scheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(position)));
     }
 
-    public void setCurrentState(T slideState, boolean runToPos) {
-        this.slideState = slideState;
-        HwSlide2.InitActions initActions = initMap.get(slideState);
+    public void setCurrentState(T servoState, boolean runToPos) {
+        this.servoState = servoState;
+        HwCRServo2.InitActions initActions = initMap.get(servoState);
         initActions.action().run();
-        if (runToPos) Scheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(slideState.position())));
+        if (runToPos) Scheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(servoState.position())));
     }
 
-    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, HwSlide2.SlideRetractionDetector retractionDetector, T restState, Encoder encoder) {
+    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, HwSlide2.SlideRetractionDetector resetDetector, T restState, Encoder encoder) {
         super(hardwareMap, id, direction, encoder);
         this.restState = restState;
-        slideState = restState;
+        servoState = restState;
         targetPosition = restState.position();
-        this.retractionDetector = retractionDetector;
+        this.resetDetector = resetDetector;
         resetPosition();
-        isLimSwitch = retractionDetector instanceof HwSwitch;
+        isLimSwitch = resetDetector instanceof HwSwitch;
     }
 
-    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, HwSlide2.SlideRetractionDetector retractionDetector, T restState, T initialState, Encoder encoder) {
+    protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, HwSlide2.SlideRetractionDetector resetDetector, T restState, T initialState, Encoder encoder) {
         super(hardwareMap, id, direction, encoder);
         this.restState = restState;
-        slideState = initialState;
+        servoState = initialState;
         targetPosition = initialState.position();
-        this.retractionDetector = retractionDetector;
+        this.resetDetector = resetDetector;
         if (initialState == restState) resetPosition();
-        isLimSwitch = retractionDetector instanceof HwSwitch;
+        isLimSwitch = resetDetector instanceof HwSwitch;
     }
 
     @Override
     public void update() {
-        retractionDetector.update();
+        resetDetector.update();
         prevTimeNano = currentTimeNano;
         currentTimeNano = System.nanoTime();
         prevPos = currentPos;
         currentPos = null;
         velocity = null;
-        setPower(powerMap.get(slideState).getAsDouble());
+        setPower(powerMap.get(servoState).getAsDouble());
 
-        if (slideState.isRetraction() && atBottom()) {
+        if (servoState.isRetraction() && atBottom()) {
             if (isLimSwitch) resetPosition();
             setPower(0f);
             setCurrentState(restState);
@@ -127,8 +126,8 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
     }
 
     protected boolean atBottom() {
-        if (slideState.equals(restState)) return true;
-        return retractionDetector.getReading();
+        if (servoState.equals(restState)) return true;
+        return resetDetector.getReading();
     }
 
     /**
@@ -153,11 +152,11 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
     public abstract void buildInitMap();
 
     public void finetune(int val) {
-        setCurrentState(slideState, targetPosition + val);
+        setCurrentState(servoState, targetPosition + val);
     }
 
     public HwSlide2.SlideRetractionDetector limitSwitch() {
-        return retractionDetector;
+        return resetDetector;
     }
 
     public abstract void updateController(int targetPosition);
@@ -196,7 +195,7 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
             if (isLimSwitch) resetPosition();
             setPower(0f);
             setCurrentState(restState);
-        }).setCancellation(() -> !slideState.isRetraction()));
+        }).setCancellation(() -> !servoState.isRetraction()));
     }
 
     public void retract(Runnable onTimeout) {
@@ -210,13 +209,13 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
             setPower(0f);
             setCurrentState(restState);
             onTimeout.run();
-        }).setCancellation(() -> !slideState.isRetraction()));
+        }).setCancellation(() -> !servoState.isRetraction()));
     }
 
     protected abstract void retraction();
 
     public DelayedResult<Integer> testEncodersAndSwitch() {
-        HwSlide2.InitActions initActions = initMap.get(getTestState());
+        HwCRServo2.InitActions initActions = initMap.get(getTestState());
         initActions.action().run();
         servo.setPower(0.75);
         AtomicBoolean encoders = new AtomicBoolean(false);
@@ -224,7 +223,7 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
         Scheduler.getInstance().add(new Delay(400, () -> {
             encoders.set(encoder.getPosition() > 50);
             retract(800, () -> limitSwitch.set(false));
-            Scheduler.getInstance().add(new Delay(retractionDetector::getReading, () -> limitSwitch.set(true)));
+            Scheduler.getInstance().add(new Delay(resetDetector::getReading, () -> limitSwitch.set(true)));
         }));
         BooleanSupplier set = MathUtil.boleanSupplierfromTimeDelay(1400);
         return new DelayedSupplier<>(() -> limitSwitch.get() || set.getAsBoolean(), () -> {
@@ -239,8 +238,8 @@ public abstract class HwCRServo2<T extends Enum<T> & HwSlide2.SlideState> extend
         }).setMaxTime(1400).get();
     }
 
-    public HwSlide2.SlideRetractionDetector getRetractionDetector() {
-        return retractionDetector;
+    public HwSlide2.SlideRetractionDetector getResetDetector() {
+        return resetDetector;
     }
 
     public abstract T getTestState();
