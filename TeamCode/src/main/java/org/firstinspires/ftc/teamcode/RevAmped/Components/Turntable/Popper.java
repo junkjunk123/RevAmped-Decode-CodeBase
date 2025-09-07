@@ -6,12 +6,12 @@ import revAmped.components.Hardware.HwServo2;
 
 public class Popper extends HwServo2<Popper.PopperState> {
 
-    public Popper(HardwareMap hardwareMap, String id, boolean setPosition) throws IllegalArgumentException {
-        super(hardwareMap, id, setPosition, PopperState.NEUTRAL, ServoBrand.AXON_MINI);
+    public Popper(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
+        super(hardwareMap, "popper", setPosition, PopperState.NEUTRAL, ServoBrand.AXON_MINI);
     }
 
-    public Popper(HardwareMap hardwareMap, String id, float initialPosition) throws IllegalArgumentException {
-        super(hardwareMap, id, initialPosition, PopperState.NEUTRAL, ServoBrand.AXON_MINI);
+    public Popper(HardwareMap hardwareMap, float initialPosition) throws IllegalArgumentException {
+        super(hardwareMap, "popper", initialPosition, PopperState.NEUTRAL, ServoBrand.AXON_MINI);
     }
 
     public enum PopperState implements HwServo2.ServoState{

@@ -57,9 +57,9 @@ public final class Globals {
     public static FollowerManager followerManager;
 
     public enum RandomizationState {
-        PPG(22),
-        PGP(23),
-        GPP(24);
+        PPG(21),
+        PGP(22),
+        GPP(23);
 
         final int ID;
 
