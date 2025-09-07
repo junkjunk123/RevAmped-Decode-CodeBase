@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.sun.tools.javac.util.Position;
+
+import org.firstinspires.ftc.teamcode.RevAmped.Components.DecodeColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Intake.IntakeColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +25,30 @@ public class Turntable {
     }
 
     public final Servos servos;
+    public final IntakeColor intakeColor;
     //private Globals.AllianceColor allianceColor;
 
-    public enum Color {
-        PURPLE,
-        GREEN;
+    public enum Color implements DecodeColor.DetectionColor {
+        PURPLE(IntakeColor.minPurpleHue,IntakeColor.maxPurpleHue),
+        GREEN(IntakeColor.minGreenHue, IntakeColor.maxGreenHue),
+        NEUTRAL(0,255);
+
+        @Override
+        public double getMinHue() {
+            return minHue;
+        }
+
+        @Override
+        public double getMaxHue() {
+            return maxHue;
+        }
+        double minHue;
+        double maxHue;
+
+        Color(double minHue, double maxHue){
+            this.minHue = minHue;
+            this.maxHue = maxHue;
+        }
     }
     public enum TableState {
         BALL1((servos,scheduler) -> {
@@ -55,6 +78,7 @@ public class Turntable {
         this.scheduler = scheduler;
         TableServo turntable = new TableServo(hardwareMap);
         Popper popper = new Popper(hardwareMap,"",true);
+        intakeColor = new IntakeColor(hardwareMap,"",Color.NEUTRAL);
         servos = new Servos(turntable,popper);
         currentState = TableState.BALL1;
     }
@@ -76,7 +100,7 @@ public class Turntable {
     }
 
     public void addToMap(TableState currentState){ //updates the hashmap based on the current table pos and color from color sensor
-    //to add element to hashmap, use .put()
+        tableMap.put(currentState, intakeColor.getColor());
     }
     public void removeFromMap(TableState currentState){
         tableMap.remove(currentState);
