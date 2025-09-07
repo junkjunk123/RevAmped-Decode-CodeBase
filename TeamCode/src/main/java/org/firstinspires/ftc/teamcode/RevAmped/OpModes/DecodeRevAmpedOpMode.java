@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes;
 
-import org.firstinspires.ftc.teamcode.RevAmped.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import revAmped.components.Misc.RevAmpedOpMode;
 

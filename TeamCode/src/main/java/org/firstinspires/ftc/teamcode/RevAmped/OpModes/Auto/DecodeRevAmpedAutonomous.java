@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto;
 
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.RevAmped.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import java.util.List;
 

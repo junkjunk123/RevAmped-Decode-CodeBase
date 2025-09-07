@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
+import java.util.function.Supplier;
+
 public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends HwMotor {
     public T getMotorState() {
         return motorState;
@@ -12,7 +14,8 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
 
     public void setMotorState(T motorState) {
         this.motorState = motorState;
-        setPower(motorState.power());
+        if (!motorState.useComputePower()) setPower(motorState.power());
+        else motor.setPower(motorState.computePower().get());
     }
 
     public void setMotorState(T motorState, float power) {
@@ -23,6 +26,12 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
     @FunctionalInterface
     protected interface MotorState {
         float power();
+        default Supplier<Float> computePower() {
+            return () -> null;
+        };
+        default boolean useComputePower() {
+            return false;
+        }
     }
 
     protected T motorState;
@@ -50,5 +59,7 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
     @Override
     public void update() {
         super.update();
+
+        if (motorState.useComputePower()) motor.setPower(motorState.computePower().get());
     }
 }

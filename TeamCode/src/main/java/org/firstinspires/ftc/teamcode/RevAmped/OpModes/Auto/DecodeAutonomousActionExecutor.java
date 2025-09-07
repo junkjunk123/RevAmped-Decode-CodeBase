@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto;
 
-import org.firstinspires.ftc.teamcode.RevAmped.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import revAmped.components.Architecture.AutonomousActionExecutor;
 import revAmped.components.Pedro.FollowerManager;

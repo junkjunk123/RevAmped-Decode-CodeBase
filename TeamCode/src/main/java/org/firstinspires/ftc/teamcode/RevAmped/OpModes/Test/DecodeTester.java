@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test;
 
-import com.pedropathing.telemetry.SelectableOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.RevAmped.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import revAmped.components.Misc.OpModeType;
 import revAmped.components.Misc.SelectableRevAmpedOpMode;

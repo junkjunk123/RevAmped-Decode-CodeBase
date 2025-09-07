@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.RevAmped;
+package org.firstinspires.ftc.teamcode.RevAmped.Components;
 
 import static revAmped.components.Misc.Globals.allianceColor;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
 
 import java.util.EnumMap;

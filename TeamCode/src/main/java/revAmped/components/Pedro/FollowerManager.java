@@ -106,10 +106,7 @@ public class FollowerManager {
      * Updates the Follower's state.
      */
     public void update() {
-        if (!Globals.disableDrive) follower.update();
-        currentPathIndex = follower.getChainIndex();
-        heading.update();
-        position.update();
+        update(false);
     }
 
     /**

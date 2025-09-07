@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.RevAmped.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;

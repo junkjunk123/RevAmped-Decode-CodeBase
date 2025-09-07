@@ -4,6 +4,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActionExecutor;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 
+import java.util.HashMap;
+
 import revAmped.components.Pedro.FollowerManager;
 
 /**
@@ -51,4 +53,21 @@ public final class Globals {
     public static DecodeAutonomousActionExecutor aae;
 
     public static FollowerManager followerManager;
+
+    public enum RandomizationState {
+        PPG(22),
+        PGP(23),
+        GPP(24);
+
+        final int ID;
+
+        RandomizationState(int tagID) {
+            ID = tagID;
+        }
+
+        public int getID() {
+            return ID;
+        }
+    }
+    public static RandomizationState randomizationState;
 }

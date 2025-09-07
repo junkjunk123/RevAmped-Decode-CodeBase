@@ -81,6 +81,7 @@ public interface HwDevice {
         DISTANCE_SENSOR,
         IMU,
         PINPOINT,
+        CAMERA,
         UNKNOWN
     }
 
