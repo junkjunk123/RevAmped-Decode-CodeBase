@@ -116,7 +116,7 @@ public class PIDFController {
         setTargetPosition(position);
     }
 
-    public double run(int currentPos) {
+    public double run(double currentPos) {
         updateFeedForwardInput(Math.signum(getTargetPosition() - currentPos));
         updatePosition(currentPos);
         return runPIDF();
