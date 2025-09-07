@@ -57,6 +57,14 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
         return localizer.getPose();
     }
 
+    public void toggleSlowMode() {
+        slowMode = !slowMode;
+    }
+
+    public void toggleFieldCentric() {
+        fieldCentric = !fieldCentric;
+    }
+
     public static class TeleOpDrivetrainBuilder {
         private OpMode op;
         private List<DcMotorSimple.Direction> directions;

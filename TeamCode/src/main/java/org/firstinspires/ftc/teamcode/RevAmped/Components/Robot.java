@@ -5,7 +5,14 @@ import static revAmped.components.Misc.Globals.allianceColor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TableServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTable;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
@@ -85,6 +92,25 @@ public class Robot {
         boolean setPositions = !opModeType.isTeleOp();
         turnTable = new TurnTable(scheduler, setPositions, hardwareMap);
         shooter = new Shooter(hardwareMap, setPositions, scheduler);
+        allDevices.put(HwDevice.DeviceType.MOTOR, new HashSet<>(
+                List.of(
+                        turnTable.hardware.intakeMotor(),
+                        shooter.hardware.turretMotor(),
+                        shooter.hardware.flywheel()
+                )
+        ));
+        allDevices.put(HwDevice.DeviceType.SERVO, new HashSet<>(
+                List.of(
+                        turnTable.hardware.turntable(),
+                        turnTable.hardware.popper(),
+                        shooter.hardware.hoodServo()
+                )
+        ));
+        allDevices.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(
+                List.of(
+                        turnTable.hardware.intakeColor()
+                )
+        ));
     }
 
     public void update() {
@@ -128,5 +154,33 @@ public class Robot {
                 s.setPosition(s.getInitialPosition());
             }
         }
+    }
+
+    public IntakeMotor intakeMotor() {
+        return turnTable.hardware.intakeMotor();
+    }
+
+    public HoodServo hoodServo() {
+        return shooter.hardware.hoodServo();
+    }
+
+    public TurretMotor turretMotor() {
+        return shooter.hardware.turretMotor();
+    }
+
+    public Flywheel flywheel() {
+        return shooter.hardware.flywheel();
+    }
+
+    public IntakeColor intakeColor() {
+        return turnTable.hardware.intakeColor();
+    }
+
+    public TableServo tableServo() {
+        return turnTable.hardware.turntable();
+    }
+
+    public Popper popper() {
+        return turnTable.hardware.popper();
     }
 }

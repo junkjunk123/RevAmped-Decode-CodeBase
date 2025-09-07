@@ -129,24 +129,34 @@ public class TableCompartmentManager {
         switchPopState.accept(currentPopIndex);
     }
 
-    public int preparePurple() {
+    public void prepareGreenForPop() {
+        int index = nextGreen();
+        if (index != currentIntakeIndex) advancePopIndex(index);
+    }
+
+    public void preparePurpleForPop() {
+        int index = nextPurple();
+        if (index != currentIntakeIndex) advancePopIndex(index);
+    }
+
+    private int nextPurple() {
         for (int i = 0; i < compartments.length; i++) {
             if (compartments[i].getColor() == IntakeColor.Color.PURPLE) {
                 return i;
             }
         }
 
-        return -1; // No purple ball found
+        return currentPopIndex; // No purple ball found
     }
 
-    public int prepareGreen() {
+    private int nextGreen() {
         for (int i = 0; i < compartments.length; i++) {
             if (compartments[i].getColor() == IntakeColor.Color.GREEN) {
                 return i;
             }
         }
 
-        return -1; // No green ball found
+        return currentPopIndex; // No green ball found
     }
 
     public IntakeColor.Color getNextPopColor() {
@@ -186,17 +196,24 @@ public class TableCompartmentManager {
     public int getNextMotifPopIndex() {
         IntakeColor.Color targetColor = getNextPopColor();
 
-        for (int i = 0; i < compartments.length; i++) {
-            if (compartments[i].getColor() == targetColor) {
-                return i;
-            }
-        }
-
-        return currentPopIndex; // No target color ball found
+        if (targetColor == IntakeColor.Color.GREEN) return nextGreen();
+        else return nextPurple();
     }
 
     public void resetPopHistory() {
         lastPoppedColor = IntakeColor.Color.NEUTRAL;
         prevLastPoppedColor = IntakeColor.Color.NEUTRAL;
+    }
+
+    public void setMotifMode(boolean motifMode) {
+        this.motifMode = motifMode;
+    }
+
+    public boolean isMotifMode() {
+        return motifMode;
+    }
+
+    public TableCompartment[] getCompartments() {
+        return compartments;
     }
 }

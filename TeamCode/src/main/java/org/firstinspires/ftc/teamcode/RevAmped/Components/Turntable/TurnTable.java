@@ -9,9 +9,14 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableSta
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableStateHandler.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableStateHandler.TurnTableState;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 public class TurnTable {
     private final Scheduler scheduler;
-    private TableCompartmentManager compartments;
+    public TableCompartmentManager compartments;
 
     public record HardwareComponents(TableServo turntable, Popper popper, IntakeMotor intakeMotor, IntakeColor intakeColor) {
         public void update() {
@@ -86,7 +91,7 @@ public class TurnTable {
         return currentState.getCycleState();
     }
 
-    public void update(){
+    public void update() {
         hardware.update();
 
         if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor.getColor());
@@ -101,5 +106,27 @@ public class TurnTable {
     public void intake() {
         setCycleState(TurnTableCycleState.INTAKE);
         setCurrentState(TurnTableInternalState.INTAKE);
+    }
+
+    public void toggleMotifMode() {
+        compartments.setMotifMode(!compartments.isMotifMode());
+    }
+
+    public void setMotifMode(boolean mode) {
+        compartments.setMotifMode(mode);
+    }
+
+    public Color[] getBallColors() {
+        return Arrays.stream(compartments.getCompartments())
+                .map(TableCompartmentManager.TableCompartment::getColor)
+                .toArray(Color[]::new);
+    }
+
+    public void prepareGreen() {
+        compartments.prepareGreenForPop();
+    }
+
+    public void preparePurple() {
+        compartments.preparePurpleForPop();
     }
 }

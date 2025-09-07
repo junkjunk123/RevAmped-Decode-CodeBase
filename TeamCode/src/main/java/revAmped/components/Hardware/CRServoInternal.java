@@ -8,16 +8,16 @@ import java.util.HashMap;
 public abstract class CRServoInternal<T extends Enum<T> & CRServoInternal.ServoState> extends HwCRServo {
     protected final HashMap<ServoState, ServoPower> statePowerMap = new HashMap<>();
 
-    public T getServoState() {
+    public T getCurrentState() {
         return servoState;
     }
 
-    public void setServoState(T servoState) {
+    public void setCurrentState(T servoState) {
         this.servoState = servoState;
         servo.setPower(statePowerMap.get(this.servoState).power());
     }
 
-    public void setServoState(T servoState, float power) {
+    public void setCurrentState(T servoState, float power) {
         this.servoState = servoState;
         setPower(power);
     }

@@ -51,8 +51,8 @@ public class TableServo extends HwCRServo2 <TableServo.TableState> {
     }
 
     @Override
-    public void setServoState(TableState servoState) {
-        super.setServoState(servoState);
+    public void setCurrentState(TableState servoState) {
+        super.setCurrentState(servoState);
         controller.reset();
         controller.setTargetPosition(servoState.position);
     }

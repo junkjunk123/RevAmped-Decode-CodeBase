@@ -30,6 +30,11 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
         statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(getError(targetPosition)));
     }
 
+    @Override
+    public TurretState getRest() {
+        return TurretState.IDLE;
+    }
+
     public enum TurretState implements MotorState {
         IDLE (0),
         HOLD(0),
@@ -47,19 +52,19 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     }
 
     @Override
-    public void setMotorState(TurretState motorState) {
-        super.setMotorState(motorState);
+    public void setCurrentState(TurretState motorState) {
+        super.setCurrentState(motorState);
         targetPosition = motorState.getPos();
         controller.reset();
     }
 
-    public void setMotorState(TurretState motorState, int targetPosition) {
-        super.setMotorState(motorState);
+    public void setCurrentState(TurretState motorState, int targetPosition) {
+        super.setCurrentState(motorState);
         this.targetPosition = targetPosition;
         controller.reset();
     }
     
     public void finetuneAngle(double rad) {
-        setMotorState(TurretState.TRACKING, (int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)));
+        setCurrentState(TurretState.TRACKING, (int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)));
     }
 }

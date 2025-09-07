@@ -32,19 +32,19 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
 
     public void run(double targetVelocity){
         this.targetVelocity = targetVelocity;
-        setMotorState(FlywheelState.RUNNING);
+        setCurrentState(FlywheelState.RUNNING);
     }
 
     @Override
-    public void setMotorState(FlywheelState motorState) {
-        super.setMotorState(motorState);
+    public void setCurrentState(FlywheelState motorState) {
+        super.setCurrentState(motorState);
         prevPos = null;
         prevTimeNano = System.nanoTime();
     }
 
     @Override
-    public void setMotorState(FlywheelState motorState, float power) {
-        super.setMotorState(motorState, power);
+    public void setCurrentState(FlywheelState motorState, float power) {
+        super.setCurrentState(motorState, power);
         prevPos = null;
         prevTimeNano = System.nanoTime();
     }
@@ -74,5 +74,10 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
         super.update();
         prevPos = currentPos;
         velocity = null;
+    }
+
+    @Override
+    public FlywheelState getRest() {
+        return FlywheelState.STOPPED;
     }
 }

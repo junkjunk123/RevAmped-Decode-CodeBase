@@ -7,15 +7,15 @@ import revAmped.components.CommandScheduler.Scheduler;
 
 public class TurnTableStateHandler {
     public enum TurnTableInternalState {
-        BALL1((hardwareComponents, scheduler) -> hardwareComponents.turntable().setServoState(TableServo.TableState.BALL1)),
-        BALL2((hardwareComponents, scheduler) -> hardwareComponents.turntable().setServoState(TableServo.TableState.BALL2)),
-        BALL3((hardwareComponents, scheduler) -> hardwareComponents.turntable().setServoState(TableServo.TableState.BALL3)),
+        BALL1((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL1)),
+        BALL2((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL2)),
+        BALL3((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL3)),
         POP((hardwareComponents, scheduler) -> {
             hardwareComponents.popper().setCurrentState(Popper.PopperState.POP);
             scheduler.add(new Delay(500,() -> hardwareComponents.popper().setCurrentState(Popper.PopperState.NEUTRAL)));
         }),
         INTAKE((hardwareComponents, scheduler) -> {
-                hardwareComponents.intakeMotor().setMotorState(IntakeMotor.IntakeState.IN);
+                hardwareComponents.intakeMotor().setCurrentState(IntakeMotor.IntakeState.INTAKE);
         });
         private BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize;
 

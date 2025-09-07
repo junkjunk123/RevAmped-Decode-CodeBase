@@ -6,21 +6,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 import java.util.HashMap;
-import java.util.function.Supplier;
 
 public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends HwMotor {
     protected final HashMap<MotorState, MotorPower> statePowerMap = new HashMap<>();
 
-    public T getMotorState() {
+    public T getCurrentState() {
         return motorState;
     }
 
-    public void setMotorState(T motorState) {
+    public void setCurrentState(T motorState) {
         this.motorState = motorState;
         motor.setPower(statePowerMap.get(motorState).power());
     }
 
-    public void setMotorState(T motorState, float power) {
+    public void setCurrentState(T motorState, float power) {
         this.motorState = motorState;
         setPower(power);
     }
@@ -82,5 +81,20 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
 
         MotorPower power = statePowerMap.get(motorState);
         if(!power.constant()) motor.setPower(power.power());
+    }
+
+    public abstract T getRest();
+
+    @Override
+    public boolean isBusy() {
+        return getCurrentState() != getRest();
+    }
+
+    public boolean atRest() {
+        return getCurrentState() == getRest();
+    }
+
+    public void stop() {
+        setCurrentState(getRest());
     }
 }

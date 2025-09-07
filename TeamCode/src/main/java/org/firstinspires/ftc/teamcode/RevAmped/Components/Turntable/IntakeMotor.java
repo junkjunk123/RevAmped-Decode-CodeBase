@@ -13,8 +13,13 @@ public class IntakeMotor extends HwMotor2<IntakeMotor.IntakeState> {
     @Override
     public void buildStatePowerMap() {
         for (IntakeState state : IntakeState.values()) {
-            statePowerMap.put(state, () -> state.power);
+            statePowerMap.put(state, MotorPower.constant(state.power));
         }
+    }
+
+    @Override
+    public IntakeState getRest() {
+        return IntakeState.STOP;
     }
 
     @Override
@@ -23,8 +28,8 @@ public class IntakeMotor extends HwMotor2<IntakeMotor.IntakeState> {
     }
 
     public enum IntakeState implements HwMotor2.MotorState{
-        IN(1.0f),
-        OUT(-1.0f),
+        INTAKE(1.0f),
+        OUTTAKE(-1.0f),
         STOP(0.0f);
 
         public final float power;

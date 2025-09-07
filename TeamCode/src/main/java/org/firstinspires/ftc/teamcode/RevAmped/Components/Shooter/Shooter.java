@@ -17,10 +17,11 @@ public class Shooter {
     private boolean trackHood = false;
     private boolean trackTurret = false;
 
-    public record HardwareComponents(HoodServo hoodServo, TurretMotor turretServo, Flywheel flywheel) {
+    public record HardwareComponents(HoodServo hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
         public void update() {
             hoodServo.update();
-            turretServo.update();
+            turretMotor.update();
+            flywheel.update();
         }
     }
 
@@ -30,7 +31,7 @@ public class Shooter {
         REST,
         TRACKING,
     }
-    public ShooterState currentState;
+    private ShooterState currentState;
 
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
@@ -78,7 +79,7 @@ public class Shooter {
                     double targetAngle = offset.getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
                     double deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
-                    hardware.turretServo().finetuneAngle(deltaAngle);
+                    hardware.turretMotor().finetuneAngle(deltaAngle);
                 }
             }
         }
@@ -105,9 +106,9 @@ public class Shooter {
     }
 
     public void stopAll(){
-        hardware.flywheel().setMotorState(Flywheel.FlywheelState.STOPPED);
+        hardware.flywheel().setCurrentState(Flywheel.FlywheelState.STOPPED);
         hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST);
-        hardware.turretServo().setMotorState(TurretMotor.TurretState.IDLE);
+        hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE);
         setCurrentState(ShooterState.REST);
         setTrackHood(false);
         setTrackTurret(false);
