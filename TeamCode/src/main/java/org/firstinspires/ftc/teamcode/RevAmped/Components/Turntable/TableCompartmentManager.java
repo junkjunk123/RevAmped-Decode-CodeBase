@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
+import revAmped.components.Misc.Globals;
+
 public class TableCompartmentManager {
-    public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState) {
+    public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
         this.switchIntakeState = switchIntakeState;
         this.switchPopState = switchPopState;
-
+        this.toggleCycleState = toggleCycleState;
     }
 
     public static final class TableCompartment {
@@ -32,9 +36,11 @@ public class TableCompartmentManager {
     private int currentIntakeIndex = 0;
     private int currentPopIndex = 0;
     private IntakeColor.Color lastPoppedColor = IntakeColor.Color.NEUTRAL;
+    private IntakeColor.Color prevLastPoppedColor = IntakeColor.Color.NEUTRAL;
     private boolean motifMode = false;
     private final Consumer<Integer> switchIntakeState;
     private final Consumer<Integer> switchPopState;
+    private final Runnable toggleCycleState;
 
     private final TableCompartment[] compartments = {
         new TableCompartment(IntakeColor.Color.NEUTRAL),
@@ -63,7 +69,17 @@ public class TableCompartmentManager {
 
     public void pop() {
         if (compartments[currentPopIndex].getColor() != IntakeColor.Color.NEUTRAL) {
+            prevLastPoppedColor = lastPoppedColor;
+            lastPoppedColor = compartments[currentPopIndex].getColor();
             compartments[currentPopIndex].releaseBall();
+
+            int nextPopIndex = motifMode ? getNextMotifPopIndex() : findNextPopIndex();
+
+            if (nextPopIndex != currentPopIndex) {
+                advancePopIndex(nextPopIndex);
+            } else {
+                toggleCycleState.run();
+            }
         }
     }
 
@@ -72,16 +88,17 @@ public class TableCompartmentManager {
         if (compartments[currentIntakeIndex].getColor() == IntakeColor.Color.NEUTRAL) {
             compartments[currentIntakeIndex].setColor(color);
 
-            if (findNextIntakeIndex() != currentIntakeIndex) {
-                advanceIntakeIndex();
+            int nextIntakeIndex = findNextIntakeIndex();
+            if (nextIntakeIndex != currentIntakeIndex) {
+                advanceIntakeIndex(nextIntakeIndex);
+            } else {
+                toggleCycleState.run();
             }
-
-
         }
     }
 
     public int findNextIntakeIndex() {
-        for (int i = 1; i <= compartments.length; i++) {
+        for (int i = 0; i <= compartments.length; i++) {
             int nextIndex = (currentIntakeIndex + i) % compartments.length;
             if (compartments[nextIndex].getColor() == IntakeColor.Color.NEUTRAL) {
                 return nextIndex;
@@ -92,7 +109,7 @@ public class TableCompartmentManager {
     }
 
     public int findNextPopIndex() {
-        for (int i = 1; i <= compartments.length; i++) {
+        for (int i = 0; i <= compartments.length; i++) {
             int nextIndex = (currentPopIndex + i) % compartments.length;
             if (compartments[nextIndex].getColor() != IntakeColor.Color.NEUTRAL) {
                 return nextIndex;
@@ -102,11 +119,84 @@ public class TableCompartmentManager {
         return currentPopIndex; // All compartments are empty
     }
 
-    public void advanceIntakeIndex() {
-        currentIntakeIndex = (currentIntakeIndex + 1) % compartments.length;
+    public void advanceIntakeIndex(int newIndex) {
+        currentIntakeIndex = newIndex % compartments.length;
+        switchIntakeState.accept(currentIntakeIndex);
     }
 
-    public void advancePopIndex() {
-        currentPopIndex = (currentPopIndex + 1) % compartments.length;
+    public void advancePopIndex(int newIndex) {
+        currentPopIndex = (newIndex) % compartments.length;
+        switchPopState.accept(currentPopIndex);
+    }
+
+    public int preparePurple() {
+        for (int i = 0; i < compartments.length; i++) {
+            if (compartments[i].getColor() == IntakeColor.Color.PURPLE) {
+                return i;
+            }
+        }
+
+        return -1; // No purple ball found
+    }
+
+    public int prepareGreen() {
+        for (int i = 0; i < compartments.length; i++) {
+            if (compartments[i].getColor() == IntakeColor.Color.GREEN) {
+                return i;
+            }
+        }
+
+        return -1; // No green ball found
+    }
+
+    public IntakeColor.Color getNextPopColor() {
+        List<IntakeColor.Color> targetPopColors = Globals.randomizationState.getColors();
+
+        if (lastPoppedColor == IntakeColor.Color.NEUTRAL) {
+            return targetPopColors.get(0);
+        }
+
+        if (prevLastPoppedColor == IntakeColor.Color.NEUTRAL) {
+            return targetPopColors.get((targetPopColors.indexOf(lastPoppedColor) + 1) % targetPopColors.size());
+        }
+
+        int lastIndex = targetPopColors.indexOf(lastPoppedColor);
+        int prevIndex = -1;
+
+        for (int i = 0; i < targetPopColors.size(); i++) {
+            if (targetPopColors.get(i) == prevLastPoppedColor) {
+                if (i != lastIndex) {
+                    prevIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (prevIndex == -1) {
+            return targetPopColors.get((lastIndex + 1) % targetPopColors.size());
+        }
+
+        if (lastIndex + 1 == prevIndex || (lastIndex == 0 && prevIndex == targetPopColors.size() - 1)) {
+            return targetPopColors.get((lastIndex + 1) % targetPopColors.size());
+        } else {
+            return targetPopColors.get((lastIndex - 1 + targetPopColors.size()) % targetPopColors.size());
+        }
+    }
+
+    public int getNextMotifPopIndex() {
+        IntakeColor.Color targetColor = getNextPopColor();
+
+        for (int i = 0; i < compartments.length; i++) {
+            if (compartments[i].getColor() == targetColor) {
+                return i;
+            }
+        }
+
+        return currentPopIndex; // No target color ball found
+    }
+
+    public void resetPopHistory() {
+        lastPoppedColor = IntakeColor.Color.NEUTRAL;
+        prevLastPoppedColor = IntakeColor.Color.NEUTRAL;
     }
 }

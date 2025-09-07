@@ -10,7 +10,7 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
         float getMaxHue();
     }
 
-    public T neutralColor;
+    private final T neutralColor;
     private T currentColor;
 
     public DecodeColor(HardwareMap hardwareMap, String id, T neutral) {

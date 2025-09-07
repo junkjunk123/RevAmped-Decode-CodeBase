@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.HashMap;
-import java.util.function.BiConsumer;
-
 import revAmped.components.CommandScheduler.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor.Color;
@@ -14,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableSta
 
 public class TurnTable {
     private final Scheduler scheduler;
-    private HashMap <TurnTableInternalState, IntakeColor.Color> tableMap = new HashMap<>();
+    private TableCompartmentManager compartments;
 
     public record HardwareComponents(TableServo turntable, Popper popper, IntakeMotor intakeMotor, IntakeColor intakeColor) {
         public void update() {
@@ -27,7 +24,7 @@ public class TurnTable {
 
     public final HardwareComponents hardware;
 
-    private TurnTableState currentState;
+    private final TurnTableState currentState;
 
     public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap){
         this.scheduler = scheduler;
@@ -37,29 +34,41 @@ public class TurnTable {
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, IntakeMotor.IntakeState.STOP);
         hardware = new HardwareComponents(turntable,popper, intakeMotor, intakeColor);
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
+        compartments = new TableCompartmentManager(
+                ball -> {
+                    setCycleState(TurnTableCycleState.INTAKE);
+                    setCurrentState(TurnTableInternalState.values()[ball]);
+                },
+                ball -> {
+                    setCycleState(TurnTableCycleState.POP);
+                    setCurrentState(TurnTableInternalState.values()[ball]);
+                },
+                () -> {
+                    setCycleState(currentState.getCycleState().toggle());
+                    compartments.resetPopHistory();
+                }
+        );
     }
 
     public void setCurrentState(TurnTableInternalState currentState) {
+        if (this.currentState.getInternalState() == currentState) return;
         this.currentState.setInternalState(currentState);
-        currentState.initialize(hardware,scheduler);
     }
 
     public void setCurrentState(TurnTableInternalState currentState, boolean init){
-        this.currentState.setInternalState(currentState);
-        if (init) currentState.initialize(hardware, scheduler);
+        if (this.currentState.getInternalState() == currentState) return;
+        this.currentState.setInternalState(currentState, init);
     }
 
     public void setCycleState(TurnTableCycleState newState){
         if (newState != currentState.getCycleState()) {
             currentState.setCycleState(newState);
-            currentState.getInternalState().initialize(hardware, scheduler);
         }
     }
 
     public void setCycleState(TurnTableCycleState newState, boolean init){
         if (newState != currentState.getCycleState()) {
-            currentState.setCycleState(newState);
-            if (init) currentState.getInternalState().initialize(hardware, scheduler);
+            currentState.setCycleState(newState, init);
         }
     }
 
@@ -77,5 +86,18 @@ public class TurnTable {
 
     public void update(){
         hardware.update();
+
+        if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor.getColor());
+    }
+
+    public void pop() {
+        setCycleState(TurnTableCycleState.POP);
+        setCurrentState(TurnTableInternalState.POP);
+        scheduler.add(new Delay(500, compartments::pop));
+    }
+
+    public void intake() {
+        setCycleState(TurnTableCycleState.INTAKE);
+        setCurrentState(TurnTableInternalState.INTAKE);
     }
 }

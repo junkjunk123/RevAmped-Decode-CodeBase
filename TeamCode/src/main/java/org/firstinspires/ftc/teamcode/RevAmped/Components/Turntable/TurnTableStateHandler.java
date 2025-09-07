@@ -12,9 +12,10 @@ public class TurnTableStateHandler {
         BALL3((hardwareComponents, scheduler) -> hardwareComponents.turntable().setServoState(TableServo.TableState.BALL3)),
         POP((hardwareComponents, scheduler) -> {
             hardwareComponents.popper().setCurrentState(Popper.PopperState.POP);
-            scheduler.add(new Delay(500,() -> {
-                hardwareComponents.popper().setCurrentState(Popper.PopperState.NEUTRAL);
-            }));
+            scheduler.add(new Delay(500,() -> hardwareComponents.popper().setCurrentState(Popper.PopperState.NEUTRAL)));
+        }),
+        INTAKE((hardwareComponents, scheduler) -> {
+                hardwareComponents.intakeMotor().setMotorState(IntakeMotor.IntakeState.IN);
         });
         private BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize;
 
@@ -37,7 +38,8 @@ public class TurnTableStateHandler {
             return this == INTAKE ? POP : INTAKE;
         }
 
-        private TurnTableInternalState[] states;
+        private final TurnTableInternalState[] states;
+
         TurnTableCycleState(TurnTableInternalState... states) {
             this.states = states;
         }
@@ -60,13 +62,15 @@ public class TurnTableStateHandler {
         public void setCycleState(TurnTableCycleState newState) {
             if (this.cycleState != newState) {
                 this.cycleState = newState;
+                switchInternalState();
                 internalState.initialize(hardware, scheduler);
             }
         }
 
-        public void setCycleState(TurnTableState newState, boolean init) {
-            if (this.cycleState != newState.cycleState) {
-                this.cycleState = newState.cycleState;
+        public void setCycleState(TurnTableCycleState newState, boolean init) {
+            if (this.cycleState != newState) {
+                this.cycleState = newState;
+                switchInternalState();
                 if (init) internalState.initialize(hardware, scheduler);
             }
         }
@@ -74,6 +78,7 @@ public class TurnTableStateHandler {
         public void setInternalState(TurnTableInternalState newState) {
             if (this.internalState != newState) {
                 this.internalState = newState;
+                switchCycleState();
                 newState.initialize(hardware, scheduler);
             }
         }
@@ -81,6 +86,7 @@ public class TurnTableStateHandler {
         public void setInternalState(TurnTableInternalState newState, boolean init) {
             if (this.internalState != newState) {
                 this.internalState = newState;
+                switchCycleState();
                 if (init) newState.initialize(hardware, scheduler);
             }
         }
@@ -91,6 +97,26 @@ public class TurnTableStateHandler {
 
         public TurnTableInternalState getInternalState() {
             return internalState;
+        }
+
+        private void switchInternalState() {
+            for (TurnTableInternalState state : cycleState.states) {
+                if (state == internalState) {
+                    return;
+                }
+            }
+
+            internalState = cycleState.states[0];
+        }
+
+        private void switchCycleState() {
+            for (TurnTableInternalState state : cycleState.states) {
+                if (state == internalState) {
+                    return;
+                }
+            }
+
+            cycleState = cycleState.toggle();
         }
     }
 }

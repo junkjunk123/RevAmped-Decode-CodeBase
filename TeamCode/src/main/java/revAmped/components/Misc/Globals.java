@@ -3,10 +3,12 @@ package revAmped.components.Misc;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActionExecutor;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 
 import java.util.HashMap;
+import java.util.List;
 
 import revAmped.components.Pedro.FollowerManager;
 
@@ -57,18 +59,24 @@ public final class Globals {
     public static FollowerManager followerManager;
 
     public enum RandomizationState {
-        PPG(21),
-        PGP(22),
-        GPP(23);
+        PPG(21, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN)),
+        PGP(22, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE)),
+        GPP(23, List.of(IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE)),;
 
         final int ID;
+        final List<IntakeColor.Color> colors;
 
-        RandomizationState(int tagID) {
+        RandomizationState(int tagID, List<IntakeColor.Color> colors) {
             ID = tagID;
+            this.colors = colors;
         }
 
         public int getID() {
             return ID;
+        }
+
+        public List<IntakeColor.Color> getColors() {
+            return colors;
         }
     }
     public static RandomizationState randomizationState;
