@@ -4,9 +4,12 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.FuturePose;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
+import com.pedropathing.paths.HeadingInterpolator;
 
 import java.util.Arrays;
 
+import revAmped.components.MathUtil.MathUtil;
 import revAmped.components.MathUtil.Vector2D;
 import revAmped.components.Misc.Globals;
 
@@ -28,13 +31,21 @@ public class ColoredDecodePose implements FuturePose {
         else if (color == Globals.AllianceColor.Blue) blue = pose;
     }
 
+    public ColoredDecodePose(double x, double y, double heading) {
+        this(new Pose(x, y, heading), Globals.AllianceColor.Blue);
+    }
+
+    public ColoredDecodePose(double x, double y) {
+        this(new Pose(x, y), Globals.AllianceColor.Blue);
+    }
+
     public Pose getPose(Globals.AllianceColor desiredColor) {
         if (desiredColor.equals(Globals.AllianceColor.Red)) {
-            if (red == null) red = color == Globals.AllianceColor.Red ? pose : blueToRed(pose);
+            if (red == null) red = blueToRed(pose);
             return red;
         }
 
-        if (blue == null) blue = color == Globals.AllianceColor.Blue ? pose : redToBlue(pose);
+        if (blue == null) blue = redToBlue(pose);
         return blue;
     }
 
@@ -47,7 +58,7 @@ public class ColoredDecodePose implements FuturePose {
     }
 
     public static double invertHeading(double theta) {
-        return new Vector2D(-Math.cos(theta), Math.sin(theta)).getTheta();
+        return MathUtil.normalizeAngleHalfPi(Math.PI - theta);
     }
 
     @Override
@@ -83,12 +94,20 @@ public class ColoredDecodePose implements FuturePose {
         return new BezierPoint(pose.getPose());
     }
 
+    public static HeadingInterpolator mirror(HeadingInterpolator interpolation) {
+        return t -> MathFunctions.normalizeAngle(Math.PI - interpolation.interpolate(t));
+    }
+
     public Globals.AllianceColor getColor() {
         return color;
     }
 
     public Pose getUnmodifiedPose() {
         return pose;
+    }
+
+    public double heading() {
+        return getPose().getHeading();
     }
 
     @Override

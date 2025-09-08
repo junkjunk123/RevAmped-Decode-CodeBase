@@ -2,24 +2,17 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 
 import java.util.function.BiConsumer;
 
-import revAmped.components.CommandScheduler.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 
-public class TurnTableStateHandler {
+public final class TurnTableInternals {
     public enum TurnTableInternalState {
         BALL1((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL1)),
         BALL2((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL2)),
-        BALL3((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL3)),
-        POP((hardwareComponents, scheduler) -> {
-            hardwareComponents.popper().setCurrentState(Popper.PopperState.POP);
-            scheduler.add(new Delay(500,() -> hardwareComponents.popper().setCurrentState(Popper.PopperState.NEUTRAL)));
-        }),
-        INTAKE((hardwareComponents, scheduler) -> {
-                hardwareComponents.intakeMotor().setCurrentState(IntakeMotor.IntakeState.INTAKE);
-        });
-        private BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize;
+        BALL3((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL3));
 
-        TurnTableInternalState(BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize){this.initialize = initialize;}
+        private final BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize;
+
+        TurnTableInternalState(BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize) {this.initialize = initialize;}
 
         public void initialize(TurnTable.HardwareComponents hardwareComponents, Scheduler scheduler){
             initialize.accept(hardwareComponents, scheduler);
@@ -32,9 +25,9 @@ public class TurnTableStateHandler {
 
     public enum TurnTableCycleState {
         INTAKE(TurnTableInternalState.BALL1, TurnTableInternalState.BALL2, TurnTableInternalState.BALL3),
-        POP(TurnTableInternalState.BALL1, TurnTableInternalState.BALL2, TurnTableInternalState.BALL3, TurnTableInternalState.POP);
+        POP(TurnTableInternalState.BALL1, TurnTableInternalState.BALL2, TurnTableInternalState.BALL3);
 
-        public TurnTableCycleState toggle(){
+        public TurnTableCycleState toggle() {
             return this == INTAKE ? POP : INTAKE;
         }
 

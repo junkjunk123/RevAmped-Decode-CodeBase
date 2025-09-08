@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.TeleOp;
 
+import com.bylazar.ftcontrol.panels.plugins.html.primitives.P;
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -60,7 +62,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_2.y.isPress()) {
             robot.shooter.setCurrentState(Shooter.ShooterState.REST);
             robot.turnTable.pop();
-            scheduler.add(new Delay(500, () -> robot.shooter.setCurrentState(Shooter.ShooterState.TRACKING)));
+            scheduler.add(new Delay(Popper.POP_TIME_MILLIS, () -> robot.shooter.setCurrentState(Shooter.ShooterState.TRACKING)));
         }
 
         if (gamepad_2.x.isPress()) {

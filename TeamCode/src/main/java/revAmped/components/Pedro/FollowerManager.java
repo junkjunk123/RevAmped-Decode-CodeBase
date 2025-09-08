@@ -68,6 +68,7 @@ public class FollowerManager {
      */
     public FollowerManager(HardwareMap hardwareMap, PathSupplier pathSupplier) {
         follower = Constants.createFollower(hardwareMap);
+        Globals.followerManager = this;
         this.pathSupplier = pathSupplier;
         setStartingPose();
         buildPaths();
@@ -82,8 +83,6 @@ public class FollowerManager {
         } else {
             obstacleAvoider = null;
         }
-
-        Globals.followerManager = this;
     }
 
     /**

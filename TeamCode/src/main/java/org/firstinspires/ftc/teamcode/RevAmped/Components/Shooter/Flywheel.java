@@ -19,18 +19,23 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
 
     public static double FLYWHEEL_MAX_VELOCITY;
     private double targetVelocity;
+    public static float AUTO_PRELOADS;
+    public static float AUTO_SET_1;
+    public static float AUTO_SET_2;
+    public static float AUTO_SET_3;
 
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(FlywheelState.RUNNING, () -> (float) controller.runWithError(targetVelocity - motor.getVelocity()));
+        statePowerMap.put(FlywheelState.STOPPED, MotorPower.constant(0f));
     }
 
     public enum FlywheelState implements MotorState {
-        RUNNING(),
-        STOPPED();
+        RUNNING,
+        STOPPED
     }
 
-    public void run(double targetVelocity){
+    public void run(double targetVelocity) {
         this.targetVelocity = targetVelocity;
         setCurrentState(FlywheelState.RUNNING);
     }

@@ -34,4 +34,9 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
     public static float HOOD_MIN_POS;
     public static float HOOD_MAX_RAD;
     public static float HOOD_MIN_RAD;
+
+    public static float AUTO_PRELOADS;
+    public static float AUTO_SET_1;
+    public static float AUTO_SET_2;
+    public static float AUTO_SET_3;
 }

@@ -17,6 +17,10 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     public final PIDFController controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     public static int TURRET_TICKS_PER_ROTATION = 0;
     private int targetPosition;
+    public static float AUTO_PRELOADS;
+    public static float AUTO_SET_1;
+    public static float AUTO_SET_2;
+    public static float AUTO_SET_3;
 
     @Override
     public int ticksPerRotation() {

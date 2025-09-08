@@ -1,18 +1,12 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import revAmped.components.CommandScheduler.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor.Color;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableStateHandler.TurnTableCycleState;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableStateHandler.TurnTableInternalState;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableStateHandler.TurnTableState;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableCycleState;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableInternalState;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableState;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public class TurnTable {
     private final Scheduler scheduler;
@@ -41,12 +35,13 @@ public class TurnTable {
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
         compartments = new TableCompartmentManager(
                 ball -> {
-                    setCycleState(TurnTableCycleState.INTAKE);
+                    intake();
                     setCurrentState(TurnTableInternalState.values()[ball]);
                 },
                 ball -> {
                     setCycleState(TurnTableCycleState.POP);
                     setCurrentState(TurnTableInternalState.values()[ball]);
+                    hardware.intakeMotor.stop();
                 },
                 () -> {
                     setCycleState(currentState.getCycleState().toggle());
@@ -65,14 +60,14 @@ public class TurnTable {
         this.currentState.setInternalState(currentState, init);
     }
 
-    public void setCycleState(TurnTableCycleState newState){
+    private void setCycleState(TurnTableCycleState newState){
         if (newState != currentState.getCycleState()) {
             currentState.setCycleState(newState);
             compartments.resetPopHistory();
         }
     }
 
-    public void setCycleState(TurnTableCycleState newState, boolean init){
+    private void setCycleState(TurnTableCycleState newState, boolean init){
         if (newState != currentState.getCycleState()) {
             currentState.setCycleState(newState, init);
             compartments.resetPopHistory();
@@ -99,13 +94,16 @@ public class TurnTable {
 
     public void pop() {
         setCycleState(TurnTableCycleState.POP);
-        setCurrentState(TurnTableInternalState.POP);
-        scheduler.add(new Delay(500, compartments::pop));
+        hardware.popper().setCurrentState(Popper.PopperState.POP);
+        scheduler.add(new Delay(Popper.POP_TIME_MILLIS, () -> {
+            hardware.popper().setCurrentState(Popper.PopperState.NEUTRAL);
+            compartments.pop();
+        }));
     }
 
     public void intake() {
         setCycleState(TurnTableCycleState.INTAKE);
-        setCurrentState(TurnTableInternalState.INTAKE);
+        hardware.intakeMotor().setCurrentState(IntakeMotor.IntakeState.INTAKE);
     }
 
     public void toggleMotifMode() {
@@ -128,5 +126,13 @@ public class TurnTable {
 
     public void preparePurple() {
         compartments.preparePurpleForPop();
+    }
+
+    public boolean canPop() {
+        return compartments.getEmptyIndices().length == 3;
+    }
+
+    public boolean full() {
+        return compartments.getEmptyIndices().length == 0;
     }
 }

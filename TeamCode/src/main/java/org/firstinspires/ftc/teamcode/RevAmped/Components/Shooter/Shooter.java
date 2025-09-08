@@ -117,4 +117,29 @@ public class Shooter {
     public void shoot() {
         hardware.flywheel().run(FLYWHEEL_MAX_VELOCITY);
     }
+
+    public void shootAutoSet(int set) {
+        switch (set) {
+            case 0 -> {
+                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_PRELOADS);
+                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_PRELOADS);
+                hardware.flywheel().run(Flywheel.AUTO_PRELOADS);
+            }
+            case 1 -> {
+                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_SET_1);
+                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_SET_1);
+                hardware.flywheel().run(Flywheel.AUTO_SET_1);
+            }
+            case 2 -> {
+                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_SET_2);
+                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_SET_2);
+                hardware.flywheel().run(Flywheel.AUTO_SET_2);
+            }
+            case 3 -> {
+                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_SET_3);
+                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_SET_3);
+                hardware.flywheel().run(Flywheel.AUTO_SET_3);
+            }
+        }
+    }
 }

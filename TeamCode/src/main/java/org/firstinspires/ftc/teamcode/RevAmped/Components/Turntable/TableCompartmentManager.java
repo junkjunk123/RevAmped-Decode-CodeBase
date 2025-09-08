@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
 import revAmped.components.Misc.Globals;
 
 public class TableCompartmentManager {
@@ -65,6 +62,12 @@ public class TableCompartmentManager {
         return java.util.stream.IntStream.range(0, compartments.length)
             .filter(i -> compartments[i].getColor() == IntakeColor.Color.PURPLE)
             .toArray();
+    }
+
+    public int[] getEmptyIndices() {
+        return java.util.stream.IntStream.range(0, compartments.length)
+                .filter(i -> compartments[i].getColor() == IntakeColor.Color.NEUTRAL)
+                .toArray();
     }
 
     public void pop() {
