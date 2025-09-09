@@ -1,22 +1,14 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import revAmped.components.CommandScheduler.Scheduler;
 
 public final class TurnTableInternals {
     public enum TurnTableInternalState {
-        BALL1((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL1)),
-        BALL2((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL2)),
-        BALL3((hardwareComponents, scheduler) -> hardwareComponents.turntable().setCurrentState(TableServo.TableState.BALL3));
-
-        private final BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize;
-
-        TurnTableInternalState(BiConsumer<TurnTable.HardwareComponents, Scheduler> initialize) {this.initialize = initialize;}
-
-        public void initialize(TurnTable.HardwareComponents hardwareComponents, Scheduler scheduler){
-            initialize.accept(hardwareComponents, scheduler);
-        }
+        BALL1,
+        BALL2,
+        BALL3;
     }
 
     public interface TurnTableStateInterface {
@@ -49,14 +41,14 @@ public final class TurnTableInternals {
             this.internalState = internalState;
             this.hardware = hardware;
             this.scheduler = scheduler;
-            internalState.initialize(hardware, scheduler);
+            initAction();
         }
 
         public void setCycleState(TurnTableCycleState newState) {
             if (this.cycleState != newState) {
                 this.cycleState = newState;
                 switchInternalState();
-                internalState.initialize(hardware, scheduler);
+                initAction();
             }
         }
 
@@ -64,7 +56,7 @@ public final class TurnTableInternals {
             if (this.cycleState != newState) {
                 this.cycleState = newState;
                 switchInternalState();
-                if (init) internalState.initialize(hardware, scheduler);
+                if (init) initAction();
             }
         }
 
@@ -72,7 +64,7 @@ public final class TurnTableInternals {
             if (this.internalState != newState) {
                 this.internalState = newState;
                 switchCycleState();
-                newState.initialize(hardware, scheduler);
+                initAction();
             }
         }
 
@@ -80,7 +72,7 @@ public final class TurnTableInternals {
             if (this.internalState != newState) {
                 this.internalState = newState;
                 switchCycleState();
-                if (init) newState.initialize(hardware, scheduler);
+                if (init) initAction();
             }
         }
 
@@ -110,6 +102,14 @@ public final class TurnTableInternals {
             }
 
             cycleState = cycleState.toggle();
+        }
+
+        private void initAction() {
+            switch (getInternalState()) {
+                case BALL1 -> hardware.turntable().setCurrentState(TableServo.TableState.BALL1);
+                case BALL2 -> hardware.turntable().setCurrentState(TableServo.TableState.BALL2);
+                case BALL3 -> hardware.turntable().setCurrentState(TableServo.TableState.BALL3);
+            }
         }
     }
 }

@@ -57,4 +57,8 @@ public class ProjectileMath {
 
         return Arrays.stream(result).min().orElse(-1);
     }
+
+    public static double targetVel() {
+        return 0;
+    }
 }

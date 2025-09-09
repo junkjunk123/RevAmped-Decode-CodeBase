@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.Paths.LM0AutoPaths;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
@@ -52,7 +53,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         popAll(0),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
-                                robot.shooter::stopAll
+                                () -> robot.shooter.setCurrentState(Shooter.ShooterState.REST)
                         )
                 ),
                 //GO_TO_FIRST_SET

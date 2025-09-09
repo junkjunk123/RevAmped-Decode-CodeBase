@@ -29,8 +29,9 @@ public class Shooter {
 
     public enum ShooterState {
         REST,
-        TRACKING,
+        TRACKING
     }
+
     private ShooterState currentState;
 
     public static double FLYWHEEL_MAX_VELOCITY;
@@ -86,7 +87,31 @@ public class Shooter {
     }
 
     public void setCurrentState(ShooterState currentState) {
+        setCurrentState(currentState, true);
+    }
+
+    private void initAction() {
+        switch (currentState) {
+            case REST -> {
+                hardware.flywheel().setCurrentState(Flywheel.FlywheelState.STOPPED);
+                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST);
+                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE);
+                setTrackHood(false);
+                setTrackTurret(false);
+            }
+            case TRACKING -> {
+                hardware.hoodServo.setCurrentState(HoodServo.HoodState.TRACKING);
+                hardware.turretMotor.setCurrentState(TurretMotor.TurretState.TRACKING);
+                hardware.flywheel.setCurrentState(Flywheel.FlywheelState.TRACKING);
+                setTrackHood(true);
+                setTrackTurret(true);
+            }
+        }
+    }
+
+    public void setCurrentState(ShooterState currentState, boolean init) {
         this.currentState = currentState;
+        if (init) initAction();
     }
 
     public boolean isTrackHood() {
@@ -103,15 +128,6 @@ public class Shooter {
 
     public void setTrackTurret(boolean trackTurret) {
         this.trackTurret = trackTurret;
-    }
-
-    public void stopAll(){
-        hardware.flywheel().setCurrentState(Flywheel.FlywheelState.STOPPED);
-        hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST);
-        hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE);
-        setCurrentState(ShooterState.REST);
-        setTrackHood(false);
-        setTrackTurret(false);
     }
 
     public void shoot() {

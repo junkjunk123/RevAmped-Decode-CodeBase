@@ -60,17 +60,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.y.isPress()) {
-            robot.shooter.setCurrentState(Shooter.ShooterState.REST);
             robot.turnTable.pop();
-            scheduler.add(new Delay(Popper.POP_TIME_MILLIS, () -> robot.shooter.setCurrentState(Shooter.ShooterState.TRACKING)));
-        }
-
-        if (gamepad_2.x.isPress()) {
-            if (robot.flywheel().getCurrentState() == Flywheel.FlywheelState.STOPPED) {
-                robot.shooter.shoot();
-            } else {
-                robot.flywheel().stop();
-            }
+            robot.shooter.setCurrentState(Shooter.ShooterState.TRACKING);
         }
 
         if (gamepad_1.b.isPress()) {

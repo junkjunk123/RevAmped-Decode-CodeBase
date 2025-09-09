@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.TwoMotorMechanism;
+import revAmped.components.MathUtil.ProjectileMath;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
 public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
@@ -28,11 +29,16 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
     public void buildStatePowerMap() {
         statePowerMap.put(FlywheelState.RUNNING, () -> (float) controller.runWithError(targetVelocity - motor.getVelocity()));
         statePowerMap.put(FlywheelState.STOPPED, MotorPower.constant(0f));
+        statePowerMap.put(FlywheelState.TRACKING, () -> {
+            targetVelocity = ProjectileMath.targetVel();
+            return (float) controller.runWithError(targetVelocity - motor.getVelocity());
+        });
     }
 
     public enum FlywheelState implements MotorState {
         RUNNING,
-        STOPPED
+        STOPPED,
+        TRACKING;
     }
 
     public void run(double targetVelocity) {
@@ -45,6 +51,8 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
         super.setCurrentState(motorState);
         prevPos = null;
         prevTimeNano = System.nanoTime();
+
+        if (motorState == FlywheelState.RUNNING) targetVelocity = FLYWHEEL_MAX_VELOCITY;
     }
 
     @Override
