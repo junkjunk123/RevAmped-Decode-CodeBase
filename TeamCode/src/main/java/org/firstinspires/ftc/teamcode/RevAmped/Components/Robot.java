@@ -38,7 +38,7 @@ public class Robot {
     private final Scheduler scheduler;
     public TurnTable turnTable;
     public Shooter shooter;
-    public static EnumMap<HwDevice.DeviceType, HashSet<? extends HwDevice>> allHardwareClasses = new EnumMap<>(HwDevice.DeviceType.class);
+    public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = new EnumMap<>(HwDevice.DeviceType.class);
 
     public enum OpModeType implements revAmped.components.Misc.OpModeType {
         TELEOP,
@@ -187,8 +187,10 @@ public class Robot {
         return turnTable.hardware.popper();
     }
 
-    public EnumMap<HwDevice.DeviceType, HashSet<? extends HwDevice>> buildHardwareClassMap() {
-        EnumMap<HwDevice.DeviceType, HashSet<? extends HwDevice>> map = new EnumMap<>(HwDevice.DeviceType.class);
+    public EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {
+        EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> map = new EnumMap<>(HwDevice.DeviceType.class);
+        map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(IntakeColor.class)));
+        map.put(HwDevice.DeviceType.MOTOR, new HashSet<>(List.of(Flywheel.class, TurretMotor.class, IntakeMotor.class)));
         //buildMap
         return map;
     }
