@@ -14,7 +14,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             s.folder("Pre-Match Tester", l -> {
                 l.add("AutomatedTest", AutomatedTest::new);
             });
-            s.folder("Calibrater", l -> {
+            s.folder("HardwareComponents", l -> {
                 l.add("ServoCalibrateTest",ServoCalibrateTest::new);
             });
         });

@@ -17,7 +17,6 @@ import revAmped.components.Misc.Logger;
 @TeleOp
 public class AutomatedTest extends DecodeRevAmpedOpMode {
     private Robot robot;
-    private HwDevice.DeviceType deviceType;
 
     @Override
     public void RevAmpedInit() {
@@ -30,7 +29,6 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
         for (HwDevice.DeviceType type : robot.allDevices.keySet()) {
             telemetry.addData("Testing", type.name());
             telemetry.update();
-            deviceType = type;
             for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(type))) {
                 if (!device.testResponse()) {
                     Logger.permaLog(device.getId(), "FAILED");
@@ -44,7 +42,6 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedLoop() {
         if (gamepad1.aWasPressed()) {
-            deviceType = HwDevice.DeviceType.MOTOR;
             if (robot.allDevices.containsKey(HwDevice.DeviceType.MOTOR)) {
                 for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(HwDevice.DeviceType.MOTOR))) {
                     if (device instanceof HwSlide2<?> slide) {

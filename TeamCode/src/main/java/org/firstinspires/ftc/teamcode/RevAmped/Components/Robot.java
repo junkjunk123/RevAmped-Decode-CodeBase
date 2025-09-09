@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class Robot {
     private final Scheduler scheduler;
     public TurnTable turnTable;
     public Shooter shooter;
+    public static EnumMap<HwDevice.DeviceType, HashSet<? extends HwDevice>> allHardwareClasses = new EnumMap<>(HwDevice.DeviceType.class);
 
     public enum OpModeType implements revAmped.components.Misc.OpModeType {
         TELEOP,
@@ -183,5 +185,11 @@ public class Robot {
 
     public Popper popper() {
         return turnTable.hardware.popper();
+    }
+
+    public EnumMap<HwDevice.DeviceType, HashSet<? extends HwDevice>> buildHardwareClassMap() {
+        EnumMap<HwDevice.DeviceType, HashSet<? extends HwDevice>> map = new EnumMap<>(HwDevice.DeviceType.class);
+        //buildMap
+        return map;
     }
 }
