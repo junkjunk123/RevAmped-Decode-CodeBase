@@ -194,4 +194,8 @@ public class Robot {
         //buildMap
         return map;
     }
+
+    public static String[] getComponentNames(HwDevice.DeviceType types) {
+        return allHardwareClasses.get(types).stream().map(Class::getCanonicalName).toArray(String[]::new);
+    }
 }

@@ -16,6 +16,7 @@ import java.util.List;
 
 import revAmped.components.GamepadDevices.Button;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
+import revAmped.components.Hardware.HwDevice;
 
 @Config
 @TeleOp(name = "ServoCalibrateTest", group = "Test")
@@ -37,7 +38,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        servos = List.of("intakeArm","intakeClaw","intakeTilt","intakeWrist","intakeTurret","hlock","depoArm","depoClaw","depoMGN");
+        servos = List.of(Robot.getComponentNames(HwDevice.DeviceType.SERVO));
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
