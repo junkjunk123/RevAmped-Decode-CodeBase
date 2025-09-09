@@ -1,4 +1,4 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Commands;
 
 /**
  * RunnableTask is an interface that defines a task that can be run, updated, and checked for completion.

@@ -1,4 +1,4 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Commands;
 
 /**
  * FiniteRunAction is a class that allows you to run a Runnable a specified number of times.

@@ -16,6 +16,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     public static float MAX_POWER = 1.0f;
     private boolean slowMode = false;
     private Localizer localizer;
+    private static Pose initialPose;
 
     public TeleOpDrivetrainHandler(OpMode op, List<DcMotorSimple.Direction> directions) {
         super(op, directions);
@@ -94,8 +95,17 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
         public TeleOpDrivetrainHandler build() {
             TeleOpDrivetrainHandler dt = new TeleOpDrivetrainHandler(op, directions);
             dt.setGamepad_1(gamepad_1);
+            localizer.setStartPose(initialPose);
             dt.setLocalizer(localizer);
             return dt;
         }
+    }
+
+    public static void setInitialPose(Pose pose) {
+        initialPose = pose;
+    }
+
+    public static Pose getInitialPose() {
+        return initialPose;
     }
 }

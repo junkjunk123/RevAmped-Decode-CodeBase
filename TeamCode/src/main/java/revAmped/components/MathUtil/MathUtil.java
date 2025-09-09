@@ -87,7 +87,7 @@ public class MathUtil {
      * @param millis The delay in milliseconds.
      * @return A BooleanSupplier that returns true after the specified delay.
      */
-    public static BooleanSupplier boleanSupplierfromTimeDelay(double millis) {
+    public static BooleanSupplier booleanSupplierfromTimeDelay(double millis) {
         long startTime = millisTime();
         return () -> (millisTime() - startTime) >= millis;
     }

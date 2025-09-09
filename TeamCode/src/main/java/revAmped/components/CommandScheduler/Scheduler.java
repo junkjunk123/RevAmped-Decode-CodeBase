@@ -1,5 +1,7 @@
 package revAmped.components.CommandScheduler;
 
+import revAmped.components.CommandScheduler.Commands.Delay;
+
 /**
  * Scheduler is a singleton class that manages delays and delay chains.
  */

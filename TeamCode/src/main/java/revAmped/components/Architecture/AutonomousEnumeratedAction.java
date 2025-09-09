@@ -7,7 +7,7 @@ import java.util.function.BooleanSupplier;
 import revAmped.components.CommandScheduler.AutonomousCommandAction;
 import revAmped.components.Misc.Globals;
 
-import revAmped.components.CommandScheduler.RunnableTask;
+import revAmped.components.CommandScheduler.Commands.RunnableTask;
 
 /**
  * AutonomousEnumeratedAction is an abstract class that defines the structure for autonomous actions

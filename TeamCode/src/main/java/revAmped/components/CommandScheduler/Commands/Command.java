@@ -1,4 +1,4 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Commands;
 
 /**
  * Command is a simple implementation of the RunnableTask interface that allows you to run a Runnable.

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components;
 
 import static revAmped.components.Misc.Globals.allianceColor;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

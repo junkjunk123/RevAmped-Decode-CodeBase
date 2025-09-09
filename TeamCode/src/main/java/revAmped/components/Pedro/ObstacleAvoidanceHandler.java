@@ -1,15 +1,11 @@
 package revAmped.components.Pedro;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
 
-import revAmped.components.CommandScheduler.Delay;
+import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
-import revAmped.components.Misc.Globals;
 
 public class ObstacleAvoidanceHandler {
     private final Stuck detectCollision;

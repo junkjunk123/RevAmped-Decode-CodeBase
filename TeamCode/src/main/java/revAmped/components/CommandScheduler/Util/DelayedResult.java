@@ -1,9 +1,12 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Util;
 import android.util.Log;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+
+import revAmped.components.CommandScheduler.Commands.Delay;
+import revAmped.components.CommandScheduler.Scheduler;
 
 /**
  * DelayedResult is a class that allows you to lazily evaluate a result using a Callable supplier.

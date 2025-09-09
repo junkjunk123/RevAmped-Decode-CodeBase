@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
+import revAmped.components.CommandScheduler.Commands.Command;
+import revAmped.components.CommandScheduler.Commands.Delay;
+import revAmped.components.CommandScheduler.Commands.DelayChain;
+import revAmped.components.CommandScheduler.Commands.RunnableTask;
+
 public class DelayChainBuilder {
     private final String identifier;
     private final List<RunnableTask> delays = new ArrayList<>();

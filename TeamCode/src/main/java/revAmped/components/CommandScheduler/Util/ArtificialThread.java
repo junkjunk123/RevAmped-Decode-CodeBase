@@ -1,6 +1,9 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Util;
 
 import java.util.function.BooleanSupplier;
+
+import revAmped.components.CommandScheduler.Commands.Delay;
+import revAmped.components.CommandScheduler.Scheduler;
 
 /**
  * ArtificialThread is an abstract class that represents a thread-like structure

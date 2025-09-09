@@ -1,6 +1,6 @@
 package revAmped.components.CommandScheduler;
 
-import revAmped.components.Architecture.AutonomousActionExecutor;
+import revAmped.components.CommandScheduler.Commands.RunnableTask;
 
 /**
  * AutonomousCommandAction is an abstract class that represents a command action

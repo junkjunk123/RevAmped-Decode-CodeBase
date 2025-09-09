@@ -17,7 +17,7 @@ public class LM0AutoPaths implements PathSupplier {
     public static ColoredDecodePose START_POSE = new ColoredDecodePose(22.460, 119.469, Math.toRadians(-90));
     public static ColoredDecodePose WAYPOINT_1 = new ColoredDecodePose(14.800, 94.600);
     public static ColoredDecodePose INTAKE_FIRST_ELEMENT_SET = new ColoredDecodePose(24.250, 85.250, Math.toRadians(-65));
-    public static ColoredDecodePose OPEN_GATE = new ColoredDecodePose(16.250, 70.000, Math.toRadians(180));
+    public static ColoredDecodePose OPEN_GATE = new ColoredDecodePose(12.250, 70.000, Math.toRadians(180));
     public static ColoredDecodePose SHOOT_FIRST_ELEMENT_SET = new ColoredDecodePose(48.750, 85.250);
     public static ColoredDecodePose WAYPOINT_2 = new ColoredDecodePose(49.341, 55.640);
     public static ColoredDecodePose INTAKE_SECOND_ELEMENT_SET = new ColoredDecodePose(24.050, 60.050, Math.toRadians(-90));
@@ -26,6 +26,7 @@ public class LM0AutoPaths implements PathSupplier {
     public static ColoredDecodePose INTAKE_THIRD_ELEMENT_SET = new ColoredDecodePose(24.000, 39.750, Math.toRadians(-70));
     public static ColoredDecodePose WAYPOINT4 = new ColoredDecodePose(16.560, 44.000);
     public static ColoredDecodePose SHOOT_THIRD_ELEMENT_SET = new ColoredDecodePose(48.750, 85.250, Math.toRadians(-180));
+    public static ColoredDecodePose PARK = new ColoredDecodePose(48, 52, Math.toRadians(180));
 
     @Override
     public Pose getStartPose() {
@@ -72,7 +73,12 @@ public class LM0AutoPaths implements PathSupplier {
                 .setTangentHeadingInterpolation()
                 .setGlobalDeceleration()
                 .build();
+        PathChain park = follower.pathBuilder()
+                .addPath(ColoredDecodePose.makeBezier(SHOOT_THIRD_ELEMENT_SET, PARK))
+                .setGlobalDeceleration()
+                .setLinearHeadingInterpolation(SHOOT_THIRD_ELEMENT_SET.heading(), PARK.heading())
+                .build();
 
-        return List.of(intakeFirstElementSet, openGate, shootFirstElementSet, intakeSecondElementSet, shootSecondElementSet, intakeThirdElementSet, shootThirdElementSet);
+        return List.of(intakeFirstElementSet, openGate, shootFirstElementSet, intakeSecondElementSet, shootSecondElementSet, intakeThirdElementSet, shootThirdElementSet, park);
     }
 }

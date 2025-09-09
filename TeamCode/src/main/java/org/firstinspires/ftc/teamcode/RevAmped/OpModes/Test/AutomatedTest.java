@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import java.util.Objects;
 
-import revAmped.components.CommandScheduler.DelayedResult;
+import revAmped.components.CommandScheduler.Util.DelayedResult;
 import revAmped.components.Hardware.HwDevice;
 import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Misc.Logger;

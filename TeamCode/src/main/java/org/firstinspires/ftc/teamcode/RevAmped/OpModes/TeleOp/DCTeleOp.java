@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.TeleOp;
 
-import com.bylazar.ftcontrol.panels.plugins.html.primitives.P;
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import revAmped.components.CommandScheduler.Delay;
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 import revAmped.components.Misc.Globals;

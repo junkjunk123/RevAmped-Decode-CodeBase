@@ -3,7 +3,7 @@ import android.util.Log;
 
 import java.util.List;
 import java.util.function.Consumer;
-import revAmped.components.CommandScheduler.Delay;
+import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.MathUtil.FiniteFieldVector;
 import revAmped.components.MathUtil.MathUtil;

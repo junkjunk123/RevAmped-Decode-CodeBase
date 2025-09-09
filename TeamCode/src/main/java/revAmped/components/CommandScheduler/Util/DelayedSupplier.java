@@ -1,7 +1,10 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Util;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
+
+import revAmped.components.CommandScheduler.Commands.Delay;
+import revAmped.components.CommandScheduler.Scheduler;
 
 /**
  * DelayedSupplier is a class that allows you to lazily evaluate a supplier after a delay.

@@ -76,7 +76,7 @@ public class TableCompartmentManager {
             lastPoppedColor = compartments[currentPopIndex].getColor();
             compartments[currentPopIndex].releaseBall();
 
-            int nextPopIndex = motifMode ? getNextMotifPopIndex() : findNextPopIndex();
+            int nextPopIndex = motifMode && Globals.randomizationState != null ? getNextMotifPopIndex() : findNextPopIndex();
 
             if (nextPopIndex != currentPopIndex) {
                 advancePopIndex(nextPopIndex);

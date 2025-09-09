@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.CommandScheduler.Delay;
+import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 
 /**

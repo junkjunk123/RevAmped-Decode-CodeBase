@@ -1,5 +1,7 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Commands;
 import java.util.List;
+
+import revAmped.components.CommandScheduler.Scheduler;
 
 /**
  * DelayChain is a class that allows you to chain multiple RunnableTasks together,

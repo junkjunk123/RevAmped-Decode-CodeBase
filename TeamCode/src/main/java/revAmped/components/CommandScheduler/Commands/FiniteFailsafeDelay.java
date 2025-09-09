@@ -1,4 +1,4 @@
-package revAmped.components.CommandScheduler;
+package revAmped.components.CommandScheduler.Commands;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BooleanSupplier;

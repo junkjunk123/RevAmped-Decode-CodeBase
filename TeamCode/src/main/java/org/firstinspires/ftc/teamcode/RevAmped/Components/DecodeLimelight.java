@@ -17,7 +17,7 @@ public class DecodeLimelight implements HwDevice {
     private final String id;
     private LLResult latestResult;
 
-    private enum Pipeline {
+    public enum Pipeline {
         NONE(-1),
         OBELISK(0),
         SHOOTING_ALIGNMENT(1),
@@ -35,10 +35,10 @@ public class DecodeLimelight implements HwDevice {
     }
     private Pipeline currentPipeline = Pipeline.NONE;
 
-    public DecodeLimelight(HardwareMap hardwareMap, String name) {
-        limelight = hardwareMap.get(Limelight3A.class, name);
+    public DecodeLimelight(HardwareMap hardwareMap) {
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(10);
-        this.id = name;
+        this.id = "limelight";
     }
 
     @Override
@@ -56,7 +56,7 @@ public class DecodeLimelight implements HwDevice {
         setCurrentPipeline(Pipeline.OBELISK);
     }
 
-    private void setCurrentPipeline(Pipeline pipeline) {
+    public void setCurrentPipeline(Pipeline pipeline) {
         if (pipeline != Pipeline.NONE) limelight.pipelineSwitch(pipeline.getPipeline());
         currentPipeline = pipeline;
     }
@@ -72,17 +72,13 @@ public class DecodeLimelight implements HwDevice {
         computeLatestResult();
         switch (currentPipeline) {
             case OBELISK -> {
-                List<LLResultTypes.FiducialResult> result = latestResult.getFiducialResults();
-                for (LLResultTypes.FiducialResult tag : result) {
-                    if (validateTag(tag)) {
-                        int id = tag.getFiducialId();
-                        for (Globals.RandomizationState state : Globals.RandomizationState.values()) {
-                            if (id == state.getID()) {
-                                Globals.randomizationState = state;
-                                currentPipeline = Pipeline.NONE;
-                                return;
-                            }
-                        }
+                LLResultTypes.FiducialResult result = latestResult.getFiducialResults().get(0);
+                int id = result.getFiducialId();
+                for (Globals.RandomizationState state : Globals.RandomizationState.values()) {
+                    if (id == state.getID()) {
+                        Globals.randomizationState = state;
+                        currentPipeline = Pipeline.NONE;
+                        return;
                     }
                 }
             }

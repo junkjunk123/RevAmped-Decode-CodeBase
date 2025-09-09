@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Hardware.Turret;
+import revAmped.components.Misc.Globals;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
 public class TurretMotor extends Turret<TurretMotor.TurretState> {
@@ -21,6 +22,8 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     public static float AUTO_SET_1;
     public static float AUTO_SET_2;
     public static float AUTO_SET_3;
+    public static float LL_DETECTION_RED;
+    public static float LL_DETECTION_BLUE;
 
     @Override
     public int ticksPerRotation() {
@@ -70,5 +73,12 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     
     public void finetuneAngle(double rad) {
         setCurrentState(TurretState.TRACKING, (int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)));
+    }
+
+    public void limelightDetection() {
+        switch (Globals.allianceColor) {
+            case Blue -> setCurrentState(TurretState.HOLD, LL_DETECTION_BLUE);
+            case Red -> setCurrentState(TurretState.HOLD, LL_DETECTION_RED);
+        }
     }
 }

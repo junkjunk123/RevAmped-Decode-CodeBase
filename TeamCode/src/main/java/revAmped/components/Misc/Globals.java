@@ -59,9 +59,9 @@ public final class Globals {
     public static FollowerManager followerManager;
 
     public enum RandomizationState {
-        PPG(21, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN)),
+        PPG(23, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN)),
         PGP(22, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE)),
-        GPP(23, List.of(IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE)),;
+        GPP(21, List.of(IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE));
 
         final int ID;
         final List<IntakeColor.Color> colors;

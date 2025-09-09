@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import revAmped.components.CommandScheduler.Delay;
-import revAmped.components.CommandScheduler.DelayedResult;
-import revAmped.components.CommandScheduler.DelayedSupplier;
+import revAmped.components.CommandScheduler.Commands.Delay;
+import revAmped.components.CommandScheduler.Util.DelayedResult;
+import revAmped.components.CommandScheduler.Util.DelayedSupplier;
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.MathUtil.MathUtil;
 
@@ -241,7 +241,7 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
             retract(800, () -> limitSwitch.set(false));
             Scheduler.getInstance().add(new Delay(retractionDetector::getReading, () -> limitSwitch.set(true)));
         }));
-        BooleanSupplier set = MathUtil.boleanSupplierfromTimeDelay(1400);
+        BooleanSupplier set = MathUtil.booleanSupplierfromTimeDelay(1400);
         return new DelayedSupplier<>(() -> limitSwitch.get() || set.getAsBoolean(), () -> {
             motor.setPower(0f);
             if (!encoders.get()) {
