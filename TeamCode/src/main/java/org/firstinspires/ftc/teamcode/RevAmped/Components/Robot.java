@@ -191,6 +191,8 @@ public class Robot {
         EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> map = new EnumMap<>(HwDevice.DeviceType.class);
         map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(IntakeColor.class)));
         map.put(HwDevice.DeviceType.MOTOR, new HashSet<>(List.of(Flywheel.class, TurretMotor.class, IntakeMotor.class)));
+        map.put(HwDevice.DeviceType.SERVO, new HashSet<>(List.of(HoodServo.class, TableServo.class, Popper.class)));
+
         //buildMap
         return map;
     }
