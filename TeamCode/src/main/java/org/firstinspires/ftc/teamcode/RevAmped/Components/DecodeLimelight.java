@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components;
 
 import androidx.annotation.NonNull;
 
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -16,6 +17,7 @@ public class DecodeLimelight implements HwDevice {
     private final Limelight3A limelight;
     private final String id;
     private LLResult latestResult;
+    private Vector detectionResult;
 
     public enum Pipeline {
         NONE(-1),
@@ -82,12 +84,33 @@ public class DecodeLimelight implements HwDevice {
                     }
                 }
             }
+            case SHOOTING_ALIGNMENT -> {
+                double tagID = Globals.allianceColor.getTagID();
+                List<LLResultTypes.FiducialResult> r = limelight.getLatestResult().getFiducialResults();
+                LLResultTypes.FiducialResult target = null;
+                for (LLResultTypes.FiducialResult i: r) {
+                    if (i != null && i.getFiducialId() == tagID) {
+                        target = i;
+                        break;
+                    }
+                }
+
+                if (target != null) {
+                    double x = target.getCameraPoseTargetSpace().getPosition().x; // right/left from tag
+                    double z = target.getCameraPoseTargetSpace().getPosition().z; // forward/back from tag
+
+                    detectionResult = new Vector();
+                    detectionResult.setOrthogonalComponents(x, z);
+                    return;
+                }
+
+                detectionResult = new Vector();
+            }
         }
     }
 
-    private boolean validateTag(LLResultTypes.FiducialResult tag) {
-        //placeholder
-        return true;
+    public Vector getDetectionResult() {
+        return detectionResult;
     }
 
     @Override
