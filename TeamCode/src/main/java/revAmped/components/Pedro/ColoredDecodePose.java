@@ -41,19 +41,15 @@ public class ColoredDecodePose implements FuturePose {
 
     public Pose getPose(Globals.AllianceColor desiredColor) {
         if (desiredColor.equals(Globals.AllianceColor.Red)) {
-            if (red == null) red = blueToRed(pose);
+            if (red == null) red = mirror(pose);
             return red;
         }
 
-        if (blue == null) blue = redToBlue(pose);
+        if (blue == null) blue = mirror(pose);
         return blue;
     }
 
-    public static Pose blueToRed(Pose pose) {
-        return new Pose(144 - pose.getX(), pose.getY(), invertHeading(pose.getHeading()));
-    }
-
-    public static Pose redToBlue(Pose pose) {
+    public static Pose mirror(Pose pose) {
         return new Pose(144 - pose.getX(), pose.getY(), invertHeading(pose.getHeading()));
     }
 
@@ -109,7 +105,7 @@ public class ColoredDecodePose implements FuturePose {
     public double heading() {
         return getPose().getHeading();
     }
-
+    
     @Override
     public boolean initialized() {
         return true;

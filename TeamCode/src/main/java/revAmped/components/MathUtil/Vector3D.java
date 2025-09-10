@@ -71,4 +71,16 @@ public class Vector3D extends Vector {
 
         return new Vector3D(x, y, z);
     }
+
+    public double getX() {
+        return values()[0];
+    }
+
+    public double getY() {
+        return values()[1];
+    }
+
+    public double getZ() {
+        return values()[2];
+    }
 }

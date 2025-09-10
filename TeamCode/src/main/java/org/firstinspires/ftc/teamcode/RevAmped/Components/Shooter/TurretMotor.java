@@ -25,6 +25,8 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     public static float LL_DETECTION_RED;
     public static float LL_DETECTION_BLUE;
 
+    double prevFineTuneAngle = 0;
+
     @Override
     public int ticksPerRotation() {
         return TURRET_TICKS_PER_ROTATION;
@@ -63,15 +65,18 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
         super.setCurrentState(motorState);
         targetPosition = motorState.getPos();
         controller.reset();
+        prevFineTuneAngle = 0;
     }
 
     public void setCurrentState(TurretState motorState, int targetPosition) {
         super.setCurrentState(motorState);
         this.targetPosition = targetPosition;
         controller.reset();
+        prevFineTuneAngle = 0;
     }
     
     public void finetuneAngle(double rad) {
+        prevFineTuneAngle = rad;
         setCurrentState(TurretState.TRACKING, (int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)));
     }
 

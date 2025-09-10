@@ -1,8 +1,15 @@
 package revAmped.components.Hardware;
 
+import android.graphics.Camera;
 import android.nfc.tech.Ndef;
 
 import androidx.annotation.NonNull;
+
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -73,16 +80,26 @@ public interface HwDevice {
     }
 
     enum DeviceType {
-        DIGITAL,
-        SERVO,
-        MOTOR,
-        ANALOG,
-        COLOR_SENSOR,
-        DISTANCE_SENSOR,
-        IMU,
-        PINPOINT,
-        CAMERA,
-        UNKNOWN
+        DIGITAL(DigitalChannel.class),
+        SERVO(Servo.class),
+        MOTOR(Motor.class),
+        ANALOG(AnalogInput.class),
+        COLOR_SENSOR(ColorSensor.class),
+        DISTANCE_SENSOR(DistanceSensor.class),
+        IMU(com.qualcomm.robotcore.hardware.IMU.class),
+        PINPOINT(GoBildaPinpointDriver.class),
+        CAMERA(Camera.class),
+        UNKNOWN(null);
+
+        public Class<?> getCanonicalClass() {
+            return canonicalClass;
+        }
+
+        final Class<?> canonicalClass;
+
+        DeviceType(Class<?> canonicalClass) {
+            this.canonicalClass = canonicalClass;
+        }
     }
 
     DeviceType getDeviceType();

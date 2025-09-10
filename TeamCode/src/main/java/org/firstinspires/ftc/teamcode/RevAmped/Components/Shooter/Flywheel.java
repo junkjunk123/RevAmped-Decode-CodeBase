@@ -24,13 +24,16 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
     public static float AUTO_SET_1;
     public static float AUTO_SET_2;
     public static float AUTO_SET_3;
+    public static double FLYWHEEL_RADIUS = 0; //Inches
+    public static int COUNTS_PER_REVOLUTION = 0;
+    public static double GEAR_RATIO = 0;
 
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(FlywheelState.RUNNING, () -> (float) controller.runWithError(targetVelocity - motor.getVelocity()));
         statePowerMap.put(FlywheelState.STOPPED, MotorPower.constant(0f));
         statePowerMap.put(FlywheelState.TRACKING, () -> {
-            targetVelocity = ProjectileMath.targetVel();
+            targetVelocity = FLYWHEEL_MAX_VELOCITY;
             return (float) controller.runWithError(targetVelocity - motor.getVelocity());
         });
     }
@@ -92,5 +95,12 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
     @Override
     public FlywheelState getRest() {
         return FlywheelState.STOPPED;
+    }
+
+    /**
+        @return Radians
+     */
+    public double getAngularVelocity() {
+        return Math.PI * 2 * getVelocity() / COUNTS_PER_REVOLUTION / GEAR_RATIO;
     }
 }

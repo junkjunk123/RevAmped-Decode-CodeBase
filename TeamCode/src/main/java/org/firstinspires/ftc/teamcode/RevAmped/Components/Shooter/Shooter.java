@@ -10,6 +10,7 @@ import revAmped.components.Hardware.HwServo2;
 import revAmped.components.MathUtil.MathUtil;
 import revAmped.components.MathUtil.ProjectileMath;
 import revAmped.components.MathUtil.Vector2D;
+import revAmped.components.MathUtil.Vector3D;
 import revAmped.components.Misc.Globals;
 
 public class Shooter {
@@ -36,9 +37,9 @@ public class Shooter {
 
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
-    public static double TARGET_LAUNCH_HEIGHT;
     public static Pose APRIL_TAG_POSE_RED;
     public static Pose APRIL_TAG_POSE_BLUE;
+    public static Vector3D BLUE_SHOOT_ZONE;
 
     private Localizer pinpoint;
 
@@ -68,19 +69,25 @@ public class Shooter {
                 Pose currentPos = pinpoint().getPose();
                 Vector2D offset = new Vector2D(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
 
-                if (trackHood) {
-                    double theta = ProjectileMath.solveTheta(Shooter.FLYWHEEL_MAX_VELOCITY, Shooter.LAUNCH_HEIGHT,
-                            offset.magnitude(), Shooter.TARGET_LAUNCH_HEIGHT);
-                    float hoodAngle = HwServo2.getPositionFromRad(theta, HoodServo.HOOD_MIN_RAD, HoodServo.HOOD_MAX_RAD,
-                            HoodServo.HOOD_MIN_POS, HoodServo.HOOD_MAX_POS);
-                    hardware.hoodServo().setCurrentState(HoodServo.HoodState.TRACKING, hoodAngle);
-                }
-
+                double deltaAngle;
                 if (trackTurret) {
                     double targetAngle = offset.getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
-                    double deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                    deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
+                } else {
+                    deltaAngle = hardware.turretMotor.prevFineTuneAngle;
+                }
+
+                if (trackHood) {
+                    Vector3D target = getTargetLaunchPos();
+                    double theta = ProjectileMath.solveThetaWithDrag(new Vector2D(pinpoint.getPose().distanceFrom(new Pose(target.getX(), target.getY())), target.getZ() - LAUNCH_HEIGHT), calcInitialLaunchVelocity(deltaAngle));
+
+                    if (!Double.isNaN(theta)) {
+                        float hoodAngle = HwServo2.getPositionFromRad(theta, HoodServo.HOOD_MIN_RAD, HoodServo.HOOD_MAX_RAD,
+                                HoodServo.HOOD_MIN_POS, HoodServo.HOOD_MAX_POS);
+                        hardware.hoodServo().setCurrentState(HoodServo.HoodState.TRACKING, hoodAngle);
+                    }
                 }
             }
         }
@@ -157,5 +164,15 @@ public class Shooter {
                 hardware.flywheel().run(Flywheel.AUTO_SET_3);
             }
         }
+    }
+
+    private double calcInitialLaunchVelocity(double turretAngleOffset) {
+        double velFlywheel = hardware.flywheel.getAngularVelocity() * Flywheel.FLYWHEEL_RADIUS;
+        double velRobot = pinpoint.getVelocityVector().getMagnitude() * Math.cos(turretAngleOffset);
+        return velRobot + velFlywheel;
+    }
+
+    public static Vector3D getTargetLaunchPos() {
+        return Globals.allianceColor == Globals.AllianceColor.Red ? new Vector3D(144 - BLUE_SHOOT_ZONE.getX(), BLUE_SHOOT_ZONE.getY(), BLUE_SHOOT_ZONE.getY()) : BLUE_SHOOT_ZONE;
     }
 }
