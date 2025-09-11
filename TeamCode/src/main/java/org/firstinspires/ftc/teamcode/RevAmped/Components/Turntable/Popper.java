@@ -1,6 +1,4 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
-
-import com.bylazar.ftcontrol.panels.plugins.html.primitives.P;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.HwServo2;
@@ -22,7 +20,9 @@ public class Popper extends HwServo2<Popper.PopperState> {
     public enum PopperState implements HwServo2.ServoState{
         NEUTRAL(Popper.NEUTRAL),
         POP(Popper.POP);
-        float position;
+
+        final float position;
+
         PopperState(float position){this.position = position;}
 
         @Override
