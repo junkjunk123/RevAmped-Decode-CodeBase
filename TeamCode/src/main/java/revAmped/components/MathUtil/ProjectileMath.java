@@ -8,8 +8,8 @@ public class ProjectileMath {
     private static final double CD = 0.4; // drag coefficient, adjust for whiffle ball
     private static final double radius = 5; // ball radius in inches
     private static final double A = Math.PI * radius * radius; // cross-sectional area in in^2
-    private static final double mass = 0.057152639 * 0.0685218; // ball mass in slugs (0.05 kg -> slugs), 1 kg ≈ 0.0685 slugs
-    private static final double k = rho * CD * A / (2 * mass); //Units: 1/in
+    private static final double massBall = 0.057152639 * 0.0685218; // ball mass in slugs (0.05 kg -> slugs), 1 kg ≈ 0.0685 slugs
+    private static final double k = rho * CD * A / (2 * massBall); //Units: 1/in
 
     /**
      * Solve for possible launch angles theta (radians).

@@ -41,6 +41,8 @@ public class Shooter {
     public static Pose APRIL_TAG_POSE_BLUE;
     public static Vector3D BLUE_SHOOT_ZONE;
 
+    public static double BALL_MASS = 0.057152639; //kg
+
     private Localizer pinpoint;
 
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
@@ -167,7 +169,7 @@ public class Shooter {
     }
 
     private double calcInitialLaunchVelocity(double turretAngleOffset) {
-        double velFlywheel = hardware.flywheel.getAngularVelocity() * Flywheel.FLYWHEEL_RADIUS;
+        double velFlywheel = hardware.flywheel.getAngularVelocity() * Flywheel.RADIUS;
         double velRobot = pinpoint.getVelocityVector().getMagnitude() * Math.cos(turretAngleOffset);
         return velRobot + velFlywheel;
     }

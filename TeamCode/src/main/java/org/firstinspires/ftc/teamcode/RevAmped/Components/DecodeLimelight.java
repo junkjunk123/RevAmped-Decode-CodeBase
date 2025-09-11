@@ -60,6 +60,7 @@ public class DecodeLimelight implements HwDevice {
 
     public void setCurrentPipeline(Pipeline pipeline) {
         if (pipeline != Pipeline.NONE) limelight.pipelineSwitch(pipeline.getPipeline());
+        else limelight.pause();
         currentPipeline = pipeline;
     }
 

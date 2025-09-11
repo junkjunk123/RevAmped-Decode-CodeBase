@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.TwoMotorMechanism;
-import revAmped.components.MathUtil.ProjectileMath;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
 public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
@@ -15,7 +14,7 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
     private long prevTimeNano;
 
     public Flywheel(HardwareMap hardwareMap, FlywheelState motorState) throws IllegalArgumentException {
-        super(hardwareMap, "left", "right", DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, motorState);
+        super(hardwareMap, "flywheel_left", "flywheel_right", DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, motorState);
     }
 
     public static double FLYWHEEL_MAX_VELOCITY;
@@ -24,9 +23,13 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
     public static float AUTO_SET_1;
     public static float AUTO_SET_2;
     public static float AUTO_SET_3;
-    public static double FLYWHEEL_RADIUS = 0; //Inches
+    public static double RADIUS = 0; //Inches
     public static int COUNTS_PER_REVOLUTION = 0;
-    public static double GEAR_RATIO = 0;
+    public static double GEAR_RATIO = 0.75;
+    public static double STALL_TORQUE = 1.47; //Kg * cm
+    public static double STALL_CURRENT = 9.2; //Amps
+    public static double k_T = 0.0980665 * STALL_TORQUE / STALL_CURRENT;
+    public static double MOMENT_OF_INERTIA;
 
     @Override
     public void buildStatePowerMap() {
@@ -101,6 +104,6 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
         @return Radians
      */
     public double getAngularVelocity() {
-        return Math.PI * 2 * getVelocity() / COUNTS_PER_REVOLUTION / GEAR_RATIO;
+        return Math.PI * 2 * getVelocity() / COUNTS_PER_REVOLUTION;
     }
 }
