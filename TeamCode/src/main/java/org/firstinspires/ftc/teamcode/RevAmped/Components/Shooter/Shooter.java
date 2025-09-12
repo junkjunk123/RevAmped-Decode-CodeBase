@@ -8,7 +8,7 @@ import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.Hardware.HwServo2;
 import revAmped.components.MathUtil.MathUtil;
-import revAmped.components.MathUtil.ProjectileMath;
+import revAmped.components.MathUtil.ProjectileMathWithDrag;
 import revAmped.components.MathUtil.Vector2D;
 import revAmped.components.MathUtil.Vector3D;
 import revAmped.components.Misc.Globals;
@@ -42,6 +42,7 @@ public class Shooter {
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
+    private double confidence;
 
     private Localizer pinpoint;
 
@@ -65,31 +66,49 @@ public class Shooter {
     public void update() {
         hardware.update();
 
-        switch (currentState) {
-            case TRACKING -> {
-                Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
-                Pose currentPos = pinpoint().getPose();
-                Vector2D offset = new Vector2D(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
+        if (currentState == ShooterState.TRACKING) {
+            Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
+            Pose currentPos = pinpoint().getPose();
+            Vector2D offset = new Vector2D(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
 
-                double deltaAngle;
-                if (trackTurret) {
-                    double targetAngle = offset.getTheta() + Math.PI;
-                    double currentAngle = pinpoint().getPose().getHeading();
-                    deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
-                    hardware.turretMotor().finetuneAngle(deltaAngle);
-                } else {
-                    deltaAngle = hardware.turretMotor.prevFineTuneAngle;
-                }
+            double deltaAngle;
+            if (trackTurret) {
+                double targetAngle = offset.getTheta() + Math.PI;
+                double currentAngle = pinpoint().getPose().getHeading();
+                deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                hardware.turretMotor().finetuneAngle(deltaAngle);
+            } else {
+                deltaAngle = hardware.turretMotor.prevFineTuneAngle;
+            }
 
-                if (trackHood) {
-                    Vector3D target = getTargetLaunchPos();
-                    double theta = ProjectileMath.solveThetaWithDrag(new Vector2D(pinpoint.getPose().distanceFrom(new Pose(target.getX(), target.getY())), target.getZ() - LAUNCH_HEIGHT), calcInitialLaunchVelocity(deltaAngle));
+            if (trackHood) {
+                Vector3D target = getTargetLaunchPos();
+                Vector2D targetDisplacements = new Vector2D (
+                        pinpoint.getPose().distanceFrom(new Pose(target.getX(), target.getY())),
+                        target.getZ() - LAUNCH_HEIGHT
+                );
+                double initialVelocity = calcInitialLaunchVelocity(deltaAngle);
 
-                    if (!Double.isNaN(theta)) {
-                        float hoodAngle = HwServo2.getPositionFromRad(theta, HoodServo.HOOD_MIN_RAD, HoodServo.HOOD_MAX_RAD,
-                                HoodServo.HOOD_MIN_POS, HoodServo.HOOD_MAX_POS);
-                        hardware.hoodServo().setCurrentState(HoodServo.HoodState.TRACKING, hoodAngle);
-                    }
+                double theta = ProjectileMathWithDrag.solveTheta(
+                        targetDisplacements,
+                        initialVelocity
+                );
+
+                confidence = ProjectileMathWithDrag.getConfidence(
+                        targetDisplacements,
+                        initialVelocity,
+                        theta
+                );
+
+                if (!Double.isNaN(theta) && confidence > 0.5) {
+                    float hoodAngle = HwServo2.getPositionFromRad(
+                            theta,
+                            HoodServo.HOOD_MIN_RAD,
+                            HoodServo.HOOD_MAX_RAD,
+                            HoodServo.HOOD_MIN_POS,
+                            HoodServo.HOOD_MAX_POS
+                    );
+                    hardware.hoodServo().setCurrentState(HoodServo.HoodState.TRACKING, hoodAngle);
                 }
             }
         }
@@ -107,6 +126,7 @@ public class Shooter {
                 hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE);
                 setTrackHood(false);
                 setTrackTurret(false);
+                confidence = 0;
             }
             case TRACKING -> {
                 hardware.hoodServo.setCurrentState(HoodServo.HoodState.TRACKING);

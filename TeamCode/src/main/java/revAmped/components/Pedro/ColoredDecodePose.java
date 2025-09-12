@@ -105,6 +105,14 @@ public class ColoredDecodePose implements FuturePose {
     public double heading() {
         return getPose().getHeading();
     }
+
+    public ColoredDecodePose offsetOppositeColor(Pose offset) {
+        if (blue == null || red == null) getPose();
+
+        if (color == Globals.AllianceColor.Red) blue = blue.plus(offset);
+        if (color == Globals.AllianceColor.Blue) red = red.plus(offset);
+        return this;
+    }
     
     @Override
     public boolean initialized() {
