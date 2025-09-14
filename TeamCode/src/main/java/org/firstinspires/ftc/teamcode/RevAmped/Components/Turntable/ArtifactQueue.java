@@ -45,7 +45,7 @@ public class ArtifactQueue {
     }
 
     public void intake(Color.ArtifactColor color) {
-        artifacts.add(new Artifact(artifacts.size() + 1).setColor(color));
+        artifacts.add(new Artifact(color, artifacts.size() + 1));
         if (currentPriority != CurrentPriority.INDEX) artifacts.sort(comparator());
     }
 
