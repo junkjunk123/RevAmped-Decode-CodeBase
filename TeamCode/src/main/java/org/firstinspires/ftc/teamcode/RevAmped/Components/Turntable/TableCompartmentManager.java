@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
+
 import java.util.List;
 import java.util.function.Consumer;
 import revAmped.components.Misc.Globals;

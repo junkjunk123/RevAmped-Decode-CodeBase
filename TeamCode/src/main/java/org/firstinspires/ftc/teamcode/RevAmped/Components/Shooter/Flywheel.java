@@ -30,6 +30,7 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
     public static double STALL_CURRENT = 9.2; //Amps
     public static double k_T = 0.0980665 * STALL_TORQUE / STALL_CURRENT;
     public static double MOMENT_OF_INERTIA;
+    public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
 
     @Override
     public void buildStatePowerMap() {

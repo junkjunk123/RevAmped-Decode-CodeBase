@@ -189,7 +189,7 @@ public class Shooter {
     }
 
     private double calcInitialLaunchVelocity(double turretAngleOffset) {
-        double velFlywheel = hardware.flywheel.getAngularVelocity() * Flywheel.RADIUS;
+        double velFlywheel = hardware.flywheel.getAngularVelocity() * Flywheel.RADIUS * Flywheel.LAUNCH_ETA;
         double velRobot = pinpoint.getVelocityVector().getMagnitude() * Math.cos(turretAngleOffset);
         return velRobot + velFlywheel;
     }

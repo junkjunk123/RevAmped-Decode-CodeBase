@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.RevAmped.Components.DecodeColor;
-
-public class IntakeColor extends DecodeColor<IntakeColor.Color> {
+public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Color {
     public static float minPurpleHue = 0f;
     public static float maxPurpleHue = 0f;
     public static float minGreenHue = 0f;
@@ -17,6 +15,16 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> {
     @Override
     public boolean testResponse() {
         return Math.abs(getHSVValues().getH() - 150) < 10;
+    }
+
+    @Override
+    public Color getPurple() {
+        return Color.PURPLE;
+    }
+
+    @Override
+    public Color getGreen() {
+        return Color.GREEN;
     }
 
     public enum Color implements DecodeColor.DetectionColor {

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components;
 
 import static revAmped.components.Misc.Globals.allianceColor;
 
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,22 +9,18 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TableServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTable;
-import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import revAmped.components.CommandScheduler.Scheduler;
-import revAmped.components.Drive.TeleOpDrivetrainHandler;
-import revAmped.components.Drive.TeleOpMecanumDrive;
 import revAmped.components.Hardware.HwDevice;
 import revAmped.components.Hardware.HwServo2;
 import revAmped.components.Misc.Globals;

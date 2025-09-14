@@ -1,13 +1,10 @@
 package revAmped.components.Misc;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActionExecutor;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 
-import java.util.HashMap;
 import java.util.List;
 
 import revAmped.components.Pedro.FollowerManager;

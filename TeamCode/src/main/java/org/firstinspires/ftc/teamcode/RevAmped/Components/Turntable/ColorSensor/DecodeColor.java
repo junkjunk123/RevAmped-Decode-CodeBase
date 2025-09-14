@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import revAmped.components.Hardware.HwColorSensor;
 
-public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor> extends HwColorSensor {
+public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor> extends HwColorSensor implements Color{
     public interface DetectionColor {
         float getMinHue();
         float getMaxHue();
@@ -21,7 +21,16 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
     @Override
     public abstract boolean testResponse();
 
-    public T getColor() {
+    public abstract T getPurple();
+    public abstract T getGreen();
+
+    protected ArtifactColor fromDetectionColor(T color) {
+        if (color == getGreen()) return ArtifactColor.GREEN;
+        if (color == getPurple()) return ArtifactColor.PURPLE;
+        return ArtifactColor.NONE;
+    }
+
+    public ArtifactColor getColor() {
         if (currentColor == null) {
             updateHSVValues();
             double hue = getHSVValues().getH();
@@ -29,11 +38,11 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
                 if (color != neutralColor) {
                     if (hue >= color.getMinHue() && hue <= color.getMaxHue()) {
                         currentColor = color;
-                        return currentColor;
+                        return fromDetectionColor(currentColor);
                     }
                 }
             }
         }
-        return currentColor;
+        return fromDetectionColor(currentColor);
     }
 }

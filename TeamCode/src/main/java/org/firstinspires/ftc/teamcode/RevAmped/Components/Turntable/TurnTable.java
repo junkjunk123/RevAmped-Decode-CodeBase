@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeColor.Color;
+
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor.Color;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableState;
