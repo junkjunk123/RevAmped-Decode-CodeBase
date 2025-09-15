@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import revAmped.components.Hardware.HwMotor2;
 
 public class IntakeMotor extends HwMotor2<IntakeMotor.IntakeState> {
-    protected IntakeMotor(HardwareMap hardwareMap, IntakeState motorState) throws IllegalArgumentException {
+    public IntakeMotor(HardwareMap hardwareMap, IntakeState motorState) throws IllegalArgumentException {
         super(hardwareMap, "intake", DcMotorSimple.Direction.FORWARD, motorState);
     }
 
@@ -29,7 +29,6 @@ public class IntakeMotor extends HwMotor2<IntakeMotor.IntakeState> {
 
     public enum IntakeState implements HwMotor2.MotorState{
         INTAKE(1.0f),
-        OUTTAKE(-1.0f),
         STOP(0.0f);
 
         public final float power;

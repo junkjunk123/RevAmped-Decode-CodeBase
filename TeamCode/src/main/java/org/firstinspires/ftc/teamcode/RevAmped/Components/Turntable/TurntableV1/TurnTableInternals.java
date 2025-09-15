@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
-
-import java.util.function.Consumer;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 
 import revAmped.components.CommandScheduler.Scheduler;
 

@@ -1,13 +1,16 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor.Color;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableCycleState;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableInternalState;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTableInternals.TurnTableState;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color.ArtifactColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableCycleState;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableInternalState;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableState;
 import java.util.Arrays;
 
 public class TurnTable {
@@ -116,10 +119,10 @@ public class TurnTable {
         compartments.setMotifMode(mode);
     }
 
-    public Color[] getBallColors() {
+    public ArtifactColor[] getBallColors() {
         return Arrays.stream(compartments.getCompartments())
                 .map(TableCompartmentManager.TableCompartment::getColor)
-                .toArray(Color[]::new);
+                .toArray(ArtifactColor[]::new);
     }
 
     public void prepareGreen() {

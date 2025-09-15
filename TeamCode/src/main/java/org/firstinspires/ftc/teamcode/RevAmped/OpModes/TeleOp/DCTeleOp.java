@@ -43,14 +43,6 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
             robot.shooter.setCurrentState(Shooter.ShooterState.REST);
         }
 
-        if (gamepad_2.left_bumper.isPress()) {
-            if (robot.intakeMotor().getCurrentState() == IntakeMotor.IntakeState.INTAKE) {
-                robot.intakeMotor().setCurrentState(IntakeMotor.IntakeState.OUTTAKE);
-            } else {
-                robot.intakeMotor().setCurrentState(IntakeMotor.IntakeState.INTAKE);
-            }
-        }
-
         if (gamepad_2.right_bumper.isPress()) {
             robot.intakeMotor().stop();
         }

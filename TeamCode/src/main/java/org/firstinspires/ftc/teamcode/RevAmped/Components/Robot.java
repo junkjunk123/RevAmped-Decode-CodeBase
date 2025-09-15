@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TableServo;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurnTable;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
 
 import java.util.EnumMap;
@@ -33,7 +33,7 @@ public class Robot {
     private final Scheduler scheduler;
     public TurnTable turnTable;
     public Shooter shooter;
-    public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = new EnumMap<>(HwDevice.DeviceType.class);
+    public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
 
     public enum OpModeType implements revAmped.components.Misc.OpModeType {
         TELEOP,
@@ -182,7 +182,7 @@ public class Robot {
         return turnTable.hardware.popper();
     }
 
-    public EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {
+    public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {
         EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> map = new EnumMap<>(HwDevice.DeviceType.class);
         map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(IntakeColor.class)));
         map.put(HwDevice.DeviceType.MOTOR, new HashSet<>(List.of(Flywheel.class, TurretMotor.class, IntakeMotor.class)));

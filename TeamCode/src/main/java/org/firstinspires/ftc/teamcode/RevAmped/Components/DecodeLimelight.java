@@ -101,7 +101,7 @@ public class DecodeLimelight implements HwDevice {
                     double z = target.getCameraPoseTargetSpace().getPosition().z; // forward/back from tag
 
                     detectionResult = new Vector();
-                    detectionResult.setOrthogonalComponents(x, z);
+                    detectionResult.setOrthogonalComponents(z, x);
                     return;
                 }
 

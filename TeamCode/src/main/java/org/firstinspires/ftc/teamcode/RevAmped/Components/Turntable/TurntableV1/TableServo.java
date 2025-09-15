@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

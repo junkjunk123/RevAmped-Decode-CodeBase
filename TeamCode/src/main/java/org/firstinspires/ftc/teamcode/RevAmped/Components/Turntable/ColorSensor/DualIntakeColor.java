@@ -1,9 +1,6 @@
-package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
+package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 
 public class DualIntakeColor implements Color {
     private boolean rightColorRead = true;
