@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 
 import java.util.List;
@@ -13,38 +14,38 @@ public class TableCompartmentManager {
     }
 
     public static final class TableCompartment {
-        private IntakeColor.Color color;
+        private Color.ArtifactColor color;
 
-        public TableCompartment(IntakeColor.Color color) {
+        public TableCompartment(Color.ArtifactColor color) {
             this.color = color;
         }
 
-        public IntakeColor.Color getColor() {
+        public Color.ArtifactColor getColor() {
             return color;
         }
 
-        public void setColor(IntakeColor.Color color) {
+        public void setColor(Color.ArtifactColor color) {
             this.color = color;
         }
 
         public void releaseBall() {
-            color = IntakeColor.Color.NEUTRAL;
+            color = Color.ArtifactColor.NONE;
         }
     }
 
     private int currentIntakeIndex = 0;
     private int currentPopIndex = 0;
-    private IntakeColor.Color lastPoppedColor = IntakeColor.Color.NEUTRAL;
-    private IntakeColor.Color prevLastPoppedColor = IntakeColor.Color.NEUTRAL;
+    private Color.ArtifactColor lastPoppedColor = Color.ArtifactColor.NONE;
+    private Color.ArtifactColor prevLastPoppedColor = Color.ArtifactColor.NONE;
     private boolean motifMode = false;
     private final Consumer<Integer> switchIntakeState;
     private final Consumer<Integer> switchPopState;
     private final Runnable toggleCycleState;
 
     private final TableCompartment[] compartments = {
-        new TableCompartment(IntakeColor.Color.NEUTRAL),
-        new TableCompartment(IntakeColor.Color.NEUTRAL),
-        new TableCompartment(IntakeColor.Color.NEUTRAL)
+        new TableCompartment(Color.ArtifactColor.NONE),
+        new TableCompartment(Color.ArtifactColor.NONE),
+        new TableCompartment(Color.ArtifactColor.NONE)
     };
 
     public TableCompartment getCompartment(int index) {
@@ -56,24 +57,24 @@ public class TableCompartmentManager {
 
     public int[] getGreenBallIndices() {
         return java.util.stream.IntStream.range(0, compartments.length)
-            .filter(i -> compartments[i].getColor() == IntakeColor.Color.GREEN)
+            .filter(i -> compartments[i].getColor() == Color.ArtifactColor.GREEN)
             .toArray();
     }
 
     public int[] getPurpleBallIndices() {
         return java.util.stream.IntStream.range(0, compartments.length)
-            .filter(i -> compartments[i].getColor() == IntakeColor.Color.PURPLE)
+            .filter(i -> compartments[i].getColor() == Color.ArtifactColor.PURPLE)
             .toArray();
     }
 
     public int[] getEmptyIndices() {
         return java.util.stream.IntStream.range(0, compartments.length)
-                .filter(i -> compartments[i].getColor() == IntakeColor.Color.NEUTRAL)
+                .filter(i -> compartments[i].getColor() == Color.ArtifactColor.NONE)
                 .toArray();
     }
 
     public void pop() {
-        if (compartments[currentPopIndex].getColor() != IntakeColor.Color.NEUTRAL) {
+        if (compartments[currentPopIndex].getColor() != Color.ArtifactColor.NONE) {
             prevLastPoppedColor = lastPoppedColor;
             lastPoppedColor = compartments[currentPopIndex].getColor();
             compartments[currentPopIndex].releaseBall();
@@ -88,9 +89,9 @@ public class TableCompartmentManager {
         }
     }
 
-    public void intake(IntakeColor.Color color) {
-        if (color == IntakeColor.Color.NEUTRAL) return;
-        if (compartments[currentIntakeIndex].getColor() == IntakeColor.Color.NEUTRAL) {
+    public void intake(Color.ArtifactColor color) {
+        if (color == Color.ArtifactColor.NONE) return;
+        if (compartments[currentIntakeIndex].getColor() == Color.ArtifactColor.NONE) {
             compartments[currentIntakeIndex].setColor(color);
 
             int nextIntakeIndex = findNextIntakeIndex();
@@ -105,7 +106,7 @@ public class TableCompartmentManager {
     public int findNextIntakeIndex() {
         for (int i = 0; i <= compartments.length; i++) {
             int nextIndex = (currentIntakeIndex + i) % compartments.length;
-            if (compartments[nextIndex].getColor() == IntakeColor.Color.NEUTRAL) {
+            if (compartments[nextIndex].getColor() == Color.ArtifactColor.NONE) {
                 return nextIndex;
             }
         }
@@ -116,7 +117,7 @@ public class TableCompartmentManager {
     public int findNextPopIndex() {
         for (int i = 0; i <= compartments.length; i++) {
             int nextIndex = (currentPopIndex + i) % compartments.length;
-            if (compartments[nextIndex].getColor() != IntakeColor.Color.NEUTRAL) {
+            if (compartments[nextIndex].getColor() != Color.ArtifactColor.NONE) {
                 return nextIndex;
             }
         }
@@ -146,7 +147,7 @@ public class TableCompartmentManager {
 
     private int nextPurple() {
         for (int i = 0; i < compartments.length; i++) {
-            if (compartments[i].getColor() == IntakeColor.Color.PURPLE) {
+            if (compartments[i].getColor() == Color.ArtifactColor.PURPLE) {
                 return i;
             }
         }
@@ -156,7 +157,7 @@ public class TableCompartmentManager {
 
     private int nextGreen() {
         for (int i = 0; i < compartments.length; i++) {
-            if (compartments[i].getColor() == IntakeColor.Color.GREEN) {
+            if (compartments[i].getColor() == Color.ArtifactColor.GREEN) {
                 return i;
             }
         }
@@ -164,14 +165,14 @@ public class TableCompartmentManager {
         return currentPopIndex; // No green ball found
     }
 
-    public IntakeColor.Color getNextPopColor() {
-        List<IntakeColor.Color> targetPopColors = Globals.randomizationState.getColors();
+    public Color.ArtifactColor getNextPopColor() {
+        List<Color.ArtifactColor> targetPopColors = Globals.randomizationState.getColors();
 
-        if (lastPoppedColor == IntakeColor.Color.NEUTRAL) {
+        if (lastPoppedColor == Color.ArtifactColor.NONE) {
             return targetPopColors.get(0);
         }
 
-        if (prevLastPoppedColor == IntakeColor.Color.NEUTRAL) {
+        if (prevLastPoppedColor == Color.ArtifactColor.NONE) {
             return targetPopColors.get((targetPopColors.indexOf(lastPoppedColor) + 1) % targetPopColors.size());
         }
 
@@ -199,15 +200,15 @@ public class TableCompartmentManager {
     }
 
     public int getNextMotifPopIndex() {
-        IntakeColor.Color targetColor = getNextPopColor();
+        Color.ArtifactColor targetColor = getNextPopColor();
 
-        if (targetColor == IntakeColor.Color.GREEN) return nextGreen();
+        if (targetColor == Color.ArtifactColor.GREEN) return nextGreen();
         else return nextPurple();
     }
 
     public void resetPopHistory() {
-        lastPoppedColor = IntakeColor.Color.NEUTRAL;
-        prevLastPoppedColor = IntakeColor.Color.NEUTRAL;
+        lastPoppedColor = Color.ArtifactColor.NONE;
+        prevLastPoppedColor = Color.ArtifactColor.NONE;
     }
 
     public void setMotifMode(boolean motifMode) {

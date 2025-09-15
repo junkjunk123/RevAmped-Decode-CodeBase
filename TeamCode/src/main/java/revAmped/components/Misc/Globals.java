@@ -1,6 +1,7 @@
 package revAmped.components.Misc;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActionExecutor;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
@@ -65,14 +66,14 @@ public final class Globals {
     public static FollowerManager followerManager;
 
     public enum RandomizationState {
-        PPG(23, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN)),
-        PGP(22, List.of(IntakeColor.Color.PURPLE, IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE)),
-        GPP(21, List.of(IntakeColor.Color.GREEN, IntakeColor.Color.PURPLE, IntakeColor.Color.PURPLE));
+        PPG(23, List.of(Color.ArtifactColor.PURPLE, Color.ArtifactColor.PURPLE, Color.ArtifactColor.GREEN)),
+        PGP(22, List.of(Color.ArtifactColor.PURPLE, Color.ArtifactColor.GREEN, Color.ArtifactColor.PURPLE)),
+        GPP(21, List.of(Color.ArtifactColor.GREEN, Color.ArtifactColor.PURPLE, Color.ArtifactColor.PURPLE));
 
         final int ID;
-        final List<IntakeColor.Color> colors;
+        final List<Color.ArtifactColor> colors;
 
-        RandomizationState(int tagID, List<IntakeColor.Color> colors) {
+        RandomizationState(int tagID, List<Color.ArtifactColor> colors) {
             ID = tagID;
             this.colors = colors;
         }
@@ -81,7 +82,7 @@ public final class Globals {
             return ID;
         }
 
-        public List<IntakeColor.Color> getColors() {
+        public List<Color.ArtifactColor> getColors() {
             return colors;
         }
     }
