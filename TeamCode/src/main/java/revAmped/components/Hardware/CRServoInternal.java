@@ -22,7 +22,7 @@ public abstract class CRServoInternal<T extends Enum<T> & CRServoInternal.ServoS
         setPower(power);
     }
 
-    protected interface ServoState {}
+    public interface ServoState {}
 
     @FunctionalInterface
     protected interface ServoPower {

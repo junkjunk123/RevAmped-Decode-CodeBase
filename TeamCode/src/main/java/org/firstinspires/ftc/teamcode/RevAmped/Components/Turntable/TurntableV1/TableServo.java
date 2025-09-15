@@ -4,11 +4,13 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.TableState;
+
 import revAmped.components.Hardware.CRServoInternal;
 import revAmped.components.Hardware.HwCRServo2;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
-public class TableServo extends HwCRServo2 <TableServo.TableState> {
+public class TableServo extends HwCRServo2 <TableState> {
     private final PIDFController controller = new PIDFController(new PIDFCoefficients(0f,0f,0f,0f));
     public static int BALL1 = 0;
     public static int BALL2 = 0;
@@ -29,31 +31,14 @@ public class TableServo extends HwCRServo2 <TableServo.TableState> {
         statePowerMap.put(TableState.BALL3, () -> (float) controller.runWithError(getError(BALL3)));
     }
 
-    public enum TableState implements CRServoInternal.ServoState {
-        REST(0),
-        BALL1(0),
-        BALL2(0),
-        BALL3(0);
-
-        final int position;
-
-        TableState(int position) {
-            this.position = position;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-    }
-
     public TableServo(HardwareMap hardwareMap, TableState state) throws IllegalArgumentException{
-        super(hardwareMap, "", TABLE_DIRECTION, state , null,null);
+        super(hardwareMap, "table", TABLE_DIRECTION, state , null,null);
     }
 
     @Override
     public void setCurrentState(TableState servoState) {
         super.setCurrentState(servoState);
         controller.reset();
-        controller.setTargetPosition(servoState.position);
+        controller.setTargetPosition(servoState.getPosition());
     }
 }

@@ -4,10 +4,12 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.FlywheelState;
+
 import revAmped.components.Hardware.TwoMotorMechanism;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
-public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
+public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     private final PIDFController controller = new PIDFController(new PIDFCoefficients(0f,0f,0f,0f));
     private Double velocity = null;
     private Integer prevPos = null;
@@ -40,12 +42,6 @@ public class Flywheel extends TwoMotorMechanism<Flywheel.FlywheelState> {
             targetVelocity = FLYWHEEL_MAX_VELOCITY;
             return (float) controller.runWithError(targetVelocity - motor.getVelocity());
         });
-    }
-
-    public enum FlywheelState implements MotorState {
-        RUNNING,
-        STOPPED,
-        TRACKING;
     }
 
     public void run(double targetVelocity) {

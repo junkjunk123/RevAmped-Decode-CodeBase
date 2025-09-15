@@ -24,7 +24,7 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
         setPower(power);
     }
 
-    protected interface MotorState { }
+    public interface MotorState { }
 
     @FunctionalInterface
     protected interface MotorPower {

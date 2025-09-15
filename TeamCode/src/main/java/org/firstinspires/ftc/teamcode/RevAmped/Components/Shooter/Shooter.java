@@ -4,6 +4,8 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.Hardware.HwServo2;
@@ -49,8 +51,8 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
-        TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? TurretMotor.TurretState.HOLD : TurretMotor.TurretState.IDLE, null);
-        Flywheel flywheel = new Flywheel(hardwareMap, Flywheel.FlywheelState.STOPPED);
+        TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? Types.TurretState.HOLD : Types.TurretState.IDLE, null);
+        Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
         hardware = new HardwareComponents(hoodServo, turretServo, flywheel);
     }
 
@@ -108,7 +110,7 @@ public class Shooter {
                             HoodServo.HOOD_MIN_POS,
                             HoodServo.HOOD_MAX_POS
                     );
-                    hardware.hoodServo().setCurrentState(HoodServo.HoodState.TRACKING, hoodAngle);
+                    hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING, hoodAngle);
                 }
             }
         }
@@ -121,17 +123,17 @@ public class Shooter {
     private void initAction() {
         switch (currentState) {
             case REST -> {
-                hardware.flywheel().setCurrentState(Flywheel.FlywheelState.STOPPED);
-                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST);
-                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE);
+                hardware.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
+                hardware.hoodServo().setCurrentState(Types.HoodState.REST);
+                hardware.turretMotor().setCurrentState(Types.TurretState.IDLE);
                 setTrackHood(false);
                 setTrackTurret(false);
                 confidence = 0;
             }
             case TRACKING -> {
-                hardware.hoodServo.setCurrentState(HoodServo.HoodState.TRACKING);
-                hardware.turretMotor.setCurrentState(TurretMotor.TurretState.TRACKING);
-                hardware.flywheel.setCurrentState(Flywheel.FlywheelState.TRACKING);
+                hardware.hoodServo.setCurrentState(Types.HoodState.TRACKING);
+                hardware.turretMotor.setCurrentState(Types.TurretState.TRACKING);
+                hardware.flywheel.setCurrentState(Types.FlywheelState.TRACKING);
                 setTrackHood(true);
                 setTrackTurret(true);
             }
@@ -166,23 +168,23 @@ public class Shooter {
     public void shootAutoSet(int set) {
         switch (set) {
             case 0 -> {
-                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_PRELOADS);
-                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_PRELOADS);
+                hardware.hoodServo().setCurrentState(Types.HoodState.REST, HoodServo.AUTO_PRELOADS);
+                hardware.turretMotor().setCurrentState(Types.TurretState.IDLE, TurretMotor.AUTO_PRELOADS);
                 hardware.flywheel().run(Flywheel.AUTO_PRELOADS);
             }
             case 1 -> {
-                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_SET_1);
-                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_SET_1);
+                hardware.hoodServo().setCurrentState(Types.HoodState.REST, HoodServo.AUTO_SET_1);
+                hardware.turretMotor().setCurrentState(Types.TurretState.IDLE, TurretMotor.AUTO_SET_1);
                 hardware.flywheel().run(Flywheel.AUTO_SET_1);
             }
             case 2 -> {
-                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_SET_2);
-                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_SET_2);
+                hardware.hoodServo().setCurrentState(Types.HoodState.REST, HoodServo.AUTO_SET_2);
+                hardware.turretMotor().setCurrentState(Types.TurretState.IDLE, TurretMotor.AUTO_SET_2);
                 hardware.flywheel().run(Flywheel.AUTO_SET_2);
             }
             case 3 -> {
-                hardware.hoodServo().setCurrentState(HoodServo.HoodState.REST, HoodServo.AUTO_SET_3);
-                hardware.turretMotor().setCurrentState(TurretMotor.TurretState.IDLE, TurretMotor.AUTO_SET_3);
+                hardware.hoodServo().setCurrentState(Types.HoodState.REST, HoodServo.AUTO_SET_3);
+                hardware.turretMotor().setCurrentState(Types.TurretState.IDLE, TurretMotor.AUTO_SET_3);
                 hardware.flywheel().run(Flywheel.AUTO_SET_3);
             }
         }

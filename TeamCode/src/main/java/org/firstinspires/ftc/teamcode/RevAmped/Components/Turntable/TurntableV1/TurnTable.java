@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableState;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+
 import java.util.Arrays;
 
 public class TurnTable {
@@ -32,10 +34,10 @@ public class TurnTable {
 
     public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap){
         this.scheduler = scheduler;
-        TableServo turntable = new TableServo(hardwareMap, setPositions ? TableServo.TableState.BALL1 : TableServo.TableState.REST);
+        TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST);
         Popper popper = new Popper(hardwareMap,setPositions);
         IntakeColor intakeColor = new IntakeColor(hardwareMap,Color.NEUTRAL);
-        IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, IntakeMotor.IntakeState.STOP);
+        IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
         hardware = new HardwareComponents(turntable,popper, intakeMotor, intakeColor);
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
         compartments = new TableCompartmentManager(
@@ -99,16 +101,16 @@ public class TurnTable {
 
     public void pop() {
         setCycleState(TurnTableCycleState.POP);
-        hardware.popper().setCurrentState(Popper.PopperState.POP);
+        hardware.popper().setCurrentState(Types.PopperState.POP);
         scheduler.add(new Delay(Popper.POP_TIME_MILLIS, () -> {
-            hardware.popper().setCurrentState(Popper.PopperState.NEUTRAL);
+            hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
             compartments.pop();
         }));
     }
 
     public void intake() {
         setCycleState(TurnTableCycleState.INTAKE);
-        hardware.intakeMotor().setCurrentState(IntakeMotor.IntakeState.INTAKE);
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
     }
 
     public void toggleMotifMode() {

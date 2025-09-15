@@ -20,7 +20,7 @@ import revAmped.components.MathUtil.RevAmpedTimer;
 import revAmped.util.Range;
 
 public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implements HwDevice, HwDevice.Servo {
-    protected interface ServoState {
+    public interface ServoState {
         float getPosition();
     }
 

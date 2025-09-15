@@ -4,12 +4,14 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.TurretState;
+
 import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Hardware.Turret;
 import revAmped.components.Misc.Globals;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
-public class TurretMotor extends Turret<TurretMotor.TurretState> {
+public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
         super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState, detector);
     }
@@ -42,22 +44,6 @@ public class TurretMotor extends Turret<TurretMotor.TurretState> {
     @Override
     public TurretState getRest() {
         return TurretState.IDLE;
-    }
-
-    public enum TurretState implements MotorState {
-        IDLE (0),
-        HOLD(0),
-        TRACKING (0);
-
-        final int pos;
-
-        TurretState(int pos) {
-            this.pos = pos;
-        }
-
-        public int getPos() {
-            return pos;
-        }
     }
 
     @Override
