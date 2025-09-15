@@ -12,7 +12,7 @@ public final class TurnTableInternals {
     }
 
     public interface TurnTableStateInterface {
-        void initialize(TurnTable.HardwareComponents hardwareComponents, Scheduler scheduler);
+        void initialize(Types.QueuerHardwareComponents hardwareComponents, Scheduler scheduler);
     }
 
     public enum TurnTableCycleState {
@@ -33,10 +33,10 @@ public final class TurnTableInternals {
     public static class TurnTableState {
         private TurnTableCycleState cycleState;
         private TurnTableInternalState internalState;
-        private final TurnTable.HardwareComponents hardware;
+        private final Types.QueuerHardwareComponents hardware;
         private final Scheduler scheduler;
 
-        public TurnTableState(TurnTableCycleState cycleState, TurnTableInternalState internalState, TurnTable.HardwareComponents hardware, Scheduler scheduler) {
+        public TurnTableState(TurnTableCycleState cycleState, TurnTableInternalState internalState, Types.QueuerHardwareComponents hardware, Scheduler scheduler) {
             this.cycleState = cycleState;
             this.internalState = internalState;
             this.hardware = hardware;

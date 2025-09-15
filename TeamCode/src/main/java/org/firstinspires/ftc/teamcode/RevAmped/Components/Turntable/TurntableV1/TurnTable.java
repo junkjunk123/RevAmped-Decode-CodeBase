@@ -9,7 +9,6 @@ import revAmped.components.Hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DualIntakeColor;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
@@ -17,6 +16,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableState;
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.QueuerHardwareComponents;
 
 import java.util.Arrays;
 
@@ -24,16 +24,7 @@ public class TurnTable implements ArtifactQueuer {
     private final Scheduler scheduler;
     public TableCompartmentManager compartments;
 
-    public record HardwareComponents(HwCRServo2<Types.TableState> turntable, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, DecodeColorSensor intakeColor) {
-        public void update() {
-            intakeColor.update();
-            intakeMotor.update();
-            turntable.update();
-            popper.update();
-        }
-    }
-
-    public final HardwareComponents hardware;
+    public final QueuerHardwareComponents hardware;
 
     private final TurnTableState currentState;
 
@@ -43,7 +34,7 @@ public class TurnTable implements ArtifactQueuer {
         Popper popper = new Popper(hardwareMap,setPositions);
         DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
-        hardware = new HardwareComponents(turntable,popper, intakeMotor, intakeColor);
+        hardware = new QueuerHardwareComponents(turntable,popper, intakeMotor, intakeColor);
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
         compartments = new TableCompartmentManager(
                 ball -> {
@@ -53,7 +44,7 @@ public class TurnTable implements ArtifactQueuer {
                 ball -> {
                     setCycleState(TurnTableCycleState.POP);
                     setCurrentState(TurnTableInternalState.values()[ball]);
-                    hardware.intakeMotor.stop();
+                    hardware.intakeMotor().stop();
                 },
                 () -> {
                     setCycleState(currentState.getCycleState().toggle());
@@ -101,7 +92,7 @@ public class TurnTable implements ArtifactQueuer {
     public void update() {
         hardware.update();
 
-        if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor.getColor());
+        if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
     }
 
     @Override
@@ -125,6 +116,11 @@ public class TurnTable implements ArtifactQueuer {
 
     public void toggleMotifMode() {
         compartments.setMotifMode(!compartments.isMotifMode());
+    }
+
+    @Override
+    public QueuerHardwareComponents hardware() {
+        return hardware;
     }
 
     public void setMotifMode(boolean mode) {
@@ -151,5 +147,26 @@ public class TurnTable implements ArtifactQueuer {
 
     public boolean full() {
         return compartments.getEmptyIndices().length == 0;
+    }
+
+    @Override
+    public int getNumberOfBalls() {
+        return 3 - compartments.getEmptyIndices().length;
+    }
+
+    public int[] getGreenBallIndices() {
+        return compartments.getGreenBallIndices();
+    }
+
+    public int[] getPurpleBallIndices() {
+        return compartments.getPurpleBallIndices();
+    }
+
+    public int[] getEmptyIndices() {
+        return compartments.getEmptyIndices();
+    }
+
+    public ArtifactColor getNextPopColor() {
+        return compartments.getNextPopColor();
     }
 }

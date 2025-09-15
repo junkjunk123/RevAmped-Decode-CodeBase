@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter;
 
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.localization.Localizer;
+
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import revAmped.components.MathUtil.Vector3D;
 import revAmped.components.Misc.Globals;
@@ -21,4 +24,9 @@ public interface ShootingMechanism<T> {
     void setCurrentState(T state);
     void setCurrentState(T state, boolean init);
     T getCurrentState();
+
+    void shootAutoSet(int set);
+    Localizer pinpoint();
+
+    Types.ShooterHardwareComponents hardware();
 }

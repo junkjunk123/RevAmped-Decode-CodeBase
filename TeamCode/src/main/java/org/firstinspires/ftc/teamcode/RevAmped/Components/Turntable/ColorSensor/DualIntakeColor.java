@@ -21,10 +21,20 @@ public class DualIntakeColor implements DecodeColorSensor {
     }
 
     @Override
+    public String getId() {
+        return leftColor.getId() + ", " + rightColor.getId();
+    }
+
+    @Override
     public void update() {
         leftColor.update();
         rightColor.update();
         rightColorRead=!rightColorRead;
+    }
+
+    @Override
+    public DeviceType getDeviceType() {
+        return DeviceType.COLOR_SENSOR;
     }
 }
 

@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.Paths.LM0AutoPaths;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.ShooterState;
 
 import revAmped.components.CommandScheduler.Commands.Command;
 import revAmped.components.CommandScheduler.Commands.Delay;
@@ -64,7 +66,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         popAll(0),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
-                                () -> robot.shooter.setCurrentState(Shooter.ShooterState.REST)
+                                () -> robot.shooter.setCurrentState(Types.ShooterState.REST)
                         )
                 ),
                 //INTAKE_FIRST_SET
@@ -110,7 +112,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         ).setMaxTimeToRun(1000),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
-                                () -> robot.shooter.setCurrentState(Shooter.ShooterState.REST)
+                                () -> robot.shooter.setCurrentState(ShooterState.REST)
                         )
                 ),
                 //INTAKE_SECOND_SET
@@ -139,7 +141,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         ).setMaxTimeToRun(3000),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
-                                () -> robot.shooter.setCurrentState(Shooter.ShooterState.REST)
+                                () -> robot.shooter.setCurrentState(ShooterState.REST)
                         )
                 ),
                 //INTAKE_THIRD_SET
@@ -168,7 +170,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         ).setMaxTimeToRun(3000),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
-                                () -> robot.shooter.setCurrentState(Shooter.ShooterState.REST)
+                                () -> robot.shooter.setCurrentState(ShooterState.REST)
                         )
                 ),
                 new DelayChain(

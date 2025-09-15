@@ -5,6 +5,8 @@ import com.pedropathing.localization.Localizer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.ShooterState;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.ShooterHardwareComponents;
 
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
@@ -15,25 +17,12 @@ import revAmped.components.MathUtil.Vector2D;
 import revAmped.components.MathUtil.Vector3D;
 import revAmped.components.Misc.Globals;
 
-public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
+public class Shooter implements ShootingMechanism<ShooterState> {
     public final Scheduler scheduler;
     private boolean trackHood = false;
     private boolean trackTurret = false;
 
-    public record HardwareComponents(HwServo2<Types.HoodState> hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
-        public void update() {
-            hoodServo.update();
-            turretMotor.update();
-            flywheel.update();
-        }
-    }
-
-    public final HardwareComponents hardware;
-
-    public enum ShooterState {
-        REST,
-        TRACKING
-    }
+    public final ShooterHardwareComponents hardware;
 
     private ShooterState currentState;
 
@@ -53,7 +42,7 @@ public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
         TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? Types.TurretState.HOLD : Types.TurretState.IDLE, null);
         Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
-        hardware = new HardwareComponents(hoodServo, turretServo, flywheel);
+        hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
     }
 
     public Localizer pinpoint() {
@@ -63,6 +52,11 @@ public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
         }
 
         return pinpoint;
+    }
+
+    @Override
+    public ShooterHardwareComponents hardware() {
+        return hardware;
     }
 
     public void update() {
@@ -80,7 +74,7 @@ public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
                 deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
                 hardware.turretMotor().finetuneAngle(deltaAngle);
             } else {
-                deltaAngle = hardware.turretMotor.prevFineTuneAngle;
+                deltaAngle = hardware.turretMotor().prevFineTuneAngle;
             }
 
             if (trackHood) {
@@ -131,9 +125,9 @@ public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
                 confidence = 0;
             }
             case TRACKING -> {
-                hardware.hoodServo.setCurrentState(Types.HoodState.TRACKING);
-                hardware.turretMotor.setCurrentState(Types.TurretState.TRACKING);
-                hardware.flywheel.setCurrentState(Types.FlywheelState.TRACKING);
+                hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING);
+                hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
+                hardware.flywheel().setCurrentState(Types.FlywheelState.TRACKING);
                 setTrackHood(true);
                 setTrackTurret(true);
             }
@@ -196,7 +190,7 @@ public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
     }
 
     private double calcInitialLaunchVelocity(double turretAngleOffset) {
-        double velFlywheel = hardware.flywheel.getAngularVelocity() * Flywheel.RADIUS * Flywheel.LAUNCH_ETA;
+        double velFlywheel = hardware.flywheel().getAngularVelocity() * Flywheel.RADIUS * Flywheel.LAUNCH_ETA;
         double velRobot = pinpoint.getVelocityVector().getMagnitude() * Math.cos(turretAngleOffset);
         return velRobot + velFlywheel;
     }

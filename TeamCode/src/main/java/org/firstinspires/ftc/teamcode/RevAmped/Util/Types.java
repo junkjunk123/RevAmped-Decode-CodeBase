@@ -2,9 +2,13 @@ package org.firstinspires.ftc.teamcode.RevAmped.Util;
 
 import static org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo.HOOD_REST;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 
 import revAmped.components.Hardware.CRServoInternal;
+import revAmped.components.Hardware.HwCRServo2;
 import revAmped.components.Hardware.HwMotor2;
 import revAmped.components.Hardware.HwServo2;
 
@@ -130,6 +134,28 @@ public interface Types {
         @Override
         public float getPosition() {
             return pos;
+        }
+    }
+
+    enum ShooterState {
+        REST,
+        TRACKING
+    }
+
+    record ShooterHardwareComponents(HwServo2<Types.HoodState> hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
+        public void update() {
+            hoodServo.update();
+            turretMotor.update();
+            flywheel.update();
+        }
+    }
+
+    record QueuerHardwareComponents(HwCRServo2<TableState> turntable, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, DecodeColorSensor intakeColor) {
+        public void update() {
+            intakeColor.update();
+            intakeMotor.update();
+            turntable.update();
+            popper.update();
         }
     }
 }

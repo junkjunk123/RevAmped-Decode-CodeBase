@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
@@ -40,7 +41,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.b.isPress()) {
             robot.turnTable.intake();
-            robot.shooter.setCurrentState(Shooter.ShooterState.REST);
+            robot.shooter.setCurrentState(Types.ShooterState.REST);
         }
 
         if (gamepad_2.right_bumper.isPress()) {
@@ -49,7 +50,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.y.isPress()) {
             robot.turnTable.pop();
-            robot.shooter.setCurrentState(Shooter.ShooterState.TRACKING);
+            robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
         }
 
         if (gamepad_1.b.isPress()) {

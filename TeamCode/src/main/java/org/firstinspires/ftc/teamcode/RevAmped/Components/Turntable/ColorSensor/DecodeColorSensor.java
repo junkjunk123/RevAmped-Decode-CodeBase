@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor;
 
-public interface DecodeColorSensor {
+import revAmped.components.Hardware.HwDevice;
+
+public interface DecodeColorSensor extends HwDevice {
     enum ArtifactColor {
         PURPLE,
         GREEN,

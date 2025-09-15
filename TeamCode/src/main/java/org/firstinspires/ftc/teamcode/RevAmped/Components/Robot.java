@@ -8,20 +8,26 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.ShootingMechanism;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ArtifactQueuer;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutonomous;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 
 import revAmped.components.CommandScheduler.Scheduler;
+import revAmped.components.Hardware.HwCRServo2;
 import revAmped.components.Hardware.HwDevice;
+import revAmped.components.Hardware.HwMotor2;
 import revAmped.components.Hardware.HwServo2;
 import revAmped.components.Misc.Globals;
 import revAmped.components.Misc.Globals.AllianceColor;
@@ -31,8 +37,8 @@ public class Robot {
     public static Robot INSTANCE;
     private List<LynxModule> allHubs;
     private final Scheduler scheduler;
-    public TurnTable turnTable;
-    public Shooter shooter;
+    public ArtifactQueuer turnTable;
+    public ShootingMechanism<Types.ShooterState> shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
 
     public enum OpModeType implements revAmped.components.Misc.OpModeType {
@@ -92,21 +98,21 @@ public class Robot {
         shooter = new Shooter(hardwareMap, setPositions, scheduler);
         allDevices.put(HwDevice.DeviceType.MOTOR, new HashSet<>(
                 List.of(
-                        turnTable.hardware.intakeMotor(),
-                        shooter.hardware.turretMotor(),
-                        shooter.hardware.flywheel()
+                        turnTable.hardware().intakeMotor(),
+                        shooter.hardware().turretMotor(),
+                        shooter.hardware().flywheel()
                 )
         ));
         allDevices.put(HwDevice.DeviceType.SERVO, new HashSet<>(
                 List.of(
-                        turnTable.hardware.turntable(),
-                        turnTable.hardware.popper(),
-                        shooter.hardware.hoodServo()
+                        turnTable.hardware().turntable(),
+                        turnTable.hardware().popper(),
+                        shooter.hardware().hoodServo()
                 )
         ));
         allDevices.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(
                 List.of(
-                        turnTable.hardware.intakeColor()
+                        turnTable.hardware().intakeColor()
                 )
         ));
     }
@@ -154,32 +160,32 @@ public class Robot {
         }
     }
 
-    public IntakeMotor intakeMotor() {
-        return turnTable.hardware.intakeMotor();
+    public HwMotor2<Types.IntakeState> intakeMotor() {
+        return turnTable.hardware().intakeMotor();
     }
 
-    public HoodServo hoodServo() {
-        return shooter.hardware.hoodServo();
+    public HwServo2<Types.HoodState> hoodServo() {
+        return shooter.hardware().hoodServo();
     }
 
     public TurretMotor turretMotor() {
-        return shooter.hardware.turretMotor();
+        return shooter.hardware().turretMotor();
     }
 
     public Flywheel flywheel() {
-        return shooter.hardware.flywheel();
+        return shooter.hardware().flywheel();
     }
 
-    public IntakeColor intakeColor() {
-        return turnTable.hardware.intakeColor();
+    public DecodeColorSensor intakeColor() {
+        return turnTable.hardware().intakeColor();
     }
 
-    public TableServo tableServo() {
-        return turnTable.hardware.turntable();
+    public HwCRServo2<Types.TableState> tableServo() {
+        return turnTable.hardware().turntable();
     }
 
-    public Popper popper() {
-        return turnTable.hardware.popper();
+    public HwServo2<Types.PopperState> popper() {
+        return turnTable.hardware().popper();
     }
 
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {

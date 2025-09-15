@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 public interface ArtifactQueuer {
     void preparePurple();
@@ -14,4 +15,15 @@ public interface ArtifactQueuer {
     default void toggleMotifMode() {
         setMotifMode(!isMotifMode());
     }
+
+    Types.QueuerHardwareComponents hardware();
+
+    boolean canPop();
+    boolean full();
+    int getNumberOfBalls();
+
+    int[] getGreenBallIndices();
+    int[] getPurpleBallIndices();
+    int[] getEmptyIndices();
+    DecodeColorSensor.ArtifactColor getNextPopColor();
 }
