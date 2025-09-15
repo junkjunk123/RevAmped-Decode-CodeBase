@@ -86,4 +86,46 @@ public interface Types {
             return pos;
         }
     }
+
+    enum GateState implements HwServo2.ServoState {
+        OPEN(0),
+        CLOSED(0);
+
+        final float pos;
+
+        GateState(float pos){this.pos=pos;}
+
+        @Override
+        public float getPosition() {
+            return pos;
+        }
+    }
+
+    enum HorizontalMGNState implements HwServo2.ServoState{
+        LOADED(0),
+        OUT(0);
+
+        final float pos;
+
+        HorizontalMGNState(float pos){this.pos = pos;}
+
+        @Override
+        public float getPosition() {
+            return pos;
+        }
+    }
+
+    enum VerticalMGNState implements HwServo2.ServoState{
+        LOADED(0),
+        OUT(0);
+
+        final float pos;
+
+        VerticalMGNState(float pos){this.pos = pos;}
+
+        @Override
+        public float getPosition() {
+            return pos;
+        }
+    }
 }
