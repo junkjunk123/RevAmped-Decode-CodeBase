@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 
-public interface ArtifactQueuer<T> {
+public interface ArtifactQueuer {
     void preparePurple();
     void prepareGreen();
     void pop();
@@ -14,7 +14,4 @@ public interface ArtifactQueuer<T> {
     default void toggleMotifMode() {
         setMotifMode(!isMotifMode());
     }
-    void setCurrentState(T currentState);
-    void setCurrentState(T currentState, boolean action);
-    T getCurrentState();
 }
