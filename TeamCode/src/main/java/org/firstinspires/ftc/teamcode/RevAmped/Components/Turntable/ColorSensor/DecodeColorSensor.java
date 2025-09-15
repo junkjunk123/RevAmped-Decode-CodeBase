@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor;
 
-public interface Color {
+public interface DecodeColorSensor {
     enum ArtifactColor {
         PURPLE,
         GREEN,
@@ -8,6 +8,5 @@ public interface Color {
     }
 
     ArtifactColor getColor();
-
     void update();
 }

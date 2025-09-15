@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Util;
 
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 
 import java.util.Comparator;
 
-public record Artifact(Color.ArtifactColor color, int index) implements Comparable<Artifact> {
+public record Artifact(DecodeColorSensor.ArtifactColor color, int index) implements Comparable<Artifact> {
     private static Comparator<Artifact> lastComparator;
 
-    public static int compare(Artifact a, Artifact b, Color.ArtifactColor preferredColor) {
-        if (preferredColor == Color.ArtifactColor.NONE) return Integer.compare(a.index, b.index);
+    public static int compare(Artifact a, Artifact b, DecodeColorSensor.ArtifactColor preferredColor) {
+        if (preferredColor == DecodeColorSensor.ArtifactColor.NONE) return Integer.compare(a.index, b.index);
         if (a.color == preferredColor) {
             if (b.color == preferredColor) return Integer.compare(a.index, b.index);
             else return 1;
@@ -18,7 +18,7 @@ public record Artifact(Color.ArtifactColor color, int index) implements Comparab
         return Integer.compare(a.index, b.index);
     }
 
-    public static Comparator<Artifact> getComparator(Color.ArtifactColor preferredColor) {
+    public static Comparator<Artifact> getComparator(DecodeColorSensor.ArtifactColor preferredColor) {
         return (o1, o2) -> compare(o1, o2, preferredColor);
     }
 

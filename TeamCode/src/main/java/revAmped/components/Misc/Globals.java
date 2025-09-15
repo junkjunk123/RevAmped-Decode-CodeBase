@@ -1,8 +1,7 @@
 package revAmped.components.Misc;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActionExecutor;
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 
@@ -66,14 +65,14 @@ public final class Globals {
     public static FollowerManager followerManager;
 
     public enum RandomizationState {
-        PPG(23, List.of(Color.ArtifactColor.PURPLE, Color.ArtifactColor.PURPLE, Color.ArtifactColor.GREEN)),
-        PGP(22, List.of(Color.ArtifactColor.PURPLE, Color.ArtifactColor.GREEN, Color.ArtifactColor.PURPLE)),
-        GPP(21, List.of(Color.ArtifactColor.GREEN, Color.ArtifactColor.PURPLE, Color.ArtifactColor.PURPLE));
+        PPG(23, List.of(DecodeColorSensor.ArtifactColor.PURPLE, DecodeColorSensor.ArtifactColor.PURPLE, DecodeColorSensor.ArtifactColor.GREEN)),
+        PGP(22, List.of(DecodeColorSensor.ArtifactColor.PURPLE, DecodeColorSensor.ArtifactColor.GREEN, DecodeColorSensor.ArtifactColor.PURPLE)),
+        GPP(21, List.of(DecodeColorSensor.ArtifactColor.GREEN, DecodeColorSensor.ArtifactColor.PURPLE, DecodeColorSensor.ArtifactColor.PURPLE));
 
         final int ID;
-        final List<Color.ArtifactColor> colors;
+        final List<DecodeColorSensor.ArtifactColor> colors;
 
-        RandomizationState(int tagID, List<Color.ArtifactColor> colors) {
+        RandomizationState(int tagID, List<DecodeColorSensor.ArtifactColor> colors) {
             ID = tagID;
             this.colors = colors;
         }
@@ -82,7 +81,7 @@ public final class Globals {
             return ID;
         }
 
-        public List<Color.ArtifactColor> getColors() {
+        public List<DecodeColorSensor.ArtifactColor> getColors() {
             return colors;
         }
     }

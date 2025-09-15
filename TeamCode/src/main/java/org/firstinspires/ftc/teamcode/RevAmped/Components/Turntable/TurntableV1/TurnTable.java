@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
+import revAmped.components.Hardware.HwCRServo2;
+import revAmped.components.Hardware.HwMotor2;
+import revAmped.components.Hardware.HwServo2;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ArtifactQueuer;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.IntakeColor.Color;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.Color.ArtifactColor;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TurnTableInternals.TurnTableCycleState;
@@ -15,11 +20,11 @@ import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import java.util.Arrays;
 
-public class TurnTable {
+public class TurnTable implements ArtifactQueuer {
     private final Scheduler scheduler;
     public TableCompartmentManager compartments;
 
-    public record HardwareComponents(TableServo turntable, Popper popper, IntakeMotor intakeMotor, IntakeColor intakeColor) {
+    public record HardwareComponents(HwCRServo2<Types.TableState> turntable, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, DecodeColorSensor intakeColor) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();
@@ -32,11 +37,11 @@ public class TurnTable {
 
     private final TurnTableState currentState;
 
-    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap){
+    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap) {
         this.scheduler = scheduler;
         TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST);
         Popper popper = new Popper(hardwareMap,setPositions);
-        IntakeColor intakeColor = new IntakeColor(hardwareMap,Color.NEUTRAL);
+        DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
         hardware = new HardwareComponents(turntable,popper, intakeMotor, intakeColor);
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
@@ -97,6 +102,11 @@ public class TurnTable {
         hardware.update();
 
         if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor.getColor());
+    }
+
+    @Override
+    public boolean isMotifMode() {
+        return compartments.isMotifMode();
     }
 
     public void pop() {

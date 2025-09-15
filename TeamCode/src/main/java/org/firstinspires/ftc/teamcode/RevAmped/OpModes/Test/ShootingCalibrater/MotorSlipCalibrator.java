@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Shooter;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import revAmped.components.MathUtil.MovingAverage;
 
@@ -25,7 +26,7 @@ public class MotorSlipCalibrator extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        flywheel = new Flywheel(hardwareMap, Flywheel.FlywheelState.RUNNING);
+        flywheel = new Flywheel(hardwareMap, Types.FlywheelState.RUNNING);
         omega_i = new MovingAverage(10);
         omega_f = new MovingAverage(10);
     }

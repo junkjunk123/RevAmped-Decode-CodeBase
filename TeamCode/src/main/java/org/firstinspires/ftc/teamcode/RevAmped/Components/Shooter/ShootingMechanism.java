@@ -5,7 +5,7 @@ import com.pedropathing.geometry.Pose;
 import revAmped.components.MathUtil.Vector3D;
 import revAmped.components.Misc.Globals;
 
-public interface ShootingMechanism {
+public interface ShootingMechanism<T> {
     Pose APRIL_TAG_POSE_RED = null;
     Pose APRIL_TAG_POSE_BLUE = null;
     Vector3D BLUE_SHOOT_ZONE = null;
@@ -17,4 +17,8 @@ public interface ShootingMechanism {
     }
 
     void shoot();
+
+    void setCurrentState(T state);
+    void setCurrentState(T state, boolean init);
+    T getCurrentState();
 }

@@ -2,14 +2,14 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Color {
+public class IntakeColor extends DecodeColor<IntakeColor.Color> implements DecodeColorSensor {
     public static float minPurpleHue = 0f;
     public static float maxPurpleHue = 0f;
     public static float minGreenHue = 0f;
     public static float maxGreenHue = 0f;
 
-    public IntakeColor(HardwareMap hardwareMap, Color neutral) {
-        super(hardwareMap, "intakeColor", neutral);
+    public IntakeColor(HardwareMap hardwareMap) {
+        super(hardwareMap, "intakeColor", Color.NEUTRAL);
     }
 
     @Override

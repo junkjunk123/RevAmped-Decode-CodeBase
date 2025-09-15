@@ -15,7 +15,7 @@ public class IntakeMotor extends HwMotor2<IntakeState> {
     @Override
     public void buildStatePowerMap() {
         for (IntakeState state : IntakeState.values()) {
-            statePowerMap.put(state, MotorPower.constant(state.power));
+            statePowerMap.put(state, MotorPower.constant(state.getPower()));
         }
     }
 

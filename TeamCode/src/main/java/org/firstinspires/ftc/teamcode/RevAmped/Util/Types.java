@@ -13,10 +13,14 @@ public interface Types {
         INTAKE(1.0f),
         STOP(0.0f);
 
-        public final float power;
+        final float power;
 
         IntakeState(float power) {
             this.power = power;
+        }
+
+        public float getPower() {
+            return power;
         }
     }
 

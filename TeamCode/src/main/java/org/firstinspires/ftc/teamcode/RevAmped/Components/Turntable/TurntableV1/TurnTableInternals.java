@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+
 import revAmped.components.CommandScheduler.Scheduler;
 
 public final class TurnTableInternals {
@@ -104,9 +106,9 @@ public final class TurnTableInternals {
 
         private void initAction() {
             switch (getInternalState()) {
-                case BALL1 -> hardware.turntable().setCurrentState(TableServo.TableState.BALL1);
-                case BALL2 -> hardware.turntable().setCurrentState(TableServo.TableState.BALL2);
-                case BALL3 -> hardware.turntable().setCurrentState(TableServo.TableState.BALL3);
+                case BALL1 -> hardware.turntable().setCurrentState(Types.TableState.BALL1);
+                case BALL2 -> hardware.turntable().setCurrentState(Types.TableState.BALL2);
+                case BALL3 -> hardware.turntable().setCurrentState(Types.TableState.BALL3);
             }
         }
     }

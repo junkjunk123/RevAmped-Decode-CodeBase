@@ -15,12 +15,12 @@ import revAmped.components.MathUtil.Vector2D;
 import revAmped.components.MathUtil.Vector3D;
 import revAmped.components.Misc.Globals;
 
-public class Shooter {
+public class Shooter implements ShootingMechanism<Shooter.ShooterState> {
     public final Scheduler scheduler;
     private boolean trackHood = false;
     private boolean trackTurret = false;
 
-    public record HardwareComponents(HoodServo hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
+    public record HardwareComponents(HwServo2<Types.HoodState> hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
         public void update() {
             hoodServo.update();
             turretMotor.update();
@@ -143,6 +143,11 @@ public class Shooter {
     public void setCurrentState(ShooterState currentState, boolean init) {
         this.currentState = currentState;
         if (init) initAction();
+    }
+
+    @Override
+    public ShooterState getCurrentState() {
+        return currentState;
     }
 
     public boolean isTrackHood() {

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import revAmped.components.MathUtil.MovingAverage;
 
@@ -18,7 +19,7 @@ public class MomentOfInertiaCalibrator extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        flywheel = new Flywheel(hardwareMap, Flywheel.FlywheelState.RUNNING);
+        flywheel = new Flywheel(hardwareMap, Types.FlywheelState.RUNNING);
         timer = new ElapsedTime();
         timer.reset();
         inertia = new MovingAverage(15);
