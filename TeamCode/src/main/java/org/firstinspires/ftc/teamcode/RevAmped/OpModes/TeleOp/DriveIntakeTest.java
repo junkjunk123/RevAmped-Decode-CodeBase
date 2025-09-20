@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.OpModes.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
@@ -9,12 +10,15 @@ import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import java.util.Arrays;
+
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
+import revAmped.components.Drive.TeleOpMecanumDrive;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 
 @TeleOp(name = "DriveIntakePopperTest", group = "TeleOp")
 public class DriveIntakeTest extends DecodeRevAmpedOpMode {
-    private TeleOpDrivetrainHandler drivetrain;
+    private TeleOpMecanumDrive drivetrain;
     private RevAmpedGamepad gamepad_1;
 
     // Hardware directly referenced here
@@ -29,20 +33,17 @@ public class DriveIntakeTest extends DecodeRevAmpedOpMode {
     public void RevAmpedInit() {
         gamepad_1 = new RevAmpedGamepad(gamepad1);
 
-        drivetrain = new TeleOpDrivetrainHandler.TeleOpDrivetrainBuilder()
-                .setOpMode(this)
-                .setGamepad_1(gamepad_1)
-                .setDirections(DecodeConstants.DRIVE_DIRECTIONS)
-                .build();
+        drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD));
 
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        popperServo = hardwareMap.get(Servo.class, "popper");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        //popperServo = hardwareMap.get(Servo.class, "popper");
 
-        popperServo.setPosition(POPPER_DOWN);
+        //popperServo.setPosition(POPPER_DOWN);
     }
 
     @Override
     public void RevAmpedLoop() {
+        drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         if (gamepad_1.a.isPress()) {
             if (intakeMotor.getPower() > 0) {
                 intakeMotor.setPower(-1); // outtake
@@ -56,19 +57,17 @@ public class DriveIntakeTest extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.x.isPress()) {
-            popperServo.setPosition(POPPER_UP);
+            //popperServo.setPosition(POPPER_UP);
         }
 
         if (gamepad_1.y.isPress()) {
-            popperServo.setPosition(POPPER_DOWN);
+            //popperServo.setPosition(POPPER_DOWN);
         }
     }
 
     @Override
     public void update() {
         gamepad_1.update();
-        drivetrain.updateLocalization();
-        drivetrain.arcadeDrive();
     }
 
     @Override

@@ -24,6 +24,13 @@ public class MotorPortTest extends DecodeRevAmpedOpMode {
         port1Motor = hardwareMap.get(DcMotor.class,"port1");
         port2Motor = hardwareMap.get(DcMotor.class,"port2");
         port3Motor = hardwareMap.get(DcMotor.class,"port3");
+        /*
+        Ports:
+        port0 - FL
+        port1 - BL
+        port2 - BR
+        port3 - FR
+        */
     }
 
     @Override
