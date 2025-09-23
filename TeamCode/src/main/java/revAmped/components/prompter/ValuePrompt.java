@@ -1,0 +1,67 @@
+package revAmped.components.prompter;
+
+public class ValuePrompt extends Prompt<Double> {
+    private final String header;
+    private final double minValue;
+    private final double maxValue;
+    private double increment;
+    private double selectedValue;
+    private final double incrementIncrement;
+
+    public ValuePrompt(String header) {
+        this(header, Double.MIN_VALUE, Double.MAX_VALUE, 0, 1);
+    }
+
+    public ValuePrompt(String header, double defaultValue) {
+        this(header, Double.MIN_VALUE, Double.MAX_VALUE, defaultValue, 1);
+    }
+
+    public ValuePrompt(String header, double defaultValue, double increment) {
+        this(header, Double.MIN_VALUE, Double.MAX_VALUE, defaultValue, increment);
+    }
+
+    public ValuePrompt(String header, double minValue, double maxValue, double defaultValue, double increment) {
+        this.header = header;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+        this.increment = increment;
+        this.selectedValue = defaultValue;
+        incrementIncrement = 0;
+    }
+
+    public ValuePrompt(String header, double minValue, double maxValue, double defaultValue, double increment, double incrementIncrement) {
+        this.header = header;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+        this.increment = increment;
+        this.selectedValue = defaultValue;
+        this.incrementIncrement = incrementIncrement;
+    }
+
+    @Override
+    public Double process() {
+        addLine(header);
+        addLine("");
+
+        addLine("< " + selectedValue + " >");
+        addData("Increment",increment);
+
+        if (input.dpad_up.isPress()) {
+            selectedValue = Math.min(maxValue, selectedValue + increment);
+        } else if (input.dpad_down.isPress()) {
+            selectedValue = Math.max(minValue, selectedValue - increment);
+        } else if (input.dpad_left.isPress()) {
+            if (incrementIncrement != 0) increment -= incrementIncrement;
+            else increment /= 2;
+        } else if (input.dpad_right.isPress()) {
+            if (incrementIncrement != 0) increment += incrementIncrement;
+            else increment *= 2;
+        }
+
+        if (input.a.isPress()) {
+            return selectedValue;
+        }
+
+        return null;
+    }
+}

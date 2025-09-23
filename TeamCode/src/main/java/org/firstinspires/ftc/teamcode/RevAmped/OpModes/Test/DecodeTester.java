@@ -17,6 +17,9 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             s.folder("Calibrater", l -> {
                 l.add("ServoCalibrateTest",ServoCalibrateTest::new);
             });
+            s.folder("SoftwareTest", l -> {
+                l.add("PromptTest", PromptTest::new);
+            });
         });
     }
 

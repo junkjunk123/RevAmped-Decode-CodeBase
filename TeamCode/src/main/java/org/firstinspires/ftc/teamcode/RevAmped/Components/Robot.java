@@ -64,6 +64,13 @@ public class Robot {
 
     public final EnumMap<HwDevice.DeviceType, HashSet<HwDevice>> allDevices = new EnumMap<>(HwDevice.DeviceType.class);
 
+    public enum CycleState {
+        UNKNOWN,
+        INTAKE,
+        SHOOT
+    }
+    public static CycleState cycleState = CycleState.UNKNOWN;
+
     private OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {

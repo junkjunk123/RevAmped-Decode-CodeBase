@@ -85,6 +85,7 @@ public final class Globals {
             return colors;
         }
     }
+
     public static RandomizationState randomizationState;
 
     public static OpModeType OpModeType;
