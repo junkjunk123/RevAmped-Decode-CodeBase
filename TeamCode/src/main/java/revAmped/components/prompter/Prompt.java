@@ -24,13 +24,6 @@ public abstract class Prompt<T> {
     // Helper functions
 
     /**
-     * Checks if a specific button was just pressed.
-     */
-    protected boolean justPressed(Button2 button) {
-        return input.isPressed(button);
-    }
-
-    /**
      * Checks if any of the specified buttons were just pressed.
      */
     protected boolean anyJustPressed(Button2... buttons) {

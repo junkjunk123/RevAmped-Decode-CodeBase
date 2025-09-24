@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test.ShootingCalibrater;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import revAmped.components.MathUtil.MovingAverage;
 
+@Disabled
 @TeleOp
 public class MotorSlipCalibrator extends DecodeRevAmpedOpMode {
     private Flywheel flywheel;

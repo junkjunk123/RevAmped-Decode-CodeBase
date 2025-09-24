@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
@@ -11,7 +12,6 @@ import java.util.Arrays;
 
 import revAmped.components.Hardware.HwDevice;
 
-@TeleOp
 public abstract class CanonicalTester<T> extends DecodeRevAmpedOpMode {
     private String[] strings;
     private Object[] devices;
@@ -24,7 +24,7 @@ public abstract class CanonicalTester<T> extends DecodeRevAmpedOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         type = getDeviceType();
         Class<?> deviceClass = type.getCanonicalClass();
-        strings = Robot.getComponentNames(type);
+        strings = Robot.getComponentNames(type).toArray(new String[0]);
         devices = Arrays.stream(strings).map(s -> hardwareMap.get(deviceClass, s)).toArray();
     }
 

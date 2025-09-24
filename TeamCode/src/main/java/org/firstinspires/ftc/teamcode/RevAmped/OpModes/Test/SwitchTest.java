@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
@@ -11,13 +13,15 @@ import java.util.Arrays;
 
 import revAmped.components.Hardware.HwDevice;
 
+@Disabled
+@TeleOp
 public class SwitchTest extends DecodeRevAmpedOpMode {
     private String[] names;
     private DigitalChannel[] switches;
 
     @Override
     public void RevAmpedInit() {
-        names = Robot.getComponentNames(HwDevice.DeviceType.DIGITAL);
+        names = Robot.getComponentNames(HwDevice.DeviceType.DIGITAL).toArray(new String[0]);
         switches = Arrays.stream(names)
                 .map(s -> hardwareMap.get(DigitalChannel.class, s))
                 .toArray(DigitalChannel[]::new);

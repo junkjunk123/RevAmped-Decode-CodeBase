@@ -41,7 +41,7 @@ public class OptionPrompt<T> extends Prompt<T> {
             selectedOptionIndex = (selectedOptionIndex + 1) % options.length;
         }
 
-        if (input.a.isPress()) {
+        if (input.right_bumper.isPress()) {
             return options[selectedOptionIndex];
         }
 

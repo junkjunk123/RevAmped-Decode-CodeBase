@@ -30,11 +30,11 @@ public class TurnTable implements ArtifactQueuer {
 
     public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap) {
         this.scheduler = scheduler;
-        TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST);
+        //TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST);
         Popper popper = new Popper(hardwareMap,setPositions);
         DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
-        hardware = new QueuerHardwareComponents(turntable,popper, intakeMotor, intakeColor);
+        hardware = new QueuerHardwareComponents(null, popper, intakeMotor, intakeColor);
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
         compartments = new TableCompartmentManager(
                 ball -> {

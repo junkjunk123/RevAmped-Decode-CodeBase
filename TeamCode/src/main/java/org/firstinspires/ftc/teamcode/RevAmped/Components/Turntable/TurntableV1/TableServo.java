@@ -32,7 +32,7 @@ public class TableServo extends HwCRServo2 <TableState> {
     }
 
     public TableServo(HardwareMap hardwareMap, TableState state) throws IllegalArgumentException{
-        super(hardwareMap, "table", TABLE_DIRECTION, state , null,null);
+        super(hardwareMap, "table", TABLE_DIRECTION, state, null,null);
     }
 
     @Override

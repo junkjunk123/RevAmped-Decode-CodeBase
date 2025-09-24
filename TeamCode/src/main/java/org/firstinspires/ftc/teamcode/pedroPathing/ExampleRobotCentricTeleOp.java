@@ -4,9 +4,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp(name = "Example Robot-Centric TeleOp", group = "Examples")
 public class ExampleRobotCentricTeleOp extends OpMode {
     private Follower follower;

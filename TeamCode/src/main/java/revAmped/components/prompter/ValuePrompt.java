@@ -58,7 +58,7 @@ public class ValuePrompt extends Prompt<Double> {
             else increment *= 2;
         }
 
-        if (input.a.isPress()) {
+        if (input.right_bumper.isPress()) {
             return selectedValue;
         }
 

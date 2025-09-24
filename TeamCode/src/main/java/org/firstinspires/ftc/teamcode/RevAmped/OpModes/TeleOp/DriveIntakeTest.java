@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,6 +17,7 @@ import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.Drive.TeleOpMecanumDrive;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 
+@Disabled
 @TeleOp(name = "DriveIntakePopperTest", group = "TeleOp")
 public class DriveIntakeTest extends DecodeRevAmpedOpMode {
     private TeleOpMecanumDrive drivetrain;

@@ -21,6 +21,8 @@ public class Prompter {
     private int currentIndex = 0;
     private boolean isCompleted = false;
 
+    private String finalMessage;
+
     public Prompter(RevAmpedOpMode opMode, RevAmpedGamepad gamepad) {
         this.opmode = opMode;
         this.gamepadInput = gamepad;
@@ -71,7 +73,11 @@ public class Prompter {
      * This should be called in a loop.
      */
     public void run() {
-        if (isCompleted) return;
+        if (isCompleted) {
+            opmode.telemetry.addLine(finalMessage);
+            opmode.telemetry.update();
+            return;
+        }
 
         boolean finished = processPrompts();
         opmode.telemetry.update();
@@ -169,5 +175,14 @@ public class Prompter {
                 prompt = null;
             }
         }
+    }
+
+    public Prompter thenDisplay(String line) {
+        this.finalMessage = line;
+        return this;
+    }
+
+    public boolean isCompleted() {
+        return isCompleted;
     }
 }

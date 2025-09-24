@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,11 +35,11 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
     private List<String> servos;
     private String currentServo;
     private boolean selecting = true;
-    private HashMap<String, Integer> calibratedPositions = new HashMap<>();
+    private final HashMap<String, Integer> calibratedPositions = new HashMap<>();
 
     @Override
     public void RevAmpedInit() {
-        servos = List.of(Robot.getComponentNames(HwDevice.DeviceType.SERVO));
+        servos = new ArrayList<>(Robot.getComponentNames(HwDevice.DeviceType.SERVO));
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

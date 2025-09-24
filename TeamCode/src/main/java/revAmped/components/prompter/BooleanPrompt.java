@@ -24,7 +24,7 @@ public class BooleanPrompt extends Prompt<Boolean> {
             selectedValue = !selectedValue;
         }
 
-        if (justPressed(input.a)) {
+        if (input.right_bumper.isPress()) {
             return selectedValue;
         }
 

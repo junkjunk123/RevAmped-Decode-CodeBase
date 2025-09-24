@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import revAmped.components.CommandScheduler.Commands.Delay;
+
 public abstract class SelectableRevAmpedOpMode extends RevAmpedOpMode {
     private final Selector<Supplier<RevAmpedOpMode>> selector;
     private RevAmpedOpMode selectedOpMode;
+    private boolean started = false;
+
     private final static String[] MESSAGE = {
             "Use the d-pad to move the cursor.",
             "Press right bumper to select.",
@@ -28,7 +32,12 @@ public abstract class SelectableRevAmpedOpMode extends RevAmpedOpMode {
             selectedOpMode.telemetry = telemetry;
             selectedOpMode.hardwareMap = hardwareMap;
             selectedOpMode.scheduler = scheduler;
-            selectedOpMode.RevAmpedInit();
+            gamepad1.reset();
+            gamepad2.reset();
+            scheduler.add(new Delay(200, () -> {
+                selectedOpMode.RevAmpedInit();
+                started = true;
+            }));
         });
     }
 
@@ -62,7 +71,8 @@ public abstract class SelectableRevAmpedOpMode extends RevAmpedOpMode {
             }
             onLog(lines);
 
-        } else selectedOpMode.RevAmpedInitLoop();
+        } else if (started) selectedOpMode.RevAmpedInitLoop();
+        else scheduler.update();
     }
 
     @Override

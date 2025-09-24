@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 
+@Disabled
 @TeleOp
 public class MotorPortTest extends DecodeRevAmpedOpMode {
     RevAmpedGamepad gp1;

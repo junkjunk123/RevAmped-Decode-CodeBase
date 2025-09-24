@@ -21,8 +21,11 @@ import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeRevAmpedAutono
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Hardware.HwCRServo2;
@@ -40,6 +43,7 @@ public class Robot {
     public ArtifactQueuer turnTable;
     public ShootingMechanism<Types.ShooterState> shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
+    public static HashMap<Class<? extends HwDevice>, HashSet<String>> idMap = buildIDMap();
 
     public enum OpModeType implements revAmped.components.Misc.OpModeType {
         TELEOP,
@@ -200,12 +204,30 @@ public class Robot {
         map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(IntakeColor.class)));
         map.put(HwDevice.DeviceType.MOTOR, new HashSet<>(List.of(Flywheel.class, TurretMotor.class, IntakeMotor.class)));
         map.put(HwDevice.DeviceType.SERVO, new HashSet<>(List.of(HoodServo.class, TableServo.class, Popper.class)));
-
-        //buildMap
         return map;
     }
 
-    public static String[] getComponentNames(HwDevice.DeviceType types) {
-        return allHardwareClasses.get(types).stream().map(Class::getCanonicalName).toArray(String[]::new);
+    public static HashMap<Class<? extends HwDevice>, HashSet<String>> buildIDMap() {
+        HashMap<Class<? extends HwDevice>, HashSet<String>> map = new HashMap<>();
+        map.put(IntakeColor.class, new HashSet<>(List.of("intakeColor")));
+        map.put(Flywheel.class, new HashSet<>(List.of("flywheel")));
+        map.put(TurretMotor.class, new HashSet<>(List.of("turret")));
+        map.put(IntakeMotor.class, new HashSet<>(List.of("intake")));
+        map.put(HoodServo.class, new HashSet<>(List.of("hood")));
+        map.put(Popper.class, new HashSet<>(List.of("popper")));
+        map.put(TableServo.class, new HashSet<>(List.of("table")));
+        return map;
+    }
+
+    public static String[] getID(Class<? extends HwDevice> deviceClass) {
+        return idMap.get(deviceClass).toArray(new String[0]);
+    }
+
+    public static HashSet<String> getComponentClassNames(HwDevice.DeviceType type) {
+        return allHardwareClasses.get(type).stream().map(Class::getCanonicalName).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public static HashSet<String> getComponentNames(HwDevice.DeviceType type) {
+        return allHardwareClasses.get(type).stream().map(t -> idMap.get(t)).flatMap(Set::stream).collect(Collectors.toCollection(HashSet::new));
     }
 }

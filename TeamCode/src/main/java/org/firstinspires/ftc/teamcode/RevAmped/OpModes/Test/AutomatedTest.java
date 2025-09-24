@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
@@ -14,6 +15,7 @@ import revAmped.components.Hardware.HwDevice;
 import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Misc.Logger;
 
+@Disabled
 @TeleOp
 public class AutomatedTest extends DecodeRevAmpedOpMode {
     private Robot robot;
