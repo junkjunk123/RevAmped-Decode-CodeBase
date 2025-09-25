@@ -16,9 +16,9 @@ public class TableServo extends HwServo2<TableServo.TableState> {
     }
 
     public enum TableState implements ServoState{
-        COMPARTMENT_1(0),
-        COMPARTMENT_2(0.298f),
-        COMPARTMENT_3(0.5961f);
+        COMPARTMENT_1(0.2471f),
+        COMPARTMENT_2(0.549f),
+        COMPARTMENT_3(0.8588f);
         private float pos;
         TableState(float pos){
             this.pos = pos;

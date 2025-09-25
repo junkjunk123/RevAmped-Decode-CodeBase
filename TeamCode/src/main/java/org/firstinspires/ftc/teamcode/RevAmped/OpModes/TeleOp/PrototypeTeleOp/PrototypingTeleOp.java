@@ -55,14 +55,14 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
             if (turntableServo.getCurrentState().ordinal()+1 <=2) {
                 turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() + 1]);
             } else{
-                turntableServo.setCurrentState(TableServo.TableState.values()[0]);
+                //turntableServo.setCurrentState(TableServo.TableState.values()[0]);
             }
         }
         if (gamepad_1.left_bumper.isPress()){
             if (turntableServo.getCurrentState().ordinal()-1 >= 0) {
                 turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() - 1]);
             } else{
-                turntableServo.setCurrentState(TableServo.TableState.values()[2]);
+                //turntableServo.setCurrentState(TableServo.TableState.values()[2]);
             }
         }
         if (gamepad_1.a.isTrue()) {
