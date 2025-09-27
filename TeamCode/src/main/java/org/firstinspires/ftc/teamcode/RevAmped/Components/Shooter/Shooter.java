@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter;
 
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
+import com.pedropathing.math.Matrix;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
@@ -65,14 +67,32 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         if (currentState == ShooterState.TRACKING) {
             Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
             Pose currentPos = pinpoint().getPose();
-            Vector2D offset = new Vector2D(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
+            Vector offset = new Vector(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
 
             double deltaAngle;
             if (trackTurret) {
-                double targetAngle = offset.getTheta() + Math.PI;
-                double currentAngle = pinpoint().getPose().getHeading();
-                deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
-                hardware.turretMotor().finetuneAngle(deltaAngle);
+                Vector robotVelocity = pinpoint.getVelocityVector();
+                if (robotVelocity.getMagnitude() < 4) {
+                    double targetAngle = offset.getTheta();
+                    double currentAngle = pinpoint().getPose().getHeading();
+                    deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                    hardware.turretMotor().finetuneAngle(deltaAngle);
+                } else {
+                    Vector iHat = offset.normalize();
+                    Vector jHat = new Vector(-offset.getYComponent(), offset.getXComponent());
+                    double flywheelLaunchSpeed = hardware.flywheel().getBallLaunchVelocity();
+                    double normalizedTurretNormalComponent = robotVelocity.getMagnitude() *
+                            robotVelocity.dot(new Vector(iHat.getYComponent(), iHat.getXComponent())) / flywheelLaunchSpeed;
+                    Vector flywheelDirectionVector = new Vector(Math.sqrt(1 - Math.pow(normalizedTurretNormalComponent, 2)), normalizedTurretNormalComponent);
+                    Matrix inverseRotMatrix = new Matrix(new double[][] {
+                            {iHat.getXComponent(), iHat.getYComponent()},
+                            {jHat.getXComponent(), jHat.getYComponent()}
+                    });
+                    double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta();
+                    double currentAngle = pinpoint().getPose().getHeading();
+                    deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                    hardware.turretMotor().finetuneAngle(deltaAngle);
+                }
             } else {
                 deltaAngle = hardware.turretMotor().prevFineTuneAngle;
             }
@@ -190,7 +210,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     }
 
     private double calcInitialLaunchVelocity(double turretAngleOffset) {
-        double velFlywheel = hardware.flywheel().getAngularVelocity() * Flywheel.RADIUS * Flywheel.LAUNCH_ETA;
+        double velFlywheel = hardware.flywheel().getBallLaunchVelocity();
         double velRobot = pinpoint.getVelocityVector().getMagnitude() * Math.cos(turretAngleOffset);
         return velRobot + velFlywheel;
     }

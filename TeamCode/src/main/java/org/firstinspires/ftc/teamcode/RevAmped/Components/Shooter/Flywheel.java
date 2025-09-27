@@ -103,4 +103,8 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public double getAngularVelocity() {
         return Math.PI * 2 * getVelocity() / COUNTS_PER_REVOLUTION;
     }
+
+    public double getBallLaunchVelocity() {
+        return getAngularVelocity() * RADIUS * LAUNCH_ETA;
+    }
 }
