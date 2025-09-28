@@ -8,16 +8,16 @@ import revAmped.components.Hardware.HwServo2;
 
 public class HoodServo extends HwServo2<HoodServo.HoodState> {
     public HoodServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
-        super(hardwareMap, "", setPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
+        super(hardwareMap, "hood", setPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
     }
 
     public HoodServo(HardwareMap hardwareMap, float initialPosition) throws IllegalArgumentException {
-        super(hardwareMap, "", initialPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
+        super(hardwareMap, "hood", initialPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
     }
 
     public enum HoodState implements ServoState{
-        FAR(0f),
-        CLOSE(0f);
+        FAR(0.251f),
+        CLOSE(0.0431f);
 
         private float pos;
 
