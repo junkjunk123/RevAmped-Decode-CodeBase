@@ -18,7 +18,7 @@ public class TurretMotor extends Turret<TurretState> {
 
     public static PIDFCoefficients TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);
     public final PIDFController controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
-    public static int TURRET_TICKS_PER_ROTATION = 0;
+    public static int TURRET_TICKS_PER_ROTATION;
     private int targetPosition;
     public static float AUTO_PRELOADS;
     public static float AUTO_SET_1;
@@ -26,6 +26,7 @@ public class TurretMotor extends Turret<TurretState> {
     public static float AUTO_SET_3;
     public static float LL_DETECTION_RED;
     public static float LL_DETECTION_BLUE;
+    public static final boolean TURRET_LIMITS_ENABLED = true;
 
     double prevFineTuneAngle = 0;
 
@@ -37,8 +38,8 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
-        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runWithError(getError(targetPosition)));
-        statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(getError(targetPosition)));
+        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - currentPos));
+        statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED? getError(targetPosition) : targetPosition - currentPos));
     }
 
     @Override

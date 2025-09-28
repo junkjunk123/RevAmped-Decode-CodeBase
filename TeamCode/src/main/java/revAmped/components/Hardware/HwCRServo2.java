@@ -26,6 +26,6 @@ public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.ServoState>
     public abstract int ticksPerRotation();
 
     public double getError(int targetPosition) {
-        return MathFunctions.normalizeAngle((double) (targetPosition - currentPos) / ticksPerRotation());
+        return ((targetPosition - currentPos % ticksPerRotation()) + ticksPerRotation() * 1.5) % ticksPerRotation() - ticksPerRotation() / 2.0;
     }
 }
