@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -35,6 +36,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
     private List<String> servos;
     private String currentServo;
     private boolean selecting = true;
+    private AnalogInput voltage;
     private final HashMap<String, Integer> calibratedPositions = new HashMap<>();
 
     @Override
@@ -42,7 +44,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
         servos = new ArrayList<>(Robot.getComponentNames(HwDevice.DeviceType.SERVO));
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        voltage = hardwareMap.get(AnalogInput.class,"popper_voltage");
         telemetry.addData(">>", "Press start to continue");
         telemetry.update();
     }
@@ -149,6 +151,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
         telemetryA.addData("TICK_CHANGE",TICK_CHANGE);
         telemetry.addData("PWM",
                 Integer.toString((int) (posJoy1*1805.2/255f+591.68)));
+        telemetryA.addData("Voltage",voltage.getVoltage());
         telemetryA.update();
     }
 
