@@ -11,8 +11,8 @@ public class TurretMotor extends HwMotor2<TurretMotor.TurretState> {
     public void buildStatePowerMap() {
 
         statePowerMap.put(TurretState.STOPPED,MotorPower.constant(0f));
-        statePowerMap.put(TurretState.FORWARD,MotorPower.constant(0.2f));
-        statePowerMap.put(TurretState.BACKWARD,MotorPower.constant(-0.2f));
+        statePowerMap.put(TurretState.FORWARD,MotorPower.constant(0.5f));
+        statePowerMap.put(TurretState.BACKWARD,MotorPower.constant(-0.5f));
     }
 
     @Override
@@ -25,7 +25,7 @@ public class TurretMotor extends HwMotor2<TurretMotor.TurretState> {
         FORWARD,
         BACKWARD;
     }
-    public TurretMotor(HardwareMap hardwareMap, TurretMotor.TurretState motorState) throws IllegalArgumentException {
-        super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState);
+    public TurretMotor(HardwareMap hardwareMap) throws IllegalArgumentException {
+        super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, TurretState.STOPPED);
     }
 }

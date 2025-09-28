@@ -1,0 +1,32 @@
+package org.firstinspires.ftc.teamcode.RevAmped.OpModes.TeleOp.PrototypeTeleOp;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
+
+import revAmped.components.Hardware.HwServo2;
+
+public class HoodServo extends HwServo2<HoodServo.HoodState> {
+    public HoodServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
+        super(hardwareMap, "", setPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
+    }
+
+    public HoodServo(HardwareMap hardwareMap, float initialPosition) throws IllegalArgumentException {
+        super(hardwareMap, "", initialPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
+    }
+
+    public enum HoodState implements ServoState{
+        FAR(0f),
+        CLOSE(0f);
+
+        private float pos;
+
+        @Override
+        public float getPosition() {
+            return pos;
+        }
+        HoodState(float pos){
+            this.pos = pos;
+        }
+    }
+}
