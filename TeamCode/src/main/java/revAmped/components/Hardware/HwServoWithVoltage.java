@@ -14,19 +14,12 @@ public abstract class HwServoWithVoltage<T extends Enum<T> & HwServo2.ServoState
     public record VoltageStatePair(ServoState previous, ServoState next, double timeout) {}
     private long turnStartTime = 0;
 
-    protected interface ServoVoltageState {
+    public interface ServoVoltageState {
         /**
          * @return if the analog encoder must read a value greater than the specified voltage to know that it has arrived -- this essentially says the direction the servo is traveling to the target
          */
-        boolean isGreater();
-        default boolean reached(double voltage) {
-            return (getVoltage() >= voltage && isGreater()) || (getVoltage() <= voltage && !isGreater());
-        }
+        boolean reached(double voltage);
         VoltageStatePair[] getStates();
-        double getVoltage();
-        default List<ServoState> getValidStates() {
-            return List.of(Arrays.stream(getStates()).map(VoltageStatePair::next).toArray(ServoState[]::new));
-        }
     }
 
     protected HwServoWithVoltage(HardwareMap hardwareMap, String id, boolean setPosition, T initialState, HwAnalogEncoder voltage, ServoBrand servoBrand) throws IllegalArgumentException {

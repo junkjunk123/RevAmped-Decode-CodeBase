@@ -7,10 +7,14 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 
+import java.util.ArrayList;
+import java.util.function.Function;
+
 import revAmped.components.Hardware.CRServoInternal;
 import revAmped.components.Hardware.HwCRServo2;
 import revAmped.components.Hardware.HwMotor2;
 import revAmped.components.Hardware.HwServo2;
+import revAmped.components.Hardware.HwServoWithVoltage;
 
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
@@ -38,6 +42,35 @@ public interface Types {
 
         @Override
         public float getPosition(){return position;}
+    }
+
+    enum PopperVoltageState implements HwServoWithVoltage.ServoVoltageState {
+        FULLY_UP (
+                voltage -> voltage >= Popper.UP_VOLTAGE,
+                new HwServoWithVoltage.VoltageStatePair(PopperState.NEUTRAL, PopperState.POP, 500)
+        ),
+        FULLY_DOWN (
+                voltage -> voltage <= Popper.DOWN_VOLTAGE,
+                new HwServoWithVoltage.VoltageStatePair(PopperState.POP, PopperState.NEUTRAL, 500)
+        );
+
+        @Override
+        public boolean reached(double voltage) {
+            return reached.apply(voltage);
+        }
+
+        @Override
+        public HwServoWithVoltage.VoltageStatePair[] getStates() {
+            return states;
+        }
+
+        public final Function<Double, Boolean> reached;
+        public final HwServoWithVoltage.VoltageStatePair[] states;
+
+        PopperVoltageState(Function<Double, Boolean> reached, HwServoWithVoltage.VoltageStatePair... states) {
+            this.reached = reached;
+            this.states = states;
+        }
     }
 
     enum TableState implements CRServoInternal.ServoState {
