@@ -80,7 +80,7 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
         super.update();
 
         MotorPower power = statePowerMap.get(motorState);
-        if(!power.constant()) setPower(power.power());
+        if (!power.constant()) setPower(power.power());
     }
 
     public abstract T getRest();

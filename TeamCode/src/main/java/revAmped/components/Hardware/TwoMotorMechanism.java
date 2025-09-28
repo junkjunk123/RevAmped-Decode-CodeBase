@@ -39,6 +39,12 @@ public abstract class TwoMotorMechanism<T extends Enum<T> & HwMotor2.MotorState>
     }
 
     @Override
+    public void update() {
+        super.update();
+        motor2.update();
+    }
+
+    @Override
     public void stop() {
         super.stop();
         motor2.stop();

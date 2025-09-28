@@ -35,6 +35,12 @@ public abstract class TwoMotorLift<T extends Enum<T> & HwSlide2.SlideState> exte
     }
 
     @Override
+    public void update() {
+        super.update();
+        secondaryMotor.update();
+    }
+
+    @Override
     public void stop() {
         super.stop();
         secondaryMotor.stop();
