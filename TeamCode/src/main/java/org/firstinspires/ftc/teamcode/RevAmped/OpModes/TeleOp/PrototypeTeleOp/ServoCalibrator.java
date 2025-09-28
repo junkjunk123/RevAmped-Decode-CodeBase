@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Robot;
 import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
+import revAmped.components.Hardware.HwDevice;
 
 @TeleOp
 public class ServoCalibrator extends DecodeRevAmpedOpMode {
@@ -14,9 +15,11 @@ public class ServoCalibrator extends DecodeRevAmpedOpMode {
     private RevAmpedGamepad gamepad_1;
     private TableServo tableServo;
     private PopperServo popperServo;
+    private HoodServo hoodServo;
     private enum Servos{
         TABLE,
         POPPER,
+        HOOD,
         NONE;
     }
     Servos servo = Servos.TABLE;
@@ -25,6 +28,7 @@ public class ServoCalibrator extends DecodeRevAmpedOpMode {
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         tableServo = new TableServo(hardwareMap,true);
         popperServo = new PopperServo(hardwareMap, true);
+        hoodServo = new HoodServo(hardwareMap,true);
     }
 
     @Override
@@ -34,6 +38,9 @@ public class ServoCalibrator extends DecodeRevAmpedOpMode {
         }
         if(servo == Servos.POPPER){
             popperServo.setPosition(position);
+        }
+        if(servo == Servos.HOOD){
+            hoodServo.setPosition(position);
         }
         if(gamepad_1.a.isPress()){
             position+=1/255f;

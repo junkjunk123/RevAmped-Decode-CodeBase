@@ -20,22 +20,25 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
     private RevAmpedGamepad gamepad_1;
 
     // Hardware directly referenced here
-    private DcMotor intakeMotor;
+    private IntakeMotor intakeMotor;
     private PopperServo popperServo;
     private TableServo turntableServo;
     private TurretMotor turretMotor;
     private FlywheelMotor flywheelMotor1;
     private FlywheelMotor flywheelMotor2;
+    private HoodServo hoodServo;
+
     @Override
     public void RevAmpedInit() {
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD));
-        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        intakeMotor = new IntakeMotor(hardwareMap);
         popperServo = new PopperServo(hardwareMap, true);
         turntableServo = new TableServo(hardwareMap, true);
-        turretMotor = new TurretMotor(hardwareMap, TurretMotor.TurretState.STOPPED);
+        turretMotor = new TurretMotor(hardwareMap);
         flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1",FlywheelMotor.FlywheelState.STOPPED);
         flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2",FlywheelMotor.FlywheelState.STOPPED);
+        hoodServo = new HoodServo(hardwareMap,true);
     }
 
     /*
@@ -48,14 +51,14 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         if (gamepad_1.b.isPress()){
-            if(intakeMotor.getPower() > 0){
-                intakeMotor.setPower(-1);
+            if(intakeMotor.getCurrentState() == IntakeMotor.IntakeState.INTAKE){
+                intakeMotor.setCurrentState(IntakeMotor.IntakeState.OUTTAKE);
             } else{
-                intakeMotor.setPower(1);
+                intakeMotor.setCurrentState(IntakeMotor.IntakeState.INTAKE);
             }
         }
         if (gamepad_1.y.isPress()){
-            intakeMotor.setPower(0);
+            intakeMotor.setCurrentState(IntakeMotor.IntakeState.STOPPED);
         }
         if (gamepad_1.right_bumper.isPress()){
             if (turntableServo.getCurrentState().ordinal()+1 <=2) {
@@ -91,6 +94,12 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
             turretMotor.setCurrentState(TurretMotor.TurretState.BACKWARD);
         } else{
             turretMotor.setCurrentState(TurretMotor.TurretState.STOPPED);
+        }
+        if(gamepad_1.dpad_up.isPress()){
+            hoodServo.setCurrentState(HoodServo.HoodState.FAR);
+        }
+        if(gamepad_1.dpad_down.isPress()){
+            hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
         }
 
     }
