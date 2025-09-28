@@ -14,7 +14,7 @@ public abstract class CRServoInternal<T extends Enum<T> & CRServoInternal.ServoS
 
     public void setCurrentState(T servoState) {
         this.servoState = servoState;
-        servo.setPower(statePowerMap.get(this.servoState).power());
+        setPower(statePowerMap.get(this.servoState).power());
     }
 
     public void setCurrentState(T servoState, float power) {
@@ -61,6 +61,6 @@ public abstract class CRServoInternal<T extends Enum<T> & CRServoInternal.ServoS
         super.update();
 
         ServoPower power = statePowerMap.get(servoState);
-        if(!power.constant()) servo.setPower(power.power());
+        if(!power.constant()) setPower(power.power());
     }
 }

@@ -22,6 +22,12 @@ public abstract class TwoMotorMechanism<T extends Enum<T> & HwMotor2.MotorState>
         motor2 = new HwMotor(hardwareMap, id2, direction2, maxPower);
     }
 
+    @Override
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
+        super.setZeroPowerBehavior(behavior);
+        motor2.setZeroPowerBehavior(behavior);
+    }
+
     public void setMode(DcMotor.RunMode mode) {
         super.setMode(mode);
         motor2.setMode(mode);
