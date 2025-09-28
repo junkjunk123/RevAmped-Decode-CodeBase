@@ -17,8 +17,8 @@ public class PopperServo extends HwServo2<PopperServo.PopperState> {
     }
 
     public enum PopperState implements ServoState{
-        POP(0.302f),
-        DOWN(0.4392f);
+        POP(0.2824f),
+        DOWN(0.4314f);
 
         private float pos;
 

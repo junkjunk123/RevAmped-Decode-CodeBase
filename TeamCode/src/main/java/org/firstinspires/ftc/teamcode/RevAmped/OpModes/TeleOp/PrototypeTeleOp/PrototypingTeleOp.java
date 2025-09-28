@@ -23,6 +23,9 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
     private DcMotor intakeMotor;
     private PopperServo popperServo;
     private TableServo turntableServo;
+    private TurretMotor turretMotor;
+    private FlywheelMotor flywheelMotor1;
+    private FlywheelMotor flywheelMotor2;
     @Override
     public void RevAmpedInit() {
         gamepad_1 = new RevAmpedGamepad(gamepad1);
@@ -30,6 +33,9 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         popperServo = new PopperServo(hardwareMap, true);
         turntableServo = new TableServo(hardwareMap, true);
+        turretMotor = new TurretMotor(hardwareMap, TurretMotor.TurretState.STOPPED);
+        flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1",FlywheelMotor.FlywheelState.STOPPED);
+        flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2",FlywheelMotor.FlywheelState.STOPPED);
     }
 
     /*
@@ -70,12 +76,33 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
         } else{
             popperServo.setCurrentState(PopperServo.PopperState.DOWN);
         }
+        if (gamepad_1.x.isPress()){
+            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.STOPPED){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
+            } else if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.RUNNING){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
+            }
+        }
+        if(gamepad_1.left_trigger!=0){
+            turretMotor.setCurrentState(TurretMotor.TurretState.FORWARD);
+        } else if (gamepad_1.right_trigger!=0){
+            turretMotor.setCurrentState(TurretMotor.TurretState.BACKWARD);
+        } else{
+            turretMotor.setCurrentState(TurretMotor.TurretState.STOPPED);
+        }
 
     }
 
     @Override
     public void update() {
         gamepad_1.update();
+        flywheelMotor1.update();
+        flywheelMotor2.update();
+        turretMotor.update();
+        turntableServo.update();
+        popperServo.update();
     }
 
     @Override
