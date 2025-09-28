@@ -26,4 +26,7 @@ public class HoodServo extends HwServo2<Types.HoodState> {
     public static float AUTO_SET_1;
     public static float AUTO_SET_2;
     public static float AUTO_SET_3;
+
+    public static float TELE_NEAR_PRESET;
+    public static float TELE_FAR_PRESET;
 }

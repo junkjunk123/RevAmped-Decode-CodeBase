@@ -8,8 +8,8 @@ public class DualIntakeColor implements DecodeColorSensor {
     private final IntakeColor rightColor;
 
     public DualIntakeColor(HardwareMap hardwareMap) {
-        leftColor = new IntakeColor(hardwareMap);
-        rightColor = new IntakeColor(hardwareMap);
+        leftColor = new IntakeColor(hardwareMap, 0);
+        rightColor = new IntakeColor(hardwareMap, 0);
     }
 
     public ArtifactColor getColor() {
@@ -29,7 +29,7 @@ public class DualIntakeColor implements DecodeColorSensor {
     public void update() {
         leftColor.update();
         rightColor.update();
-        rightColorRead=!rightColorRead;
+        rightColorRead = !rightColorRead;
     }
 
     @Override

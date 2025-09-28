@@ -26,7 +26,7 @@ public class TurretMotor extends Turret<TurretState> {
     public static float AUTO_SET_3;
     public static float LL_DETECTION_RED;
     public static float LL_DETECTION_BLUE;
-    public static final boolean TURRET_LIMITS_ENABLED = true;
+    public static boolean TURRET_LIMITS_ENABLED;
 
     double prevFineTuneAngle = 0;
 

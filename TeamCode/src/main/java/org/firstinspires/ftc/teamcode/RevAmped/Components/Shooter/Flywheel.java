@@ -25,11 +25,11 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static float AUTO_SET_1;
     public static float AUTO_SET_2;
     public static float AUTO_SET_3;
-    public static double RADIUS = 0; //Inches
-    public static int COUNTS_PER_REVOLUTION = 0;
-    public static double GEAR_RATIO = 0.75;
-    public static double STALL_TORQUE = 1.47; //Kg * cm
-    public static double STALL_CURRENT = 9.2; //Amps
+    public static double RADIUS; //Inches
+    public static int COUNTS_PER_REVOLUTION;
+    public static double GEAR_RATIO;
+    public static double STALL_TORQUE; //Kg * cm
+    public static double STALL_CURRENT; //Amps
     public static double k_T = 0.0980665 * STALL_TORQUE / STALL_CURRENT;
     public static double MOMENT_OF_INERTIA;
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
