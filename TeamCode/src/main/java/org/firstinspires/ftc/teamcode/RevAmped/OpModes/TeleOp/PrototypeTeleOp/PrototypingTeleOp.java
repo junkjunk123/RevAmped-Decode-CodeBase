@@ -18,6 +18,7 @@ import revAmped.components.GamepadDevices.RevAmpedGamepad;
 public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpMecanumDrive drivetrain;
     private RevAmpedGamepad gamepad_1;
+    private RevAmpedGamepad gamepad_2;
 
     // Hardware directly referenced here
     private IntakeMotor intakeMotor;
@@ -31,6 +32,7 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedInit() {
         gamepad_1 = new RevAmpedGamepad(gamepad1);
+        gamepad_2 = new RevAmpedGamepad(gamepad2);
         drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD));
         intakeMotor = new IntakeMotor(hardwareMap);
         popperServo = new PopperServo(hardwareMap, true);
@@ -38,6 +40,8 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
         turretMotor = new TurretMotor(hardwareMap);
         flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1",FlywheelMotor.FlywheelState.STOPPED);
         flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2",FlywheelMotor.FlywheelState.STOPPED);
+        flywheelMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        flywheelMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hoodServo = new HoodServo(hardwareMap,true);
     }
 
@@ -60,26 +64,26 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_1.y.isPress()){
             intakeMotor.setCurrentState(IntakeMotor.IntakeState.STOPPED);
         }
-        if (gamepad_1.right_bumper.isPress()){
+        if (gamepad_2.right_bumper.isPress()){
             if (turntableServo.getCurrentState().ordinal()+1 <=2) {
                 turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() + 1]);
             } else{
                 //turntableServo.setCurrentState(TableServo.TableState.values()[0]);
             }
         }
-        if (gamepad_1.left_bumper.isPress()){
+        if (gamepad_2.left_bumper.isPress()){
             if (turntableServo.getCurrentState().ordinal()-1 >= 0) {
                 turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() - 1]);
             } else{
                 //turntableServo.setCurrentState(TableServo.TableState.values()[2]);
             }
         }
-        if (gamepad_1.a.isTrue()) {
+        if (gamepad_2.a.isTrue()) {
             popperServo.setCurrentState(PopperServo.PopperState.POP);
         } else{
             popperServo.setCurrentState(PopperServo.PopperState.DOWN);
         }
-        if (gamepad_1.x.isPress()){
+        if (gamepad_2.x.isPress()){
             if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.STOPPED){
                 flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
                 flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
@@ -88,17 +92,17 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
                 flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
             }
         }
-        if(gamepad_1.left_trigger!=0){
+        if(gamepad_2.left_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.FORWARD);
-        } else if (gamepad_1.right_trigger!=0){
+        } else if (gamepad_2.right_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.BACKWARD);
         } else{
             turretMotor.setCurrentState(TurretMotor.TurretState.STOPPED);
         }
-        if(gamepad_1.dpad_up.isPress()){
+        if(gamepad_2.dpad_up.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.FAR);
         }
-        if(gamepad_1.dpad_down.isPress()){
+        if(gamepad_2.dpad_down.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
         }
 
@@ -107,6 +111,7 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
     @Override
     public void update() {
         gamepad_1.update();
+        gamepad_2.update();
         flywheelMotor1.update();
         flywheelMotor2.update();
         turretMotor.update();

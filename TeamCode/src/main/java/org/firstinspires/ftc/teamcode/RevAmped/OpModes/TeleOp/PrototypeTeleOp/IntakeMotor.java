@@ -8,15 +8,15 @@ import revAmped.components.Hardware.HwMotor2;
 
 public class IntakeMotor extends HwMotor2<IntakeMotor.IntakeState> {
     public IntakeMotor(HardwareMap hardwareMap, double maxPower) throws IllegalArgumentException {
-        super(hardwareMap, "intake", DcMotorSimple.Direction.FORWARD, maxPower, IntakeState.STOPPED);
+        super(hardwareMap, "intake", DcMotorSimple.Direction.REVERSE, maxPower, IntakeState.STOPPED);
     }
 
     public IntakeMotor(HardwareMap hardwareMap, DcMotor.RunMode runMode) throws IllegalArgumentException {
-        super(hardwareMap, "intake", DcMotorSimple.Direction.FORWARD, runMode, IntakeState.STOPPED);
+        super(hardwareMap, "intake", DcMotorSimple.Direction.REVERSE, runMode, IntakeState.STOPPED);
     }
 
     public IntakeMotor(HardwareMap hardwareMap) throws IllegalArgumentException {
-        super(hardwareMap, "intake", DcMotorSimple.Direction.FORWARD, IntakeState.STOPPED);
+        super(hardwareMap, "intake", DcMotorSimple.Direction.REVERSE, IntakeState.STOPPED);
     }
 
     @Override

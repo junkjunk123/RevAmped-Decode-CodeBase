@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RevAmped.OpModes.TeleOp.PrototypeTeleOp;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -24,7 +25,9 @@ public class FlywheelMotor extends HwMotor2<FlywheelMotor.FlywheelState> {
     public FlywheelState getRest() {
         return FlywheelState.STOPPED;
     }
-    public FlywheelMotor(HardwareMap hardwareMap,String id, FlywheelMotor.FlywheelState motorState) throws IllegalArgumentException {
+
+    public FlywheelMotor(HardwareMap hardwareMap, String id, FlywheelMotor.FlywheelState motorState) throws IllegalArgumentException {
         super(hardwareMap,id, DcMotorSimple.Direction.REVERSE, motorState);
     }
+
 }
