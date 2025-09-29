@@ -16,11 +16,14 @@ import java.util.List;
 import revAmped.components.Misc.Constants;
 
 public final class DecodeConstants implements Constants {
+    /**
+     * List of motor directions for the drive motors in the order: front left, back left, back right, front right
+     */
     public static List<DcMotorSimple.Direction> DRIVE_DIRECTIONS = List.of (
-            DcMotorSimple.Direction.FORWARD,
+            DcMotorSimple.Direction.REVERSE,
             DcMotorSimple.Direction.REVERSE,
             DcMotorSimple.Direction.FORWARD,
-            DcMotorSimple.Direction.REVERSE
+            DcMotorSimple.Direction.FORWARD
     );
 
     public void build() {
