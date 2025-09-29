@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class DualIntakeColor implements DecodeColorSensor {
     private boolean rightColorRead = true;
     private final IntakeColor leftColor;
