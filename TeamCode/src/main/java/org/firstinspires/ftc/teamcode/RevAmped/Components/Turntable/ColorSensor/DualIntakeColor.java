@@ -7,8 +7,10 @@ public class DualIntakeColor implements DecodeColorSensor {
     private final IntakeColor leftColor;
     private final IntakeColor rightColor;
 
+    public static double LEFT_OFFSET;
+
     public DualIntakeColor(HardwareMap hardwareMap) {
-        leftColor = new IntakeColor(hardwareMap, 0);
+        leftColor = new IntakeColor(hardwareMap, LEFT_OFFSET);
         rightColor = new IntakeColor(hardwareMap, 0);
     }
 

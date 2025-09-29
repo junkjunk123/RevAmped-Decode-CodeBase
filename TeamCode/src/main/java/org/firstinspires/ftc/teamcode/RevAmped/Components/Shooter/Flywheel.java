@@ -33,6 +33,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double k_T = 0.0980665 * STALL_TORQUE / STALL_CURRENT;
     public static double MOMENT_OF_INERTIA;
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
+    public static double VELOCITY_ERROR_THRESHOLD;
 
     @Override
     public void buildStatePowerMap() {
@@ -106,5 +107,9 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public double getBallLaunchVelocity() {
         return getAngularVelocity() * RADIUS * LAUNCH_ETA;
+    }
+
+    public boolean canShoot() {
+        return Math.abs(getVelocity() - targetVelocity) < VELOCITY_ERROR_THRESHOLD;
     }
 }
