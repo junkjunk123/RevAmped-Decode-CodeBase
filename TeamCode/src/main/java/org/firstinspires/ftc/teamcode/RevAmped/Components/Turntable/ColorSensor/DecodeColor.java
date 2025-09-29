@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import java.util.function.Supplier;
+
 import revAmped.components.Hardware.HwColorSensor;
 
 public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor> extends HwColorSensor implements DecodeColorSensor {
     public interface DetectionColor {
-        float getMinHue();
-        float getMaxHue();
+        boolean evaluateHue(double hue);
+        boolean evaluateDistance(double distance);
+        default boolean evaluate(Supplier<Double> hue, Supplier<Double> distance) {
+            return evaluateDistance(distance.get()) && evaluateHue(hue.get());
+        }
     }
 
     private final T neutralColor;
@@ -32,12 +37,15 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
 
     public ArtifactColor getColor() {
         if (currentColor == null) {
-            double hue = getHue();
+            Double hue = null;
             for (T color : neutralColor.getDeclaringClass().getEnumConstants()) {
                 if (color != neutralColor) {
-                    if (hue >= color.getMinHue() && hue <= color.getMaxHue()) {
-                        currentColor = color;
-                        return fromDetectionColor(currentColor);
+                    if (color.evaluateDistance(getDistanceMM())) {
+                        if (hue == null) hue = getHue();
+                        if (color.evaluateHue(hue)) {
+                            currentColor = color;
+                            return fromDetectionColor(currentColor);
+                        }
                     }
                 }
             }
