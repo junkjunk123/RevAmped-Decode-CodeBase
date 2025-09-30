@@ -34,28 +34,24 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     }
 
     public enum Color implements DecodeColor.DetectionColor {
-        PURPLE(IntakeColor.minPurpleHue,IntakeColor.maxPurpleHue, maxPurpleDistance),
-        GREEN(IntakeColor.minGreenHue, IntakeColor.maxGreenHue, maxGreenDistance),
-        NEUTRAL(0,255, 10000);
+        PURPLE, GREEN, NEUTRAL;
 
         @Override
         public boolean evaluateHue(double hue) {
-            return hue >= minHue && hue <= maxHue;
+            return switch (this) {
+                case PURPLE -> hue >= IntakeColor.minPurpleHue && hue <= IntakeColor.maxPurpleHue;
+                case GREEN -> hue >= IntakeColor.minGreenHue && hue <= IntakeColor.maxGreenHue;
+                default -> true;
+            };
         }
 
         @Override
         public boolean evaluateDistance(double distance) {
-            return distance <= maxDistance;
-        }
-
-        final float minHue;
-        final float maxHue;
-        final float maxDistance;
-
-        Color(float minHue, float maxHue, float maxDistance) {
-            this.minHue = minHue;
-            this.maxHue = maxHue;
-            this.maxDistance = maxDistance;
+            return switch (this) {
+                case PURPLE -> distance <= IntakeColor.maxPurpleDistance;
+                case GREEN -> distance <= IntakeColor.maxGreenDistance;
+                default -> true;
+            };
         }
     }
 

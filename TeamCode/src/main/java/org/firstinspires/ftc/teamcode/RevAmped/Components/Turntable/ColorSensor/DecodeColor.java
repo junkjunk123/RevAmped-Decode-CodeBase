@@ -37,16 +37,11 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
 
     public ArtifactColor getColor() {
         if (currentColor == null) {
-            Double hue = null;
             for (T color : neutralColor.getDeclaringClass().getEnumConstants()) {
                 if (color != neutralColor) {
-                    if (color.evaluateDistance(getDistanceMM())) {
-                        if (hue == null) hue = getHue();
-                        if (color.evaluateHue(hue)) {
-                            currentColor = color;
-                            return fromDetectionColor(currentColor);
-                        }
-                    }
+                    if (!color.evaluate(this::getHue, this::getDistanceMM)) continue;
+                    currentColor = color;
+                    return fromDetectionColor(currentColor);
                 }
             }
         }
