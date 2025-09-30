@@ -17,9 +17,10 @@ public class DualIntakeColor implements DecodeColorSensor {
     }
 
     public ArtifactColor getColor() {
+        rightColorRead = !rightColorRead;
         if (rightColorRead) {
             return rightColor.getColor();
-        } else{
+        } else {
             return leftColor.getColor();
         }
     }
@@ -33,7 +34,6 @@ public class DualIntakeColor implements DecodeColorSensor {
     public void update() {
         leftColor.update();
         rightColor.update();
-        rightColorRead = !rightColorRead;
     }
 
     @Override

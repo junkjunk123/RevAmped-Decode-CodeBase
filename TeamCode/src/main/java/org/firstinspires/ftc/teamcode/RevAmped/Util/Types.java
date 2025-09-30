@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Util;
 
 import static org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo.HOOD_REST;
-
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
-
-import java.util.ArrayList;
 import java.util.function.Function;
-
 import revAmped.components.Hardware.CRServoInternal;
 import revAmped.components.Hardware.HwCRServo2;
 import revAmped.components.Hardware.HwMotor2;
