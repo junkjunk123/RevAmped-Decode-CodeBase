@@ -38,6 +38,11 @@ public abstract class TwoMotorMechanism<T extends Enum<T> & HwMotor2.MotorState>
         motor2.setPower(power);
     }
 
+    public void setPower(float power) {
+        super.setPower(power);
+        motor2.setPower(power);
+    }
+
     @Override
     public void update() {
         super.update();
