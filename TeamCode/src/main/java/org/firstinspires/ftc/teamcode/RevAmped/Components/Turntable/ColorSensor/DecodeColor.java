@@ -50,7 +50,14 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
                 }
             }
         }
+
         return fromDetectionColor(currentColor);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        currentColor = null;
     }
 
     public abstract double getHue();
