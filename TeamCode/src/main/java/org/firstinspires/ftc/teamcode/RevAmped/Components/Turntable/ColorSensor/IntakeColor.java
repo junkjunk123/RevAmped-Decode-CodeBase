@@ -13,8 +13,8 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     public static float maxPurpleDistance;
     private final double offset;
 
-    public IntakeColor(HardwareMap hardwareMap, double offset) {
-        super(hardwareMap, "intakeColor", Color.NEUTRAL);
+    public IntakeColor(HardwareMap hardwareMap, String id, double offset) {
+        super(hardwareMap, id, Color.NEUTRAL);
         this.offset = offset;
     }
 

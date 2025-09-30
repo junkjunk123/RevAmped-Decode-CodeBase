@@ -16,22 +16,23 @@ public class ColorTest extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedInit() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        leftColor = new IntakeColor(hardwareMap,0d);
-        rightColor = new IntakeColor(hardwareMap,0d);
+        //leftColor = new IntakeColor(hardwareMap,"color_left",0d);
+        rightColor = new IntakeColor(hardwareMap,"color_right",0d);
     }
 
     @Override
     public void RevAmpedLoop() {
-        telemetry.addData("Left",leftColor.getColor());
-        telemetry.addData("Left",leftColor.getHSVValues());
-        telemetry.addData("Right",rightColor.getColor());
-        telemetry.addData("Right",rightColor.getHSVValues());
+        //telemetry.addData("Left",leftColor.getColor());
+        //telemetry.addData("Left",leftColor.getHSVValues());
+        telemetry.addData("color_right",rightColor.getColor());
+        telemetry.addData("color_right",rightColor.getHue());
+        telemetry.addData("Distance",rightColor.getDistanceMM());
     }
 
     @Override
     public void update() {
         telemetry.update();
-        leftColor.update();
+        //leftColor.update();
         rightColor.update();
     }
 
