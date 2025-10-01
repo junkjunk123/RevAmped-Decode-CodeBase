@@ -14,29 +14,29 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(16.2)
+            .mass(12.4)
             .forwardZeroPowerAcceleration(-29.08)
             .lateralZeroPowerAcceleration(-69)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.03, 0, 0, 0.015))
             .translationalPIDFSwitch(4)
             .secondaryTranslationalPIDFCoefficients(
-                    new PIDFCoefficients(0.4, 0, 0.005, 0.0006)
+                    new PIDFCoefficients(0.08, 0, 0.005, 0.0006)
             )
             .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0, 0.01))
             .secondaryHeadingPIDFCoefficients(
-                    new PIDFCoefficients(2.5, 0, 0.1, 0.0005)
+                    new PIDFCoefficients(1.5, 0, 0.1, 0.0005)
             )
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.1, 0, 0.00035, 0.6,0.015)
+                    new FilteredPIDFCoefficients(0.03, 0, 0.0004, 0.6,0.015)
             )
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(
-                    0.02,
+                    0.005,
                     0,
-                    0.000005,
+                    0,
                     0.6,
-                    0.01))
-            .drivePIDFSwitch(15)
-            .centripetalScaling(0.0005);
+                    0.015))
+            .drivePIDFSwitch(5)
+            .centripetalScaling(0.00055);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("motor_lf")
@@ -62,7 +62,7 @@ public class Constants {
             0.1,
             0.009,
             50,
-            1.25,
+            1,
             10,
             1
     );

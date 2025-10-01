@@ -15,10 +15,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
 
 import revAmped.components.GamepadDevices.Button;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 import revAmped.components.Hardware.HwDevice;
+import revAmped.components.prompter.OptionPrompt;
+import revAmped.components.prompter.Prompter;
 
 @Config
 @TeleOp(name = "ServoCalibrateTest", group = "Test")
@@ -38,6 +41,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
     private boolean selecting = true;
     private AnalogInput voltage;
     private final HashMap<String, Integer> calibratedPositions = new HashMap<>();
+    private Prompter prompter;
 
     @Override
     public void RevAmpedInit() {
@@ -47,29 +51,20 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
         voltage = hardwareMap.get(AnalogInput.class,"popper_voltage");
         telemetry.addData(">>", "Press start to continue");
         telemetry.update();
+        int[] indices = new int[servos.size()];
+        for (int i = 0; i < indices.length; i++) indices[i] = i;
+        prompter = new Prompter(this, gamepad_1)
+                .prompt("servo", new OptionPrompt<>(
+                        "Select a servo -- press right bumper to select",
+                        (Function<Integer, String>) i -> servos.get(i),
+                        indices
+                ))
+                .onComplete(() -> selectedPort = prompter.get("servo"));
     }
 
     @Override
     public void RevAmpedInitLoop() {
-        gamepad_1.update();
-        telemetry.addData("servo", servos.get(selectedPort));
-        telemetry.update();
-
-        if (gamepad_1.dpad_up.isPress()) {
-            selectedPort++;
-            selectedPort %= servos.size();
-            if (selectedPort < 0) {
-                selectedPort += servos.size();
-            }
-        }
-
-        if (gamepad_1.dpad_down.isPress()) {
-            selectedPort--;
-            selectedPort %= servos.size();
-            if (selectedPort < 0) {
-                selectedPort += servos.size();
-            }
-        }
+        prompter.run();
     }
 
     @Override
