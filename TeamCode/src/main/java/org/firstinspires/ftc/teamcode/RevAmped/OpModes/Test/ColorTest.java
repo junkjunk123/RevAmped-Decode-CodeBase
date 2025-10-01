@@ -25,7 +25,7 @@ public class ColorTest extends DecodeRevAmpedOpMode {
         //telemetry.addData("Left",leftColor.getColor());
         //telemetry.addData("Left",leftColor.getHSVValues());
         telemetry.addData("color_right",rightColor.getColor());
-        telemetry.addData("color_right",rightColor.getHue());
+        telemetry.addData("color_right",rightColor.getHSVValues());
         telemetry.addData("Distance",rightColor.getDistanceMM());
     }
 
