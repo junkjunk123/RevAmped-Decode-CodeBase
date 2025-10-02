@@ -2,8 +2,8 @@
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="intake" port="3"/>
-            <goBILDA5202SeriesMotor name="flywheel2" port="1"/>
-            <goBILDA5202SeriesMotor name="flywheel1" port="2"/>
+            <goBILDA5202SeriesMotor name="flywheel_right" port="1"/>
+            <goBILDA5202SeriesMotor name="flywheel_left" port="2"/>
             <goBILDA5202SeriesMotor name="turret" port="0"/>
             <Servo name="hood" port="0"/>
             <RevColorSensorV3 name="color_right" port="0" bus="0"/>

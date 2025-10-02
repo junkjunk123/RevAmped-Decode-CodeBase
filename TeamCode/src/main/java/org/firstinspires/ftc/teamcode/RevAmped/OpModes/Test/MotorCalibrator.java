@@ -20,19 +20,27 @@ import revAmped.components.Hardware.HwDevice;
 
 @TeleOp (group = "Test")
 public class MotorCalibrator extends DecodeRevAmpedOpMode {
-    private DcMotor motor;
+    private DcMotor[] motor;
     private List<String> motors;
-    private Robot robot;
+    private int[] zeroPosition;
+
     @Override
     public void RevAmpedInit() {
         motors = new ArrayList<>(Robot.getComponentNames(HwDevice.DeviceType.MOTOR));
+        motor = new DcMotor[motors.size()];
+        for (int i = 0; i < motor.length; i++) {
+            motor[i] = hardwareMap.get(DcMotor.class, motors.get(i));
+        }
+        zeroPosition = new int[motors.size()];
+        for (int j = 0; j < zeroPosition.length; j++) {
+            zeroPosition[j] = motor[j].getCurrentPosition();
+        }
     }
 
     @Override
     public void RevAmpedLoop() {
-        for (int i = 0; i<motors.size(); i++){
-            motor = hardwareMap.get(DcMotor.class, motors.get(i));
-            telemetry.addData(motors.get(i), motor.getCurrentPosition());
+        for (int i = 0; i < motors.size(); i++) {
+            telemetry.addData(motors.get(i), motor[i].getCurrentPosition() - zeroPosition[i]);
         }
     }
 

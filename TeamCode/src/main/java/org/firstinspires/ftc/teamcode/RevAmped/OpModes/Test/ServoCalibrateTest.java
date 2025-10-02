@@ -32,7 +32,6 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
     private RevAmpedGamepad gamepad_1;
     public static int denominator = 255;
     public static int TICK_CHANGE = 1;
-    private final static DecimalFormat numberFormatter = new DecimalFormat("#.###");
     private Telemetry telemetryA;
     private boolean singleTickMode = false;
     private int selectedPort = 0;
@@ -45,21 +44,18 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        servos = new ArrayList<>(Robot.getComponentNames(HwDevice.DeviceType.SERVO));
+        servos = List.of("hood","popper");
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         voltage = hardwareMap.get(AnalogInput.class,"popper_voltage");
         telemetry.addData(">>", "Press start to continue");
         telemetry.update();
-        int[] indices = new int[servos.size()];
-        for (int i = 0; i < indices.length; i++) indices[i] = i;
         prompter = new Prompter(this, gamepad_1)
                 .prompt("servo", new OptionPrompt<>(
                         "Select a servo -- press right bumper to select",
-                        (Function<Integer, String>) i -> servos.get(i),
-                        indices
+                        servos.toArray(new String[0])
                 ))
-                .onComplete(() -> selectedPort = prompter.get("servo"));
+                .onComplete(() -> currentServo = prompter.get("servo"));
     }
 
     @Override
@@ -69,7 +65,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedStart() {
-        currentServo = servos.get(selectedPort);
+        selectedPort = servos.indexOf(currentServo);
         servo = hardwareMap.get(ServoImplEx.class, currentServo);
         int initialPos = (int) servo.getPosition() * 255;
         if (initialPos == 0) {

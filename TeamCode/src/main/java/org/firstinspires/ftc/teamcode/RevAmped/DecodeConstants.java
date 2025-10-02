@@ -31,8 +31,8 @@ public final class DecodeConstants implements Constants {
         Popper.POP = 72/255f; Popper.NEUTRAL = 110/255f; Popper.UP_VOLTAGE = 0; Popper.DOWN_VOLTAGE = 0;
 
         //Flywheel Constants
-        Flywheel.FLYWHEEL_MAX_VELOCITY = 0; Flywheel.GEAR_RATIO = 0.75; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
-        Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 0; Flywheel.RADIUS = 0;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1350; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.GEAR_RATIO = 0.75; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
+        Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
         Flywheel.VELOCITY_ERROR_THRESHOLD = 0.5;
 
@@ -42,10 +42,11 @@ public final class DecodeConstants implements Constants {
         HoodServo.TELE_FAR_PRESET = 0f; HoodServo.TELE_NEAR_PRESET = 0f;
 
         //Turret Constants
-        TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 0;
-        TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);
+        TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2240;
+        TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
         TurretMotor.AUTO_PRELOADS = 0; TurretMotor.AUTO_SET_1 = 0; TurretMotor.AUTO_SET_2 = 0; TurretMotor.AUTO_SET_3 = 0;
+        TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560;
 
         //Table Constants
         TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);

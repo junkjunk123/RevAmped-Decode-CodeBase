@@ -73,7 +73,7 @@ public class Prompter {
      * This should be called in a loop.
      */
     public void run() {
-        if (isCompleted) {
+        if (isCompleted && finalMessage != null) {
             opmode.telemetry.addLine(finalMessage);
             opmode.telemetry.update();
             return;

@@ -30,8 +30,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
-    public static Pose APRIL_TAG_POSE_RED;
-    public static Pose APRIL_TAG_POSE_BLUE;
+    public static Pose APRIL_TAG_POSE_RED = new Pose(128.5, 130.5);
+    public static Pose APRIL_TAG_POSE_BLUE = new Pose(15.5, 130.5);
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
@@ -70,6 +70,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             Vector offset = new Vector(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
 
             double deltaAngle;
+
             if (trackTurret) {
                 Vector robotVelocity = pinpoint.getVelocityVector();
                 if (robotVelocity.getMagnitude() < 4) {
@@ -147,7 +148,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             case TRACKING -> {
                 hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING);
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
-                hardware.flywheel().setCurrentState(Types.FlywheelState.TRACKING);
+                hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
                 setTrackHood(true);
                 setTrackTurret(true);
             }

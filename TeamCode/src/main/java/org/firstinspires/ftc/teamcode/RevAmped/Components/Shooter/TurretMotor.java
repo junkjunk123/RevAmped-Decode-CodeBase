@@ -10,14 +10,16 @@ import revAmped.components.Hardware.HwSlide2;
 import revAmped.components.Hardware.Turret;
 import revAmped.components.Misc.Globals;
 import revAmped.components.SlideController.PIDF.PIDFController;
+import revAmped.util.Range;
 
 public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
         super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState, detector);
+        controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     }
 
     public static PIDFCoefficients TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);
-    public final PIDFController controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
+    public final PIDFController controller;
     public static int TURRET_TICKS_PER_ROTATION;
     private int targetPosition;
     public static float AUTO_PRELOADS;
@@ -27,6 +29,8 @@ public class TurretMotor extends Turret<TurretState> {
     public static float LL_DETECTION_RED;
     public static float LL_DETECTION_BLUE;
     public static boolean TURRET_LIMITS_ENABLED;
+    public static int TURRET_POSITIVE_LIMIT_TICKS;
+    public static int TURRET_NEGATIVE_LIMIT_TICKS;
 
     double prevFineTuneAngle = 0;
 
@@ -64,7 +68,7 @@ public class TurretMotor extends Turret<TurretState> {
     
     public void finetuneAngle(double rad) {
         prevFineTuneAngle = rad;
-        setCurrentState(TurretState.TRACKING, (int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)));
+        setCurrentState(TurretState.TRACKING, Range.clip((int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)), TURRET_NEGATIVE_LIMIT_TICKS, TURRET_POSITIVE_LIMIT_TICKS));
     }
 
     public void limelightDetection() {

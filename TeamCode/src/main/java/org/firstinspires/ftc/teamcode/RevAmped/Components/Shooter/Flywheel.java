@@ -4,23 +4,35 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types.FlywheelState;
 
 import revAmped.components.Hardware.TwoMotorMechanism;
 import revAmped.components.SlideController.PIDF.PIDFController;
 
 public class Flywheel extends TwoMotorMechanism<FlywheelState> {
-    private final PIDFController controller = new PIDFController(new PIDFCoefficients(0f,0f,0f,0f));
+    private final PIDFController controllerLarge;
+    private final PIDFController controllerMedium;
+    private final PIDFController controllerSmall;
+
+    public static PIDFCoefficients largeCoefficients;
+    public static PIDFCoefficients mediumCoefficients;
+    public static PIDFCoefficients smallCoefficients;
     private Double velocity = null;
     private Integer prevPos = null;
     private long prevTimeNano;
 
     public Flywheel(HardwareMap hardwareMap, FlywheelState motorState) throws IllegalArgumentException {
-        super(hardwareMap, "flywheel_left", "flywheel_right", DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, motorState);
+        super(hardwareMap, "flywheel_right", "flywheel_left", DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, motorState);
+        controllerLarge = new PIDFController(largeCoefficients);
+        controllerMedium = new PIDFController(mediumCoefficients);
+        controllerSmall = new PIDFController(smallCoefficients);
     }
 
-    public static double FLYWHEEL_MAX_VELOCITY;
+    public static double FLYWHEEL_FAR_VELOCITY;
+    public static double FLYWHEEL_NEAR_VELOCITY;
     private double targetVelocity;
+    private double currentAcceleration;
     public static float AUTO_PRELOADS;
     public static float AUTO_SET_1;
     public static float AUTO_SET_2;
@@ -37,17 +49,29 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     @Override
     public void buildStatePowerMap() {
-        statePowerMap.put(FlywheelState.RUNNING, () -> (float) controller.runWithError(targetVelocity - motor.getVelocity()));
+        statePowerMap.put(FlywheelState.RUNNING, () -> (float) controllerOutput());
         statePowerMap.put(FlywheelState.STOPPED, MotorPower.constant(0f));
-        statePowerMap.put(FlywheelState.TRACKING, () -> {
-            targetVelocity = FLYWHEEL_MAX_VELOCITY;
-            return (float) controller.runWithError(targetVelocity - motor.getVelocity());
-        });
     }
 
     public void run(double targetVelocity) {
         this.targetVelocity = targetVelocity;
+        if (getCurrentState() != FlywheelState.RUNNING) {
+            controllerSmall.reset();
+            controllerMedium.reset();
+            controllerLarge.reset();
+        }
         setCurrentState(FlywheelState.RUNNING);
+    }
+
+    public double controllerOutput() {
+        if (targetVelocity <= 600) return controllerSmall.runWithError(targetVelocity - getVelocityImperial());
+        else if (targetVelocity <= 1200) return controllerMedium.runWithError(targetVelocity - getVelocityImperial());
+        else return controllerLarge.runWithError(targetVelocity - getVelocityImperial());
+    }
+
+    public void updateTargetVelocity(double dist) {
+        if (dist < 100) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
+        else targetVelocity = FLYWHEEL_FAR_VELOCITY;
     }
 
     @Override
@@ -55,8 +79,11 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         super.setCurrentState(motorState);
         prevPos = null;
         prevTimeNano = System.nanoTime();
+        controllerLarge.reset();
+        controllerSmall.reset();
+        controllerMedium.reset();
 
-        if (motorState == FlywheelState.RUNNING) targetVelocity = FLYWHEEL_MAX_VELOCITY;
+        if (motorState == FlywheelState.RUNNING) targetVelocity = FLYWHEEL_FAR_VELOCITY;
     }
 
     @Override
@@ -64,6 +91,9 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         super.setCurrentState(motorState, power);
         prevPos = null;
         prevTimeNano = System.nanoTime();
+        controllerLarge.reset();
+        controllerSmall.reset();
+        controllerMedium.reset();
     }
 
     @Override
@@ -84,6 +114,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         }
 
         return velocity;
+    }
+
+    public double getVelocityImperial() {
+        return getVelocity() / ticksPerInch();
     }
 
     @Override
@@ -110,6 +144,14 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     }
 
     public boolean canShoot() {
-        return Math.abs(getVelocity() - targetVelocity) < VELOCITY_ERROR_THRESHOLD;
+        return Math.abs(getVelocityImperial() - targetVelocity) < VELOCITY_ERROR_THRESHOLD;
+    }
+
+    public boolean canShootLinear() {
+        return Math.abs(targetVelocity - getVelocityImperial() + Popper.POP_TIME_MILLIS * currentAcceleration) < VELOCITY_ERROR_THRESHOLD;
+    }
+
+    public static double ticksPerInch() {
+       return (double) COUNTS_PER_REVOLUTION / 2 / Math.PI / RADIUS;
     }
 }

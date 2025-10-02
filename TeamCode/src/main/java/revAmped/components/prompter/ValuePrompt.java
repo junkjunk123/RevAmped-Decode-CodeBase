@@ -7,6 +7,7 @@ public class ValuePrompt extends Prompt<Double> {
     private double increment;
     private double selectedValue;
     private final double incrementIncrement;
+    private boolean isInteger = false;
 
     public ValuePrompt(String header) {
         this(header, Double.MIN_VALUE, Double.MAX_VALUE, 0, 1);
@@ -27,6 +28,8 @@ public class ValuePrompt extends Prompt<Double> {
         this.increment = increment;
         this.selectedValue = defaultValue;
         incrementIncrement = 0;
+
+        if (isInteger(maxValue, minValue, defaultValue, increment, incrementIncrement)) isInteger = true;
     }
 
     public ValuePrompt(String header, double minValue, double maxValue, double defaultValue, double increment, double incrementIncrement) {
@@ -36,6 +39,13 @@ public class ValuePrompt extends Prompt<Double> {
         this.increment = increment;
         this.selectedValue = defaultValue;
         this.incrementIncrement = incrementIncrement;
+
+        if (isInteger(maxValue, minValue, defaultValue, increment, incrementIncrement)) isInteger = true;
+    }
+
+    private boolean isInteger(double... a) {
+        for (double i : a) if (Math.round(i) != i) return false;
+        return true;
     }
 
     @Override
@@ -43,7 +53,8 @@ public class ValuePrompt extends Prompt<Double> {
         addLine(header);
         addLine("");
 
-        addLine("< " + selectedValue + " >");
+        if (!isInteger) addLine("< " + selectedValue + " >");
+        else addLine("< " + (int) selectedValue + " >");
         addData("Increment",increment);
 
         if (input.dpad_up.isPress()) {
