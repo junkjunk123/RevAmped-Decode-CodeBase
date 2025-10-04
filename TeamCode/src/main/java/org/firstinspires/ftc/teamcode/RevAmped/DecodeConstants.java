@@ -31,6 +31,12 @@ public final class DecodeConstants implements Constants {
         Popper.POP = 72/255f; Popper.NEUTRAL = 110/255f; Popper.UP_VOLTAGE = 0; Popper.DOWN_VOLTAGE = 0;
 
         //Flywheel Constants
+        Flywheel.kStatic = 0.05;
+        Flywheel.FLYWHEEL_NEAR_VELOCITY = 800;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1350;
+        Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.0003);
+        Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.0008);
+        Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
         Flywheel.FLYWHEEL_FAR_VELOCITY = 1350; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.GEAR_RATIO = 0.75; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
@@ -49,9 +55,9 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560;
 
         //Table Constants
-        TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);
-        TableServo.BALL1 = 0; TableServo.BALL2 = 0; TableServo.BALL3 = 0;
-        TableServo.TICKS_PER_ROTATION = 0;
+        TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);
+        TableServo.BALL1 = 0; TableServo.BALL2 = 2700; TableServo.BALL3 = 5400;
+        TableServo.TICKS_PER_ROTATION = 8100;
 
         //ColorSensor Constants
         IntakeColor.maxGreenHue = 170; IntakeColor.minGreenHue = 150; IntakeColor.maxPurpleHue = 240; IntakeColor.minPurpleHue = 210; IntakeColor.maxPurpleDistance = 30; IntakeColor.maxGreenDistance = 30;

@@ -16,7 +16,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     public static float MAX_POWER = 1.0f;
     private boolean slowMode = false;
     private Localizer localizer;
-    private static Pose initialPose;
+    private static Pose initialPose = new Pose(72, 72, Math.toRadians(90));
 
     public TeleOpDrivetrainHandler(OpMode op, List<DcMotorSimple.Direction> directions) {
         super(op, directions);

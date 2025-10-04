@@ -6,21 +6,25 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class DualIntakeColor implements DecodeColorSensor {
     private boolean rightColorRead = true;
+    public static boolean useLeft = true;
+    public static boolean useRight = true;
     private final IntakeColor leftColor;
     private final IntakeColor rightColor;
 
     public static double LEFT_OFFSET;
 
     public DualIntakeColor(HardwareMap hardwareMap) {
-        leftColor = new IntakeColor(hardwareMap, "",LEFT_OFFSET);
-        rightColor = new IntakeColor(hardwareMap, "",0);
+        leftColor = new IntakeColor(hardwareMap, "color_left", LEFT_OFFSET);
+        rightColor = new IntakeColor(hardwareMap, "color_right",0);
     }
 
     public ArtifactColor getColor() {
         rightColorRead = !rightColorRead;
         if (rightColorRead) {
+            if (!useRight) return leftColor.getColor();
             return rightColor.getColor();
         } else {
+            if (!useLeft) return rightColor.getColor();
             return leftColor.getColor();
         }
     }

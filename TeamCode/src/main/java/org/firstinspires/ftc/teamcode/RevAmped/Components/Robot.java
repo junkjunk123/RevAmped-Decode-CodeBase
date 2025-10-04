@@ -210,8 +210,7 @@ public class Robot {
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> buildIDMap() {
         HashMap<Class<? extends HwDevice>, HashSet<String>> map = new HashMap<>();
         map.put(IntakeColor.class, new HashSet<>(List.of("intakeColor")));
-        map.put(Flywheel.class, new HashSet<>(List.of("flywheel1")));
-        map.put(Flywheel.class, new HashSet<>(List.of("flywheel2")));
+        map.put(Flywheel.class, new HashSet<>(List.of("flywheel1", "flywheel2")));
         map.put(TurretMotor.class, new HashSet<>(List.of("turret")));
         map.put(IntakeMotor.class, new HashSet<>(List.of("intake")));
         map.put(HoodServo.class, new HashSet<>(List.of("hood")));

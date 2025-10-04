@@ -7,16 +7,17 @@
             <goBILDA5202SeriesMotor name="turret" port="0"/>
             <Servo name="hood" port="0"/>
             <RevColorSensorV3 name="color_right" port="0" bus="0"/>
+            <RevColorSensorV3 name="color_left" port="0" bus="1"/>
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motor_lf" port="0"/>
             <goBILDA5202SeriesMotor name="motor_lb" port="1"/>
             <goBILDA5202SeriesMotor name="motor_rb" port="2"/>
             <goBILDA5202SeriesMotor name="motor_rf" port="3"/>
-            <Servo name="table" port="1"/>
+            <ContinuousRotationServo name="table" port="1"/>
             <Servo name="popper" port="5"/>
             <goBILDAPinpoint name="pinpoint" port="0" bus="3"/>
-            <AnalogInput name="popper_voltage" port="2"/>
+            <AnalogInput name="popper_voltage" port="0"/>
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

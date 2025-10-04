@@ -34,13 +34,13 @@ public class STDController {
      * A timer used to measure the elapsed time between runs.
      * This is used to calculate the rate of change of the error.
      */
-    private ElapsedTime timer = new ElapsedTime();
+    private final ElapsedTime timer = new ElapsedTime();
 
     /**
      * The maximum position for the controller.
      * This is used to scale the sigmoid function and ensure that the output remains within a reasonable range.
      */
-    private final int maxPos;
+    private int maxPos;
 
     /**
      * Constructs a new STDController with the specified coefficients and maximum position.
@@ -102,6 +102,24 @@ public class STDController {
      */
     public double run(int currentPos) {
         int error = targetPosition - currentPos;
+        return runWithError(error);
+    }
+
+    /**
+     * Gets the previous error value.
+     * This is used to retrieve the last calculated error for debugging or further calculations.
+     *
+     * @return the previous error value
+     */
+    public double getError() {
+        return prevError;
+    }
+
+    public void setMaxPos(int maxPos) {
+        this.maxPos = maxPos;
+    }
+
+    public double runWithError(int error) {
         double seconds = timer.seconds();
         timer.reset();
         double deltaError = (double) (error - prevError)/seconds;
@@ -113,15 +131,5 @@ public class STDController {
         double feedforward = Math.signum(error) * coefficients.F;
         if (targetPosition == 0) feedforward = 0;
         return power + feedforward + correction;
-    }
-
-    /**
-     * Gets the previous error value.
-     * This is used to retrieve the last calculated error for debugging or further calculations.
-     *
-     * @return the previous error value
-     */
-    public double getError() {
-        return prevError;
     }
 }

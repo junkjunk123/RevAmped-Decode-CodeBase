@@ -9,7 +9,7 @@ import revAmped.components.Hardware.HwMotor2;
 
 public class IntakeMotor extends HwMotor2<IntakeState> {
     public IntakeMotor(HardwareMap hardwareMap, IntakeState motorState) throws IllegalArgumentException {
-        super(hardwareMap, "intake", DcMotorSimple.Direction.FORWARD, motorState);
+        super(hardwareMap, "intake", DcMotorSimple.Direction.REVERSE, motorState);
     }
 
     @Override

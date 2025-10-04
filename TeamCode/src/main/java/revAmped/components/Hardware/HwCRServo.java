@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -58,6 +59,35 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
 
     public interface Encoder {
         int getPosition();
+        double getVelocity();
+
+        static Encoder fromLambdas(Supplier<Integer> position, Supplier<Double> velocity) {
+            return new Encoder() {
+                @Override
+                public int getPosition() {
+                    return position.get();
+                }
+
+                @Override
+                public double getVelocity() {
+                    return velocity.get();
+                }
+            };
+        }
+
+        static Encoder external(HwMotor2<?> otherMotor) {
+            return new Encoder() {
+                @Override
+                public int getPosition() {
+                    return otherMotor.motor.getCurrentPosition();
+                }
+
+                @Override
+                public double getVelocity() {
+                    return otherMotor.motor.getVelocity();
+                }
+            };
+        }
     }
 
     public void setPower(float power) {

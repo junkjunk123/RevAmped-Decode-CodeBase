@@ -29,8 +29,8 @@ public class TableServo extends HwCRServo2 <TableState> {
         statePowerMap.put(TableState.BALL3, () -> (float) controller.runWithError(getError(BALL3)));
     }
 
-    public TableServo(HardwareMap hardwareMap, TableState state) throws IllegalArgumentException{
-        super(hardwareMap, "table", DcMotorSimple.Direction.FORWARD, state, null,null);
+    public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
+        super(hardwareMap, "table", DcMotorSimple.Direction.FORWARD, state, encoder);
     }
 
     @Override

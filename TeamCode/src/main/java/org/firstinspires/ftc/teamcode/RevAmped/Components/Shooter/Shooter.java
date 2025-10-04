@@ -42,7 +42,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
-        TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? Types.TurretState.HOLD : Types.TurretState.IDLE, null);
+        TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? Types.TurretState.HOLD : Types.TurretState.IDLE);
         Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
     }
@@ -149,7 +149,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                 hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING);
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
                 hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
-                setTrackHood(true);
+                //setTrackHood(true);
                 setTrackTurret(true);
             }
         }

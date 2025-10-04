@@ -13,8 +13,8 @@ import revAmped.components.SlideController.PIDF.PIDFController;
 import revAmped.util.Range;
 
 public class TurretMotor extends Turret<TurretState> {
-    public TurretMotor(HardwareMap hardwareMap, TurretState motorState, HwSlide2.SlideRetractionDetector detector) throws IllegalArgumentException {
-        super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState, detector);
+    public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {
+        super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState);
         controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     }
 

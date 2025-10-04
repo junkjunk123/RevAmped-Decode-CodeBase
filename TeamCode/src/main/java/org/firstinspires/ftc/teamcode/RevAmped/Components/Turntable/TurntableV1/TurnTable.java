@@ -2,12 +2,8 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
-import revAmped.components.Hardware.HwCRServo2;
-import revAmped.components.Hardware.HwMotor2;
-import revAmped.components.Hardware.HwServo2;
-
+import revAmped.components.Hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ArtifactQueuer;
-import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.IntakeMotor;
@@ -30,10 +26,10 @@ public class TurnTable implements ArtifactQueuer {
 
     public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap) {
         this.scheduler = scheduler;
-        TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST);
+        IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
+        TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
         DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);
-        IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
         hardware = new QueuerHardwareComponents(turntable, popper, intakeMotor, intakeColor);
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
         compartments = new TableCompartmentManager(
@@ -135,10 +131,12 @@ public class TurnTable implements ArtifactQueuer {
 
     public void prepareGreen() {
         compartments.prepareGreenForPop();
+        setCycleState(TurnTableCycleState.POP);
     }
 
     public void preparePurple() {
         compartments.preparePurpleForPop();
+        setCycleState(TurnTableCycleState.POP);
     }
 
     public boolean canPop() {

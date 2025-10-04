@@ -22,7 +22,7 @@ public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageS
                 "popper",
                 setPosition,
                 PopperState.NEUTRAL,
-                new HwAnalogEncoder(hardwareMap, "popperVoltage"),
+                new HwAnalogEncoder(hardwareMap, "popper_voltage"),
                 ServoBrand.AXON_MINI
         );
     }
@@ -33,7 +33,7 @@ public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageS
                 "popper",
                 initialPosition,
                 PopperState.NEUTRAL,
-                new HwAnalogEncoder(hardwareMap, "popperVoltage"),
+                new HwAnalogEncoder(hardwareMap, "popper_voltage"),
                 ServoBrand.AXON_MINI
         );
     }

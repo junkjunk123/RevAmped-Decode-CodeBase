@@ -46,6 +46,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double MOMENT_OF_INERTIA;
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
     public static double VELOCITY_ERROR_THRESHOLD;
+    public static double kStatic;
 
     @Override
     public void buildStatePowerMap() {
@@ -64,9 +65,15 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     }
 
     public double controllerOutput() {
-        if (targetVelocity <= 600) return controllerSmall.runWithError(targetVelocity - getVelocityImperial());
-        else if (targetVelocity <= 1200) return controllerMedium.runWithError(targetVelocity - getVelocityImperial());
-        else return controllerLarge.runWithError(targetVelocity - getVelocityImperial());
+        if (targetVelocity <= 600) return runController(controllerSmall, targetVelocity - getVelocityImperial());
+        else if (targetVelocity <= 1200) return runController(controllerMedium, targetVelocity - getVelocityImperial());
+        else return runController(controllerLarge, targetVelocity - getVelocityImperial());
+    }
+
+    public double runController(PIDFController controller, double error) {
+        controller.updateError(error);
+        controller.updateFeedForwardInput(targetVelocity);
+        return controller.runPIDF() + kStatic;
     }
 
     public void updateTargetVelocity(double dist) {
