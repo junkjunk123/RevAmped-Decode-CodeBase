@@ -13,6 +13,10 @@ public class Vector2D extends Vector {
         super(x, y);
     }
 
+    public Vector2D() {
+        this(0, 0);
+    }
+
     /**
      * Rotates the vector by an angle
      * @param angle the angle in degrees to rotate the vector

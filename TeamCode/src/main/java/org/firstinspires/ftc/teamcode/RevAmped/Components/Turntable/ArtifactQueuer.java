@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
+import revAmped.components.MathUtil.Vector2D;
+
 public interface ArtifactQueuer {
     void preparePurple();
     void prepareGreen();
     void pop();
-    DecodeColorSensor.ArtifactColor[] getBallColors();
+    Vector2D[] getBallColors();
     void intake();
     void update();
     boolean isMotifMode();
@@ -26,4 +28,6 @@ public interface ArtifactQueuer {
     int[] getPurpleBallIndices();
     int[] getEmptyIndices();
     DecodeColorSensor.ArtifactColor getNextPopColor();
+
+    void manualTransfer();
 }

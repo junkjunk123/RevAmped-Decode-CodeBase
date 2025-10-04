@@ -61,6 +61,16 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         return hardware;
     }
 
+    @Override
+    public void toggleHoodTracking() {
+        trackHood = !trackHood;
+    }
+
+    @Override
+    public void toggleTurretTracking() {
+        trackTurret = !trackTurret;
+    }
+
     public void update() {
         hardware.update();
 
@@ -218,5 +228,10 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static Vector3D getTargetLaunchPos() {
         return Globals.allianceColor == Globals.AllianceColor.Red ? new Vector3D(144 - BLUE_SHOOT_ZONE.getX(), BLUE_SHOOT_ZONE.getY(), BLUE_SHOOT_ZONE.getY()) : BLUE_SHOOT_ZONE;
+    }
+
+    public void toggleState() {
+        if (currentState == ShooterState.REST) setCurrentState(ShooterState.TRACKING);
+        else setCurrentState(ShooterState.REST);
     }
 }

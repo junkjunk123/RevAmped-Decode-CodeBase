@@ -3,6 +3,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Hardware.HwCRServo;
+import revAmped.components.MathUtil.Vector2D;
+
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor.ArtifactColor;
@@ -87,6 +89,7 @@ public class TurnTable implements ArtifactQueuer {
 
     public void update() {
         hardware.update();
+        compartments.update();
 
         if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
     }
@@ -123,10 +126,10 @@ public class TurnTable implements ArtifactQueuer {
         compartments.setMotifMode(mode);
     }
 
-    public ArtifactColor[] getBallColors() {
+    public Vector2D[] getBallColors() {
         return Arrays.stream(compartments.getCompartments())
                 .map(TableCompartmentManager.TableCompartment::getColor)
-                .toArray(ArtifactColor[]::new);
+                .toArray(revAmped.components.MathUtil.Vector2D[]::new);
     }
 
     public void prepareGreen() {
@@ -137,6 +140,10 @@ public class TurnTable implements ArtifactQueuer {
     public void preparePurple() {
         compartments.preparePurpleForPop();
         setCycleState(TurnTableCycleState.POP);
+    }
+
+    public void manualTransfer() {
+        compartments.manualTransfer();
     }
 
     public boolean canPop() {

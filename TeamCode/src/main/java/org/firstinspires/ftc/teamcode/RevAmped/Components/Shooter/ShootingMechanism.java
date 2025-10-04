@@ -29,4 +29,8 @@ public interface ShootingMechanism<T> {
     Localizer pinpoint();
 
     Types.ShooterHardwareComponents hardware();
+
+    void toggleHoodTracking();
+    void toggleTurretTracking();
+    void toggleState();
 }

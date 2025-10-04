@@ -48,6 +48,10 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
             robot.intakeMotor().stop();
         }
 
+        if (gamepad_2.a.isPress()) {
+            robot.turnTable.manualTransfer();
+        }
+
         if (gamepad_2.y.isPress()) {
             robot.turnTable.pop();
             robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
@@ -67,6 +71,18 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_left.isPress()) {
             robot.turnTable.preparePurple();
+        }
+
+        if (gamepad_1.y.isPress()) {
+            robot.shooter.toggleState();
+        }
+
+        if (gamepad_1.dpad_up.isPress()) {
+            robot.shooter.toggleHoodTracking();
+        }
+
+        if (gamepad_1.dpad_down.isPress()) {
+            robot.shooter.toggleTurretTracking();
         }
     }
 

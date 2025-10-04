@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
+import revAmped.components.MathUtil.Vector;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+
+import revAmped.components.MathUtil.Vector2D;
 import revAmped.components.Misc.Globals;
 
 public class TableCompartmentManager {
@@ -13,22 +17,72 @@ public class TableCompartmentManager {
     }
 
     public static final class TableCompartment {
-        private DecodeColorSensor.ArtifactColor color;
+        private Vector2D color = new Vector2D(); //ihat purple, jhat green
+        private final int index;
 
-        public TableCompartment(DecodeColorSensor.ArtifactColor color) {
-            this.color = color;
+        public TableCompartment(int index) {
+            this.index = index;
         }
 
-        public DecodeColorSensor.ArtifactColor getColor() {
+        public Vector2D getColor() {
             return color;
         }
 
-        public void setColor(DecodeColorSensor.ArtifactColor color) {
+        public void setColor(Vector2D color) {
             this.color = color;
         }
 
+        public void setColor(DecodeColorSensor.ArtifactColor color) {
+            if (color == DecodeColorSensor.ArtifactColor.PURPLE) {
+                this.color = new Vector2D(1, 0);
+            } else if (color == DecodeColorSensor.ArtifactColor.GREEN) {
+                this.color = new Vector2D(0, 1);
+            } else {
+                this.color = new Vector2D(0, 0);
+            }
+        }
+
         public void releaseBall() {
-            color = DecodeColorSensor.ArtifactColor.NONE;
+            color = new Vector2D();
+        }
+
+        public static Comparator<TableCompartment> getComparator(DecodeColorSensor.ArtifactColor color) {
+            if (color == DecodeColorSensor.ArtifactColor.PURPLE) {
+                return Comparator.comparingDouble(c -> c.color.getX());
+            } else if (color == DecodeColorSensor.ArtifactColor.GREEN) {
+                return Comparator.comparingDouble(c -> c.color.getY());
+            } else {
+                return (a, b) -> 0; // No specific order
+            }
+        }
+
+        public boolean isGreen() {
+            return color.getY() == 1;
+        }
+
+        public boolean isPurple() {
+            return color.getX() == 1;
+        }
+
+        public boolean isNone() {
+            return color.getX() == 0 && color.getY() == 0;
+        }
+
+        public boolean isUndetermined() {
+            return !isGreen() && !isPurple() && !isNone();
+        }
+
+        public DecodeColorSensor.ArtifactColor getGuessedColor() {
+            if (isNone()) return DecodeColorSensor.ArtifactColor.NONE;
+            return color.getX() > color.getY() ? DecodeColorSensor.ArtifactColor.PURPLE : DecodeColorSensor.ArtifactColor.GREEN;
+        }
+
+        public void update(boolean motifMode, int green, int purple) {
+            if (!motifMode) return;
+
+            if (green >= 1) color = new Vector2D(Math.sqrt(0.9), Math.sqrt(0.1));
+            else if (purple == 2) color = new Vector2D(Math.sqrt(0.1), Math.sqrt(0.9));
+            else if (purple == 1) color = new Vector2D(Math.sqrt(0.5), Math.sqrt(0.5));
         }
     }
 
@@ -42,10 +96,16 @@ public class TableCompartmentManager {
     private final Runnable toggleCycleState;
 
     private final TableCompartment[] compartments = {
-        new TableCompartment(DecodeColorSensor.ArtifactColor.NONE),
-        new TableCompartment(DecodeColorSensor.ArtifactColor.NONE),
-        new TableCompartment(DecodeColorSensor.ArtifactColor.NONE)
+        new TableCompartment(0),
+        new TableCompartment(1),
+        new TableCompartment(2)
     };
+
+    private TableCompartment[] sort(DecodeColorSensor.ArtifactColor color) {
+        TableCompartment[] sorted = compartments.clone();
+        java.util.Arrays.sort(sorted, TableCompartment.getComparator(color));
+        return sorted;
+    }
 
     public TableCompartment getCompartment(int index) {
         if (index < 0 || index >= compartments.length) {
@@ -56,26 +116,26 @@ public class TableCompartmentManager {
 
     public int[] getGreenBallIndices() {
         return java.util.stream.IntStream.range(0, compartments.length)
-            .filter(i -> compartments[i].getColor() == DecodeColorSensor.ArtifactColor.GREEN)
+            .filter(i -> compartments[i].isGreen())
             .toArray();
     }
 
     public int[] getPurpleBallIndices() {
         return java.util.stream.IntStream.range(0, compartments.length)
-            .filter(i -> compartments[i].getColor() == DecodeColorSensor.ArtifactColor.PURPLE)
+            .filter(i -> compartments[i].isPurple())
             .toArray();
     }
 
     public int[] getEmptyIndices() {
         return java.util.stream.IntStream.range(0, compartments.length)
-                .filter(i -> compartments[i].getColor() == DecodeColorSensor.ArtifactColor.NONE)
+                .filter(i -> compartments[i].isNone())
                 .toArray();
     }
 
     public void pop() {
-        if (compartments[currentPopIndex].getColor() != DecodeColorSensor.ArtifactColor.NONE) {
+        if (!compartments[currentPopIndex].isNone()) {
             prevLastPoppedColor = lastPoppedColor;
-            lastPoppedColor = compartments[currentPopIndex].getColor();
+            lastPoppedColor = compartments[currentPopIndex].getGuessedColor();
             compartments[currentPopIndex].releaseBall();
 
             int nextPopIndex = motifMode && Globals.randomizationState != null ? getNextMotifPopIndex() : findNextPopIndex();
@@ -90,8 +150,21 @@ public class TableCompartmentManager {
 
     public void intake(DecodeColorSensor.ArtifactColor color) {
         if (color == DecodeColorSensor.ArtifactColor.NONE) return;
-        if (compartments[currentIntakeIndex].getColor() == DecodeColorSensor.ArtifactColor.NONE) {
+        if (compartments[currentIntakeIndex].isNone()) {
             compartments[currentIntakeIndex].setColor(color);
+
+            int nextIntakeIndex = findNextIntakeIndex();
+            if (nextIntakeIndex != currentIntakeIndex) {
+                advanceIntakeIndex(nextIntakeIndex);
+            } else {
+                toggleCycleState.run();
+            }
+        }
+    }
+
+    public void manualTransfer() {
+        if (compartments[currentIntakeIndex].isNone()) {
+            compartments[currentIntakeIndex].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
 
             int nextIntakeIndex = findNextIntakeIndex();
             if (nextIntakeIndex != currentIntakeIndex) {
@@ -105,7 +178,7 @@ public class TableCompartmentManager {
     public int findNextIntakeIndex() {
         for (int i = 0; i <= compartments.length; i++) {
             int nextIndex = (currentIntakeIndex + i) % compartments.length;
-            if (compartments[nextIndex].getColor() == DecodeColorSensor.ArtifactColor.NONE) {
+            if (compartments[nextIndex].isNone()) {
                 return nextIndex;
             }
         }
@@ -116,7 +189,7 @@ public class TableCompartmentManager {
     public int findNextPopIndex() {
         for (int i = 0; i <= compartments.length; i++) {
             int nextIndex = (currentPopIndex + i) % compartments.length;
-            if (compartments[nextIndex].getColor() != DecodeColorSensor.ArtifactColor.NONE) {
+            if (!compartments[nextIndex].isNone()) {
                 return nextIndex;
             }
         }
@@ -145,23 +218,17 @@ public class TableCompartmentManager {
     }
 
     private int nextPurple() {
-        for (int i = 0; i < compartments.length; i++) {
-            if (compartments[i].getColor() == DecodeColorSensor.ArtifactColor.PURPLE) {
-                return i;
-            }
-        }
+        TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.PURPLE);
+        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentPopIndex;
 
-        return currentPopIndex; // No purple ball found
+        return sorted[0].index; // No purple ball found
     }
 
     private int nextGreen() {
-        for (int i = 0; i < compartments.length; i++) {
-            if (compartments[i].getColor() == DecodeColorSensor.ArtifactColor.GREEN) {
-                return i;
-            }
-        }
+        TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.GREEN);
+        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentPopIndex;
 
-        return currentPopIndex; // No green ball found
+        return sorted[0].index; // No green ball found
     }
 
     public DecodeColorSensor.ArtifactColor getNextPopColor() {
@@ -220,5 +287,19 @@ public class TableCompartmentManager {
 
     public TableCompartment[] getCompartments() {
         return compartments;
+    }
+
+    public void update() {
+        int greenCount = 0;
+        int purpleCount = 0;
+
+        for (TableCompartment compartment : compartments) {
+            if (compartment.isGreen()) greenCount++;
+            else if (compartment.isPurple()) purpleCount++;
+        }
+
+        for (TableCompartment compartment : compartments) {
+            compartment.update(motifMode, greenCount, purpleCount);
+        }
     }
 }
