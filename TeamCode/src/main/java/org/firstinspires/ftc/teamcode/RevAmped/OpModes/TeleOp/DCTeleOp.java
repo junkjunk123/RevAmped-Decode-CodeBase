@@ -99,4 +99,12 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     public Robot.OpModeType getOpModeType() {
         return Robot.OpModeType.TELEOP;
     }
+
+    public void setGamepad_2(RevAmpedGamepad gamepad_2) {
+        this.gamepad_2 = gamepad_2;
+    }
+
+    public void setGamepad_1(RevAmpedGamepad gamepad_1) {
+        this.gamepad_1 = gamepad_1;
+    }
 }
