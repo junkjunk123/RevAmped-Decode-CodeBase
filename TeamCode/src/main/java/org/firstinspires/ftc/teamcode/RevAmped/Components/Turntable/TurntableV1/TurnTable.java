@@ -4,6 +4,7 @@ import revAmped.components.CommandScheduler.Commands.Delay;
 import revAmped.components.CommandScheduler.Scheduler;
 import revAmped.components.Hardware.HwCRServo;
 import revAmped.components.MathUtil.Vector2D;
+import revAmped.components.Misc.Globals;
 
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DualIntakeColor;
@@ -21,22 +22,20 @@ import java.util.Arrays;
 public class TurnTable implements ArtifactQueuer {
     private final Scheduler scheduler;
     public TableCompartmentManager compartments;
-
     public final QueuerHardwareComponents hardware;
-
     private final TurnTableState currentState;
 
     public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap) {
         this.scheduler = scheduler;
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
-        TableServo turntable = new TableServo(hardwareMap, setPositions ? Types.TableState.BALL1 : Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
+        TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
         DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);
-        hardware = new QueuerHardwareComponents(turntable, popper, intakeMotor, intakeColor);
-        currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler);
+        hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor);
         compartments = new TableCompartmentManager(
                 ball -> {
-                    intake();
+                    intakeMotor.stop();
+                    scheduler.add(new Delay(() -> tableServo.getLastError() < TableServo.BALL1 / 2.0, this::intake));
                     setCurrentState(TurnTableInternalState.values()[ball]);
                 },
                 ball -> {
@@ -45,10 +44,11 @@ public class TurnTable implements ArtifactQueuer {
                     hardware.intakeMotor().stop();
                 },
                 () -> {
-                    setCycleState(currentState.getCycleState().toggle());
+                    setCycleState(getCurrentState().getCycleState().toggle());
                     compartments.resetPopHistory();
                 }
         );
+        currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler, compartments);
     }
 
     public void setCurrentState(TurnTableInternalState currentState) {
@@ -88,10 +88,13 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     public void update() {
+        Globals.telemetry.addData("error", hardware.turntable().getLastError());
+        Globals.telemetry.addData("state",hardware.turntable().getCurrentState());
+        Globals.telemetry.addData("balls",3 - compartments.getEmptyIndices().length);
         hardware.update();
         compartments.update();
 
-        if (currentState.getCycleState() == TurnTableCycleState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
+        if (currentState.getCycleState() == TurnTableCycleState.INTAKE && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
     }
 
     @Override

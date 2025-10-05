@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 
 import revAmped.components.CommandScheduler.Scheduler;
+import revAmped.components.Misc.Globals;
 
 public final class TurnTableInternals {
     public enum TurnTableInternalState {
@@ -35,12 +36,14 @@ public final class TurnTableInternals {
         private TurnTableInternalState internalState;
         private final Types.QueuerHardwareComponents hardware;
         private final Scheduler scheduler;
+        private final TableCompartmentManager compartmentManager;
 
-        public TurnTableState(TurnTableCycleState cycleState, TurnTableInternalState internalState, Types.QueuerHardwareComponents hardware, Scheduler scheduler) {
+        public TurnTableState(TurnTableCycleState cycleState, TurnTableInternalState internalState, Types.QueuerHardwareComponents hardware, Scheduler scheduler, TableCompartmentManager compartmentManager) {
             this.cycleState = cycleState;
             this.internalState = internalState;
             this.hardware = hardware;
             this.scheduler = scheduler;
+            this.compartmentManager = compartmentManager;
             initAction();
         }
 
@@ -63,17 +66,28 @@ public final class TurnTableInternals {
         public void setInternalState(TurnTableInternalState newState) {
             if (this.internalState != newState) {
                 this.internalState = newState;
-                switchCycleState();
                 initAction();
+                switchInternalCompartmentState();
             }
         }
 
         public void setInternalState(TurnTableInternalState newState, boolean init) {
             if (this.internalState != newState) {
                 this.internalState = newState;
-                switchCycleState();
                 if (init) initAction();
+                switchInternalCompartmentState();
             }
+        }
+
+        public void switchInternalState() {
+            if (cycleState == TurnTableCycleState.POP) {
+                int nextPopIndex = compartmentManager.isMotifMode() && Globals.randomizationState != null ? compartmentManager.getNextMotifPopIndex() : compartmentManager.findNextPopIndex();
+                internalState = TurnTableInternalState.values()[nextPopIndex];
+            } else if (cycleState == TurnTableCycleState.INTAKE) {
+                int nextIntakeIndex = compartmentManager.findNextIntakeIndex();
+                internalState = TurnTableInternalState.values()[nextIntakeIndex];
+            }
+            switchInternalCompartmentState();
         }
 
         public TurnTableCycleState getCycleState() {
@@ -84,32 +98,16 @@ public final class TurnTableInternals {
             return internalState;
         }
 
-        private void switchInternalState() {
-            for (TurnTableInternalState state : cycleState.states) {
-                if (state == internalState) {
-                    return;
-                }
-            }
-
-            internalState = cycleState.states[0];
-        }
-
-        private void switchCycleState() {
-            for (TurnTableInternalState state : cycleState.states) {
-                if (state == internalState) {
-                    return;
-                }
-            }
-
-            cycleState = cycleState.toggle();
-        }
-
         private void initAction() {
-            switch (getInternalState()) {
+            switch (internalState) {
                 case BALL1 -> hardware.turntable().setCurrentState(Types.TableState.BALL1);
                 case BALL2 -> hardware.turntable().setCurrentState(Types.TableState.BALL2);
                 case BALL3 -> hardware.turntable().setCurrentState(Types.TableState.BALL3);
             }
+        }
+
+        private void switchInternalCompartmentState() {
+            compartmentManager.setCurrentIndex(internalState.ordinal());
         }
     }
 }

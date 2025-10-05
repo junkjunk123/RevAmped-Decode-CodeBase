@@ -126,6 +126,9 @@ public class Robot {
                         turnTable.hardware().intakeColor()
                 )
         ));
+        turnTable.hardware().turntable().resetPosition();
+        shooter.hardware().flywheel().resetPosition();
+        shooter.hardware().turretMotor().resetPosition();
     }
 
     public void update() {

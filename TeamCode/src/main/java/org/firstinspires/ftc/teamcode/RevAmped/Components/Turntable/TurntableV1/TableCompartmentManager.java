@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
-import revAmped.components.MathUtil.Vector;
 
 import java.util.Comparator;
 import java.util.List;
@@ -57,15 +56,15 @@ public class TableCompartmentManager {
         }
 
         public boolean isGreen() {
-            return color.getY() == 1;
+            return color.getY() >= 0.95;
         }
 
         public boolean isPurple() {
-            return color.getX() == 1;
+            return color.getX() >= 0.95;
         }
 
         public boolean isNone() {
-            return color.getX() == 0 && color.getY() == 0;
+            return color.magnitude() < 0.1;
         }
 
         public boolean isUndetermined() {
@@ -86,14 +85,17 @@ public class TableCompartmentManager {
         }
     }
 
-    private int currentIntakeIndex = 0;
-    private int currentPopIndex = 0;
+    private int currentIndex = 0;
     private DecodeColorSensor.ArtifactColor lastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
     private DecodeColorSensor.ArtifactColor prevLastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
     private boolean motifMode = false;
     private final Consumer<Integer> switchIntakeState;
     private final Consumer<Integer> switchPopState;
     private final Runnable toggleCycleState;
+
+    public void setCurrentIndex(int currentIntakeIndex) {
+        this.currentIndex = currentIntakeIndex;
+    }
 
     private final TableCompartment[] compartments = {
         new TableCompartment(0),
@@ -133,14 +135,14 @@ public class TableCompartmentManager {
     }
 
     public void pop() {
-        if (!compartments[currentPopIndex].isNone()) {
+        if (!compartments[currentIndex].isNone()) {
             prevLastPoppedColor = lastPoppedColor;
-            lastPoppedColor = compartments[currentPopIndex].getGuessedColor();
-            compartments[currentPopIndex].releaseBall();
+            lastPoppedColor = compartments[currentIndex].getGuessedColor();
+            compartments[currentIndex].releaseBall();
 
             int nextPopIndex = motifMode && Globals.randomizationState != null ? getNextMotifPopIndex() : findNextPopIndex();
 
-            if (nextPopIndex != currentPopIndex) {
+            if (nextPopIndex != currentIndex) {
                 advancePopIndex(nextPopIndex);
             } else {
                 toggleCycleState.run();
@@ -150,11 +152,11 @@ public class TableCompartmentManager {
 
     public void intake(DecodeColorSensor.ArtifactColor color) {
         if (color == DecodeColorSensor.ArtifactColor.NONE) return;
-        if (compartments[currentIntakeIndex].isNone()) {
-            compartments[currentIntakeIndex].setColor(color);
+        if (compartments[currentIndex].isNone()) {
+            compartments[currentIndex].setColor(color);
 
             int nextIntakeIndex = findNextIntakeIndex();
-            if (nextIntakeIndex != currentIntakeIndex) {
+            if (nextIntakeIndex != currentIndex) {
                 advanceIntakeIndex(nextIntakeIndex);
             } else {
                 toggleCycleState.run();
@@ -163,11 +165,11 @@ public class TableCompartmentManager {
     }
 
     public void manualTransfer() {
-        if (compartments[currentIntakeIndex].isNone()) {
-            compartments[currentIntakeIndex].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
+        if (compartments[currentIndex].isNone()) {
+            compartments[currentIndex].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
 
             int nextIntakeIndex = findNextIntakeIndex();
-            if (nextIntakeIndex != currentIntakeIndex) {
+            if (nextIntakeIndex != currentIndex) {
                 advanceIntakeIndex(nextIntakeIndex);
             } else {
                 toggleCycleState.run();
@@ -176,57 +178,65 @@ public class TableCompartmentManager {
     }
 
     public int findNextIntakeIndex() {
+        if (compartments[currentIndex].isNone()) return currentIndex;
+
         for (int i = 0; i <= compartments.length; i++) {
-            int nextIndex = (currentIntakeIndex + i) % compartments.length;
+            int nextIndex = (currentIndex + i) % compartments.length;
             if (compartments[nextIndex].isNone()) {
                 return nextIndex;
             }
         }
 
-        return currentIntakeIndex; // All compartments are full
+        return currentIndex; // All compartments are full
     }
 
     public int findNextPopIndex() {
+        if (!compartments[currentIndex].isNone()) return currentIndex;
+
         for (int i = 0; i <= compartments.length; i++) {
-            int nextIndex = (currentPopIndex + i) % compartments.length;
+            int nextIndex = (currentIndex + i) % compartments.length;
             if (!compartments[nextIndex].isNone()) {
                 return nextIndex;
             }
         }
 
-        return currentPopIndex; // All compartments are empty
+        return currentIndex; // All compartments are empty
     }
 
     public void advanceIntakeIndex(int newIndex) {
-        currentIntakeIndex = newIndex % compartments.length;
-        switchIntakeState.accept(currentIntakeIndex);
+        currentIndex = newIndex % compartments.length;
+        switchIntakeState.accept(currentIndex);
     }
 
     public void advancePopIndex(int newIndex) {
-        currentPopIndex = (newIndex) % compartments.length;
-        switchPopState.accept(currentPopIndex);
+        currentIndex = (newIndex) % compartments.length;
+        switchPopState.accept(currentIndex);
     }
 
     public void prepareGreenForPop() {
         int index = nextGreen();
-        if (index != currentIntakeIndex) advancePopIndex(index);
+        if (index != currentIndex) advancePopIndex(index);
     }
 
     public void preparePurpleForPop() {
         int index = nextPurple();
-        if (index != currentIntakeIndex) advancePopIndex(index);
+        if (index != currentIndex) advancePopIndex(index);
     }
 
     private int nextPurple() {
+        if (compartments[currentIndex].isPurple()) return currentIndex;
+
         TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.PURPLE);
-        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentPopIndex;
+        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentIndex;
 
         return sorted[0].index; // No purple ball found
     }
 
     private int nextGreen() {
+        if (compartments[currentIndex].isGreen()) return currentIndex;
+
         TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.GREEN);
-        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentPopIndex;
+        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentIndex;
 
         return sorted[0].index; // No green ball found
     }

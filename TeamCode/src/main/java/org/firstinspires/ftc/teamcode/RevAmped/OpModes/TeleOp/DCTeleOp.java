@@ -36,6 +36,13 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     }
 
     @Override
+    public void RevAmpedInitLoop() {
+        telemetry.addData("pos",robot.tableServo().getCurrentPosition());
+        telemetry.addData("state", robot.tableServo().getCurrentState());
+        telemetry.update();
+    }
+
+    @Override
     public void RevAmpedLoop() {
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
@@ -93,6 +100,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         drivetrain.updateLocalization();
         drivetrain.arcadeDrive();
         robot.update();
+        telemetry.update();
     }
 
     @Override

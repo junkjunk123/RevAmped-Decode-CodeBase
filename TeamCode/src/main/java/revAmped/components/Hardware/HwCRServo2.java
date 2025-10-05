@@ -11,10 +11,12 @@ public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.ServoState>
     public abstract int ticksPerRotation();
 
     public double getError(int targetPosition) {
-        return ((targetPosition - currentPos % ticksPerRotation()) + ticksPerRotation() * 1.5) % ticksPerRotation() - ticksPerRotation() / 2.0;
+        return ((targetPosition - getCurrentPosition() % ticksPerRotation()) + ticksPerRotation() * 1.5) % ticksPerRotation() - ticksPerRotation() / 2.0;
     }
 
     public static double getErrorInfiniteRotation(int targetPosition, int currentPos, int ticksPerRotation) {
         return ((targetPosition - currentPos % ticksPerRotation) + ticksPerRotation * 1.5) % ticksPerRotation - ticksPerRotation / 2.0;
     }
+
+    public abstract double getLastError();
 }

@@ -31,6 +31,7 @@ public class TableServo extends HwCRServo2 <TableState> {
 
     public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
         super(hardwareMap, "table", DcMotorSimple.Direction.FORWARD, state, encoder);
+        resetPosition();
     }
 
     @Override
@@ -38,5 +39,10 @@ public class TableServo extends HwCRServo2 <TableState> {
         super.setCurrentState(servoState);
         controller.reset();
         controller.setTargetPosition(servoState.getPosition());
+    }
+
+    @Override
+    public double getLastError() {
+        return controller.getError();
     }
 }

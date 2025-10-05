@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.RevAmped.Util;
 
 import static org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo.HOOD_REST;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.Popper;
+import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1.TableServo;
+
 import java.util.function.Function;
 import revAmped.components.Hardware.CRServoInternal;
 import revAmped.components.Hardware.HwCRServo2;
@@ -28,61 +31,57 @@ public interface Types {
         }
     }
 
-    enum PopperState implements HwServo2.ServoState{
-        NEUTRAL(Popper.NEUTRAL),
-        POP(Popper.POP);
-
-        final float position;
-
-        PopperState(float position){this.position = position;}
+    enum PopperState implements HwServo2.ServoState {
+        NEUTRAL,
+        POP;
 
         @Override
-        public float getPosition(){return position;}
+        public float getPosition() {
+            if (this == NEUTRAL) return Popper.NEUTRAL;
+            else return Popper.POP;
+        }
     }
 
     enum PopperVoltageState implements HwServoWithVoltage.ServoVoltageState {
-        FULLY_UP (
-                voltage -> voltage >= Popper.UP_VOLTAGE,
-                new HwServoWithVoltage.VoltageStatePair(PopperState.NEUTRAL, PopperState.POP, 500)
-        ),
-        FULLY_DOWN (
-                voltage -> voltage <= Popper.DOWN_VOLTAGE,
-                new HwServoWithVoltage.VoltageStatePair(PopperState.POP, PopperState.NEUTRAL, 500)
-        );
+        FULLY_UP,
+        FULLY_DOWN;
 
         @Override
         public boolean reached(double voltage) {
-            return reached.apply(voltage);
+            if (this == FULLY_UP) {
+                return voltage >= Popper.UP_VOLTAGE;
+            }
+
+            return voltage <= Popper.DOWN_VOLTAGE;
         }
 
         @Override
         public HwServoWithVoltage.VoltageStatePair[] getStates() {
-            return states;
-        }
-
-        public final Function<Double, Boolean> reached;
-        public final HwServoWithVoltage.VoltageStatePair[] states;
-
-        PopperVoltageState(Function<Double, Boolean> reached, HwServoWithVoltage.VoltageStatePair... states) {
-            this.reached = reached;
-            this.states = states;
+            if (this == FULLY_UP) return new HwServoWithVoltage.VoltageStatePair[] {new HwServoWithVoltage.VoltageStatePair(PopperState.NEUTRAL, PopperState.POP, 500)};
+            return new HwServoWithVoltage.VoltageStatePair[] {new HwServoWithVoltage.VoltageStatePair(PopperState.POP, PopperState.NEUTRAL, 500)};
         }
     }
 
     enum TableState implements CRServoInternal.ServoState {
-        REST(0),
-        BALL1(0),
-        BALL2(0),
-        BALL3(0);
-
-        final int position;
-
-        TableState(int position) {
-            this.position = position;
-        }
+        REST,
+        BALL1,
+        BALL2,
+        BALL3;
 
         public int getPosition() {
-            return position;
+            switch (this) {
+                case REST, BALL1 -> {
+                    return TableServo.BALL1;
+                }
+                case BALL2 -> {
+                    return TableServo.BALL2;
+                }
+                case BALL3 -> {
+                    return TableServo.BALL3;
+                }
+            }
+
+            return 0;
         }
     }
 
@@ -92,34 +91,22 @@ public interface Types {
     }
 
     enum TurretState implements HwMotor2.MotorState {
-        IDLE (0),
-        HOLD(0),
-        TRACKING (0);
-
-        final int pos;
-
-        TurretState(int pos) {
-            this.pos = pos;
-        }
+        IDLE,
+        HOLD,
+        TRACKING;
 
         public int getPos() {
-            return pos;
+            return 0;
         }
     }
 
     enum HoodState implements HwServo2.ServoState {
-        REST(HOOD_REST),
-        TRACKING(HOOD_REST);
-
-        final float pos;
-
-        HoodState(float pos) {
-            this.pos = pos;
-        }
+        REST,
+        TRACKING;
 
         @Override
         public float getPosition() {
-            return pos;
+            return HOOD_REST;
         }
     }
 
