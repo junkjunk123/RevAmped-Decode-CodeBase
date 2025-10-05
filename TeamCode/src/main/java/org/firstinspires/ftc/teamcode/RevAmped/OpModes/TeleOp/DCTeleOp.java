@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.RevAmped.OpModes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.RevAmped.Util.Types;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import java.util.Arrays;
+
 import revAmped.components.Drive.TeleOpDrivetrainHandler;
 import revAmped.components.GamepadDevices.RevAmpedGamepad;
 import revAmped.components.Misc.Globals;
@@ -39,11 +41,13 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     public void RevAmpedInitLoop() {
         telemetry.addData("pos",robot.tableServo().getCurrentPosition());
         telemetry.addData("state", robot.tableServo().getCurrentState());
+        telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.update();
     }
 
     @Override
     public void RevAmpedLoop() {
+        telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
         if (gamepad_2.b.isPress()) {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.TurntableV1;
 
 import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,10 +12,10 @@ import revAmped.components.SlideController.PIDF.PIDFController;
 public class TableServo extends HwCRServo2 <TableState> {
     public static PIDFCoefficients TABLE_PIDF_COEFFICIENTS;
     private final PIDFController controller = new PIDFController(TABLE_PIDF_COEFFICIENTS);
-    public static int BALL1 = 0;
-    public static int BALL2 = 0;
-    public static int BALL3 = 0;
-    public static int TICKS_PER_ROTATION = 0;
+    public static int BALL1;
+    public static int BALL2;
+    public static int BALL3;
+    public static int TICKS_PER_ROTATION;
 
     @Override
     public int ticksPerRotation() {
@@ -24,9 +25,9 @@ public class TableServo extends HwCRServo2 <TableState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TableState.REST, ServoPower.constant(0f));
-        statePowerMap.put(TableState.BALL1, () -> (float) controller.runWithError(getError(BALL1)));
-        statePowerMap.put(TableState.BALL2, () -> (float) controller.runWithError(getError(BALL2)));
-        statePowerMap.put(TableState.BALL3, () -> (float) controller.runWithError(getError(BALL3)));
+        statePowerMap.put(TableState.BALL1, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL1)), -1, 1));
+        statePowerMap.put(TableState.BALL2, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL2)), -1, 1));
+        statePowerMap.put(TableState.BALL3, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL3)), -1, 1));
     }
 
     public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
@@ -36,9 +37,8 @@ public class TableServo extends HwCRServo2 <TableState> {
 
     @Override
     public void setCurrentState(TableState servoState) {
+        if (getCurrentState() != servoState) controller.reset();
         super.setCurrentState(servoState);
-        controller.reset();
-        controller.setTargetPosition(servoState.getPosition());
     }
 
     @Override

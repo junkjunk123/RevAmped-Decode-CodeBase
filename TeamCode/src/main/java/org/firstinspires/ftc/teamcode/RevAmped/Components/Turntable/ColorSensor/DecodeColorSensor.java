@@ -11,4 +11,5 @@ public interface DecodeColorSensor extends HwDevice {
 
     ArtifactColor getColor();
     void update();
+    void disable();
 }

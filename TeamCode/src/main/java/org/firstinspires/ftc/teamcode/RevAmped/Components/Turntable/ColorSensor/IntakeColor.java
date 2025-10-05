@@ -33,6 +33,9 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
         return Color.GREEN;
     }
 
+    @Override
+    public void disable() {}
+
     public enum Color implements DecodeColor.DetectionColor {
         PURPLE, GREEN, NEUTRAL;
 

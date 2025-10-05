@@ -34,8 +34,12 @@ public class TurnTable implements ArtifactQueuer {
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor);
         compartments = new TableCompartmentManager(
                 ball -> {
+                    hardware.intakeColor().disable();
                     intakeMotor.stop();
-                    scheduler.add(new Delay(() -> tableServo.getLastError() < TableServo.BALL1 / 2.0, this::intake));
+                    scheduler.add(new Delay(10000, () -> {
+                        intake();
+                        intakeColor.enableRight();
+                    }));
                     setCurrentState(TurnTableInternalState.values()[ball]);
                 },
                 ball -> {
