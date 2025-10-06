@@ -40,6 +40,7 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
     public void update() {
         intakeMotor.update();
         tableServo.update();
+        telemetry.update();
     }
 
     @Override

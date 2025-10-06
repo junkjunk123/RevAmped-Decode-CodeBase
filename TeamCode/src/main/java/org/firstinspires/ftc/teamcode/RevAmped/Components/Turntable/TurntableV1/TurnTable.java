@@ -36,7 +36,7 @@ public class TurnTable implements ArtifactQueuer {
                 ball -> {
                     hardware.intakeColor().disable();
                     intakeMotor.stop();
-                    scheduler.add(new Delay(10000, () -> {
+                    scheduler.add(new Delay(() -> tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500, () -> {
                         intake();
                         intakeColor.enableRight();
                     }));

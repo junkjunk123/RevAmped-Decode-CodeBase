@@ -52,6 +52,7 @@ public final class TurnTableInternals {
                 this.cycleState = newState;
                 switchInternalState();
                 initAction();
+                cycleStateInitAction();
             }
         }
 
@@ -59,7 +60,10 @@ public final class TurnTableInternals {
             if (this.cycleState != newState) {
                 this.cycleState = newState;
                 switchInternalState();
-                if (init) initAction();
+                if (init) {
+                    initAction();
+                    cycleStateInitAction();
+                }
             }
         }
 
@@ -103,6 +107,12 @@ public final class TurnTableInternals {
                 case BALL1 -> hardware.turntable().setCurrentState(Types.TableState.BALL1);
                 case BALL2 -> hardware.turntable().setCurrentState(Types.TableState.BALL2);
                 case BALL3 -> hardware.turntable().setCurrentState(Types.TableState.BALL3);
+            }
+        }
+
+        private void cycleStateInitAction() {
+            if (cycleState == TurnTableCycleState.POP) {
+                hardware.intakeMotor().stop();
             }
         }
 

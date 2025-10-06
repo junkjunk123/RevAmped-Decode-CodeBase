@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.function.Supplier;
 
+import revAmped.components.Hardware.HwCRServo;
+
 public class Differentiator {
     private Double previousValue;
     private final ElapsedTime timer;
@@ -17,6 +19,10 @@ public class Differentiator {
         this.timer.reset();
         this.previousValue = null;
         this.optional = optional;
+    }
+
+    public Differentiator(HwCRServo.Encoder encoder) {
+        this(encoder::getVelocity,() -> (double) encoder.getPosition());
     }
 
     public double calculate() {
