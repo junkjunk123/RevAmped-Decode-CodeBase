@@ -3,6 +3,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.Components.Turntable.ColorSensor.
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import revAmped.components.MathUtil.Vector2D;
@@ -242,7 +243,9 @@ public class TableCompartmentManager {
     }
 
     public DecodeColorSensor.ArtifactColor getNextPopColor() {
-        List<DecodeColorSensor.ArtifactColor> targetPopColors = Globals.randomizationState.getColors();
+        List<DecodeColorSensor.ArtifactColor> targetPopColors = Optional.ofNullable(Globals.randomizationState)
+                .orElse(Globals.RandomizationState.PPG)
+                .getColors();
 
         if (lastPoppedColor == DecodeColorSensor.ArtifactColor.NONE) {
             return targetPopColors.get(0);

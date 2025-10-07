@@ -50,8 +50,7 @@ public final class TurnTableInternals {
         public void setCycleState(TurnTableCycleState newState) {
             if (this.cycleState != newState) {
                 this.cycleState = newState;
-                switchInternalState();
-                initAction();
+                switchInternalState(true);
                 cycleStateInitAction();
             }
         }
@@ -59,11 +58,8 @@ public final class TurnTableInternals {
         public void setCycleState(TurnTableCycleState newState, boolean init) {
             if (this.cycleState != newState) {
                 this.cycleState = newState;
-                switchInternalState();
-                if (init) {
-                    initAction();
-                    cycleStateInitAction();
-                }
+                switchInternalState(init);
+                if (init) cycleStateInitAction();
             }
         }
 
@@ -83,15 +79,14 @@ public final class TurnTableInternals {
             }
         }
 
-        public void switchInternalState() {
+        public void switchInternalState(boolean init) {
             if (cycleState == TurnTableCycleState.POP) {
                 int nextPopIndex = compartmentManager.isMotifMode() && Globals.randomizationState != null ? compartmentManager.getNextMotifPopIndex() : compartmentManager.findNextPopIndex();
-                internalState = TurnTableInternalState.values()[nextPopIndex];
+                setInternalState(TurnTableInternalState.values()[nextPopIndex], init);
             } else if (cycleState == TurnTableCycleState.INTAKE) {
                 int nextIntakeIndex = compartmentManager.findNextIntakeIndex();
-                internalState = TurnTableInternalState.values()[nextIntakeIndex];
+                setInternalState(TurnTableInternalState.values()[nextIntakeIndex], init);
             }
-            switchInternalCompartmentState();
         }
 
         public TurnTableCycleState getCycleState() {

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.RevAmped.OpModes.Auto.DecodeAutonomousActi
 import org.firstinspires.ftc.teamcode.RevAmped.DecodeConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 import revAmped.components.Pedro.FollowerManager;
 
