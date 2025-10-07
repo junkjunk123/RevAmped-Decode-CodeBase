@@ -5,8 +5,8 @@ import com.pedropathing.localization.Localizer;
 
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import revAmped.components.math.Vector3D;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector3D;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 public interface ShootingMechanism<T> {
     Pose APRIL_TAG_POSE_RED = null;

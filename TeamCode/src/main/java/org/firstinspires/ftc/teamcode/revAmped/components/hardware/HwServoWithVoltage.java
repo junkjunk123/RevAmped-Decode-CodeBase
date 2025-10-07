@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 public abstract class HwServoWithVoltage<T extends Enum<T> & HwServo2.ServoState, S extends Enum<S> & HwServoWithVoltage.ServoVoltageState> extends HwServo2<T> {
     private final HwAnalogEncoder voltageSensor;

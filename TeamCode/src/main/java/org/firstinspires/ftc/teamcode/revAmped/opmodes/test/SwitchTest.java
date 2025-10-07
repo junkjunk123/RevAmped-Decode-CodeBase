@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.Arrays;
 
-import revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 
 @Disabled
 @TeleOp

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.function.Supplier;
 
-import revAmped.components.hardware.HwColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
 
 public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor> extends HwColorSensor implements DecodeColorSensor {
     public interface DetectionColor {

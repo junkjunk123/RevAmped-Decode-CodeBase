@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.PopperState;
 
-import revAmped.components.hardware.HwAnalogEncoder;
-import revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwAnalogEncoder;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
 
 public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageState> {
     public static double POP_TIME_MILLIS;

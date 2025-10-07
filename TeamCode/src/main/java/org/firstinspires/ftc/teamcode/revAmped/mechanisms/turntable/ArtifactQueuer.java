@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ColorSensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 
 public interface ArtifactQueuer {
     void preparePurple();

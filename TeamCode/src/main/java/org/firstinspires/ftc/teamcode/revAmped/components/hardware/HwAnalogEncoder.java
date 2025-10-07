@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

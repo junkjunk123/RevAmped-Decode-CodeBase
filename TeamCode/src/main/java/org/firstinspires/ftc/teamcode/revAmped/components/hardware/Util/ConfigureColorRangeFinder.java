@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import revAmped.util.ColorRangeFinder;
+import org.firstinspires.ftc.teamcode.revAmped.util.ColorRangeFinder;
 
 @Disabled
 @Config

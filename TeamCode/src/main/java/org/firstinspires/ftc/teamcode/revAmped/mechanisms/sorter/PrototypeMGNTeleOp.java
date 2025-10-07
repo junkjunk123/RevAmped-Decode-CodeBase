@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
 
-import revAmped.components.drive.TeleOpMecanumDrive;
-import revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 public class PrototypeMGNTeleOp extends DecodeRevAmpedOpMode {
     private RevAmpedGamepad gamepad_1;

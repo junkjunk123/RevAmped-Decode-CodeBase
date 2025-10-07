@@ -7,11 +7,11 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ColorSensor.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.TurntableV1.TableServo;
 
-import revAmped.components.hardware.CRServoInternal;
-import revAmped.components.hardware.HwCRServo2;
-import revAmped.components.hardware.HwMotor2;
-import revAmped.components.hardware.HwServo2;
-import revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.CRServoInternal;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
 
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {

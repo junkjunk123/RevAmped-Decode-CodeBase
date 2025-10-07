@@ -6,8 +6,8 @@ import org.firstinspires.ftc.robotcore.external.Supplier;
 
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.hardware.HwMotor;
-import revAmped.components.hardware.HwSwitch;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 
 public class HwSlideRetract {
     private boolean retract = false;

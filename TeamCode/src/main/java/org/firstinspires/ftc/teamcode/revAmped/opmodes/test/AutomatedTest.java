@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 
 import java.util.Objects;
 
-import revAmped.components.scheduler.Util.DelayedResult;
-import revAmped.components.hardware.HwDevice;
-import revAmped.components.hardware.HwSlide2;
-import revAmped.components.misc.Logger;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSlide2;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
 
 @Disabled
 @TeleOp

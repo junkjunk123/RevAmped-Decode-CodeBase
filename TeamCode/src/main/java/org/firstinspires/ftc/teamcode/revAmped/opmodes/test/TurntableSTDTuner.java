@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.TurntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
-import revAmped.components.hardware.HwCRServo2;
-import revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 
 @Config
 @TeleOp

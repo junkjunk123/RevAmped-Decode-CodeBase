@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
-import revAmped.components.gamepad.GamepadMapper;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.GamepadMapper;
 
 public class OnePersonTeleOp extends DecodeRevAmpedOpMode {
     private GamepadMapper gamepad_1;

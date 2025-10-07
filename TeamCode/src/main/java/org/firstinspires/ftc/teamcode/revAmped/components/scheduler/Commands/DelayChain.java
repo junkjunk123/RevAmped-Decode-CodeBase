@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands;
 import java.util.List;
 
-import revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 /**
  * DelayChain is a class that allows you to chain multiple RunnableTasks together,

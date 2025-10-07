@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ColorSensor.
 import java.util.Comparator;
 import java.util.List;
 
-import revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 
 public class Artifact implements Comparable<Artifact> {
     private static Comparator<Artifact> lastComparator;

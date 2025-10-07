@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.controller.STD;
 
-import revAmped.components.controller.SlideController;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.SlideController;
 
 public class CustomSTDCoefficients implements SlideController.SlideConstants {
     public double K, F, D, C;

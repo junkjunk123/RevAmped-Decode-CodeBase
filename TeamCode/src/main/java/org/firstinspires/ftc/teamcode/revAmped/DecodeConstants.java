@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.TurntableV1.
 
 import java.util.List;
 
-import revAmped.components.misc.Constants;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Constants;
 
 public final class DecodeConstants implements Constants {
     /**

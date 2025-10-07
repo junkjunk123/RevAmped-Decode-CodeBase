@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.util;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import revAmped.components.gamepad.Button;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button;
 
 /**
  * For selection using game pad before waitForStart()

@@ -4,8 +4,8 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 public class ObstacleAvoidanceHandler {
     private final Stuck detectCollision;

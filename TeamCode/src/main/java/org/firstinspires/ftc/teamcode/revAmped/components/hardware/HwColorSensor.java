@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
 import static android.graphics.Color.red;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import androidx.annotation.NonNull;
 
@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import revAmped.components.math.HSVValue;
-import revAmped.components.math.RGBValue;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.HSVValue;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.RGBValue;
 
 public class HwColorSensor implements HwDevice, HwDevice.Sensor<HSVValue> {
     private RevColorSensorV3 colorSensor;

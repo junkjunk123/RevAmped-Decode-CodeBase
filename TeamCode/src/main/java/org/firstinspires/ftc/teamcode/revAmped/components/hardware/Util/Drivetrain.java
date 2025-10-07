@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import java.util.Arrays;
 import java.util.List;
 
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 /**
  * Abstract class representing a drivetrain system with four motors.

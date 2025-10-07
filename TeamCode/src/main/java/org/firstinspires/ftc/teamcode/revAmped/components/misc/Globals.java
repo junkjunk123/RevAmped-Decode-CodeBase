@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
 
 import java.util.List;
 
-import revAmped.components.pedro.FollowerManager;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 
 /**
  * Globals class to hold global variables and settings for the robot.

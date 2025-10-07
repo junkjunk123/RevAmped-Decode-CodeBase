@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 /**
  * DelayedResult is a class that allows you to lazily evaluate a result using a Callable supplier.

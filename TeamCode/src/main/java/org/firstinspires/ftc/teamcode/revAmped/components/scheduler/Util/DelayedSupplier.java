@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 /**
  * DelayedSupplier is a class that allows you to lazily evaluate a supplier after a delay.

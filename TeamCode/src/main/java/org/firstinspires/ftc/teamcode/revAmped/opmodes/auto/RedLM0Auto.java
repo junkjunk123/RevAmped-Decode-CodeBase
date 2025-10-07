@@ -10,14 +10,14 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
 
-import revAmped.components.scheduler.Commands.Command;
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Commands.DelayChain;
-import revAmped.components.scheduler.Commands.OptionalDelay;
-import revAmped.components.scheduler.Commands.Pause;
-import revAmped.components.drive.TeleOpDrivetrainHandler;
-import revAmped.components.misc.Globals;
-import revAmped.components.pedro.FollowerManager;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Command;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.DelayChain;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.OptionalDelay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Pause;
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 
 @Autonomous
 public class RedLM0Auto extends DecodeRevAmpedOpMode {

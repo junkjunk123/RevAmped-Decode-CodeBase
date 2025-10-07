@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 
 /**
  * DelayManager is a class that manages multiple Delay objects.

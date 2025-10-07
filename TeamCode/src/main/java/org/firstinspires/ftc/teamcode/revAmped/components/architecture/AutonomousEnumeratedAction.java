@@ -4,10 +4,10 @@ import com.pedropathing.follower.Follower;
 
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.scheduler.AutonomousCommandAction;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.AutonomousCommandAction;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
-import revAmped.components.scheduler.Commands.RunnableTask;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.RunnableTask;
 
 /**
  * AutonomousEnumeratedAction is an abstract class that defines the structure for autonomous actions

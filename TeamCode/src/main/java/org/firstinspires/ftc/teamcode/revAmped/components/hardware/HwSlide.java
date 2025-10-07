@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 
-import revAmped.components.hardware.Util.HwSlideRetract;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Util.HwSlideRetract;
 
 public class HwSlide extends HwMotor {
     protected final HwSwitch limitSwitch;

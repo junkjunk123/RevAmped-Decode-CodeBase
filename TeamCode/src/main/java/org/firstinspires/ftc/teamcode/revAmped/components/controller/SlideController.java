@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.controller;
 
-import revAmped.components.controller.STD.CustomSTDCoefficients;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.STD.CustomSTDCoefficients;
 
 public interface SlideController {
     /**

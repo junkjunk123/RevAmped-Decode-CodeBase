@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.DriveIntakeTest;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MomentOfInertiaCalibrator;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MotorSlipCalibrator;
 
-import revAmped.components.misc.OpModeType;
-import revAmped.components.misc.SelectableRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.SelectableRevAmpedOpMode;
 
 @TeleOp(name = "DecodeTester")
 public class DecodeTester extends SelectableRevAmpedOpMode {

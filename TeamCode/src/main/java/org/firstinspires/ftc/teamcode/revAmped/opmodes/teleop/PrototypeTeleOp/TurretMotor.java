@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import revAmped.components.hardware.HwMotor2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 
 public class TurretMotor extends HwMotor2<TurretMotor.TurretState> {
     @Override

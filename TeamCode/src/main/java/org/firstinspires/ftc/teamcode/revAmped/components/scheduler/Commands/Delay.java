@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 /**
  * Delay is a class that implements RunnableTask and allows you to run an action after a certain condition is met.

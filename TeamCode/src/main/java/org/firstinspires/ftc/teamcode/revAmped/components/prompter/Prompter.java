@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import revAmped.components.gamepad.RevAmpedGamepad;
-import revAmped.components.misc.RevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 
 //Modified From the Marrow Library
 public class Prompter {

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.TurntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import revAmped.components.hardware.HwCRServo;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 
 @TeleOp
 public class TurntableTest extends DecodeRevAmpedOpMode {

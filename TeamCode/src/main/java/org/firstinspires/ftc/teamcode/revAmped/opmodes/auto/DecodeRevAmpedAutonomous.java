@@ -5,9 +5,9 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 
 import java.util.List;
 
-import revAmped.components.architecture.AutonomousEnumeratedAction;
-import revAmped.components.pedro.FollowerManager;
-import revAmped.components.pedro.PathSupplier;
+import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
 
 public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     protected Robot robot;

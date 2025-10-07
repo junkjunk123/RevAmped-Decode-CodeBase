@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.TurntableV1;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Scheduler;
-import revAmped.components.hardware.HwCRServo;
-import revAmped.components.math.Vector2D;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ColorSensor.DualIntakeColor;
@@ -136,7 +136,7 @@ public class TurnTable implements ArtifactQueuer {
     public Vector2D[] getBallColors() {
         return Arrays.stream(compartments.getCompartments())
                 .map(TableCompartmentManager.TableCompartment::getColor)
-                .toArray(revAmped.components.math.Vector2D[]::new);
+                .toArray(org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D[]::new);
     }
 
     public void prepareGreen() {

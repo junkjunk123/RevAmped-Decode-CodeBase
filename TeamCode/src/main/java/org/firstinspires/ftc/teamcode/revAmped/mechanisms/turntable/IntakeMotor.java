@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.IntakeState;
 
-import revAmped.components.hardware.HwMotor2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 
 public class IntakeMotor extends HwMotor2<IntakeState> {
     public IntakeMotor(HardwareMap hardwareMap, IntakeState motorState) throws IllegalArgumentException {

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 
 @TeleOp (group = "Test")
 public class MotorCalibrator extends DecodeRevAmpedOpMode {

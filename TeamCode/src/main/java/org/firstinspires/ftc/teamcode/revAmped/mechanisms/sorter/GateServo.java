@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 
 public class GateServo extends HwServo2<Types.GateState> {
     public GateServo (HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException{

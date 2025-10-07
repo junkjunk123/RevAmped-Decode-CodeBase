@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.gamepad;
 
 import android.util.Log;
 
-import revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 /**
  * General Button definitions

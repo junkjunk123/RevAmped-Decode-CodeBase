@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 
-import revAmped.components.gamepad.Button;
-import revAmped.components.gamepad.RevAmpedGamepad;
-import revAmped.components.hardware.Util.Drivetrain;
-import revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Util.Drivetrain;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 
 /**
  * TeleOpMecanumDrive is a class that extends the Drivetrain class to provide

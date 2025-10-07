@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler;
 
-import revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 
 /**
  * Scheduler is a singleton class that manages delays and delay chains.

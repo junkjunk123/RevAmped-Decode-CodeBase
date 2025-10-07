@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.Arrays;
 
-import revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 
 public abstract class CanonicalTester<T> extends DecodeRevAmpedOpMode {
     private String[] strings;

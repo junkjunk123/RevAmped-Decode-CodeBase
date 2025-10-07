@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.misc;
 
-import revAmped.components.architecture.AutonomousEnumeratedAction;
+import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
 
 /**
  * This class is an abstract base class for autonomous tests in the RevAmped framework.

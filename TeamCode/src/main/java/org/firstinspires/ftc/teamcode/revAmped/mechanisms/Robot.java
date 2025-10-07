@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms;
 
-import static revAmped.components.misc.Globals.allianceColor;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.allianceColor;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -27,14 +27,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import revAmped.components.scheduler.Scheduler;
-import revAmped.components.hardware.HwCRServo2;
-import revAmped.components.hardware.HwDevice;
-import revAmped.components.hardware.HwMotor2;
-import revAmped.components.hardware.HwServo2;
-import revAmped.components.misc.Globals;
-import revAmped.components.misc.Globals.AllianceColor;
-import revAmped.components.misc.RevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 
 public class Robot {
     public static Robot INSTANCE;
@@ -45,7 +45,7 @@ public class Robot {
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> idMap = buildIDMap();
 
-    public enum OpModeType implements revAmped.components.misc.OpModeType {
+    public enum OpModeType implements org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType {
         TELEOP,
         AUTO,
         TEST;

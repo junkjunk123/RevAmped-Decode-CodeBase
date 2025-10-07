@@ -3,11 +3,11 @@ import android.util.Log;
 
 import java.util.List;
 import java.util.function.Consumer;
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Scheduler;
-import revAmped.components.math.FiniteFieldVector;
-import revAmped.components.math.MathUtil;
-import revAmped.components.math.Matrix;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Matrix;
 
 /**
  * TeleOpStateHandler is a class that manages the state transitions in a teleoperated mode of a robot.

@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ColorSensor.
 
 import java.util.List;
 
-import revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 
 public class UndeterminedArtifact extends Artifact {
     private Vector2D probabilityAmplitudes = new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3));

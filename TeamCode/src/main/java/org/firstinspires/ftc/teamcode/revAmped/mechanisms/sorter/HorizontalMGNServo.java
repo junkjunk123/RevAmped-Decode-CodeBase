@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 
 public class HorizontalMGNServo extends HwServo2<Types.HorizontalMGNState> {
     public HorizontalMGNServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {

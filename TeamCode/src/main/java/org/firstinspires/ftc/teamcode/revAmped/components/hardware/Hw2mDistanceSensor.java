@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-import revAmped.components.math.LinearFunction;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.LinearFunction;
 
-public class Hw2mDistanceSensor extends revAmped.components.hardware.DistanceSensor implements HwDevice {
+public class Hw2mDistanceSensor extends org.firstinspires.ftc.teamcode.revAmped.components.hardware.DistanceSensor implements HwDevice {
     protected DistanceSensor distanceSensor;
 
     protected Hw2mDistanceSensor(HardwareMap hardwareMap, String id) {

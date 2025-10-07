@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
 
-import revAmped.components.hardware.Turret;
-import revAmped.components.misc.Globals;
-import revAmped.components.controller.PIDF.PIDFController;
-import revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Turret;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {

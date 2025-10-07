@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import androidx.annotation.NonNull;
 
@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 
-import revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 /**
  * Created by zwang on 2/7/2016.

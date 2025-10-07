@@ -5,8 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
-import revAmped.components.math.Vector2D;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 public class TableCompartmentManager {
     public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState, Runnable toggleCycleState) {

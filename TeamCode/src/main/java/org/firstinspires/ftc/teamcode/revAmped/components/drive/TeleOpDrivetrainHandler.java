@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.List;
 
-import revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     public static TeleOpDrivetrainHandler INSTANCE;

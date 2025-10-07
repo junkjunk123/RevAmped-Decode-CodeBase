@@ -1,15 +1,15 @@
 
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import revAmped.components.math.RevAmpedTimer;
-import revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.RevAmpedTimer;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implements HwDevice, HwDevice.Servo {
     public interface ServoState {

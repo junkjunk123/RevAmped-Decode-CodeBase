@@ -10,14 +10,14 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterHardwareComponents;
 
-import revAmped.components.scheduler.Scheduler;
-import revAmped.components.drive.TeleOpDrivetrainHandler;
-import revAmped.components.hardware.HwServo2;
-import revAmped.components.math.MathUtil;
-import revAmped.components.math.ProjectileMathWithDrag;
-import revAmped.components.math.Vector2D;
-import revAmped.components.math.Vector3D;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.ProjectileMathWithDrag;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector3D;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 public class Shooter implements ShootingMechanism<ShooterState> {
     public final Scheduler scheduler;

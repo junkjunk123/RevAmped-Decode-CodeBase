@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 
 public class PopperServo extends HwServo2<PopperServo.PopperState> {
 

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.pedro;
 
 import com.pedropathing.paths.HeadingInterpolator;
 
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 public class ColoredDecodeHeadingInterpolator {
     private final HeadingInterpolator interpolator;

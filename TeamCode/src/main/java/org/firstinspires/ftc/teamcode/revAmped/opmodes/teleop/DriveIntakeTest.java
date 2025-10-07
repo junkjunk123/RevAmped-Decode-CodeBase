@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.Arrays;
 
-import revAmped.components.drive.TeleOpMecanumDrive;
-import revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 @Disabled
 @TeleOp(name = "DriveIntakePopperTest", group = "TeleOp")

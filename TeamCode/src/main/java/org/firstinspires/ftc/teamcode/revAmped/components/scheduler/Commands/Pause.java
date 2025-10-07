@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands;
 
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 public class Pause implements RunnableTask {
     protected boolean complete = false;

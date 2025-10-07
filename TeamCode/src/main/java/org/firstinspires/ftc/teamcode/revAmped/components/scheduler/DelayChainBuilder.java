@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
-import revAmped.components.scheduler.Commands.Command;
-import revAmped.components.scheduler.Commands.Delay;
-import revAmped.components.scheduler.Commands.DelayChain;
-import revAmped.components.scheduler.Commands.RunnableTask;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Command;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.DelayChain;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.RunnableTask;
 
 public class DelayChainBuilder {
     private final String identifier;

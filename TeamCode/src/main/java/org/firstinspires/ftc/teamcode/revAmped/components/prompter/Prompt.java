@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode.revAmped.components.prompter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import revAmped.components.gamepad.Button2;
-import revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button2;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 public abstract class Prompt<T> {
     protected RevAmpedGamepad input;

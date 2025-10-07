@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
-import revAmped.components.hardware.HwCRServo2;
-import revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 
 public class TableServo extends HwCRServo2 <TableState> {
     public static PIDFCoefficients TABLE_PIDF_COEFFICIENTS;

@@ -9,8 +9,8 @@ import com.pedropathing.paths.HeadingInterpolator;
 
 import java.util.Arrays;
 
-import revAmped.components.math.MathUtil;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 public class ColoredDecodePose implements FuturePose {
     private final Pose pose;

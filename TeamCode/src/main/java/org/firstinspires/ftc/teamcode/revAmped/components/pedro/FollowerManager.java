@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 /**
  * FollowerManager is a class that manages the Follower component,

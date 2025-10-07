@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
-import static revAmped.components.misc.Globals.AllianceColor.None;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor.None;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,12 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
-import revAmped.components.gamepad.RevAmpedGamepad;
-import revAmped.components.misc.Globals;
-import revAmped.components.prompter.BooleanPrompt;
-import revAmped.components.prompter.OptionPrompt;
-import revAmped.components.prompter.Prompter;
-import revAmped.components.prompter.ValuePrompt;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.BooleanPrompt;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.ValuePrompt;
 
 @Disabled
 @TeleOp

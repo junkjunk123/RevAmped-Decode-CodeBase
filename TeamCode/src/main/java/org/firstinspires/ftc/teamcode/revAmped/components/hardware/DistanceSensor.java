@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.Optional;
 
-import revAmped.components.math.LinearFunction;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.LinearFunction;
 
 /**
  * Abstract class representing a distance sensor.

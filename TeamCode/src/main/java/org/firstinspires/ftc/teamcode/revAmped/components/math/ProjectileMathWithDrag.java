@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.math;
 
-import revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 public class ProjectileMathWithDrag {
     private static final double g = -386.0885; // gravity in in/s^2

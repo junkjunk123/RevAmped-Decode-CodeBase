@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.util;
 
-import revAmped.components.math.MovingAverage;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MovingAverage;
 
 public class LoopTimer {
     private long previousTime;

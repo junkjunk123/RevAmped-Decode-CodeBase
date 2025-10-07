@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.FlywheelState;
 
-import revAmped.components.hardware.TwoMotorMechanism;
-import revAmped.components.math.Differentiator;
-import revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.TwoMotorMechanism;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 
 public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     private final PIDFController controllerLarge;

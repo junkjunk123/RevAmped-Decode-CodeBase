@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import revAmped.components.hardware.HwMotor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor;
 
 /**
  * Interlace braking and floating for a gradual braking

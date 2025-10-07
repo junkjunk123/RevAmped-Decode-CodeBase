@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import revAmped.components.math.MovingAverage;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MovingAverage;
 
 @Disabled
 @TeleOp

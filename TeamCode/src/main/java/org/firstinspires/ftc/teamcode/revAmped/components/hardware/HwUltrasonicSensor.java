@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import revAmped.components.math.LinearFunction;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.LinearFunction;
 
 public class HwUltrasonicSensor extends DistanceSensor implements HwDevice {
     protected AnalogInput distanceSensor;

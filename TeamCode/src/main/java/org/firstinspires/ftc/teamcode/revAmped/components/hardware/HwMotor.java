@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import androidx.annotation.NonNull;
 
@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-import revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 /**
  * Created by zwang on 2/7/2016.

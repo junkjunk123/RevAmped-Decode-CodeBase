@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 import java.util.Arrays;
 
-import revAmped.components.drive.TeleOpDrivetrainHandler;
-import revAmped.components.gamepad.RevAmpedGamepad;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 @TeleOp(name = "DCTeleOp", group = "TeleOp")
 public class DCTeleOp extends DecodeRevAmpedOpMode {

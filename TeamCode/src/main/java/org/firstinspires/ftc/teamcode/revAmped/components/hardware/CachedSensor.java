@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import revAmped.components.math.KalmanFilter.KalmanFilterParameters;
-import revAmped.components.math.TimeInvariantDiscretizedExtrapolator;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter.KalmanFilterParameters;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.TimeInvariantDiscretizedExtrapolator;
 
 /**
  * Abstract class for a cached sensor that retrieves its value from a supplier.
@@ -86,7 +86,7 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
     public abstract static class CachedNumericalValue extends CachedValue<Double> {
         private Double prevValue;
         private Double prevPrevValue;
-        private revAmped.components.math.KalmanFilter kalmanFilter;
+        private org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter kalmanFilter;
         private Function<Double, Double> lowPassFilter;
 
         /**
@@ -104,7 +104,7 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
                 lowPassFilter = filterConstants.scale() ? t -> t * filterConstants.alpha() : t -> filterConstants.alpha();
             } else if (sensorClass.isAnnotationPresent(KalmanFilter.class)) {
                 KalmanFilter filterConstants = sensorClass.getAnnotation(KalmanFilter.class);
-                kalmanFilter = new revAmped.components.math.KalmanFilter(new KalmanFilterParameters(
+                kalmanFilter = new org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter(new KalmanFilterParameters(
                         filterConstants.modelCovariance(), filterConstants.dataCovariance()));
             }
         }
@@ -143,7 +143,7 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
     }
 
     public static abstract class CachedNumericalSensor extends CachedSensor<Double> {
-        private revAmped.components.math.KalmanFilter kalmanFilter;
+        private org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter kalmanFilter;
         private Function<Double, Double> lowPassFilter;
         private final TimeInvariantDiscretizedExtrapolator extrapolator;
 
@@ -163,7 +163,7 @@ public abstract class CachedSensor<T> implements HwDevice.Sensor<T> {
                 extrapolator = new TimeInvariantDiscretizedExtrapolator(filterConstants.order());
             } else if (sensorClass.isAnnotationPresent(KalmanFilter.class)) {
                 KalmanFilter filterConstants = sensorClass.getAnnotation(KalmanFilter.class);
-                kalmanFilter = new revAmped.components.math.KalmanFilter(new KalmanFilterParameters(
+                kalmanFilter = new org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter(new KalmanFilterParameters(
                         Objects.requireNonNull(filterConstants).modelCovariance(), filterConstants.dataCovariance()));
                 extrapolator = new TimeInvariantDiscretizedExtrapolator(filterConstants.order());
             } else {

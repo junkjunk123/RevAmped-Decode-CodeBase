@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.drive;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import revAmped.components.hardware.HwMotor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor;
 
 /**
  * Created by swang on 11/30/2017.

@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.List;
 
-import revAmped.components.hardware.HwDevice;
-import revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 public class DecodeLimelight implements HwDevice {
     private final Limelight3A limelight;

@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import java.util.HashMap;
 import java.util.List;
 
-import revAmped.components.gamepad.Button;
-import revAmped.components.gamepad.RevAmpedGamepad;
-import revAmped.components.prompter.OptionPrompt;
-import revAmped.components.prompter.Prompter;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 
 @Config
 @TeleOp(name = "ServoCalibrateTest", group = "Test")

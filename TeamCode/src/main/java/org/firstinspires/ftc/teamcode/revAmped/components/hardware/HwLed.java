@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static revAmped.components.hardware.HwLed.ELedStatus.LED_BLINK;
-import static revAmped.components.hardware.HwLed.ELedStatus.LED_OFF;
-import static revAmped.components.hardware.HwLed.ELedStatus.LED_ON;
-import static revAmped.components.misc.Globals.testing;
+import static org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwLed.ELedStatus.LED_BLINK;
+import static org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwLed.ELedStatus.LED_OFF;
+import static org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwLed.ELedStatus.LED_ON;
+import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 
 /**
@@ -59,7 +59,7 @@ public class HwLed implements HwDevice {
                  String ledName) {
         // get a reference to our LED object.
         if (!testing)
-        channel = hardwareMap.get(DigitalChannel.class, ledName);
+            channel = hardwareMap.get(DigitalChannel.class, ledName);
         this.id = ledName;
         // set the channel channel to input.
         if (!testing) {

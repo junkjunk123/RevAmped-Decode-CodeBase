@@ -7,9 +7,9 @@ import com.pedropathing.paths.PathChain;
 
 import java.util.List;
 
-import revAmped.components.misc.Globals;
-import revAmped.components.pedro.ColoredDecodePose;
-import revAmped.components.pedro.PathSupplier;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.ColoredDecodePose;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
 
 @Config
 public class LM0AutoPaths implements PathSupplier {

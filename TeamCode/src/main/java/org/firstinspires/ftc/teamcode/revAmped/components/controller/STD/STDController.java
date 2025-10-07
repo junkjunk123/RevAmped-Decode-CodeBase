@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.controller.STD;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 /**
  * The STDController class implements a slide controller that uses a custom set of coefficients
