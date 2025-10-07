@@ -1,0 +1,32 @@
+package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import revAmped.components.hardware.HwServo2;
+
+public class PopperServo extends HwServo2<PopperServo.PopperState> {
+
+    public PopperServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
+        super(hardwareMap, "popper", setPosition, PopperState.DOWN, ServoBrand.AXON_MINI);
+    }
+
+    public PopperServo(HardwareMap hardwareMap, float initialPosition) throws IllegalArgumentException {
+        super(hardwareMap, "popper", initialPosition, PopperState.DOWN, ServoBrand.AXON_MINI);
+    }
+
+    public enum PopperState implements ServoState{
+        POP(0.2824f),
+        DOWN(0.4314f);
+
+        private float pos;
+
+        PopperState(float pos){
+            this.pos=pos;
+        }
+
+        @Override
+        public float getPosition() {
+            return pos;
+        }
+    }
+}
