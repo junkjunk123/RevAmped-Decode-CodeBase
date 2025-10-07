@@ -243,9 +243,8 @@ public class TableCompartmentManager {
     }
 
     public DecodeColorSensor.ArtifactColor getNextPopColor() {
-        List<DecodeColorSensor.ArtifactColor> targetPopColors = Optional.ofNullable(Globals.randomizationState)
-                .orElse(Globals.RandomizationState.PPG)
-                .getColors();
+        List<DecodeColorSensor.ArtifactColor> targetPopColors = Globals.randomizationState != null? Globals.randomizationState.getColors()
+                : Globals.RandomizationState.PPG.getColors();
 
         if (lastPoppedColor == DecodeColorSensor.ArtifactColor.NONE) {
             return targetPopColors.get(0);
