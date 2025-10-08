@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.al
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
@@ -105,8 +107,8 @@ public class Robot {
         allHubs = hardwareMap.getAll(LynxModule.class);
         setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
         boolean setPositions = !opModeType.isTeleOp();
-        turnTable = new TurnTable(scheduler, setPositions, hardwareMap);
         shooter = new Shooter(hardwareMap, setPositions, scheduler);
+        turnTable = new TurnTable(scheduler, setPositions, hardwareMap, shooter::setCurrentState);
         allDevices.put(HwDevice.DeviceType.MOTOR, new HashSet<>(
                 List.of(
                         turnTable.hardware().intakeMotor(),
@@ -198,7 +200,7 @@ public class Robot {
         return turnTable.hardware().turntable();
     }
 
-    public HwServo2<Types.PopperState> popper() {
+    public HwServoWithVoltage<Types.PopperState, Types.PopperVoltageState> popper() {
         return turnTable.hardware().popper();
     }
 
@@ -232,5 +234,17 @@ public class Robot {
 
     public static HashSet<String> getComponentNames(HwDevice.DeviceType type) {
         return allHardwareClasses.get(type).stream().map(t -> idMap.get(t)).flatMap(Set::stream).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public void shootAll() {
+        int balls = turnTable.getNumberOfBalls();
+        if (balls == 0) return;
+
+        turnTable.pop();
+        if (balls > 1) scheduler.add(new Delay(() -> popper().reached(Types.PopperVoltageState.FULLY_DOWN)
+                && tableServo().getVelocity() < 10
+                && Math.abs(tableServo().getLastError()) < 500
+                && flywheel().canShoot(), this::shootAll
+        ));
     }
 }

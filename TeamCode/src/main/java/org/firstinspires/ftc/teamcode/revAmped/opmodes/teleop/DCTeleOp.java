@@ -36,14 +36,6 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     }
 
     @Override
-    public void RevAmpedInitLoop() {
-        telemetry.addData("pos",robot.tableServo().getCurrentPosition());
-        telemetry.addData("state", robot.tableServo().getCurrentState());
-        telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
-        telemetry.update();
-    }
-
-    @Override
     public void RevAmpedLoop() {
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
@@ -63,9 +55,12 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
             robot.turnTable.manualTransfer();
         }
 
-        if (gamepad_2.y.isPress()) {
-            robot.turnTable.pop();
+        if (gamepad_2.x.isPress()) {
             robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
+        }
+
+        if (gamepad_2.y.isPress()) {
+            robot.shootAll();
         }
 
         if (gamepad_1.b.isPress()) {
@@ -82,6 +77,10 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_left.isPress()) {
             robot.turnTable.preparePurple();
+        }
+
+        if (gamepad_2.dpad_up.isPress()) {
+            robot.turnTable.pop();
         }
 
         if (gamepad_1.y.isPress()) {

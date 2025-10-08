@@ -163,7 +163,7 @@ public interface Types {
         }
     }
 
-    record QueuerHardwareComponents(HwCRServo2<TableState> turntable, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, DecodeColorSensor intakeColor) {
+    record QueuerHardwareComponents(HwCRServo2<TableState> turntable, HwServoWithVoltage<Types.PopperState, Types.PopperVoltageState> popper, HwMotor2<Types.IntakeState> intakeMotor, DecodeColorSensor intakeColor) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();

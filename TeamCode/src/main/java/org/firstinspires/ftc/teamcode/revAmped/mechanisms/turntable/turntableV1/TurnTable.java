@@ -18,15 +18,18 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.QueuerHardwareComponents;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class TurnTable implements ArtifactQueuer {
     private final Scheduler scheduler;
     public TableCompartmentManager compartments;
     public final QueuerHardwareComponents hardware;
     private final TurnTableState currentState;
+    private final Consumer<Types.ShooterState> shooterStateConsumer;
 
-    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap) {
+    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap, Consumer<Types.ShooterState> shooterStateConsumer) {
         this.scheduler = scheduler;
+        this.shooterStateConsumer = shooterStateConsumer;
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
@@ -46,9 +49,11 @@ public class TurnTable implements ArtifactQueuer {
                     setCycleState(TurnTableCycleState.POP);
                     setCurrentState(TurnTableInternalState.values()[ball]);
                     hardware.intakeMotor().stop();
+                    shooterStateConsumer.accept(Types.ShooterState.TRACKING);
                 },
                 () -> {
                     setCycleState(getCurrentState().getCycleState().toggle());
+                    shooterStateConsumer.accept(Types.ShooterState.REST);
                     compartments.resetPopHistory();
                 }
         );
