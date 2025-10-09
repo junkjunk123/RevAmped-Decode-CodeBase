@@ -25,7 +25,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     private long prevTimeNano;
 
     public Flywheel(HardwareMap hardwareMap, FlywheelState motorState) throws IllegalArgumentException {
-        super(hardwareMap, "flywheel_right", "flywheel_left", DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, motorState);
+        super(hardwareMap, "flywheel_right", "flywheel_left", DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, motorState);
         controllerLarge = new PIDFController(largeCoefficients);
         controllerMedium = new PIDFController(mediumCoefficients);
         controllerSmall = new PIDFController(smallCoefficients);

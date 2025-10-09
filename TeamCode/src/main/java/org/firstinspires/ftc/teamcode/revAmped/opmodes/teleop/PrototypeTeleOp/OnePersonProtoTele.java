@@ -26,6 +26,12 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     private FlywheelMotor flywheelMotor2;
     private HoodServo hoodServo;
 
+    private enum ShootState{
+        CLOSE,
+        FAR;
+    }
+    private ShootState shootState = ShootState.CLOSE;
+
     @Override
     public void RevAmpedInit() {
         gamepad_1 = new RevAmpedGamepad(gamepad1);
@@ -49,6 +55,10 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
+        telemetry.addData("Flywheel Power Far",flywheelMotor1.getFarPower());
+        telemetry.addData("Flywheel Power Close",flywheelMotor1.getClosePower());
+        telemetry.addData("Hood Position Far",hoodServo.getFarPosition());
+        telemetry.addData("Hood Position Close",hoodServo.getClosePosition());
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         if (gamepad_1.b.isPress()){
             if(intakeMotor.getCurrentState() == IntakeMotor.IntakeState.INTAKE){
@@ -60,18 +70,25 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         if (gamepad_1.y.isPress()){
             intakeMotor.setCurrentState(IntakeMotor.IntakeState.STOPPED);
         }
+        //flywheel config
         if (gamepad_1.right_bumper.isPress()){
-            if (turntableServo.getCurrentState().ordinal()+1 <=2) {
-                turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() + 1]);
-            } else{
-                //turntableServo.setCurrentState(TableServo.TableState.values()[0]);
+            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR) {
+                flywheelMotor1.incrementFarPower();
+                flywheelMotor2.incrementFarPower();
+            }
+            else if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
+                flywheelMotor1.incrementClosePower();
+                flywheelMotor2.incrementClosePower();
             }
         }
         if (gamepad_1.left_bumper.isPress()){
-            if (turntableServo.getCurrentState().ordinal()-1 >= 0) {
-                turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() - 1]);
-            } else{
-                //turntableServo.setCurrentState(TableServo.TableState.values()[2]);
+            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR) {
+                flywheelMotor1.decrementFarPower();
+                flywheelMotor2.decrementFarPower();
+            }
+            else if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
+                flywheelMotor1.decrementClosePower();
+                flywheelMotor2.decrementClosePower();
             }
         }
         if (gamepad_1.a.isTrue()) {
@@ -81,9 +98,14 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         }
         if (gamepad_1.x.isPress()){
             if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.STOPPED){
-                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-            } else if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR){
+                if (shootState == ShootState.FAR) {
+                    flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                    flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                } else if (shootState == ShootState.CLOSE){
+                    flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+                    flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+                }
+            } else if (flywheelMotor1.getCurrentState() != FlywheelMotor.FlywheelState.STOPPED){
                 flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
                 flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
             }
@@ -97,13 +119,35 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         }
         if(gamepad_1.dpad_up.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.FAR);
-            flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-            flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+            shootState = ShootState.FAR;
+            if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+            }
         }
         if(gamepad_1.dpad_down.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
-            flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
-            flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+            shootState = ShootState.CLOSE;
+            if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+            }
+        }
+        //hood config
+        if(gamepad_1.dpad_left.isPress()){
+            if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
+                hoodServo.decrementFarPosition();
+            }
+            else if(hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE){
+                hoodServo.decrementClosePosition();
+            }
+        }
+        if(gamepad_1.dpad_right.isPress()) {
+            if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
+                hoodServo.incrementFarPosition();
+            } else if (hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) {
+                hoodServo.incrementClosePosition();
+            }
         }
 
     }
@@ -116,6 +160,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         turretMotor.update();
         turntableServo.update();
         popperServo.update();
+        telemetry.update();
     }
 
     @Override
