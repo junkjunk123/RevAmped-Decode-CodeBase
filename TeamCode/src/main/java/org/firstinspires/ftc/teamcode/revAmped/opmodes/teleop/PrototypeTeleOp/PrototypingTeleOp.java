@@ -36,8 +36,8 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
         popperServo = new PopperServo(hardwareMap, true);
         turntableServo = new TableServo(hardwareMap, true);
         turretMotor = new TurretMotor(hardwareMap);
-        flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1",FlywheelMotor.FlywheelState.STOPPED);
-        flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2",FlywheelMotor.FlywheelState.STOPPED);
+        flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1", DcMotorSimple.Direction.REVERSE, FlywheelMotor.FlywheelState.STOPPED);
+        flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2", DcMotorSimple.Direction.FORWARD, FlywheelMotor.FlywheelState.STOPPED);
         flywheelMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         flywheelMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hoodServo = new HoodServo(hardwareMap,true);
@@ -83,9 +83,9 @@ public class PrototypingTeleOp extends DecodeRevAmpedOpMode {
         }
         if (gamepad_2.x.isPress()){
             if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.STOPPED){
-                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
-                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
-            } else if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.RUNNING){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+            } else if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR){
                 flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
                 flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
             }
