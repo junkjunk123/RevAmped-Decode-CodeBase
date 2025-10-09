@@ -29,7 +29,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         gamepad_2 = new RevAmpedGamepad(gamepad2);
         drivetrain = new TeleOpDrivetrainHandler.TeleOpDrivetrainBuilder()
                 .setOpMode(this)
-                .setGamepad_1(gamepad_1)
+                .setGamepad(gamepad_1)
                 .setDirections(DecodeConstants.DRIVE_DIRECTIONS)
                 .setLocalizer(new PinpointLocalizer(hardwareMap, Constants.localizerConstants))
                 .build();

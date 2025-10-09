@@ -82,7 +82,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
             return this;
         }
 
-        public TeleOpDrivetrainBuilder setGamepad_1(RevAmpedGamepad gamepad_1) {
+        public TeleOpDrivetrainBuilder setGamepad(RevAmpedGamepad gamepad_1) {
             this.gamepad_1 = gamepad_1;
             return this;
         }
