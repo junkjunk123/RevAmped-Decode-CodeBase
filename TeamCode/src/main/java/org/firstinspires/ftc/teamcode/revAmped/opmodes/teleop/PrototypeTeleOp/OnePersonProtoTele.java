@@ -59,6 +59,8 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         telemetry.addData("Flywheel Power Close",flywheelMotor1.getClosePower());
         telemetry.addData("Hood Position Far",hoodServo.getFarPosition());
         telemetry.addData("Hood Position Close",hoodServo.getClosePosition());
+        telemetry.addData("State",hoodServo.getCurrentState());
+        telemetry.addData("Flywheel Power",flywheelMotor1.getPower());
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         if (gamepad_1.b.isPress()){
             if(intakeMotor.getCurrentState() == IntakeMotor.IntakeState.INTAKE){
@@ -110,9 +112,9 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
                 flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
             }
         }
-        if(gamepad_1.left_trigger!=0){
+        if(gamepad_1.right_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.FORWARD);
-        } else if (gamepad_1.right_trigger!=0){
+        } else if (gamepad_1.left_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.BACKWARD);
         } else{
             turretMotor.setCurrentState(TurretMotor.TurretState.STOPPED);
@@ -137,6 +139,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         if(gamepad_1.dpad_left.isPress()){
             if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
                 hoodServo.decrementFarPosition();
+                hoodServo.setCurrentState(HoodServo.HoodState.FAR);
             }
             else if(hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE){
                 hoodServo.decrementClosePosition();
@@ -145,6 +148,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         if(gamepad_1.dpad_right.isPress()) {
             if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
                 hoodServo.incrementFarPosition();
+                hoodServo.setCurrentState(HoodServo.HoodState.FAR);
             } else if (hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) {
                 hoodServo.incrementClosePosition();
             }

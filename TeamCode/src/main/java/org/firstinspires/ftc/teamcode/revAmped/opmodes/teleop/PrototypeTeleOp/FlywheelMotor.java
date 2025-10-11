@@ -17,7 +17,7 @@ public class FlywheelMotor extends HwMotor2<FlywheelMotor.FlywheelState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(FlywheelMotor.FlywheelState.STOPPED, MotorPower.constant(0f));
-        statePowerMap.put(FlywheelState.FAR,MotorPower.constant(0.95f + farPowerDifference));
+        statePowerMap.put(FlywheelState.FAR,MotorPower.constant(0.90f + farPowerDifference));
         statePowerMap.put(FlywheelState.CLOSE,MotorPower.constant(0.67f + closePowerDifference));
     }
 
