@@ -40,6 +40,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("vel", robot.tableServo().getVelocity());
+        telemetry.addData("Turret Encoder",robot.turretMotor().getCurrentPosition());
+        telemetry.addData("Turret Target",robot.turretMotor().getTargetPosition());
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
         if (gamepad_2.b.isPress()) {

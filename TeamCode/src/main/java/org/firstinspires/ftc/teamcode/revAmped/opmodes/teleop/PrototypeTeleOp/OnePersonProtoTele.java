@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
@@ -20,7 +21,8 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     // Hardware directly referenced here
     private IntakeMotor intakeMotor;
     private PopperServo popperServo;
-    private TableServo turntableServo;
+    //private TableServo turntableServo;
+    private CRTableServo turntableServo;
     private TurretMotor turretMotor;
     private FlywheelMotor flywheelMotor1;
     private FlywheelMotor flywheelMotor2;
@@ -38,7 +40,8 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD));
         intakeMotor = new IntakeMotor(hardwareMap);
         popperServo = new PopperServo(hardwareMap, true);
-        turntableServo = new TableServo(hardwareMap, true);
+        //turntableServo = new TableServo(hardwareMap, true);
+        turntableServo = new CRTableServo(hardwareMap, HwCRServo.Encoder.external(intakeMotor));
         turretMotor = new TurretMotor(hardwareMap);
         flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1", DcMotorSimple.Direction.REVERSE, FlywheelMotor.FlywheelState.STOPPED);
         flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2", DcMotorSimple.Direction.FORWARD, FlywheelMotor.FlywheelState.STOPPED);
