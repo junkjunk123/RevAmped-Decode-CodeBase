@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 
 import java.util.Comparator;
@@ -7,6 +9,7 @@ import java.util.function.Consumer;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 
 public class TableCompartmentManager {
     public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
@@ -155,12 +158,17 @@ public class TableCompartmentManager {
         if (compartments[currentIndex].isNone()) {
             compartments[currentIndex].setColor(color);
 
-            int nextIntakeIndex = findNextIntakeIndex();
-            if (nextIntakeIndex != currentIndex) {
-                advanceIntakeIndex(nextIntakeIndex);
-            } else {
-                toggleCycleState.run();
-            }
+            Scheduler.getInstance().add(new Delay(
+                    100,
+                    () -> {
+                        int nextIntakeIndex = findNextIntakeIndex();
+                        if (nextIntakeIndex != currentIndex) {
+                            advanceIntakeIndex(nextIntakeIndex);
+                        } else {
+                            toggleCycleState.run();
+                        }
+                    }
+            ));
         }
     }
 

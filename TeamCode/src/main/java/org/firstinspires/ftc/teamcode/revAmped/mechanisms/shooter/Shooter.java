@@ -105,7 +105,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 }
             } else {
-                deltaAngle = hardware.turretMotor().prevFineTuneAngle;
+                deltaAngle = hardware.turretMotor().getPrevFineTuneAngle();
             }
 
             if (trackHood) {
@@ -150,7 +150,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             case REST -> {
                 hardware.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
                 hardware.hoodServo().setCurrentState(Types.HoodState.REST);
-                hardware.turretMotor().setCurrentState(Types.TurretState.IDLE);
+                hardware.turretMotor().setCurrentState(Types.TurretState.HOLD);
                 setTrackHood(false);
                 setTrackTurret(false);
                 confidence = 0;
@@ -160,7 +160,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
                 hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
                 //setTrackHood(true);
-                setTrackTurret(true);
+                //setTrackTurret(true);
             }
         }
     }

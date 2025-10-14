@@ -21,4 +21,6 @@ public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.ServoState>
     public abstract double getLastError();
 
     public abstract double getVelocity();
+
+    public abstract void reverse();
 }

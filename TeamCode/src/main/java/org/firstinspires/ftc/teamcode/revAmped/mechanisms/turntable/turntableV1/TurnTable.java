@@ -25,11 +25,9 @@ public class TurnTable implements ArtifactQueuer {
     public TableCompartmentManager compartments;
     public final QueuerHardwareComponents hardware;
     private final TurnTableState currentState;
-    private final Consumer<Types.ShooterState> shooterStateConsumer;
 
     public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap, Consumer<Types.ShooterState> shooterStateConsumer) {
         this.scheduler = scheduler;
-        this.shooterStateConsumer = shooterStateConsumer;
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
@@ -114,9 +112,9 @@ public class TurnTable implements ArtifactQueuer {
     public void pop() {
         setCycleState(TurnTableCycleState.POP);
         hardware.popper().setCurrentState(Types.PopperState.POP);
-        scheduler.add(new Delay(Popper.POP_TIME_MILLIS, () -> {
+        scheduler.add(new Delay(1000, () -> {
             hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
-            compartments.pop();
+            scheduler.add(new Delay(500, () -> compartments.pop()));
         }));
     }
 

@@ -5,6 +5,8 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
+import java.util.function.Consumer;
+
 public final class TurnTableInternals {
     public enum TurnTableInternalState {
         BALL1,
@@ -108,6 +110,8 @@ public final class TurnTableInternals {
         private void cycleStateInitAction() {
             if (cycleState == TurnTableCycleState.POP) {
                 hardware.intakeMotor().stop();
+            } else {
+                hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
             }
         }
 

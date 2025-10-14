@@ -43,6 +43,7 @@ public class TableServo extends HwCRServo2<TableState> {
         controller = new PIDFController(TABLE_PIDF_COEFFICIENTS);
         resetPosition();
         velocityComputer = new Differentiator(encoder);
+        //reverse();
     }
 
     @Override
@@ -66,5 +67,12 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public double getVelocity() {
         return velocityComputer.calculate();
+    }
+
+    @Override
+    public void reverse() {
+        int temp = BALL2;
+        BALL2 = BALL3;
+        BALL3 = temp;
     }
 }

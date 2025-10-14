@@ -7,6 +7,7 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
@@ -32,6 +33,7 @@ public class TurretPIDTuner extends DecodeRevAmpedOpMode {
         startPos = turret.getCurrentPosition();
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         controller = new PIDFController(new PIDFCoefficients(P, I, D, F));
+        turret.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private int pos() {

@@ -47,6 +47,11 @@ public class DualIntakeColor implements DecodeColorSensor {
         useRight = false;
     }
 
+    public static void disableSensors() {
+        useLeft = false;
+        useRight = false;
+    }
+
     public void enableLeft() {
         useLeft = true;
     }

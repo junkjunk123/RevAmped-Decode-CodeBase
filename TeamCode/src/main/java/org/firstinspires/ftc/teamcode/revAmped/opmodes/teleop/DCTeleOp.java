@@ -36,14 +36,21 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     }
 
     @Override
+    public void RevAmpedStart() {
+        robot.teleopInitialize();
+    }
+
+    @Override
     public void RevAmpedLoop() {
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("vel", robot.tableServo().getVelocity());
+        telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
+        telemetry.addData("turretTarg", robot.turretMotor().getPrevFineTuneAngle());
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
         if (gamepad_2.b.isPress()) {
-            robot.turnTable.intake();
+            robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
             robot.shooter.setCurrentState(Types.ShooterState.REST);
         }
 

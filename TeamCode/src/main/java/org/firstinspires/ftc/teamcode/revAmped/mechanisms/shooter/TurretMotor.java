@@ -31,7 +31,7 @@ public class TurretMotor extends Turret<TurretState> {
     public static int TURRET_POSITIVE_LIMIT_TICKS;
     public static int TURRET_NEGATIVE_LIMIT_TICKS;
 
-    double prevFineTuneAngle = 0;
+    private double prevFineTuneAngle = 0;
 
     @Override
     public int ticksPerRotation() {
@@ -75,5 +75,9 @@ public class TurretMotor extends Turret<TurretState> {
             case Blue -> setCurrentState(TurretState.HOLD, LL_DETECTION_BLUE);
             case Red -> setCurrentState(TurretState.HOLD, LL_DETECTION_RED);
         }
+    }
+
+    public double getPrevFineTuneAngle() {
+        return prevFineTuneAngle;
     }
 }
