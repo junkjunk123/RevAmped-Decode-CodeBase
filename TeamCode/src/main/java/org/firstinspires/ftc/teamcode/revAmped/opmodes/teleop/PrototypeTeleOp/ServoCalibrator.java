@@ -42,16 +42,23 @@ public class ServoCalibrator extends DecodeRevAmpedOpMode {
             hoodServo.setPosition(position);
         }
         if(gamepad_1.a.isPress()){
-            position+=1/255f;
+            position+=5/255f;
         }
         if(gamepad_1.b.isPress()){
-            position-=1/255f;
+            position-=5/255f;
         }
         if(gamepad_1.y.isPress()){
             if (servo.ordinal()+1 < 3) {
                 servo = Servos.values()[servo.ordinal() + 1];
             } else{
                 servo = Servos.values()[0];
+            }
+        }
+        if(gamepad_1.x.isPress()) {
+            if (servo.ordinal() - 1 > 0) {
+                servo = Servos.values()[servo.ordinal() - 1];
+            } else {
+                servo = Servos.values()[3];
             }
         }
         telemetry.addData("Position",position);

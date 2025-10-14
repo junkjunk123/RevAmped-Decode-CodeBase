@@ -10,8 +10,8 @@ public class TurretMotor extends HwMotor2<TurretMotor.TurretState> {
     public void buildStatePowerMap() {
 
         statePowerMap.put(TurretState.STOPPED,MotorPower.constant(0f));
-        statePowerMap.put(TurretState.FORWARD,MotorPower.constant(0.5f));
-        statePowerMap.put(TurretState.BACKWARD,MotorPower.constant(-0.5f));
+        statePowerMap.put(TurretState.FORWARD,MotorPower.constant(0.3f));
+        statePowerMap.put(TurretState.BACKWARD,MotorPower.constant(-0.3f));
     }
 
     @Override

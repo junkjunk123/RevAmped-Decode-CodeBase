@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
@@ -20,11 +21,18 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     // Hardware directly referenced here
     private IntakeMotor intakeMotor;
     private PopperServo popperServo;
-    private TableServo turntableServo;
+    //private TableServo turntableServo;
+    private CRTableServo turntableServo;
     private TurretMotor turretMotor;
     private FlywheelMotor flywheelMotor1;
     private FlywheelMotor flywheelMotor2;
     private HoodServo hoodServo;
+
+    private enum ShootState{
+        CLOSE,
+        FAR;
+    }
+    private ShootState shootState = ShootState.CLOSE;
 
     @Override
     public void RevAmpedInit() {
@@ -32,10 +40,11 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD));
         intakeMotor = new IntakeMotor(hardwareMap);
         popperServo = new PopperServo(hardwareMap, true);
-        turntableServo = new TableServo(hardwareMap, true);
+        //turntableServo = new TableServo(hardwareMap, true);
+        turntableServo = new CRTableServo(hardwareMap, HwCRServo.Encoder.external(intakeMotor));
         turretMotor = new TurretMotor(hardwareMap);
-        flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1",FlywheelMotor.FlywheelState.STOPPED);
-        flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2",FlywheelMotor.FlywheelState.STOPPED);
+        flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1", DcMotorSimple.Direction.REVERSE, FlywheelMotor.FlywheelState.STOPPED);
+        flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2", DcMotorSimple.Direction.FORWARD, FlywheelMotor.FlywheelState.STOPPED);
         flywheelMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         flywheelMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hoodServo = new HoodServo(hardwareMap,true);
@@ -49,6 +58,12 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
+        telemetry.addData("Flywheel Power Far",flywheelMotor1.getFarPower());
+        telemetry.addData("Flywheel Power Close",flywheelMotor1.getClosePower());
+        telemetry.addData("Hood Position Far",hoodServo.getFarPosition());
+        telemetry.addData("Hood Position Close",hoodServo.getClosePosition());
+        telemetry.addData("State",hoodServo.getCurrentState());
+        telemetry.addData("Flywheel Power",flywheelMotor1.getPower());
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         if (gamepad_1.b.isPress()){
             if(intakeMotor.getCurrentState() == IntakeMotor.IntakeState.INTAKE){
@@ -60,18 +75,25 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         if (gamepad_1.y.isPress()){
             intakeMotor.setCurrentState(IntakeMotor.IntakeState.STOPPED);
         }
+        //flywheel config
         if (gamepad_1.right_bumper.isPress()){
-            if (turntableServo.getCurrentState().ordinal()+1 <=2) {
-                turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() + 1]);
-            } else{
-                //turntableServo.setCurrentState(TableServo.TableState.values()[0]);
+            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR) {
+                flywheelMotor1.incrementFarPower();
+                flywheelMotor2.incrementFarPower();
+            }
+            else if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
+                flywheelMotor1.incrementClosePower();
+                flywheelMotor2.incrementClosePower();
             }
         }
         if (gamepad_1.left_bumper.isPress()){
-            if (turntableServo.getCurrentState().ordinal()-1 >= 0) {
-                turntableServo.setCurrentState(TableServo.TableState.values()[turntableServo.getCurrentState().ordinal() - 1]);
-            } else{
-                //turntableServo.setCurrentState(TableServo.TableState.values()[2]);
+            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR) {
+                flywheelMotor1.decrementFarPower();
+                flywheelMotor2.decrementFarPower();
+            }
+            else if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
+                flywheelMotor1.decrementClosePower();
+                flywheelMotor2.decrementClosePower();
             }
         }
         if (gamepad_1.a.isTrue()) {
@@ -81,25 +103,58 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         }
         if (gamepad_1.x.isPress()){
             if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.STOPPED){
-                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
-                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.RUNNING);
-            } else if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.RUNNING){
+                if (shootState == ShootState.FAR) {
+                    flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                    flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                } else if (shootState == ShootState.CLOSE){
+                    flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+                    flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+                }
+            } else if (flywheelMotor1.getCurrentState() != FlywheelMotor.FlywheelState.STOPPED){
                 flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
                 flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
             }
         }
-        if(gamepad_1.left_trigger!=0){
+        if(gamepad_1.right_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.FORWARD);
-        } else if (gamepad_1.right_trigger!=0){
+        } else if (gamepad_1.left_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.BACKWARD);
         } else{
             turretMotor.setCurrentState(TurretMotor.TurretState.STOPPED);
         }
         if(gamepad_1.dpad_up.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.FAR);
+            shootState = ShootState.FAR;
+            if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
+            }
         }
         if(gamepad_1.dpad_down.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
+            shootState = ShootState.CLOSE;
+            if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR){
+                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
+            }
+        }
+        //hood config
+        if(gamepad_1.dpad_left.isPress()){
+            if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
+                hoodServo.decrementFarPosition();
+                hoodServo.setCurrentState(HoodServo.HoodState.FAR);
+            }
+            else if(hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE){
+                hoodServo.decrementClosePosition();
+            }
+        }
+        if(gamepad_1.dpad_right.isPress()) {
+            if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
+                hoodServo.incrementFarPosition();
+                hoodServo.setCurrentState(HoodServo.HoodState.FAR);
+            } else if (hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) {
+                hoodServo.incrementClosePosition();
+            }
         }
 
     }
@@ -112,6 +167,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         turretMotor.update();
         turntableServo.update();
         popperServo.update();
+        telemetry.update();
     }
 
     @Override
