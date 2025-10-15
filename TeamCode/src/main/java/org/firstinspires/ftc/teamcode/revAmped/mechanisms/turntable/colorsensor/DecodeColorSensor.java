@@ -16,4 +16,8 @@ public interface DecodeColorSensor extends HwDevice {
     static void disableSensors() {
         DualIntakeColor.disableSensors();
     }
+
+    static void enableSensors() {
+        DualIntakeColor.enableSensors();
+    }
 }

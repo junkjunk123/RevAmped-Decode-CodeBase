@@ -6,13 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.Arrays;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
-import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 @Disabled
 @TeleOp(name = "DriveIntakePopperTest", group = "TeleOp")

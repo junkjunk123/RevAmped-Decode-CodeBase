@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 
 @TeleOp
 public class TurntableTest extends DecodeRevAmpedOpMode {

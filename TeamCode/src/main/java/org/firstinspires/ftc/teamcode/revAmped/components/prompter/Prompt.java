@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.prompter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button2;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 

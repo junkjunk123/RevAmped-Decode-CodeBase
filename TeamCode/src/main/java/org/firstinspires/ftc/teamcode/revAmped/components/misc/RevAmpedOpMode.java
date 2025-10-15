@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import java.util.Objects;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+
+import java.util.Objects;
 
 /**
  * Base class for all RevAmped OpModes.

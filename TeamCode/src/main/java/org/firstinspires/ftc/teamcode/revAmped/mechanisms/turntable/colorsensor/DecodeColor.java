@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.function.Supplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
+
+import java.util.function.Supplier;
 
 public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor> extends HwColorSensor implements DecodeColorSensor {
     public interface DetectionColor {

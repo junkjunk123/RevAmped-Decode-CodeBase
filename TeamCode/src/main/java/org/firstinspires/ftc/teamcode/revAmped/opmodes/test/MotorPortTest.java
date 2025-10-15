@@ -4,10 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 @Disabled
 @TeleOp

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 
 public class DecodeAutonomousMethods {
     public static Robot robot;

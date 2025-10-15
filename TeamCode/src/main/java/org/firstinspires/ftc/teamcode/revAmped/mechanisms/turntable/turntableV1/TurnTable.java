@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableState;
@@ -40,19 +41,18 @@ public class TurnTable implements ArtifactQueuer {
                     scheduler.add(new Delay(() -> tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500, () -> {
                         intake();
                         intakeColor.enableRight();
-                    }));
+                    }).setMaxTimeToRun(3000));
                     setCurrentState(TurnTableInternalState.values()[ball]);
                 },
-                ball -> {
-                    setCycleState(TurnTableCycleState.POP);
-                    setCurrentState(TurnTableInternalState.values()[ball]);
-                    hardware.intakeMotor().stop();
-                    shooterStateConsumer.accept(Types.ShooterState.TRACKING);
-                },
+                ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {
                     setCycleState(getCurrentState().getCycleState().toggle());
-                    shooterStateConsumer.accept(Types.ShooterState.REST);
                     compartments.resetPopHistory();
+
+                    switch (getCurrentCycleState()) {
+                        case POP -> shooterStateConsumer.accept(Types.ShooterState.TRACKING);
+                        case INTAKE -> shooterStateConsumer.accept(Types.ShooterState.REST);
+                    }
                 }
         );
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler, compartments);
@@ -95,9 +95,6 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     public void update() {
-        Globals.telemetry.addData("error", hardware.turntable().getLastError());
-        Globals.telemetry.addData("state",hardware.turntable().getCurrentState());
-        Globals.telemetry.addData("balls",3 - compartments.getEmptyIndices().length);
         hardware.update();
         compartments.update();
 

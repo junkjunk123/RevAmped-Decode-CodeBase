@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-
-import java.util.function.Consumer;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 public final class TurnTableInternals {
     public enum TurnTableInternalState {

@@ -2,9 +2,8 @@ package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
 import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class HwAnalogEncoder extends CachedSensor.CachedNumericalSensor implements HwDevice, HwDevice.Sensor<Double> {
     private final AnalogInput voltageSensor;

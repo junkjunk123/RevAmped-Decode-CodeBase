@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 
 @TeleOp (group = "Test")
 public class MotorCalibrator extends DecodeRevAmpedOpMode {

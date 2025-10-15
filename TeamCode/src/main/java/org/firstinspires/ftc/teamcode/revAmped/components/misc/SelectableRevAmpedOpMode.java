@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.revAmped.components.misc;
 import com.pedropathing.telemetry.SelectScope;
 import com.pedropathing.telemetry.Selector;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 
 public abstract class SelectableRevAmpedOpMode extends RevAmpedOpMode {
     private final Selector<Supplier<RevAmpedOpMode>> selector;

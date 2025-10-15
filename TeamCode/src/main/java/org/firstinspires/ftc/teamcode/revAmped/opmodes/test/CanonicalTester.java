@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.Arrays;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 
 public abstract class CanonicalTester<T> extends DecodeRevAmpedOpMode {
     private String[] strings;

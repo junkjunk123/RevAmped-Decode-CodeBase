@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util;
 
-import java.util.function.BooleanSupplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * ArtificialThread is an abstract class that represents a thread-like structure

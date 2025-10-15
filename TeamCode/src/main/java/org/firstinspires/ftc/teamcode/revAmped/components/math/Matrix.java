@@ -5,9 +5,10 @@
 
 package org.firstinspires.ftc.teamcode.revAmped.components.math;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Locale;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A class representing a mathematical matrix with various operations.

@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-
-import java.util.HashMap;
-import java.util.List;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+
+import java.util.HashMap;
+import java.util.List;
 
 @Config
 @TeleOp(name = "ServoCalibrateTest", group = "Test")

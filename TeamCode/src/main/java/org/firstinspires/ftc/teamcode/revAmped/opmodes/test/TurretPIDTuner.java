@@ -9,10 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 
 @Config
 @TeleOp

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
+
 import androidx.annotation.NonNull;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter.KalmanFilterParameters;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.TimeInvariantDiscretizedExtrapolator;
 
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.KalmanFilter.KalmanFilterParameters;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.TimeInvariantDiscretizedExtrapolator;
 
 /**
  * Abstract class for a cached sensor that retrieves its value from a supplier.

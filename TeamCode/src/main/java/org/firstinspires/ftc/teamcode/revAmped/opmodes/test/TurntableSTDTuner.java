@@ -10,12 +10,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
-import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 
 @Config
 @TeleOp

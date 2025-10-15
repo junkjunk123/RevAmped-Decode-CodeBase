@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.pedro;
+
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.BezierPoint;
@@ -7,10 +8,10 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.HeadingInterpolator;
 
-import java.util.Arrays;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+
+import java.util.Arrays;
 
 public class ColoredDecodePose implements FuturePose {
     private final Pose pose;

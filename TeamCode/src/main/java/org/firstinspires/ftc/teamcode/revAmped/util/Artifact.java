@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.revAmped.util;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 
 import java.util.Comparator;
 import java.util.List;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 
 public class Artifact implements Comparable<Artifact> {
     private static Comparator<Artifact> lastComparator;

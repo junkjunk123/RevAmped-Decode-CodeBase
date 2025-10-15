@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.DoubleSupplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.Button;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Util.Drivetrain;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.DoubleSupplier;
 
 /**
  * TeleOpMecanumDrive is a class that extends the Drivetrain class to provide

@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
 
 import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.sun.tools.javac.util.Name;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.CRServoInternal;
@@ -51,9 +48,19 @@ public class CRTableServo extends HwCRServo2<CRTableServo.TableState> {
     }
 
     @Override
+    public void reverse() {
+
+    }
+
+    @Override
     public void buildStatePowerMap() {
         //statePowerMap.put(TableState.REST, () -> (float) MathFunctions.clamp(controller.runWithError(getError(REST)),-1,1));
         statePowerMap.put(TableState.REST, ServoPower.constant(0f));
+    }
+
+    @Override
+    public boolean testResponse() {
+        return super.testResponse();
     }
 
     public enum TableState implements CRServoInternal.ServoState{

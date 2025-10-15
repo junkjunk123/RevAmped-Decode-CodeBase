@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.revAmped.util;
 
 import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo.HOOD_REST;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.CRServoInternal;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {

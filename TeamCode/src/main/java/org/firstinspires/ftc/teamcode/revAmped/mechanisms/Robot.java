@@ -5,18 +5,26 @@ import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.al
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.ShootingMechanism;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.DecodeRevAmpedAutonomous;
@@ -28,15 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 
 public class Robot {
     public static Robot INSTANCE;

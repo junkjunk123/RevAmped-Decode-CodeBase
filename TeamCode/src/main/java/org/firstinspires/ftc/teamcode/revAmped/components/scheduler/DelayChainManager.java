@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler;
 
-import java.util.HashMap;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.DelayChain;
+
+import java.util.HashMap;
 
 /**
  * DelayChainManager is a class that manages multiple DelayChains.

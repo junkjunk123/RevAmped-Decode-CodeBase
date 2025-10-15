@@ -3,17 +3,16 @@ package org.firstinspires.ftc.teamcode.revAmped;
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 
 import java.util.List;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Constants;
 
 public final class DecodeConstants implements Constants {
     /**
@@ -48,11 +47,11 @@ public final class DecodeConstants implements Constants {
         HoodServo.TELE_FAR_PRESET = 0f; HoodServo.TELE_NEAR_PRESET = 0f;
 
         //Turret Constants
-        TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2240;
+        TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
         TurretMotor.AUTO_PRELOADS = 0; TurretMotor.AUTO_SET_1 = 0; TurretMotor.AUTO_SET_2 = 0; TurretMotor.AUTO_SET_3 = 0;
-        TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560;
+        TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -500; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 500;
 
         //Table Constants
         TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);

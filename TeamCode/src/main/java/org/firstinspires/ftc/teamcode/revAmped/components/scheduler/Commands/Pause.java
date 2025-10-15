@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands;
 
-import java.util.function.BooleanSupplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+
+import java.util.function.BooleanSupplier;
 
 public class Pause implements RunnableTask {
     protected boolean complete = false;
@@ -40,8 +40,8 @@ public class Pause implements RunnableTask {
     }
 
     public static class OffsetCanceledPause extends Pause {
-        private BooleanSupplier startCancel;
-        private double millis;
+        private final BooleanSupplier startCancel;
+        private final double millis;
         private boolean startedCancel;
         private BooleanSupplier time;
 

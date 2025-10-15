@@ -5,15 +5,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-
-import java.util.Objects;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSlide2;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+
+import java.util.Objects;
 
 @Disabled
 @TeleOp

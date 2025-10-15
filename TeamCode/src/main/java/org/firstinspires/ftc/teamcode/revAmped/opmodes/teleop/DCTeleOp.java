@@ -3,17 +3,17 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop;
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-
-import java.util.Arrays;
-
+import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
+
+import java.util.Arrays;
 
 @TeleOp(name = "DCTeleOp", group = "TeleOp")
 public class DCTeleOp extends DecodeRevAmpedOpMode {
@@ -44,12 +44,12 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
-        telemetry.addData("vel", robot.tableServo().getVelocity());
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
-        telemetry.addData("turretTarg", robot.turretMotor().getPrevFineTuneAngle());
+
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
         if (gamepad_2.b.isPress()) {
+            DecodeColorSensor.enableSensors();
             robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
             robot.shooter.setCurrentState(Types.ShooterState.REST);
         }

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.controller.LQR;
 
-import java.util.Objects;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.SlideController;
+
+import java.util.Objects;
 
 public class CustomLQRCoefficients implements SlideController.SlideConstants {
     public double posTol;

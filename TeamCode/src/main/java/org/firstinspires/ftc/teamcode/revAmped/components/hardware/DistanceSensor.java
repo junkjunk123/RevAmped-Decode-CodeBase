@@ -4,9 +4,9 @@ import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.te
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.Optional;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.math.LinearFunction;
+
+import java.util.Optional;
 
 /**
  * Abstract class representing a distance sensor.

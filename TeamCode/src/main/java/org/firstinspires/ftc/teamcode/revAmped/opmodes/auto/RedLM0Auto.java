@@ -2,22 +2,21 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM0AutoPaths;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
-
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Command;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.DelayChain;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.OptionalDelay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Pause;
-import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM0AutoPaths;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
 
 @Autonomous
 public class RedLM0Auto extends DecodeRevAmpedOpMode {

@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler;
 
-import java.util.Comparator;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.Set;
-import java.util.function.BooleanSupplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+
+import java.util.Comparator;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.BooleanSupplier;
 
 /**
  * DelayManager is a class that manages multiple Delay objects.

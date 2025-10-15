@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
 import com.pedropathing.control.PIDFCoefficients;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
-
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Turret;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
 
 public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {
-        super(hardwareMap, "turret", DcMotorSimple.Direction.FORWARD, motorState);
+        super(hardwareMap, "turret", DcMotorSimple.Direction.REVERSE, motorState);
         controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     }
 
-    public static PIDFCoefficients TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0, 0, 0, 0);
+    public static PIDFCoefficients TURRET_PIDF_COEFFICIENTS;
     public final PIDFController controller;
     public static int TURRET_TICKS_PER_ROTATION;
     private int targetPosition;
@@ -41,8 +42,8 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
-        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - currentPos));
-        statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED? getError(targetPosition) : targetPosition - currentPos));
+        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()));
+        statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()));
     }
 
     @Override
@@ -67,7 +68,9 @@ public class TurretMotor extends Turret<TurretState> {
     
     public void finetuneAngle(double rad) {
         prevFineTuneAngle = rad;
-        setCurrentState(TurretState.TRACKING, Range.clip((int) (targetPosition + rad * ticksPerRotation() / (2 * Math.PI)), TURRET_NEGATIVE_LIMIT_TICKS, TURRET_POSITIVE_LIMIT_TICKS));
+        targetPosition = Range.clip((int) (rad * ticksPerRotation() / (2 * Math.PI)), TURRET_NEGATIVE_LIMIT_TICKS, TURRET_POSITIVE_LIMIT_TICKS);
+        Globals.telemetry.addData("angle",targetPosition);
+        motorState = TurretState.TRACKING;
     }
 
     public void limelightDetection() {
@@ -79,5 +82,10 @@ public class TurretMotor extends Turret<TurretState> {
 
     public double getPrevFineTuneAngle() {
         return prevFineTuneAngle;
+    }
+
+    @Override
+    public int getTargetPosition() {
+        return targetPosition;
     }
 }

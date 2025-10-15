@@ -7,11 +7,10 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 /**
  * FollowerManager is a class that manages the Follower component,

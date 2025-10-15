@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 /**

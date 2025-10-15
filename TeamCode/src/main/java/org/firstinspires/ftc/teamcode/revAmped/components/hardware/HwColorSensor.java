@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 
-import static android.graphics.Color.red;
-
 import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import androidx.annotation.NonNull;
@@ -13,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.math.HSVValue;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.RGBValue;
 

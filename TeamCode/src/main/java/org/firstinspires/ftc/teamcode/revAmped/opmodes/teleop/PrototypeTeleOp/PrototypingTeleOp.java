@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.Arrays;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
-import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 @TeleOp(name = "PrototypingTeleOp", group = "TeleOp")
 public class PrototypingTeleOp extends DecodeRevAmpedOpMode {

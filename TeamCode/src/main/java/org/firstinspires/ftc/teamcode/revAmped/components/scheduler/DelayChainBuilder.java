@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BooleanSupplier;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Command;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.DelayChain;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.RunnableTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public class DelayChainBuilder {
     private final String identifier;

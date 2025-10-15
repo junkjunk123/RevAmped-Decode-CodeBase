@@ -2,13 +2,12 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.SelectableRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.DriveIntakeTest;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MomentOfInertiaCalibrator;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MotorSlipCalibrator;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.SelectableRevAmpedOpMode;
 
 @TeleOp(name = "DecodeTester")
 public class DecodeTester extends SelectableRevAmpedOpMode {

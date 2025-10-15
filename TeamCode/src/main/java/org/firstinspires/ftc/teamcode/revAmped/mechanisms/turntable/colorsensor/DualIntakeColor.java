@@ -16,6 +16,8 @@ public class DualIntakeColor implements DecodeColorSensor {
     public DualIntakeColor(HardwareMap hardwareMap) {
         leftColor = new IntakeColor(hardwareMap, "color_left", LEFT_OFFSET);
         rightColor = new IntakeColor(hardwareMap, "color_right",0);
+        useLeft = false;
+        useRight = true;
     }
 
     public ArtifactColor getColor() {
@@ -50,6 +52,11 @@ public class DualIntakeColor implements DecodeColorSensor {
     public static void disableSensors() {
         useLeft = false;
         useRight = false;
+    }
+
+    public static void enableSensors() {
+        useLeft = false;
+        useRight = true;
     }
 
     public void enableLeft() {

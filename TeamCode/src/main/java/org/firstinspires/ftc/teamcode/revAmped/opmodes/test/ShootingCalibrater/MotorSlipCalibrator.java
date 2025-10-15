@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MovingAverage;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.math.MovingAverage;
 
 @Disabled
 @TeleOp

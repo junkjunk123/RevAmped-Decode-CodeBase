@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.examples;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Hw2mDistanceSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.LowPassFilter;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.LinearFunction;

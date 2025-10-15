@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types.PopperState;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwAnalogEncoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types.PopperState;
 
 public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageState> {
     public static double POP_TIME_MILLIS;

@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
 
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-
-import java.util.List;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+
+import java.util.List;
 
 public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     protected Robot robot;

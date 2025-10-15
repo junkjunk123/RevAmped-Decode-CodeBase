@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
+
 import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
+
 import java.util.EnumMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends HwMotor {
     protected SlideRetractionDetector retractionDetector;

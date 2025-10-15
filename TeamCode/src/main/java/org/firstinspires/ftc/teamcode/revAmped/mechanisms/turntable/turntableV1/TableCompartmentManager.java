@@ -1,4 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
@@ -6,10 +9,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 
 public class TableCompartmentManager {
     public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState, Runnable toggleCycleState) {

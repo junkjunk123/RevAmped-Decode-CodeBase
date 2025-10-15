@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.prompter;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 
 //Modified From the Marrow Library
 public class Prompter {

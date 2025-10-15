@@ -31,8 +31,6 @@ public class TableServo extends HwCRServo2<TableState> {
         statePowerMap.put(TableState.BALL1, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL1)), -1, 1));
         statePowerMap.put(TableState.BALL2, () -> {
                 double error = getError(BALL2);
-                Globals.telemetry.addData("error", error);
-                Globals.telemetry.addData("pos", getCurrentPosition());
                 return (float) MathFunctions.clamp(controller.runWithError(error), -1, 1);
         });
         statePowerMap.put(TableState.BALL3, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL3)), -1, 1));

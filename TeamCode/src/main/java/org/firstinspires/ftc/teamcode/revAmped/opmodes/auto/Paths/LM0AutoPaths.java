@@ -5,11 +5,11 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-import java.util.List;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.ColoredDecodePose;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
+
+import java.util.List;
 
 @Config
 public class LM0AutoPaths implements PathSupplier {
