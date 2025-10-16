@@ -45,7 +45,7 @@ public final class Globals {
             return tagID;
         }
     }
-    public static AllianceColor allianceColor;
+    public static AllianceColor allianceColor = AllianceColor.None;
 
     /**
      * Initializes the telemetry instance.

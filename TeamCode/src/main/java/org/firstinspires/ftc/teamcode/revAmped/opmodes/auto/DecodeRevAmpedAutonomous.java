@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
+import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
@@ -65,6 +66,8 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedStop() {
         scheduler.clear();
+        TeleOpDrivetrainHandler.setInitialPose(followerManager.follower.getPose());
+        Robot.AUTONOMOUS_INSTANCE = robot;
     }
 
     private void setAutoState(int autoState) {

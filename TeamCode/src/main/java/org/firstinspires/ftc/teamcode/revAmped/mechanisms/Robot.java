@@ -39,8 +39,9 @@ import java.util.stream.Collectors;
 
 public class Robot {
     public static Robot INSTANCE;
+    public static Robot AUTONOMOUS_INSTANCE;
     private List<LynxModule> allHubs;
-    private final Scheduler scheduler;
+    private Scheduler scheduler;
     public ArtifactQueuer turnTable;
     public ShootingMechanism<Types.ShooterState> shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
@@ -79,11 +80,8 @@ public class Robot {
     private OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
-        Globals.OpModeType = opModeType;
-        Globals.allianceColor = allianceColor;
-        scheduler = opMode.scheduler;
+        updateOpMode(opMode, allianceColor);
         HardwareMap hardwareMap = opMode.hardwareMap;
-        opModeType = (OpModeType) opMode.getOpModeType();
         init(hardwareMap);
         INSTANCE = this;
     }
@@ -93,13 +91,23 @@ public class Robot {
     }
 
     public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+        updateOpMode(opMode, allianceColor);
+        HardwareMap hardwareMap = opMode.hardwareMap;
+        init(hardwareMap);
+        INSTANCE = this;
+    }
+
+    public void updateOpMode(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
         Globals.OpModeType = opModeType;
         Globals.allianceColor = allianceColor;
         scheduler = opMode.scheduler;
-        HardwareMap hardwareMap = opMode.hardwareMap;
-        this.opModeType = opModeType;
-        init(hardwareMap);
-        INSTANCE = this;
+        opModeType = (OpModeType) opMode.getOpModeType();
+    }
+
+    public static Robot getAutonomousInstance(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
+        if (AUTONOMOUS_INSTANCE == null) return new Robot(opMode, allianceColor);
+        AUTONOMOUS_INSTANCE.updateOpMode(opMode, allianceColor);
+        return AUTONOMOUS_INSTANCE;
     }
 
     public void init(HardwareMap hardwareMap) {
@@ -170,7 +178,7 @@ public class Robot {
     public void teleopInitialize() {
         for (HwDevice servo : allDevices.get(HwDevice.DeviceType.SERVO)) {
             if (servo instanceof HwServo2<?> s) {
-                s.setPosition(s.getInitialPosition());
+                s.setPosition(s.getPosition());
             }
         }
     }

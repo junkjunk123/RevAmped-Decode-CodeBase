@@ -24,7 +24,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        robot = new Robot(this, Globals.allianceColor);
+        robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
         drivetrain = new TeleOpDrivetrainHandler.TeleOpDrivetrainBuilder()

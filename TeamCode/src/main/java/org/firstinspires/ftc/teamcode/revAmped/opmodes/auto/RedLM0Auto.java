@@ -54,7 +54,9 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedStop() {
+        scheduler.clear();
         TeleOpDrivetrainHandler.setInitialPose(followerManager.follower.getPose());
+        Robot.AUTONOMOUS_INSTANCE = robot;
     }
 
     private void build() {

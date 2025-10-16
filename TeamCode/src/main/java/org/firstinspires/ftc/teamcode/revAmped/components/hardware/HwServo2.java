@@ -19,9 +19,9 @@ public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implemen
     public final ServoImplEx servo;
     private T currentState;
     private final String id;
-    protected float position;
+    protected float position = -1f;
     private final T initialState;
-    private float initialPosition;
+    private final float initialPosition;
     private RevAmpedTimer timer = null;
     private double approxTravelTime = 0;
     private boolean reached = true;
@@ -34,8 +34,8 @@ public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implemen
         AXON_MICRO(0.075),
         GOBILDA_SUPERSPEED(0.043);
 
-        double hertz;
-        int degRange;
+        final double hertz;
+        final int degRange;
 
         /**
          * @param hertz seconds for 60 degrees
@@ -113,6 +113,7 @@ public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implemen
     }
 
     public float getPosition() {
+        if (position == -1f) return initialPosition;
         return position;
     }
 
