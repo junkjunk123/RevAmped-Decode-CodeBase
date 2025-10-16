@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrain
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
@@ -42,15 +43,18 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
+        /*
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
+         */
+        telemetry.addData("trackTurret", Shooter.trackTurret);
 
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
         if (gamepad_2.b.isPress()) {
             DecodeColorSensor.enableSensors();
-            robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+            robot.turnTable.intake();
             robot.shooter.setCurrentState(Types.ShooterState.REST);
         }
 
@@ -107,9 +111,9 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     public void update() {
         gamepad_1.update();
         gamepad_2.update();
-        drivetrain.updateLocalization();
-        drivetrain.arcadeDrive();
+        if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) drivetrain.updateLocalization();
         robot.update();
+        drivetrain.arcadeDrive();
         telemetry.update();
     }
 

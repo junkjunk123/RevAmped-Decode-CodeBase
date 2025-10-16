@@ -107,6 +107,7 @@ public class Robot {
     public static Robot getAutonomousInstance(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
         if (AUTONOMOUS_INSTANCE == null) return new Robot(opMode, allianceColor);
         AUTONOMOUS_INSTANCE.updateOpMode(opMode, allianceColor);
+        DecodeColorSensor.enableSensors();
         return AUTONOMOUS_INSTANCE;
     }
 

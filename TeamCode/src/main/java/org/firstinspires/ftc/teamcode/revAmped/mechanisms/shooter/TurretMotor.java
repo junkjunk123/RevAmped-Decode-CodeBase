@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
 
+@Config
 public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {
         super(hardwareMap, "turret", DcMotorSimple.Direction.REVERSE, motorState);
@@ -31,12 +33,13 @@ public class TurretMotor extends Turret<TurretState> {
     public static boolean TURRET_LIMITS_ENABLED;
     public static int TURRET_POSITIVE_LIMIT_TICKS;
     public static int TURRET_NEGATIVE_LIMIT_TICKS;
+    public static double TURRET_RAD_LIMIT;
 
     private double prevFineTuneAngle = 0;
 
     @Override
     public int ticksPerRotation() {
-        return TURRET_TICKS_PER_ROTATION;
+        return (int) ((TURRET_POSITIVE_LIMIT_TICKS) * (Math.PI * 2 / TURRET_RAD_LIMIT));
     }
 
     @Override
@@ -68,7 +71,7 @@ public class TurretMotor extends Turret<TurretState> {
     
     public void finetuneAngle(double rad) {
         prevFineTuneAngle = rad;
-        targetPosition = Range.clip((int) (rad * ticksPerRotation() / (2 * Math.PI)), TURRET_NEGATIVE_LIMIT_TICKS, TURRET_POSITIVE_LIMIT_TICKS);
+        targetPosition = Range.clip((int) (rad * TURRET_POSITIVE_LIMIT_TICKS / TURRET_RAD_LIMIT), TURRET_NEGATIVE_LIMIT_TICKS, TURRET_POSITIVE_LIMIT_TICKS);
         Globals.telemetry.addData("angle",targetPosition);
         motorState = TurretState.TRACKING;
     }

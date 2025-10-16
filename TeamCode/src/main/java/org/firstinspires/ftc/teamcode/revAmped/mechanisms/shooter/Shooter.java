@@ -38,6 +38,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static double BALL_MASS = 0.057152639; //kg
     private double confidence;
 
+    public static boolean velocityCompensationOnTurret;
+
     private Localizer pinpoint;
 
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
@@ -72,41 +74,49 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     @Override
     public void toggleTurretTracking() {
         trackTurret = !trackTurret;
+        if (hardware().turretMotor().getCurrentState() == Types.TurretState.TRACKING && !trackTurret) hardware().turretMotor().setCurrentState(Types.TurretState.HOLD);
     }
 
     public void update() {
         hardware.update();
 
         if (currentState == ShooterState.TRACKING) {
-            //Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
-            Pose targetPos = new Pose(0, -144);
+            Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
             Pose currentPos = pinpoint().getPose();
-            Vector offset = new Vector(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
+            Vector offset = new Vector();
+            offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
 
             double deltaAngle;
 
             if (trackTurret) {
                 Vector robotVelocity = pinpoint.getVelocityVector();
+
                 if (robotVelocity.getMagnitude() < 4) {
-                    double targetAngle = Math.abs(offset.getTheta()) + Math.PI / 2;
+                    double targetAngle = offset.getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
                     deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
-                } else {
+                } else if (velocityCompensationOnTurret) {
                     Vector iHat = offset.normalize();
-                    Vector jHat = new Vector(-offset.getYComponent(), offset.getXComponent());
+                    Vector jHat = new Vector();
+                    jHat.setOrthogonalComponents(-offset.getYComponent(), offset.getXComponent());
                     double flywheelLaunchSpeed = hardware.flywheel().getBallLaunchVelocity();
+                    Vector invertediHat = new Vector();
+                    invertediHat.setOrthogonalComponents(iHat.getYComponent(), iHat.getXComponent());
                     double normalizedTurretNormalComponent = robotVelocity.getMagnitude() *
-                            robotVelocity.dot(new Vector(iHat.getYComponent(), iHat.getXComponent())) / flywheelLaunchSpeed;
-                    Vector flywheelDirectionVector = new Vector(Math.sqrt(1 - Math.pow(normalizedTurretNormalComponent, 2)), normalizedTurretNormalComponent);
+                            robotVelocity.dot(invertediHat) / flywheelLaunchSpeed;
+                    Vector flywheelDirectionVector = new Vector();
+                    flywheelDirectionVector.setOrthogonalComponents(Math.sqrt(1 - Math.pow(normalizedTurretNormalComponent, 2)), normalizedTurretNormalComponent);
                     Matrix inverseRotMatrix = new Matrix(new double[][] {
                             {iHat.getXComponent(), iHat.getYComponent()},
                             {jHat.getXComponent(), jHat.getYComponent()}
                     });
-                    double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta();
+                    double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
                     deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
+                } else {
+                    deltaAngle = hardware.turretMotor().getPrevFineTuneAngle();
                 }
             } else {
                 deltaAngle = hardware.turretMotor().getPrevFineTuneAngle();
