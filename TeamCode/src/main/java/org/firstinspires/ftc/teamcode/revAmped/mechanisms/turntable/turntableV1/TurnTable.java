@@ -38,10 +38,10 @@ public class TurnTable implements ArtifactQueuer {
                 ball -> {
                     hardware.intakeColor().disable();
                     intakeMotor.stop();
-                    scheduler.add(new Delay(() -> tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500, () -> {
+                    scheduler.add(new Delay(() -> Math.abs(tableServo.getLastError()) < 50 || (tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500), () -> {
                         intake();
                         intakeColor.enableRight();
-                    }).setMaxTimeToRun(3000));
+                    }).setMaxTimeToRun(2200));
                     setCurrentState(TurnTableInternalState.values()[ball]);
                 },
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
@@ -99,6 +99,7 @@ public class TurnTable implements ArtifactQueuer {
         compartments.update();
 
         if (currentState.getCycleState() == TurnTableCycleState.INTAKE && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
+        compartments.getNextMotifPopIndex();
     }
 
     @Override
@@ -109,10 +110,16 @@ public class TurnTable implements ArtifactQueuer {
     public void pop() {
         setCycleState(TurnTableCycleState.POP);
         hardware.popper().setCurrentState(Types.PopperState.POP);
-        scheduler.add(new Delay(1000, () -> {
+        scheduler.add(new Delay(() -> hardware.popper().reached(Types.PopperVoltageState.FULLY_UP), () -> scheduler.add(new Delay(150, () -> {
             hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
-            scheduler.add(new Delay(500, () -> compartments.pop()));
-        }));
+            scheduler.add(new Delay(() -> hardware().popper().reached(Types.PopperVoltageState.FULLY_DOWN),
+                    () -> scheduler.add(new Delay(300, compartments::pop))
+            ));
+        }))));
+    }
+
+    public void switchStateToPop() {
+        setCycleState(TurnTableCycleState.POP);
     }
 
     public void intake() {
@@ -180,5 +187,9 @@ public class TurnTable implements ArtifactQueuer {
 
     public ArtifactColor getNextPopColor() {
         return compartments.getNextPopColor();
+    }
+
+    public boolean currentIndexHasArtifact() {
+        return !compartments.currentCompartment().isNone();
     }
 }

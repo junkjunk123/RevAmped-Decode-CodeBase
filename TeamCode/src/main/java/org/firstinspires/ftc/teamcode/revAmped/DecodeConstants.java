@@ -27,7 +27,7 @@ public final class DecodeConstants implements Constants {
 
     public void build() {
         //Popper Constants
-        Popper.POP = 75/255f; Popper.NEUTRAL = 112/255f; Popper.UP_VOLTAGE = 2.3f; Popper.DOWN_VOLTAGE = 1.845f;
+        Popper.POP = 75/255f; Popper.NEUTRAL = 112/255f; Popper.UP_VOLTAGE = 2.24f; Popper.DOWN_VOLTAGE = 1.833f;
 
         //Flywheel Constants
         Flywheel.kStatic = 0.05;
@@ -36,7 +36,7 @@ public final class DecodeConstants implements Constants {
         Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.0003);
         Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.0008);
         Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1350; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.GEAR_RATIO = 0.75; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1350; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.GEAR_RATIO = 1; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
         Flywheel.VELOCITY_ERROR_THRESHOLD = 0.5;
@@ -55,11 +55,11 @@ public final class DecodeConstants implements Constants {
 
         //Table Constants
         TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);
-        TableServo.BALL1 = 0; TableServo.BALL2 = 2700; TableServo.BALL3 = 5400;
-        TableServo.TICKS_PER_ROTATION = 8100;
+        TableServo.BALL1 = 0; TableServo.BALL2 = 2730; TableServo.BALL3 = 5461;
+        TableServo.TICKS_PER_ROTATION = 8192;
 
         //ColorSensor Constants
         IntakeColor.maxGreenHue = 170; IntakeColor.minGreenHue = 150; IntakeColor.maxPurpleHue = 240; IntakeColor.minPurpleHue = 210; IntakeColor.maxPurpleDistance = 30; IntakeColor.maxGreenDistance = 30;
-        DualIntakeColor.LEFT_OFFSET = 0;
+        DualIntakeColor.LEFT_OFFSET = 1.25;
     }
 }

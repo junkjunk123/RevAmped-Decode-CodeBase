@@ -53,6 +53,11 @@ public class CRTableServo extends HwCRServo2<CRTableServo.TableState> {
     }
 
     @Override
+    public void finetune(int ticks) {
+
+    }
+
+    @Override
     public void buildStatePowerMap() {
         //statePowerMap.put(TableState.REST, () -> (float) MathFunctions.clamp(controller.runWithError(getError(REST)),-1,1));
         statePowerMap.put(TableState.REST, ServoPower.constant(0f));

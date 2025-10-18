@@ -16,10 +16,12 @@ public class ColorTest extends DecodeRevAmpedOpMode {
     private IntakeColor rightColor;
     private IntakeMotor intakeMotor;
 
+    public static double offset;
+
     @Override
     public void RevAmpedInit() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        //leftColor = new IntakeColor(hardwareMap,"color_left",0d);
+        leftColor = new IntakeColor(hardwareMap,"color_left",0d);
         rightColor = new IntakeColor(hardwareMap,"color_right",0d);
         intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
     }
@@ -29,11 +31,14 @@ public class ColorTest extends DecodeRevAmpedOpMode {
         if (gamepad1.bWasPressed()) intakeMotor.setPower(1);
         if (gamepad1.aWasPressed()) intakeMotor.setPower(0);
 
-        //telemetry.addData("Left",leftColor.getColor());
-        //telemetry.addData("Left",leftColor.getHSVValues());
+        leftColor.setOffset(offset);
+
         telemetry.addData("color_right",rightColor.getColor());
         telemetry.addData("color_right",rightColor.getHSVValues());
         telemetry.addData("Distance",rightColor.getDistanceMM());
+        telemetry.addData("color_left",leftColor.getColor());
+        telemetry.addData("color_left",leftColor.getHue());
+        telemetry.addData("Distance",leftColor.getDistanceMM());
         telemetry.addData("Intake Power",intakeMotor.getPower());
         telemetry.addData("Intake Current",intakeMotor.getCurrentAmps());
         telemetry.addData("TurntablePosition", intakeMotor.getCurrentPosition());
@@ -42,7 +47,7 @@ public class ColorTest extends DecodeRevAmpedOpMode {
     @Override
     public void update() {
         telemetry.update();
-        //leftColor.update();
+        leftColor.update();
         rightColor.update();
     }
 

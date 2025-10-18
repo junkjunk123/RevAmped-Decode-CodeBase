@@ -11,7 +11,7 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     public static float maxGreenHue;
     public static float maxGreenDistance;
     public static float maxPurpleDistance;
-    private final double offset;
+    private double offset;
 
     public IntakeColor(HardwareMap hardwareMap, String id, double offset) {
         super(hardwareMap, id, Color.NEUTRAL);
@@ -61,5 +61,9 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     @Override
     public double getHue() {
         return getHSVValues().getH() + offset;
+    }
+
+    public void setOffset(double offset) {
+        this.offset = offset;
     }
 }

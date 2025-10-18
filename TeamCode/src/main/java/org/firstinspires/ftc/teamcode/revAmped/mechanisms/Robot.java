@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.DecodeRevAmpedAutonomous;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
@@ -249,10 +250,9 @@ public class Robot {
         if (balls == 0) return;
 
         turnTable.pop();
-        if (balls > 1) scheduler.add(new Delay(() -> popper().reached(Types.PopperVoltageState.FULLY_DOWN)
-                && tableServo().getVelocity() < 10
-                && Math.abs(tableServo().getLastError()) < 500
-                && flywheel().canShoot(), this::shootAll
+        if (balls > 1) scheduler.add(new Delay(() -> tableServo().getVelocity() < 10
+                && Math.abs(tableServo().getLastError()) < 100
+                && turnTable.getNumberOfBalls() < balls, this::shootAll
         ));
     }
 }

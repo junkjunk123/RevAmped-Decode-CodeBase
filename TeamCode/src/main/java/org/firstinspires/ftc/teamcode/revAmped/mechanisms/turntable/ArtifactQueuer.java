@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 public interface ArtifactQueuer {
@@ -13,6 +14,7 @@ public interface ArtifactQueuer {
     void update();
     boolean isMotifMode();
     void setMotifMode(boolean mode);
+    void switchStateToPop();
 
     default void toggleMotifMode() {
         setMotifMode(!isMotifMode());
@@ -30,4 +32,6 @@ public interface ArtifactQueuer {
     DecodeColorSensor.ArtifactColor getNextPopColor();
 
     void manualTransfer();
+    TurnTableInternals.TurnTableState getCurrentState();
+    boolean currentIndexHasArtifact();
 }

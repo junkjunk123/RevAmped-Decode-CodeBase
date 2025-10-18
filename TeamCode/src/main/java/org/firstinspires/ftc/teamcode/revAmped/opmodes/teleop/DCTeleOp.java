@@ -43,12 +43,9 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        /*
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
-         */
-        telemetry.addData("trackTurret", Shooter.trackTurret);
 
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
@@ -68,6 +65,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.x.isPress()) {
             robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
+            robot.turnTable.switchStateToPop();
         }
 
         if (gamepad_2.y.isPress()) {
@@ -80,6 +78,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_1.x.isPress()) {
             robot.turnTable.toggleMotifMode();
+            gamepad_1.rumble(500);
+            gamepad_2.rumble(500);
         }
 
         if (gamepad_2.dpad_right.isPress()) {
@@ -104,6 +104,14 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_1.dpad_down.isPress()) {
             robot.shooter.toggleTurretTracking();
+        }
+
+        if (gamepad_2.left_stick_x > 0.3) {
+            robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35));
+        }
+
+        if (gamepad_2.right_stick_button.isPress()) {
+            robot.tableServo().resetPosition();
         }
     }
 

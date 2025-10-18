@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
 
 public class TableServo extends HwCRServo2<TableState> {
@@ -19,6 +18,7 @@ public class TableServo extends HwCRServo2<TableState> {
     public static int BALL3;
     public static int TICKS_PER_ROTATION;
     private final Differentiator velocityComputer;
+    private int finetuneTicks = 0;
 
     @Override
     public int ticksPerRotation() {
@@ -28,12 +28,12 @@ public class TableServo extends HwCRServo2<TableState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TableState.REST, ServoPower.constant(0f));
-        statePowerMap.put(TableState.BALL1, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL1)), -1, 1));
+        statePowerMap.put(TableState.BALL1, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL1 + finetuneTicks)), -1, 1));
         statePowerMap.put(TableState.BALL2, () -> {
-                double error = getError(BALL2);
+                double error = getError(BALL2 + finetuneTicks);
                 return (float) MathFunctions.clamp(controller.runWithError(error), -1, 1);
         });
-        statePowerMap.put(TableState.BALL3, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL3)), -1, 1));
+        statePowerMap.put(TableState.BALL3, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL3 + finetuneTicks)), -1, 1));
     }
 
     public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
@@ -41,7 +41,6 @@ public class TableServo extends HwCRServo2<TableState> {
         controller = new PIDFController(TABLE_PIDF_COEFFICIENTS);
         resetPosition();
         velocityComputer = new Differentiator(encoder);
-        //reverse();
     }
 
     @Override
@@ -49,6 +48,7 @@ public class TableServo extends HwCRServo2<TableState> {
         if (getCurrentState() != servoState) {
             controller.reset();
             velocityComputer.reset();
+            finetuneTicks = 0;
         }
         super.setCurrentState(servoState);
     }
@@ -63,6 +63,7 @@ public class TableServo extends HwCRServo2<TableState> {
         return super.getCurrentPosition() % TICKS_PER_ROTATION;
     }
 
+    @Override
     public double getVelocity() {
         return velocityComputer.calculate();
     }
@@ -72,5 +73,16 @@ public class TableServo extends HwCRServo2<TableState> {
         int temp = BALL2;
         BALL2 = BALL3;
         BALL3 = temp;
+    }
+
+    @Override
+    public void finetune(int ticks) {
+        finetuneTicks += ticks;
+    }
+
+    @Override
+    public void resetPosition() {
+        finetuneTicks = 0;
+        super.resetPosition();
     }
 }

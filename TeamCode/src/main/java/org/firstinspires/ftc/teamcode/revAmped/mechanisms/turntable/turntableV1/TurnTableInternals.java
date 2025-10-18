@@ -80,7 +80,7 @@ public final class TurnTableInternals {
 
         public void switchInternalState(boolean init) {
             if (cycleState == TurnTableCycleState.POP) {
-                int nextPopIndex = compartmentManager.isMotifMode() && Globals.randomizationState != null ? compartmentManager.getNextMotifPopIndex() : compartmentManager.findNextPopIndex();
+                int nextPopIndex = compartmentManager.isMotifMode() ? compartmentManager.getNextMotifPopIndex() : compartmentManager.findNextPopIndex();
                 setInternalState(TurnTableInternalState.values()[nextPopIndex], init);
             } else if (cycleState == TurnTableCycleState.INTAKE) {
                 int nextIntakeIndex = compartmentManager.findNextIntakeIndex();

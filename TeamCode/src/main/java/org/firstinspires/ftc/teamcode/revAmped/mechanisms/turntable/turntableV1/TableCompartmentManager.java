@@ -1,16 +1,23 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Config
 public class TableCompartmentManager {
+    public static int defaultRandomizationStateGreenIndex = 1;
+
     public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
         this.switchIntakeState = switchIntakeState;
         this.switchPopState = switchPopState;
@@ -80,6 +87,7 @@ public class TableCompartmentManager {
 
         public void update(boolean motifMode, int green, int purple) {
             if (!motifMode) return;
+            if (!isUndetermined()) return;
 
             if (green >= 1) color = new Vector2D(Math.sqrt(0.9), Math.sqrt(0.1));
             else if (purple == 2) color = new Vector2D(Math.sqrt(0.1), Math.sqrt(0.9));
@@ -107,7 +115,8 @@ public class TableCompartmentManager {
 
     private TableCompartment[] sort(DecodeColorSensor.ArtifactColor color) {
         TableCompartment[] sorted = compartments.clone();
-        java.util.Arrays.sort(sorted, TableCompartment.getComparator(color));
+        java.util.Arrays.sort(sorted, TableCompartment.getComparator(color).reversed());
+
         return sorted;
     }
 
@@ -142,7 +151,7 @@ public class TableCompartmentManager {
             lastPoppedColor = compartments[currentIndex].getGuessedColor();
             compartments[currentIndex].releaseBall();
 
-            int nextPopIndex = motifMode && Globals.randomizationState != null ? getNextMotifPopIndex() : findNextPopIndex();
+            int nextPopIndex = motifMode ? getNextMotifPopIndex() : findNextPopIndex();
 
             if (nextPopIndex != currentIndex) {
                 advancePopIndex(nextPopIndex);
@@ -234,7 +243,8 @@ public class TableCompartmentManager {
         if (compartments[currentIndex].isPurple()) return currentIndex;
 
         TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.PURPLE);
-        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentIndex;
+        if (sorted[0].isNone()) return currentIndex;
+        if (sorted[0].color.getX() < compartments[currentIndex].color.getX() + 0.03) return currentIndex;
 
         return sorted[0].index; // No purple ball found
     }
@@ -243,14 +253,16 @@ public class TableCompartmentManager {
         if (compartments[currentIndex].isGreen()) return currentIndex;
 
         TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.GREEN);
-        if (sorted[0].isNone() || sorted[0].isUndetermined()) return currentIndex;
+        Globals.telemetry.addLine(Arrays.toString(Arrays.stream(sorted).map(t -> t.color).toArray()));
+        if (sorted[0].isNone()) return currentIndex;
+        if (sorted[0].color.getY() < compartments[currentIndex].color.getY() + 0.03) return currentIndex;
 
         return sorted[0].index; // No green ball found
     }
 
     public DecodeColorSensor.ArtifactColor getNextPopColor() {
         List<DecodeColorSensor.ArtifactColor> targetPopColors = Globals.randomizationState != null? Globals.randomizationState.getColors()
-                : Globals.RandomizationState.PPG.getColors();
+                : getDefaultState().getColors();
 
         if (lastPoppedColor == DecodeColorSensor.ArtifactColor.NONE) {
             return targetPopColors.get(0);
@@ -286,8 +298,23 @@ public class TableCompartmentManager {
     public int getNextMotifPopIndex() {
         DecodeColorSensor.ArtifactColor targetColor = getNextPopColor();
 
-        if (targetColor == DecodeColorSensor.ArtifactColor.GREEN) return nextGreen();
-        else return nextPurple();
+        Globals.telemetry.addData("color", targetColor);
+
+        if (targetColor == DecodeColorSensor.ArtifactColor.GREEN) {
+            int index = nextGreen();
+            Globals.telemetry.addData("index", index);
+            if (index != currentIndex) return index;
+            Globals.telemetry.addData("state", "searchingforpurple");
+            return nextPurple();
+        }
+
+        else {
+            int index = nextPurple();
+            Globals.telemetry.addData("index", index);
+            if (index != currentIndex) return index;
+            Globals.telemetry.addData("state", "searchingforgreen");
+            return nextGreen();
+        }
     }
 
     public void resetPopHistory() {
@@ -319,5 +346,15 @@ public class TableCompartmentManager {
         for (TableCompartment compartment : compartments) {
             compartment.update(motifMode, greenCount, purpleCount);
         }
+    }
+
+    public TableCompartment currentCompartment() {
+        return compartments[currentIndex];
+    }
+
+    private static Globals.RandomizationState getDefaultState() {
+        if (defaultRandomizationStateGreenIndex == 1) return Globals.RandomizationState.GPP;
+        else if (defaultRandomizationStateGreenIndex == 2) return Globals.RandomizationState.PGP;
+        return Globals.RandomizationState.PPG;
     }
 }
