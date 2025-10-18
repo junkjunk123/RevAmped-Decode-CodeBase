@@ -85,6 +85,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             Pose currentPos = pinpoint().getPose();
             Vector offset = new Vector();
             offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
+            double dist = offset.getMagnitude();
+            hardware.flywheel().updateTargetVelocity(dist);
 
             double deltaAngle;
 
@@ -151,6 +153,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     );
                     hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING, hoodAngle);
                 }
+            } else {
+                hardware.hoodServo().updatePreset(dist);
             }
         }
     }

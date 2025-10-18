@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.HoodState;
 
-public class HoodServo extends HwServo2<Types.HoodState> {
+public class HoodServo extends Hood {
     public HoodServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
         super(hardwareMap, "hood", setPosition, HoodState.REST, ServoBrand.AXON_MAX);
     }
@@ -28,4 +28,24 @@ public class HoodServo extends HwServo2<Types.HoodState> {
 
     public static float TELE_NEAR_PRESET;
     public static float TELE_FAR_PRESET;
+
+    public void toggleShootingPreset() {
+        if (getCurrentState() == HoodState.FAR_PRESET) setCurrentState(HoodState.NEAR_PRESET);
+        else if (getCurrentState() == HoodState.NEAR_PRESET) setCurrentState(HoodState.FAR_PRESET);
+    }
+
+    public void switchToPreset(double dist) {
+        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
+        else setCurrentState(HoodState.FAR_PRESET);
+    }
+
+    public boolean isPreset() {
+        return getCurrentState().isPreset();
+    }
+
+    public void updatePreset(double dist) {
+        if (!isPreset()) return;
+        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
+        else setCurrentState(HoodState.FAR_PRESET);
+    }
 }

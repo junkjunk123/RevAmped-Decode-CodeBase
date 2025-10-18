@@ -81,6 +81,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     }
 
     public void updateTargetVelocity(double dist) {
+        if (getCurrentState() != FlywheelState.RUNNING) return;
         if (dist < 100) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
         else targetVelocity = FLYWHEEL_FAR_VELOCITY;
     }
@@ -95,7 +96,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         controllerMedium.reset();
         currentAcceleration.reset();
 
-        if (motorState == FlywheelState.RUNNING) targetVelocity = FLYWHEEL_FAR_VELOCITY;
+        targetVelocity = FLYWHEEL_NEAR_VELOCITY;
     }
 
     @Override
