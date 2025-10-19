@@ -172,9 +172,11 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                 confidence = 0;
             }
             case TRACKING -> {
-                hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING);
+                Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
+                double dist = targetPos.distanceFrom(targetPos);
+                hardware.hoodServo().setPreset(dist);
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
-                hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
+                hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING, dist);
             }
         }
     }

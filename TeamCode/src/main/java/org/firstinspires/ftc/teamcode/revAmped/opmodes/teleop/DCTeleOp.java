@@ -21,13 +21,13 @@ import java.util.Arrays;
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;
-    private HoodServo hoodServo;
+    //private HoodServo hoodServo;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
 
     @Override
     public void RevAmpedInit() {
-        hoodServo = new HoodServo(hardwareMap,true);
+        //hoodServo = new HoodServo(hardwareMap,true);
         robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
@@ -105,8 +105,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_1.dpad_up.isPress()) {
             //robot.shooter.toggleHoodTracking();
-            hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
-            robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
+            //hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
+            //robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
         }
 
         if (gamepad_1.dpad_down.isPress()) {

@@ -21,4 +21,6 @@ public abstract class Hood extends HwServo2<Types.HoodState> {
     public abstract boolean isPreset();
 
     public abstract void updatePreset(double dist);
+
+    public abstract void setPreset(double dist);
 }

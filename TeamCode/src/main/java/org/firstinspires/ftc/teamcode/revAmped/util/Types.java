@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Hood;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
@@ -86,8 +87,6 @@ public interface Types {
 
     enum FlywheelState implements HwMotor2.MotorState {
         RUNNING,
-        CLOSE,
-        FAR,
         STOPPED;
     }
 
@@ -109,6 +108,18 @@ public interface Types {
 
         @Override
         public float getPosition() {
+            switch (this) {
+                case TRACKING, REST -> {
+                    return HOOD_REST;
+                }
+                case FAR_PRESET -> {
+                    return HoodServo.TELE_FAR_PRESET;
+                }
+                case NEAR_PRESET -> {
+                    return HoodServo.TELE_NEAR_PRESET;
+                }
+            }
+
             return HOOD_REST;
         }
 

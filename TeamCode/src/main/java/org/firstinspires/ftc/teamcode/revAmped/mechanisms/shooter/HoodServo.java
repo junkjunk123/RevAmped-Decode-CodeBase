@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.HoodState;
 
 public class HoodServo extends Hood {
@@ -45,6 +43,12 @@ public class HoodServo extends Hood {
 
     public void updatePreset(double dist) {
         if (!isPreset()) return;
+        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
+        else setCurrentState(HoodState.FAR_PRESET);
+    }
+
+    @Override
+    public void setPreset(double dist) {
         if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
     }

@@ -52,8 +52,6 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(FlywheelState.RUNNING, () -> (float) controllerOutput());
-        statePowerMap.put(FlywheelState.FAR, () -> (float) controllerOutput());
-        statePowerMap.put(FlywheelState.CLOSE, () -> (float) controllerOutput());
         statePowerMap.put(FlywheelState.STOPPED, MotorPower.constant(0f));
     }
 
@@ -99,12 +97,21 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         currentAcceleration.reset();
 
         if (motorState == FlywheelState.RUNNING) {
-            targetVelocity = FLYWHEEL_FAR_VELOCITY;
-        } else if (motorState == FlywheelState.FAR){
-            targetVelocity = FLYWHEEL_FAR_VELOCITY;
-        } else if (motorState == FlywheelState.CLOSE){
             targetVelocity = FLYWHEEL_NEAR_VELOCITY;
         }
+    }
+
+    public void setCurrentState(FlywheelState motorState, double dist) {
+        super.setCurrentState(motorState);
+        prevPos = null;
+        prevTimeNano = System.nanoTime();
+        controllerLarge.reset();
+        controllerSmall.reset();
+        controllerMedium.reset();
+        currentAcceleration.reset();
+
+        if (dist < 100) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
+        else targetVelocity = FLYWHEEL_FAR_VELOCITY;
     }
 
     @Override

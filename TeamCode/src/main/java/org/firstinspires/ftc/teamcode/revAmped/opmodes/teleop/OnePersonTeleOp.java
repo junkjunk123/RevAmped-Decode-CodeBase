@@ -5,14 +5,12 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 public class OnePersonTeleOp extends DecodeRevAmpedOpMode {
-    private GamepadMapper gamepad_1;
-    private GamepadMapper gamepad_2;
     private final DCTeleOp dcTeleOp = new DCTeleOp();
 
     @Override
     public void RevAmpedInit() {
-        gamepad_1 = new GamepadMapper(gamepad1);
-        gamepad_2 = new GamepadMapper(gamepad2);
+        GamepadMapper gamepad_1 = new GamepadMapper(gamepad1);
+        GamepadMapper gamepad_2 = new GamepadMapper(gamepad2);
         dcTeleOp.scheduler = this.scheduler;
         dcTeleOp.hardwareMap = this.hardwareMap;
         dcTeleOp.gamepad2 = gamepad2;
