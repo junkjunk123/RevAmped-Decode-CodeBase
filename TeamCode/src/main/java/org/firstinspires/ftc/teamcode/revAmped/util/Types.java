@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Hood;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
@@ -102,11 +103,17 @@ public interface Types {
 
     enum HoodState implements HwServo2.ServoState {
         REST,
-        TRACKING;
+        TRACKING,
+        NEAR_PRESET,
+        FAR_PRESET;
 
         @Override
         public float getPosition() {
             return HOOD_REST;
+        }
+
+        public boolean isPreset() {
+            return this == NEAR_PRESET || this == FAR_PRESET;
         }
     }
 
@@ -157,7 +164,7 @@ public interface Types {
         TRACKING
     }
 
-    record ShooterHardwareComponents(HwServo2<Types.HoodState> hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
+    record ShooterHardwareComponents(Hood hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
         public void update() {
             hoodServo.update();
             turretMotor.update();

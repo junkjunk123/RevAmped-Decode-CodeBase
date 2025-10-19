@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
@@ -40,7 +41,7 @@ public class TurnTable implements ArtifactQueuer {
                     intakeMotor.stop();
                     scheduler.add(new Delay(() -> Math.abs(tableServo.getLastError()) < 50 || (tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500), () -> {
                         intake();
-                        intakeColor.enableRight();
+                        DecodeColorSensor.enableSensors();
                     }).setMaxTimeToRun(2200));
                     setCurrentState(TurnTableInternalState.values()[ball]);
                 },

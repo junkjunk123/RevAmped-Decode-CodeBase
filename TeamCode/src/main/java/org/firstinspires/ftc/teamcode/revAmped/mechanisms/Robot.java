@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Hood;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.ShootingMechanism;
@@ -189,7 +190,7 @@ public class Robot {
         return turnTable.hardware().intakeMotor();
     }
 
-    public HwServo2<Types.HoodState> hoodServo() {
+    public Hood hoodServo() {
         return shooter.hardware().hoodServo();
     }
 
