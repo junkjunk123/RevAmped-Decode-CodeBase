@@ -33,7 +33,7 @@ public final class DecodeConstants implements Constants {
         Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.0003);
         Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.0008);
         Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 2000; Flywheel.FLYWHEEL_NEAR_VELOCITY = 1350; Flywheel.GEAR_RATIO = 1; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1800; Flywheel.FLYWHEEL_NEAR_VELOCITY = 1000; Flywheel.GEAR_RATIO = 1; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
         Flywheel.VELOCITY_ERROR_THRESHOLD = 0.5;
@@ -56,7 +56,7 @@ public final class DecodeConstants implements Constants {
         TableServo.TICKS_PER_ROTATION = 8192;
 
         //ColorSensor Constants
-        IntakeColor.maxGreenHue = 170; IntakeColor.minGreenHue = 150; IntakeColor.maxPurpleHue = 240; IntakeColor.minPurpleHue = 210; IntakeColor.maxPurpleDistance = 30; IntakeColor.maxGreenDistance = 30;
+        IntakeColor.maxGreenHue = 167; IntakeColor.minGreenHue = 160; IntakeColor.maxPurpleHue = 238; IntakeColor.minPurpleHue = 216; IntakeColor.maxPurpleDistance = 60; IntakeColor.maxGreenDistance = 60;
         DualIntakeColor.LEFT_OFFSET = 1.25;
     }
 }

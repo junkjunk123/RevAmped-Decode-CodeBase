@@ -21,13 +21,15 @@ import java.util.Arrays;
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;
-    private HoodServo hoodServo;
+    //Erics hood
+    //private HoodServo hoodServo;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
 
     @Override
     public void RevAmpedInit() {
-        hoodServo = new HoodServo(hardwareMap,true);
+        //Erics hood
+        //hoodServo = new HoodServo(hardwareMap,true);
         robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
@@ -49,8 +51,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
+        telemetry.addData("Color",robot.intakeColor().getColor());
         //telemetry.addData("velocity",robot.flywheel().getVelocity());
-        //robot.flywheel().run((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE)? 800d : 1350d);
 
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
@@ -70,6 +72,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.x.isPress()) {
             robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
+            //Erics hood
+            //robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
             robot.turnTable.switchStateToPop();
         }
 
@@ -105,8 +109,9 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_1.dpad_up.isPress()) {
             //robot.shooter.toggleHoodTracking();
-            hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
-            robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
+            //Erics hood
+            //hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
+            //robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
         }
 
         if (gamepad_1.dpad_down.isPress()) {
