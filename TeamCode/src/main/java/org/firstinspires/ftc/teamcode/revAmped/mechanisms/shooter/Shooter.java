@@ -86,13 +86,13 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             Vector offset = new Vector();
             offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
             double dist = offset.getMagnitude();
-            hardware.flywheel().updateTargetVelocity(dist);
+            Vector robotVelocity = pinpoint.getVelocityVector();
+
+            if (robotVelocity.getMagnitude() < 4) hardware.flywheel().updateTargetVelocity(dist);
 
             double deltaAngle;
 
             if (trackTurret) {
-                Vector robotVelocity = pinpoint.getVelocityVector();
-
                 if (robotVelocity.getMagnitude() < 4) {
                     double targetAngle = offset.getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
@@ -154,7 +154,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING, hoodAngle);
                 }
             } else {
-                hardware.hoodServo().updatePreset(dist);
+                if (robotVelocity.getMagnitude() < 4) hardware.hoodServo().updatePreset(dist);
             }
         }
     }
@@ -176,7 +176,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                 double dist = targetPos.distanceFrom(targetPos);
                 hardware.hoodServo().setPreset(dist);
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
-                hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING, dist);
+                hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
             }
         }
     }

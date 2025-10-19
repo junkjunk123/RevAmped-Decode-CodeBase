@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrain
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
@@ -21,14 +22,12 @@ import java.util.Arrays;
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;
-    //Erics hood
     //private HoodServo hoodServo;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
 
     @Override
     public void RevAmpedInit() {
-        //Erics hood
         //hoodServo = new HoodServo(hardwareMap,true);
         robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
@@ -38,6 +37,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
                 .setGamepad(gamepad_1)
                 .setDirections(DecodeConstants.DRIVE_DIRECTIONS)
                 .setLocalizer(new PinpointLocalizer(hardwareMap, Constants.localizerConstants))
+                .invertControls()
                 .build();
     }
 
@@ -52,7 +52,6 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
         telemetry.addData("Color",robot.intakeColor().getColor());
-        //telemetry.addData("velocity",robot.flywheel().getVelocity());
 
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
@@ -72,8 +71,6 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.x.isPress()) {
             robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
-            //Erics hood
-            //robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
             robot.turnTable.switchStateToPop();
         }
 
@@ -108,10 +105,15 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.dpad_up.isPress()) {
-            //robot.shooter.toggleHoodTracking();
+            try {
+                robot.shooter.toggleHoodTracking();
+            } catch (Exception e) {
+                throw new UnsupportedOperationException("Hood tracking has not been implemented yet");
+            }
+
             //Erics hood
             //hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
-            //robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
+            //robot.flywheel().run((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Flywheel.FLYWHEEL_NEAR_VELOCITY : Flywheel.FLYWHEEL_FAR_VELOCITY);
         }
 
         if (gamepad_1.dpad_down.isPress()) {

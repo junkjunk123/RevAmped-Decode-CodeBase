@@ -150,6 +150,75 @@ public class TeleOpMecanumDrive extends Drivetrain {
     }
 
     /**
+     * Arcade drive method for controlling the robot using a gamepad.
+     * @param x the x-value from the gamepad
+     * @param y the y-value from the gamepad
+     * @param rx the rotation value from the gamepad
+     * @param slowMode whether to enable slow mode
+     * @param slowMult the multiplier for slow mode
+     * @param DZ deadzone value for joystick input
+     * @param angleZero the angle at which the gamepad is considered to be at zero
+     * @param maxPower the maximum power for the motors
+     */
+    public void arcadeDrive(double x, double y, double rx, boolean slowMode, float slowMult, float DZ, float angleZero, float maxPower) {
+        double robotHeading;
+
+        if (Math.abs(y) > DZ || Math.abs(x) > DZ || Math.abs(rx) > DZ) {
+            Vector2D movementVector = smoothGamepadAngle(x, y, angleZero);
+
+            if (Math.abs(y) > DZ) {
+                y = -0.5 * Math.tan(movementVector.getY() * 1.12); // Remember, this is reversed!
+            } else {
+                y = 0;
+            }
+
+            if (Math.abs(x) > DZ) {
+                x = 0.5 * Math.tan(movementVector.getX() * 1.12);
+            } else {
+                x = 0;
+            }
+
+            if (Math.abs(rx) > DZ) {
+                rx = 0.5 * Math.tan(rx * 1.12);
+            } else {
+                rx = 0;
+            }
+
+            if (fieldCentric) {
+                robotHeading = getHeading.getAsDouble();
+                x = x * Math.cos(-robotHeading) - y * Math.sin(-robotHeading);
+                y = x * Math.sin(-robotHeading) + y * Math.cos(robotHeading);
+            }
+
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPow = (y + x + rx) / denominator;
+            double backLeftPow = (y - x + rx) / denominator;
+            double frontRightPow = (y - x - rx) / denominator;
+            double backRightPow = (y + x - rx) / denominator;
+
+            double highestPower = Math.max(Math.max(frontLeftPow, backLeftPow), Math.max(frontRightPow, backRightPow));
+
+            if (highestPower > maxPower) {
+                frontLeftPow *= maxPower / highestPower;
+                frontRightPow *= maxPower / highestPower;
+                backRightPow *= maxPower / highestPower;
+                backLeftPow *= maxPower / highestPower;
+            }
+
+            if (slowMode) {
+                frontLeftPow *= slowMult;
+                frontRightPow *= slowMult;
+                backRightPow *= slowMult;
+                backLeftPow *= slowMult;
+            }
+
+            setPowers(frontLeftPow, backLeftPow, frontRightPow, backRightPow);
+        } else if (!prevVelZero){
+            setPowers(0,0,0,0);
+        }
+    }
+
+    /**
      * Arcade drive method for controlling the robot using a gamepad with default parameters. These are based off Thilan's preferences.
      * @param gamepad1 the gamepad used for control
      * @param fieldCentric whether to enable field-centric driving

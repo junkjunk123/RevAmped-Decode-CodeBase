@@ -17,6 +17,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     public static float ANGLE_ZERO = (float) Math.tan(Math.toRadians(15));
     public static float MAX_POWER = 1.0f;
     private boolean slowMode = false;
+    private boolean invertedControls = false;
     private Localizer localizer;
     private static Pose initialPose = new Pose(72, 72, Math.toRadians(90));
 
@@ -26,7 +27,8 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     }
 
     public void arcadeDrive() {
-        arcadeDrive(gamepad_1, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
+        if (!invertedControls) arcadeDrive(gamepad_1, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
+        else arcadeDrive(-gamepad_1.left_stick_x, -gamepad_1.left_stick_y, gamepad_1.right_stick_x, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
     }
 
     public void updateLocalization() {
@@ -68,11 +70,16 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
         fieldCentric = !fieldCentric;
     }
 
+    public void setInvertedControls(boolean invertedControls) {
+        this.invertedControls = invertedControls;
+    }
+
     public static class TeleOpDrivetrainBuilder {
         private OpMode op;
         private List<DcMotorSimple.Direction> directions;
         private RevAmpedGamepad gamepad_1;
         private Localizer localizer;
+        private boolean invertedControls = false;
 
         public TeleOpDrivetrainBuilder setDirections(List<DcMotorSimple.Direction> directions) {
             this.directions = directions;
@@ -94,11 +101,17 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
             return this;
         }
 
+        public TeleOpDrivetrainBuilder invertControls() {
+            this.invertedControls = true;
+            return this;
+        }
+
         public TeleOpDrivetrainHandler build() {
             TeleOpDrivetrainHandler dt = new TeleOpDrivetrainHandler(op, directions);
             dt.setGamepad_1(gamepad_1);
             localizer.setStartPose(initialPose);
             dt.setLocalizer(localizer);
+            dt.setInvertedControls(invertedControls);
             return dt;
         }
     }
