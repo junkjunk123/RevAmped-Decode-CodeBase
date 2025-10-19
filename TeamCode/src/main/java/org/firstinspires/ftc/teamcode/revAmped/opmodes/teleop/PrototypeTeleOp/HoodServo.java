@@ -15,7 +15,7 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
     private static float farPositionDifference = 0f;
     private static float closePositionDifference = 0f;
     public enum HoodState implements ServoState{
-        FAR(1f+ farPositionDifference),
+        FAR(0.96f+ farPositionDifference),
         CLOSE(0f + closePositionDifference);
 
         private float pos;
