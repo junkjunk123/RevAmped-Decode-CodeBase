@@ -97,4 +97,8 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
     public void stop() {
         setCurrentState(getRest());
     }
+
+    public void setVoltageCompensation() {
+
+    }
 }

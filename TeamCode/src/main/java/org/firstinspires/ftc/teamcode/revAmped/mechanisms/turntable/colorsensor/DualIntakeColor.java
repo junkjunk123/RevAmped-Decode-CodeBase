@@ -72,4 +72,3 @@ public class DualIntakeColor implements DecodeColorSensor {
         return DeviceType.COLOR_SENSOR;
     }
 }
-

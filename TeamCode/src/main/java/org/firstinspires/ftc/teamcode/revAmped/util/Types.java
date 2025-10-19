@@ -18,7 +18,8 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
         INTAKE(1.0f),
-        STOP(0.0f);
+        STOP(0.0f),
+        OUTTAKE(-1.0f);
 
         final float power;
 

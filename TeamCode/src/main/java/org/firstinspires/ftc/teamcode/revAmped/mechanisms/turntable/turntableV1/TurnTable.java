@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
@@ -28,9 +29,9 @@ public class TurnTable implements ArtifactQueuer {
     public final QueuerHardwareComponents hardware;
     private final TurnTableState currentState;
 
-    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap, Consumer<Types.ShooterState> shooterStateConsumer) {
+    public TurnTable(Scheduler scheduler, boolean setPositions, HardwareMap hardwareMap, Consumer<Types.ShooterState> shooterStateConsumer, HwVoltageSensor voltageSensor) {
         this.scheduler = scheduler;
-        IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
+        IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, voltageSensor);
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
         DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);

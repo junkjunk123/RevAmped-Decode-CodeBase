@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
@@ -23,7 +24,8 @@ public class ColorTest extends DecodeRevAmpedOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         leftColor = new IntakeColor(hardwareMap,"color_left",0d);
         rightColor = new IntakeColor(hardwareMap,"color_right",0d);
-        intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP);
+        intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
+        intakeMotor.setVoltageCompensation();
     }
 
     @Override

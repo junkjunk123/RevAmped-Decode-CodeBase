@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
@@ -48,6 +49,7 @@ public class Robot {
     public ShootingMechanism<Types.ShooterState> shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> idMap = buildIDMap();
+    public HwVoltageSensor voltageSensor;
 
     public enum OpModeType implements org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType {
         TELEOP,
@@ -116,9 +118,10 @@ public class Robot {
     public void init(HardwareMap hardwareMap) {
         allHubs = hardwareMap.getAll(LynxModule.class);
         setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
+        voltageSensor = new HwVoltageSensor(hardwareMap);
         boolean setPositions = !opModeType.isTeleOp();
         shooter = new Shooter(hardwareMap, setPositions, scheduler);
-        turnTable = new TurnTable(scheduler, setPositions, hardwareMap, shooter::setCurrentState);
+        turnTable = new TurnTable(scheduler, setPositions, hardwareMap, shooter::setCurrentState, voltageSensor);
         allDevices.put(HwDevice.DeviceType.MOTOR, new HashSet<>(
                 List.of(
                         turnTable.hardware().intakeMotor(),
@@ -141,10 +144,12 @@ public class Robot {
         turnTable.hardware().turntable().resetPosition();
         shooter.hardware().flywheel().resetPosition();
         shooter.hardware().turretMotor().resetPosition();
+        intakeMotor().setVoltageCompensation();
     }
 
     public void update() {
         clearBulkCache();
+        voltageSensor.update();
         turnTable.update();
         shooter.update();
     }
@@ -219,6 +224,7 @@ public class Robot {
         map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(IntakeColor.class)));
         map.put(HwDevice.DeviceType.MOTOR, new HashSet<>(List.of(Flywheel.class, TurretMotor.class, IntakeMotor.class)));
         map.put(HwDevice.DeviceType.SERVO, new HashSet<>(List.of(HoodServo.class, TableServo.class, Popper.class)));
+        map.put(HwDevice.DeviceType.VOLTAGE_SENSOR, new HashSet<>(List.of(HwVoltageSensor.class)));
         return map;
     }
 
@@ -231,6 +237,7 @@ public class Robot {
         map.put(HoodServo.class, new HashSet<>(List.of("hood")));
         map.put(Popper.class, new HashSet<>(List.of("popper")));
         map.put(TableServo.class, new HashSet<>(List.of("table")));
+        map.put(HwVoltageSensor.class, new HashSet<>(List.of("voltageSensor")));
         return map;
     }
 

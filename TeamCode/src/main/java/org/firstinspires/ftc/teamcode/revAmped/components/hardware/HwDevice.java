@@ -6,6 +6,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 /**
  * Interface representing a hardware device.
@@ -79,6 +80,7 @@ public interface HwDevice {
         IMU(com.qualcomm.robotcore.hardware.IMU.class),
         PINPOINT(GoBildaPinpointDriver.class),
         CAMERA(Camera.class),
+        VOLTAGE_SENSOR(VoltageSensor.class),
         UNKNOWN(null);
 
         public Class<?> getCanonicalClass() {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
@@ -16,7 +17,8 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.INTAKE);
+        intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
+        intakeMotor.setVoltageCompensation();
         tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, HwCRServo.Encoder.external(intakeMotor));
     }
 
