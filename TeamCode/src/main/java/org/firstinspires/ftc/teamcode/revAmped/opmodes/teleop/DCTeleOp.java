@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
@@ -20,11 +21,13 @@ import java.util.Arrays;
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;
+    private HoodServo hoodServo;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
 
     @Override
     public void RevAmpedInit() {
+        hoodServo = new HoodServo(hardwareMap,true);
         robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
@@ -46,6 +49,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         telemetry.addData("color",robot.intakeColor().getColor());
         telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
+        //telemetry.addData("velocity",robot.flywheel().getVelocity());
+        //robot.flywheel().run((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE)? 800d : 1350d);
 
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
@@ -99,7 +104,9 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.dpad_up.isPress()) {
-            robot.shooter.toggleHoodTracking();
+            //robot.shooter.toggleHoodTracking();
+            hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
+            robot.flywheel().setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Types.FlywheelState.CLOSE : Types.FlywheelState.FAR);
         }
 
         if (gamepad_1.dpad_down.isPress()) {

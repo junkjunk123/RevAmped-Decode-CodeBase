@@ -85,7 +85,9 @@ public interface Types {
 
     enum FlywheelState implements HwMotor2.MotorState {
         RUNNING,
-        STOPPED
+        CLOSE,
+        FAR,
+        STOPPED;
     }
 
     enum TurretState implements HwMotor2.MotorState {
