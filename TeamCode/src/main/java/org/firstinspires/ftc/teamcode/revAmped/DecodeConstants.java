@@ -56,7 +56,8 @@ public final class DecodeConstants implements Constants {
         TableServo.TICKS_PER_ROTATION = 8192;
 
         //ColorSensor Constants
-        IntakeColor.maxGreenHue = 167; IntakeColor.minGreenHue = 160; IntakeColor.maxPurpleHue = 238; IntakeColor.minPurpleHue = 216; IntakeColor.maxPurpleDistance = 60; IntakeColor.maxGreenDistance = 60;
+        IntakeColor.maxGreenHue = 167; IntakeColor.minGreenHue = 160; IntakeColor.maxPurpleHue = 238; IntakeColor.minPurpleHue = 216;
+        IntakeColor.maxPurpleLeftDistance = 60; IntakeColor.maxGreenLeftDistance = 60; IntakeColor.maxPurpleRightDistance = 60; IntakeColor.maxGreenRightDistance = 60;
         DualIntakeColor.LEFT_OFFSET = 1.25;
     }
 }

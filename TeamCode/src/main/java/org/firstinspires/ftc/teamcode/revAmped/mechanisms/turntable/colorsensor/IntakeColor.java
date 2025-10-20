@@ -9,8 +9,10 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     public static float maxPurpleHue;
     public static float minGreenHue;
     public static float maxGreenHue;
-    public static float maxGreenDistance;
-    public static float maxPurpleDistance;
+    public static float maxGreenLeftDistance;
+    public static float maxPurpleLeftDistance;
+    public static float maxGreenRightDistance;
+    public static float maxPurpleRightDistance;
     private double offset;
 
     public IntakeColor(HardwareMap hardwareMap, String id, double offset) {
@@ -36,8 +38,25 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     @Override
     public void disable() {}
 
+    public enum CurrentSensor {
+        RIGHT,
+        LEFT;
+
+        public double getMaxGreenDistance() {
+            if (this == RIGHT) return IntakeColor.maxGreenRightDistance;
+            return IntakeColor.maxGreenLeftDistance;
+        }
+
+        public double getMaxPurpleDistance() {
+            if (this == RIGHT) return IntakeColor.maxPurpleRightDistance;
+            return IntakeColor.maxPurpleLeftDistance;
+        }
+    }
+
     public enum Color implements DecodeColor.DetectionColor {
         PURPLE, GREEN, NEUTRAL;
+
+        public static CurrentSensor currentSensor;
 
         @Override
         public boolean evaluateHue(double hue) {
@@ -51,8 +70,8 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
         @Override
         public boolean evaluateDistance(double distance) {
             return switch (this) {
-                case PURPLE -> distance <= IntakeColor.maxPurpleDistance;
-                case GREEN -> distance <= IntakeColor.maxGreenDistance;
+                case PURPLE -> distance <= currentSensor.getMaxPurpleDistance();
+                case GREEN -> distance <= currentSensor.getMaxGreenDistance();
                 default -> true;
             };
         }

@@ -7,6 +7,7 @@ import com.pedropathing.math.Matrix;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
@@ -31,8 +32,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
-    public static Pose APRIL_TAG_POSE_RED = new Pose(128.5, 130.5);
-    public static Pose APRIL_TAG_POSE_BLUE = new Pose(15.5, 130.5);
+    public static Pose APRIL_TAG_POSE_RED = new Pose(139, 138);
+    public static Pose APRIL_TAG_POSE_BLUE = new Pose(5, 138);
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
@@ -50,6 +51,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
         trackTurret = false;
+        velocityCompensationOnTurret = false;
     }
 
     public Localizer pinpoint() {
@@ -83,11 +85,12 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         if (currentState == ShooterState.TRACKING) {
             Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
             Pose currentPos = pinpoint().getPose();
+            Globals.telemetry.addData("currentPose", currentPos);
             Vector offset = new Vector();
             offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
+            Globals.telemetry.addData("offset", offset);
             double dist = offset.getMagnitude();
             Vector robotVelocity = pinpoint.getVelocityVector();
-
             if (robotVelocity.getMagnitude() < 4) hardware.flywheel().updateTargetVelocity(dist);
 
             double deltaAngle;
@@ -95,8 +98,10 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             if (trackTurret) {
                 if (robotVelocity.getMagnitude() < 4) {
                     double targetAngle = offset.getTheta() + Math.PI;
+                    Globals.telemetry.addData("hoodTargetAngleDeg", Math.toDegrees(targetAngle));
                     double currentAngle = pinpoint().getPose().getHeading();
                     deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                    Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else if (velocityCompensationOnTurret) {
                     Vector iHat = offset.normalize();

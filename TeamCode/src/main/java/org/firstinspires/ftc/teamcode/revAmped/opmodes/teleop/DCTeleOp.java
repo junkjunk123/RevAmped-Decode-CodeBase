@@ -127,6 +127,14 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_2.right_stick_button.isPress()) {
             robot.tableServo().resetPosition();
         }
+
+        if (gamepad_1.left_trigger > 0.3) {
+            robot.turretMotor().fineTuneTicks((int) (-gamepad_1.left_trigger * 20));
+        }
+
+        if (gamepad_1.right_trigger > 0.3) {
+            robot.turretMotor().fineTuneTicks((int) (gamepad_1.right_trigger * 20));
+        }
     }
 
     @Override

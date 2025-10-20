@@ -72,8 +72,13 @@ public class TurretMotor extends Turret<TurretState> {
     public void finetuneAngle(double rad) {
         prevFineTuneAngle = rad;
         targetPosition = Range.clip((int) (rad * TURRET_POSITIVE_LIMIT_TICKS / TURRET_RAD_LIMIT), TURRET_NEGATIVE_LIMIT_TICKS, TURRET_POSITIVE_LIMIT_TICKS);
-        Globals.telemetry.addData("angle",targetPosition);
+        Globals.telemetry.addData("targetPosition",targetPosition);
         motorState = TurretState.TRACKING;
+    }
+
+    public void fineTuneTicks(int ticks) {
+        targetPosition += ticks;
+        motorState = TurretState.HOLD;
     }
 
     public void limelightDetection() {
