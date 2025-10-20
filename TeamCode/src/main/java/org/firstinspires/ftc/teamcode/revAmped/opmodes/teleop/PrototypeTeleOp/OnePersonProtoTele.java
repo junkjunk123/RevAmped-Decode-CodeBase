@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
@@ -20,8 +21,8 @@ import java.util.Arrays;
 @TeleOp(name = "One Person Prototyping TeleOp", group = "TeleOp")
 @Config
 public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
-    public static int HoodPositionFar; //input the amount of ticks (1 = 1/255)
-    public static int HoodPositionClose;
+    public static float HoodPositionFar; //input the amount of ticks (1 = 1/255)
+    public static float HoodPositionClose;
     public static int MotorVelocityFar;
     public static int MotorVelocityClose;
     private TeleOpMecanumDrive drivetrain;
@@ -65,8 +66,16 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         //Telemetry statements
         telemetry.addData("Hood Position", hoodServo.getPosition());
-        telemetry.addData("Motor Velocity", flywheel.getVelocity());
+        //telemetry.addData("Motor Velocity", flywheel.getVelocity());
         telemetry.addData("ShootState",shootState);
+        telemetry.addData("Inputted Velocity Close",MotorVelocityClose);
+        telemetry.addData("intakeCurrent",intakeMotor.motor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("flywheelCurrent", flywheel.motor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("leftFrontCurrent", drivetrain.leftFront.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("leftBackCurrent", drivetrain.leftRear.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("rightFrontCurrent", drivetrain.rightFront.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("rightBackCurrent", drivetrain.rightRear.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("turretCurrent", turretMotor.motor.getCurrent(CurrentUnit.AMPS));
         //Drivetrain
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         //Intake/Outtake

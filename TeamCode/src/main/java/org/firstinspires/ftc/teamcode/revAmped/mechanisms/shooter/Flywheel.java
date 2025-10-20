@@ -65,7 +65,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
             prevPos = null;
             prevTimeNano = System.nanoTime();
         }
-        setCurrentState(FlywheelState.RUNNING);
+        motorState = FlywheelState.RUNNING;
     }
 
     public double controllerOutput() {

@@ -20,8 +20,8 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
         @Override
         public float getPosition() {
             switch (this){
-                case CLOSE -> {return OnePersonProtoTele.HoodPositionClose;}
-                case FAR -> {return OnePersonProtoTele.HoodPositionFar;}
+                case CLOSE -> {return OnePersonProtoTele.HoodPositionClose/255;}
+                case FAR -> {return OnePersonProtoTele.HoodPositionFar/255;}
             }
             return 0.5f;
         }
