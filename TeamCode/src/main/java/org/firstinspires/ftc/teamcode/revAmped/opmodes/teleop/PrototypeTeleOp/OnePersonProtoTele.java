@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -7,13 +10,20 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
 
 @TeleOp(name = "One Person Prototyping TeleOp", group = "TeleOp")
+@Config
 public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
+    public static int HoodPositionFar; //input the amount of ticks (1 = 1/255)
+    public static int HoodPositionClose;
+    public static int MotorVelocityFar;
+    public static int MotorVelocityClose;
     private TeleOpMecanumDrive drivetrain;
     private RevAmpedGamepad gamepad_1;
 
@@ -22,9 +32,8 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     private PopperServo popperServo;
     private TableServo turntableServo;
     //private CRTableServo turntableServo;
+    private Flywheel flywheel;
     private TurretMotor turretMotor;
-    private FlywheelMotor flywheelMotor1;
-    private FlywheelMotor flywheelMotor2;
     private HoodServo hoodServo;
 
     private enum ShootState{
@@ -35,17 +44,14 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD));
         intakeMotor = new IntakeMotor(hardwareMap);
         popperServo = new PopperServo(hardwareMap, true);
         turntableServo = new TableServo(hardwareMap, true);
-        //turntableServo = new CRTableServo(hardwareMap, HwCRServo.Encoder.external(intakeMotor));
+        flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
         turretMotor = new TurretMotor(hardwareMap);
-        flywheelMotor1 = new FlywheelMotor(hardwareMap, "flywheel1", DcMotorSimple.Direction.REVERSE, FlywheelMotor.FlywheelState.STOPPED);
-        flywheelMotor2 = new FlywheelMotor(hardwareMap, "flywheel2", DcMotorSimple.Direction.FORWARD, FlywheelMotor.FlywheelState.STOPPED);
-        flywheelMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        flywheelMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         hoodServo = new HoodServo(hardwareMap,true);
     }
 
@@ -57,13 +63,13 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        telemetry.addData("Flywheel Power Far",flywheelMotor1.getFarPower());
-        telemetry.addData("Flywheel Power Close",flywheelMotor1.getClosePower());
-        telemetry.addData("Hood Position Far",hoodServo.getFarPosition());
-        telemetry.addData("Hood Position Close",hoodServo.getClosePosition());
-        telemetry.addData("State",hoodServo.getCurrentState());
-        telemetry.addData("Flywheel Power",flywheelMotor1.getPower());
+        //Telemetry statements
+        telemetry.addData("Hood Position", hoodServo.getPosition());
+        telemetry.addData("Motor Velocity", flywheel.getVelocity());
+        telemetry.addData("ShootState",shootState);
+        //Drivetrain
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
+        //Intake/Outtake
         if (gamepad_1.b.isPress()){
             if(intakeMotor.getCurrentState() == IntakeMotor.IntakeState.INTAKE){
                 intakeMotor.setCurrentState(IntakeMotor.IntakeState.OUTTAKE);
@@ -71,49 +77,25 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
                 intakeMotor.setCurrentState(IntakeMotor.IntakeState.INTAKE);
             }
         }
-        if (gamepad_1.y.isPress()){
+        //Stop intake
+        if (gamepad_1.y.isPress()) {
             intakeMotor.setCurrentState(IntakeMotor.IntakeState.STOPPED);
         }
-        //flywheel config
-        if (gamepad_1.right_bumper.isPress()){
-            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR) {
-                flywheelMotor1.incrementFarPower();
-                flywheelMotor2.incrementFarPower();
-            }
-            else if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
-                flywheelMotor1.incrementClosePower();
-                flywheelMotor2.incrementClosePower();
-            }
-        }
-        if (gamepad_1.left_bumper.isPress()){
-            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR) {
-                flywheelMotor1.decrementFarPower();
-                flywheelMotor2.decrementFarPower();
-            }
-            else if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
-                flywheelMotor1.decrementClosePower();
-                flywheelMotor2.decrementClosePower();
-            }
-        }
+        //Popper
         if (gamepad_1.a.isTrue()) {
             popperServo.setCurrentState(PopperServo.PopperState.POP);
         } else{
             popperServo.setCurrentState(PopperServo.PopperState.DOWN);
         }
+        //Run/Stop Flywheel
         if (gamepad_1.x.isPress()){
-            if (flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.STOPPED){
-                if (shootState == ShootState.FAR) {
-                    flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-                    flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-                } else if (shootState == ShootState.CLOSE){
-                    flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
-                    flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
-                }
-            } else if (flywheelMotor1.getCurrentState() != FlywheelMotor.FlywheelState.STOPPED){
-                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
-                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.STOPPED);
+            if(flywheel.getCurrentState() == Types.FlywheelState.STOPPED) {
+                flywheel.run((shootState == ShootState.CLOSE) ? MotorVelocityClose : MotorVelocityFar);
+            } else{
+                flywheel.setCurrentState(Types.FlywheelState.STOPPED);
             }
         }
+        //Turret Movement
         if(gamepad_1.right_trigger!=0){
             turretMotor.setCurrentState(TurretMotor.TurretState.FORWARD);
         } else if (gamepad_1.left_trigger!=0){
@@ -121,39 +103,14 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         } else{
             turretMotor.setCurrentState(TurretMotor.TurretState.STOPPED);
         }
+        //Hood Positions
         if(gamepad_1.dpad_up.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.FAR);
             shootState = ShootState.FAR;
-            if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.CLOSE){
-                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.FAR);
-            }
         }
         if(gamepad_1.dpad_down.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
             shootState = ShootState.CLOSE;
-            if(flywheelMotor1.getCurrentState() == FlywheelMotor.FlywheelState.FAR){
-                flywheelMotor1.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
-                flywheelMotor2.setCurrentState(FlywheelMotor.FlywheelState.CLOSE);
-            }
-        }
-        //hood config
-        if(gamepad_1.dpad_left.isPress()){
-            if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
-                hoodServo.decrementFarPosition();
-                hoodServo.setCurrentState(HoodServo.HoodState.FAR);
-            }
-            else if(hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE){
-                hoodServo.decrementClosePosition();
-            }
-        }
-        if(gamepad_1.dpad_right.isPress()) {
-            if (hoodServo.getCurrentState() == HoodServo.HoodState.FAR) {
-                hoodServo.incrementFarPosition();
-                hoodServo.setCurrentState(HoodServo.HoodState.FAR);
-            } else if (hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) {
-                hoodServo.incrementClosePosition();
-            }
         }
 
     }
@@ -161,8 +118,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     @Override
     public void update() {
         gamepad_1.update();
-        flywheelMotor1.update();
-        flywheelMotor2.update();
+        flywheel.update();
         turretMotor.update();
         turntableServo.update();
         popperServo.update();

@@ -12,38 +12,18 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
     public HoodServo(HardwareMap hardwareMap, float initialPosition) throws IllegalArgumentException {
         super(hardwareMap, "hood", initialPosition, HoodState.CLOSE, ServoBrand.AXON_MAX);
     }
-    private static float farPositionDifference = 0f;
-    private static float closePositionDifference = 0f;
     public enum HoodState implements ServoState{
-        FAR(0.96f+ farPositionDifference),
-        CLOSE(0f + closePositionDifference);
+        FAR,
+        CLOSE;
 
-        private float pos;
 
         @Override
         public float getPosition() {
-            return pos;
+            switch (this){
+                case CLOSE -> {return OnePersonProtoTele.HoodPositionClose;}
+                case FAR -> {return OnePersonProtoTele.HoodPositionFar;}
+            }
+            return 0.5f;
         }
-        HoodState(float pos){
-            this.pos = pos;
-        }
-    }
-    public void incrementFarPosition(){
-        farPositionDifference += 0.01f;
-    }
-    public void decrementFarPosition(){
-        farPositionDifference -= 0.01f;
-    }
-    public void incrementClosePosition(){
-        closePositionDifference += 0.01f;
-    }
-    public void decrementClosePosition(){
-        closePositionDifference -= 0.01f;
-    }
-    public float getFarPosition(){
-        return farPositionDifference+0.93f;
-    }
-    public float getClosePosition(){
-        return closePositionDifference+0.667f;
     }
 }
