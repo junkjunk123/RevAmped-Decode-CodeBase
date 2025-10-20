@@ -1,11 +1,16 @@
-package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
+package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Mechanisms;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
-
+/*
+Eric Zhao
+10/20/2025
+Turret Motor Hardware class for Prototyping Teleop
+ */
 public class TurretMotor extends HwMotor2<TurretMotor.TurretState> {
+    
     @Override
     public void buildStatePowerMap() {
 
