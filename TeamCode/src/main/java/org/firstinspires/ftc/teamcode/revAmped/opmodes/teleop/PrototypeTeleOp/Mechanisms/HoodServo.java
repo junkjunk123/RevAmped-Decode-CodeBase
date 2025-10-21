@@ -21,6 +21,7 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
     //State enum
     public enum HoodState implements ServoState{
         FAR,
+        MEDIUM,
         CLOSE;
 
 
@@ -28,6 +29,7 @@ public class HoodServo extends HwServo2<HoodServo.HoodState> {
         public float getPosition() {
             switch (this){
                 case CLOSE -> {return OnePersonShooterCalibrator.HoodPositionClose/255;}
+                case MEDIUM -> {return OnePersonShooterCalibrator.HoodPositionMedium/255;}
                 case FAR -> {return OnePersonShooterCalibrator.HoodPositionFar/255;}
             }
             return 0.5f;

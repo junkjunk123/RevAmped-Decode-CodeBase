@@ -105,7 +105,8 @@ public interface Types {
         REST,
         TRACKING,
         NEAR_PRESET,
-        FAR_PRESET;
+        FAR_PRESET,
+        MED_PRESET;
 
         @Override
         public float getPosition() {
@@ -118,6 +119,9 @@ public interface Types {
                 }
                 case NEAR_PRESET -> {
                     return HoodServo.TELE_NEAR_PRESET;
+                }
+                case MED_PRESET -> {
+                    return HoodServo.TELE_MED_PRESET;
                 }
             }
 
