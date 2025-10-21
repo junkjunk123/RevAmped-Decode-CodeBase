@@ -55,7 +55,10 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_2.b.isPress()) {
             DecodeColorSensor.enableSensors();
             robot.turnTable.intake();
-            robot.shooter.setCurrentState(Types.ShooterState.REST);
+            //robot.shooter.setCurrentState(Types.ShooterState.REST);
+        }
+        if (gamepad_2.right_trigger != 0){
+            robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
         }
 
         if (gamepad_2.right_bumper.isPress()) {

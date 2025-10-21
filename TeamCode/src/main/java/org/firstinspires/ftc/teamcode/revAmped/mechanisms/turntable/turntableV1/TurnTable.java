@@ -53,7 +53,7 @@ public class TurnTable implements ArtifactQueuer {
 
                     switch (getCurrentCycleState()) {
                         case POP -> shooterStateConsumer.accept(Types.ShooterState.TRACKING);
-                        case INTAKE -> shooterStateConsumer.accept(Types.ShooterState.REST);
+                        //case INTAKE -> shooterStateConsumer.accept(Types.ShooterState.REST);
                     }
                 }
         );

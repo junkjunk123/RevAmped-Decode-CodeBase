@@ -18,7 +18,6 @@
             <RevColorSensorV3 name="color_left" port="0" bus="0"/>
             <goBILDAPinpoint name="pinpoint" port="0" bus="3"/>
             <AnalogInput name="popper_voltage" port="0"/>
-            <RevColorSensorV3 name="color_left" port="0" bus="0"/>
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
