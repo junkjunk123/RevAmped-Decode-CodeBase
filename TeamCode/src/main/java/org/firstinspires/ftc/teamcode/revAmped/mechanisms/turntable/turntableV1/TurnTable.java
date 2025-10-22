@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class TurnTable implements ArtifactQueuer {
+    public static int smallIntakeDelay;
+    public static int bigIntakeDelay;
     private final Scheduler scheduler;
     public TableCompartmentManager compartments;
     public final QueuerHardwareComponents hardware;
@@ -39,14 +41,14 @@ public class TurnTable implements ArtifactQueuer {
         compartments = new TableCompartmentManager(
                 ball -> {
                     intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
-                    scheduler.add(new Delay(100, () -> {
+                    setCurrentState(TurnTableInternalState.values()[ball]);
+                    scheduler.add(new Delay(smallIntakeDelay, () -> {
                         hardware.intakeColor().disable();
                         intakeMotor.stop();
                         scheduler.add(new Delay(() -> Math.abs(tableServo.getLastError()) < 50 || (tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500), () -> {
                             intake();
                             DecodeColorSensor.enableSensors();
                         }).setMaxTimeToRun(2200));
-                        setCurrentState(TurnTableInternalState.values()[ball]);
                     }));
                 },
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
@@ -55,11 +57,13 @@ public class TurnTable implements ArtifactQueuer {
                     compartments.resetPopHistory();
 
                     switch (getCurrentCycleState()) {
-                        case POP -> shooterStateConsumer.accept(Types.ShooterState.TRACKING);
-                        case INTAKE -> {
-                            shooterStateConsumer.accept(Types.ShooterState.REST);
+                        case POP -> {
+                            shooterStateConsumer.accept(Types.ShooterState.TRACKING);
                             intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
-                            scheduler.add(new Delay(800, intakeMotor::stop));
+                            scheduler.add(new Delay(bigIntakeDelay, intakeMotor::stop));
+                        }
+                        case INTAKE -> {
+                            //shooterStateConsumer.accept(Types.ShooterState.REST);
                         }
                     }
                 }

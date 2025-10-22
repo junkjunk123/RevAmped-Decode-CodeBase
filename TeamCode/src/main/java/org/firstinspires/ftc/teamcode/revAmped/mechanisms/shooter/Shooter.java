@@ -257,4 +257,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         if (currentState == ShooterState.REST) setCurrentState(ShooterState.TRACKING);
         else setCurrentState(ShooterState.REST);
     }
+
+    public Localizer getPinpoint() {
+        return pinpoint;
+    }
 }

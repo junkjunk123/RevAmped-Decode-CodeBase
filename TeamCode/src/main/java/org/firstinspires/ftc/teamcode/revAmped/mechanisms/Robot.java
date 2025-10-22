@@ -258,9 +258,25 @@ public class Robot {
         if (balls == 0) return;
 
         turnTable.pop();
+        updateLock();
         if (balls > 1) scheduler.add(new Delay(() -> tableServo().getVelocity() < 10
                 && Math.abs(tableServo().getLastError()) < 100
                 && turnTable.getNumberOfBalls() < balls, this::shootAll
         ));
+    }
+
+    public void updateLock() {
+        hoodServo().setUpdateLock(true);
+        flywheel().setUpdateLock(true);
+
+        scheduler.add(
+                new Delay(() -> turnTable.getNumberOfBalls() == 0, () -> {
+                    hoodServo().setUpdateLock(false);
+                    flywheel().setUpdateLock(false);
+                })
+                .setCancellation(() -> turnTable.getCurrentState().getCycleState() != TurnTableInternals.TurnTableCycleState.POP)
+                .setCancellation(() -> shooter.getPinpoint().getVelocityVector().getMagnitude() > 6)
+                .setMaxTimeToRun(3500)
+        );
     }
 }
