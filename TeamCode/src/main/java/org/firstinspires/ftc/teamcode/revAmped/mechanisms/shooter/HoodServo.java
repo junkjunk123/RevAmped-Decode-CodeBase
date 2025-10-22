@@ -35,8 +35,8 @@ public class HoodServo extends Hood {
     }
 
     public void switchToPreset(double dist) {
-        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
-        else if (dist < 150) setCurrentState(HoodState.MED_PRESET);
+        if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
+        else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
     }
 
@@ -46,15 +46,15 @@ public class HoodServo extends Hood {
 
     public void updatePreset(double dist) {
         if (!isPreset()) return;
-        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
-        else if (dist < 150) setCurrentState(HoodState.MED_PRESET);
+        if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
+        else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
     }
 
     @Override
     public void setPreset(double dist) {
-        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
-        else if (dist < 150) setCurrentState(HoodState.MED_PRESET);
+        if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
+        else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
     }
 }
