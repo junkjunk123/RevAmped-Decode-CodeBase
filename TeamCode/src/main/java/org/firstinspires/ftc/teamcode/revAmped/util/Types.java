@@ -94,7 +94,9 @@ public interface Types {
     enum TurretState implements HwMotor2.MotorState {
         IDLE,
         HOLD,
-        TRACKING;
+        TRACKING,
+        LEFT90,
+        RIGHT90;
 
         public int getPos() {
             return 0;
