@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
@@ -38,13 +37,16 @@ public class TurnTable implements ArtifactQueuer {
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor);
         compartments = new TableCompartmentManager(
                 ball -> {
-                    hardware.intakeColor().disable();
-                    intakeMotor.stop();
-                    scheduler.add(new Delay(() -> Math.abs(tableServo.getLastError()) < 50 || (tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500), () -> {
-                        intake();
-                        DecodeColorSensor.enableSensors();
-                    }).setMaxTimeToRun(2200));
-                    setCurrentState(TurnTableInternalState.values()[ball]);
+                    intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
+                    scheduler.add(new Delay(100, () -> {
+                        hardware.intakeColor().disable();
+                        intakeMotor.stop();
+                        scheduler.add(new Delay(() -> Math.abs(tableServo.getLastError()) < 50 || (tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500), () -> {
+                            intake();
+                            DecodeColorSensor.enableSensors();
+                        }).setMaxTimeToRun(2200));
+                        setCurrentState(TurnTableInternalState.values()[ball]);
+                    }));
                 },
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {
@@ -53,7 +55,11 @@ public class TurnTable implements ArtifactQueuer {
 
                     switch (getCurrentCycleState()) {
                         case POP -> shooterStateConsumer.accept(Types.ShooterState.TRACKING);
-                        case INTAKE -> shooterStateConsumer.accept(Types.ShooterState.REST);
+                        case INTAKE -> {
+                            shooterStateConsumer.accept(Types.ShooterState.REST);
+                            intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
+                            scheduler.add(new Delay(800, intakeMotor::stop));
+                        }
                     }
                 }
         );

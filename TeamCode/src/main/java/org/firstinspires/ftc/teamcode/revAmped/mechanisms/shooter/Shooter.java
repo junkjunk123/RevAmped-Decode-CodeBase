@@ -7,7 +7,6 @@ import com.pedropathing.math.Matrix;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
@@ -16,6 +15,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector3D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterHardwareComponents;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
@@ -100,7 +100,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     double targetAngle = offset.getTheta() + Math.PI;
                     Globals.telemetry.addData("hoodTargetAngleDeg", Math.toDegrees(targetAngle));
                     double currentAngle = pinpoint().getPose().getHeading();
-                    deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                    deltaAngle = MathUtil.normalizeAnglePi(targetAngle - currentAngle);
+                    deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
                     Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else if (velocityCompensationOnTurret) {
@@ -120,7 +121,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     });
                     double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta() + Math.PI;
                     double currentAngle = pinpoint().getPose().getHeading();
-                    deltaAngle = MathUtil.normalizeAngleHalfPi(targetAngle - currentAngle);
+                    deltaAngle = MathUtil.normalizeAnglePi(targetAngle - currentAngle);
+                    deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else {
                     deltaAngle = hardware.turretMotor().getPrevFineTuneAngle();

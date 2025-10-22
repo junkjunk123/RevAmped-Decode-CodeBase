@@ -221,7 +221,7 @@ public class Robot {
 
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {
         EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> map = new EnumMap<>(HwDevice.DeviceType.class);
-        map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(IntakeColor.class)));
+        map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(DecodeColorSensor.class)));
         map.put(HwDevice.DeviceType.MOTOR, new HashSet<>(List.of(Flywheel.class, TurretMotor.class, IntakeMotor.class)));
         map.put(HwDevice.DeviceType.SERVO, new HashSet<>(List.of(HoodServo.class, TableServo.class, Popper.class)));
         map.put(HwDevice.DeviceType.VOLTAGE_SENSOR, new HashSet<>(List.of(HwVoltageSensor.class)));
@@ -230,7 +230,7 @@ public class Robot {
 
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> buildIDMap() {
         HashMap<Class<? extends HwDevice>, HashSet<String>> map = new HashMap<>();
-        map.put(IntakeColor.class, new HashSet<>(List.of("intakeColor")));
+        map.put(DecodeColorSensor.class, new HashSet<>(List.of("intakeColor")));
         map.put(Flywheel.class, new HashSet<>(List.of("flywheel1", "flywheel2")));
         map.put(TurretMotor.class, new HashSet<>(List.of("turret")));
         map.put(IntakeMotor.class, new HashSet<>(List.of("intake")));
