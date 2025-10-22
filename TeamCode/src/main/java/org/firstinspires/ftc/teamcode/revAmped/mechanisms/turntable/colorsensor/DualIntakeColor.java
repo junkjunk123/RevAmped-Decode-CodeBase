@@ -24,7 +24,7 @@ public class DualIntakeColor implements DecodeColorSensor {
 
     public ArtifactColor getColor() {
         rightColorRead = !rightColorRead;
-        if (rightColorRead) {
+        if (!rightColorRead) {
             if (useLeft) return leftColor();
             if (useRight) return rightColor();
             else return ArtifactColor.NONE;
