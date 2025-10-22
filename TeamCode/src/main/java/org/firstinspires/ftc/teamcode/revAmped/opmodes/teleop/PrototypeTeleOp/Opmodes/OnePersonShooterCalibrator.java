@@ -30,8 +30,10 @@ TeleOp for calibrating hood and motor powers/positions
 @Config
 public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
     public static float HoodPositionFar; //input the amount of ticks (1 = 1/255)
+    public static float HoodPositionMedium;
     public static float HoodPositionClose;
     public static int MotorVelocityFar;
+    public static int MotorVelocityMedium;
     public static int MotorVelocityClose;
     private TeleOpMecanumDrive drivetrain;
     private RevAmpedGamepad gamepad_1;
@@ -47,6 +49,7 @@ public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
 
     private enum ShootState{
         CLOSE,
+        MEDIUM,
         FAR;
     }
     private ShootState shootState = ShootState.CLOSE;
@@ -107,7 +110,7 @@ public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
         //Run/Stop Flywheel
         if (gamepad_1.x.isPress()){
             if(flywheel.getCurrentState() == Types.FlywheelState.STOPPED) {
-                flywheel.run((shootState == ShootState.CLOSE) ? MotorVelocityClose : MotorVelocityFar);
+                flywheel.run((shootState == ShootState.CLOSE) ? MotorVelocityClose : (shootState == ShootState.MEDIUM) ? MotorVelocityMedium : MotorVelocityFar);
             } else{
                 flywheel.setCurrentState(Types.FlywheelState.STOPPED);
             }
@@ -128,6 +131,9 @@ public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
         if(gamepad_1.dpad_down.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
             shootState = ShootState.CLOSE;
+        }
+        if(gamepad_1.dpad_left.isPress()){
+            hoodServo.setCurrentState(HoodServo.HoodState.MEDIUM);
         }
 
     }

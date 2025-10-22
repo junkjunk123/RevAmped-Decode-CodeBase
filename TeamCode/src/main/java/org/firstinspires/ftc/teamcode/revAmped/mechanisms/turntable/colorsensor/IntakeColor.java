@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor;
 
+import android.provider.Settings;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 @Config
 public class IntakeColor extends DecodeColor<IntakeColor.Color> implements DecodeColorSensor {
@@ -56,7 +60,7 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     public enum Color implements DecodeColor.DetectionColor {
         PURPLE, GREEN, NEUTRAL;
 
-        public static CurrentSensor currentSensor;
+        public static CurrentSensor currentSensor = CurrentSensor.RIGHT;
 
         @Override
         public boolean evaluateHue(double hue) {

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrain
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
@@ -55,7 +56,10 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_2.b.isPress()) {
             DecodeColorSensor.enableSensors();
             robot.turnTable.intake();
-            robot.shooter.setCurrentState(Types.ShooterState.REST);
+            //robot.shooter.setCurrentState(Types.ShooterState.REST);
+        }
+        if (gamepad_2.right_trigger != 0){
+            robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
         }
 
         if (gamepad_2.right_bumper.isPress()) {
@@ -131,6 +135,14 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_1.right_trigger > 0.3) {
             robot.turretMotor().fineTuneTicks((int) (gamepad_1.right_trigger * 20));
+        }
+
+        if (gamepad_1.right_bumper.isPress()){
+            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS);
+        }
+
+        if (gamepad_1.left_bumper.isPress()){
+            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS);
         }
     }
 
