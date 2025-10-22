@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.sun.tools.javac.util.Name;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 
 import java.util.List;
 
@@ -55,6 +57,7 @@ public final class DecodeConstants implements Constants {
         TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);
         TableServo.BALL1 = 0; TableServo.BALL2 = 2730; TableServo.BALL3 = 5461;
         TableServo.TICKS_PER_ROTATION = 8192;
+        TurnTable.smallIntakeDelay = 60; TurnTable.bigIntakeDelay=800;
 
         //ColorSensor Constants
         IntakeColor.maxGreenHue = 200; IntakeColor.minGreenHue = 155; IntakeColor.maxPurpleHue = 250; IntakeColor.minPurpleHue = 208;

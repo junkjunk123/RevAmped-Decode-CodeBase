@@ -26,7 +26,7 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
 
     @Override
     public boolean testResponse() {
-        return Math.abs(getHSVValues().getH() - 150) < 10;
+        return Math.abs(getHSVValues().getH() - 152.4) < 0.3;
     }
 
     @Override
