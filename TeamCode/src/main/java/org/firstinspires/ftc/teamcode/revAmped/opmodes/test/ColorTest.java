@@ -19,14 +19,14 @@ public class ColorTest extends DecodeRevAmpedOpMode {
     private DualIntakeColor dualColor;
     private IntakeMotor intakeMotor;
 
-    public static double offset = 20;
+    public static double offset = 10;
 
     @Override
     public void RevAmpedInit() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dualColor = new DualIntakeColor(hardwareMap);
         dualColor.setOffset(offset);
-        leftColor = new IntakeColor(hardwareMap,"color_left",0d);
+        leftColor = new IntakeColor(hardwareMap,"color_left",offset);
         rightColor = new IntakeColor(hardwareMap,"color_right",0d);
         intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
         intakeMotor.setVoltageCompensation();
@@ -36,6 +36,18 @@ public class ColorTest extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         if (gamepad1.bWasPressed()) intakeMotor.setPower(1);
         if (gamepad1.aWasPressed()) intakeMotor.setPower(0);
+        if (gamepad1.leftBumperWasPressed()){
+            dualColor.disable();
+            dualColor.enableLeft();
+        }
+        if (gamepad1.rightBumperWasPressed()){
+            dualColor.disable();
+            dualColor.enableRight();
+        }
+        if (gamepad1.yWasPressed()){
+            dualColor.enableRight();
+            dualColor.enableLeft();
+        }
 
         //leftColor.setOffset(offset);
         telemetry.addData("color_right Hue",rightColor.getHue());
