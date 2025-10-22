@@ -91,7 +91,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             Globals.telemetry.addData("offset", offset);
             double dist = offset.getMagnitude();
             Vector robotVelocity = pinpoint.getVelocityVector();
-            if (robotVelocity.getMagnitude() < 4) hardware.flywheel().updateTargetVelocity(dist);
+            //if (robotVelocity.getMagnitude() < 4) hardware.flywheel().updateTargetVelocity(dist);
 
             double deltaAngle;
 
@@ -161,7 +161,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING, hoodAngle);
                 }
             } else {
-                if (robotVelocity.getMagnitude() < 4) hardware.hoodServo().updatePreset(dist);
+                //if (robotVelocity.getMagnitude() < 4) hardware.hoodServo().updatePreset(dist);
             }
         }
     }
@@ -181,7 +181,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             case TRACKING -> {
                 Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
                 double dist = targetPos.distanceFrom(targetPos);
-                hardware.hoodServo().setPreset(dist);
+                //hardware.hoodServo().setPreset(dist);
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
                 hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
             }

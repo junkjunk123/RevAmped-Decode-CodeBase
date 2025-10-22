@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.HoodState;
 
 public class HoodServo extends Hood {
@@ -47,7 +48,8 @@ public class HoodServo extends Hood {
     }
 
     public void updatePreset(double dist) {
-        if (updateLock || !isPreset()) return;
+        Globals.telemetry.addData("distance",dist);
+        //if (updateLock || !isPreset()) return;
         if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
         else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
@@ -55,7 +57,7 @@ public class HoodServo extends Hood {
 
     @Override
     public void setPreset(double dist) {
-        if (updateLock) return;
+        //if (updateLock) return;
         if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
         else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);

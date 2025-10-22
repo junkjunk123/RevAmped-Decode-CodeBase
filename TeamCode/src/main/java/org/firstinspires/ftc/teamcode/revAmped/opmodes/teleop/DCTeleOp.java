@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
@@ -117,6 +118,9 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.dpad_up.isPress()) {
+            robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
+            robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY);
+            /*
             try {
                 robot.shooter.toggleHoodTracking();
             } catch (Exception e) {
@@ -126,10 +130,18 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
             //Erics hood
             //hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
             //robot.flywheel().run((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Flywheel.FLYWHEEL_NEAR_VELOCITY : Flywheel.FLYWHEEL_FAR_VELOCITY);
+            */
         }
 
+
         if (gamepad_1.dpad_down.isPress()) {
-            robot.shooter.toggleTurretTracking();
+            robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
+            robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+            //robot.shooter.toggleTurretTracking();
+        }
+        if (gamepad_1.dpad_left.isPress()){
+            robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
+            robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
         }
 
         if (gamepad_2.left_stick_x > 0.3) {
