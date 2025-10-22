@@ -64,4 +64,9 @@ public class HoodServo extends Hood {
     public void setUpdateLock(boolean updateLock) {
         this.updateLock = updateLock;
     }
+
+    @Override
+    public boolean isUpdateLock() {
+        return updateLock;
+    }
 }

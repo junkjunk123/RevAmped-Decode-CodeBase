@@ -52,6 +52,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         trackHood = false;
         trackTurret = false;
         velocityCompensationOnTurret = false;
+        hoodServo.setUpdateLock(true);
+        flywheel.setUpdateLock(true);
     }
 
     public Localizer pinpoint() {

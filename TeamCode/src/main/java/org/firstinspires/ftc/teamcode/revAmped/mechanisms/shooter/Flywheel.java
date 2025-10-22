@@ -198,4 +198,8 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public void setUpdateLock(boolean updateLock) {
         this.updateLock = updateLock;
     }
+
+    public boolean isUpdateLock() {
+        return updateLock;
+    }
 }
