@@ -102,7 +102,8 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         new Delay(
                                 () -> followerManager.finished(true),
                                 () -> {
-                                    limelight.computeRandomizationState();
+                                    //limelight.computeRandomizationState();
+                                    Globals.randomizationState = Globals.RandomizationState.PPG;
                                     robot.turretMotor().limelightDetection();
                                 }
                         ).setMaxTimeToRun(2500),

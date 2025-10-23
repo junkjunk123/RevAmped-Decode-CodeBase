@@ -54,7 +54,7 @@ public class ColoredDecodePose implements FuturePose {
     }
 
     public static double invertHeading(double theta) {
-        return MathUtil.normalizeAngleHalfPi(Math.PI - theta);
+        return MathUtil.normalizeAnglePi(Math.PI - theta);
     }
 
     @Override

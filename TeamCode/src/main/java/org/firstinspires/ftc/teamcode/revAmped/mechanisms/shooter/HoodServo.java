@@ -26,14 +26,19 @@ public class HoodServo extends Hood {
 
     public static float TELE_NEAR_PRESET;
     public static float TELE_FAR_PRESET;
+    public static float TELE_MED_PRESET;
+
+    private boolean updateLock = false;
 
     public void toggleShootingPreset() {
         if (getCurrentState() == HoodState.FAR_PRESET) setCurrentState(HoodState.NEAR_PRESET);
-        else if (getCurrentState() == HoodState.NEAR_PRESET) setCurrentState(HoodState.FAR_PRESET);
+        else if (getCurrentState() == HoodState.MED_PRESET) setCurrentState(HoodState.FAR_PRESET);
+        else if (getCurrentState() == HoodState.NEAR_PRESET) setCurrentState(HoodState.MED_PRESET);
     }
 
     public void switchToPreset(double dist) {
-        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
+        if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
+        else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
     }
 
@@ -42,14 +47,26 @@ public class HoodServo extends Hood {
     }
 
     public void updatePreset(double dist) {
-        if (!isPreset()) return;
-        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
+        if (updateLock || !isPreset()) return;
+        if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
+        else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
     }
 
     @Override
     public void setPreset(double dist) {
-        if (dist < 100) setCurrentState(HoodState.NEAR_PRESET);
+        if (updateLock) return;
+        if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
+        else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);
         else setCurrentState(HoodState.FAR_PRESET);
+    }
+
+    public void setUpdateLock(boolean updateLock) {
+        this.updateLock = updateLock;
+    }
+
+    @Override
+    public boolean isUpdateLock() {
+        return updateLock;
     }
 }

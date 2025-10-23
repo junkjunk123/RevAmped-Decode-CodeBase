@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+
 @Config
 public class DualIntakeColor implements DecodeColorSensor {
     private boolean rightColorRead = true;
@@ -22,7 +24,7 @@ public class DualIntakeColor implements DecodeColorSensor {
 
     public ArtifactColor getColor() {
         rightColorRead = !rightColorRead;
-        if (rightColorRead) {
+        if (!rightColorRead) {
             if (useLeft) return leftColor();
             if (useRight) return rightColor();
             else return ArtifactColor.NONE;
@@ -67,6 +69,9 @@ public class DualIntakeColor implements DecodeColorSensor {
     public static void enableSensors() {
         useLeft = true;
         useRight = true;
+    }
+    public void setOffset(double leftOffset){
+        LEFT_OFFSET = leftOffset;
     }
 
     public void enableLeft() {

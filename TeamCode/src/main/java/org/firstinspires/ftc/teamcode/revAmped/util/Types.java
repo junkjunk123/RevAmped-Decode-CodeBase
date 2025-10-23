@@ -19,7 +19,7 @@ public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
         INTAKE(1.0f),
         STOP(0.0f),
-        OUTTAKE(-1.0f);
+        OUTTAKE(-0.5f);
 
         final float power;
 
@@ -94,7 +94,9 @@ public interface Types {
     enum TurretState implements HwMotor2.MotorState {
         IDLE,
         HOLD,
-        TRACKING;
+        TRACKING,
+        LEFT90,
+        RIGHT90;
 
         public int getPos() {
             return 0;
@@ -105,7 +107,8 @@ public interface Types {
         REST,
         TRACKING,
         NEAR_PRESET,
-        FAR_PRESET;
+        FAR_PRESET,
+        MED_PRESET;
 
         @Override
         public float getPosition() {
@@ -118,6 +121,9 @@ public interface Types {
                 }
                 case NEAR_PRESET -> {
                     return HoodServo.TELE_NEAR_PRESET;
+                }
+                case MED_PRESET -> {
+                    return HoodServo.TELE_MED_PRESET;
                 }
             }
 

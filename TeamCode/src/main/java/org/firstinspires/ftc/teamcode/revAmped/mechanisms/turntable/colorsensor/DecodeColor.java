@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 import java.util.function.Supplier;
 

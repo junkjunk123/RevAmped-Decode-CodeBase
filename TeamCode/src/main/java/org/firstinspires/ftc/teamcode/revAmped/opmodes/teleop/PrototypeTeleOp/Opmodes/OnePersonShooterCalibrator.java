@@ -1,28 +1,39 @@
-package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp;
+package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Mechanisms.HoodServo;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Mechanisms.IntakeMotor;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Mechanisms.PopperServo;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Mechanisms.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.Mechanisms.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
+/*
+Eric Zhao
+10/20/2025
+TeleOp for calibrating hood and motor powers/positions
+ */
 
-@TeleOp(name = "One Person Prototyping TeleOp", group = "TeleOp")
+@TeleOp(name = "OnePersonShooterCalibrator", group = "TeleOp")
 @Config
-public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
-    public static int HoodPositionFar; //input the amount of ticks (1 = 1/255)
-    public static int HoodPositionClose;
+public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
+    public static float HoodPositionFar; //input the amount of ticks (1 = 1/255)
+    public static float HoodPositionMedium;
+    public static float HoodPositionClose;
     public static int MotorVelocityFar;
+    public static int MotorVelocityMedium;
     public static int MotorVelocityClose;
     private TeleOpMecanumDrive drivetrain;
     private RevAmpedGamepad gamepad_1;
@@ -38,6 +49,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
 
     private enum ShootState{
         CLOSE,
+        MEDIUM,
         FAR;
     }
     private ShootState shootState = ShootState.CLOSE;
@@ -65,8 +77,16 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         //Telemetry statements
         telemetry.addData("Hood Position", hoodServo.getPosition());
-        telemetry.addData("Motor Velocity", flywheel.getVelocity());
+        //telemetry.addData("Motor Velocity", flywheel.getVelocity());
         telemetry.addData("ShootState",shootState);
+        telemetry.addData("=========Current=========","");
+        telemetry.addData("intakeCurrent",intakeMotor.motor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("flywheelCurrent", flywheel.motor.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("leftFrontCurrent", drivetrain.leftFront.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("leftBackCurrent", drivetrain.leftRear.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("rightFrontCurrent", drivetrain.rightFront.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("rightBackCurrent", drivetrain.rightRear.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("turretCurrent", turretMotor.motor.getCurrent(CurrentUnit.AMPS));
         //Drivetrain
         drivetrain.arcadeDrive(gamepad_1, false, 0.5f, 0.15f, (float) Math.tan(Math.toRadians(15)), 1f);
         //Intake/Outtake
@@ -90,7 +110,7 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         //Run/Stop Flywheel
         if (gamepad_1.x.isPress()){
             if(flywheel.getCurrentState() == Types.FlywheelState.STOPPED) {
-                flywheel.run((shootState == ShootState.CLOSE) ? MotorVelocityClose : MotorVelocityFar);
+                flywheel.run((shootState == ShootState.CLOSE) ? MotorVelocityClose : (shootState == ShootState.MEDIUM) ? MotorVelocityMedium : MotorVelocityFar);
             } else{
                 flywheel.setCurrentState(Types.FlywheelState.STOPPED);
             }
@@ -111,6 +131,9 @@ public class OnePersonProtoTele extends DecodeRevAmpedOpMode {
         if(gamepad_1.dpad_down.isPress()){
             hoodServo.setCurrentState(HoodServo.HoodState.CLOSE);
             shootState = ShootState.CLOSE;
+        }
+        if(gamepad_1.dpad_left.isPress()){
+            hoodServo.setCurrentState(HoodServo.HoodState.MEDIUM);
         }
 
     }

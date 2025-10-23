@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
+import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
@@ -25,6 +25,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     //private HoodServo hoodServo;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
+    private Prompter prompter;
 
     @Override
     public void RevAmpedInit() {
@@ -37,12 +38,19 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
                 .setGamepad(gamepad_1)
                 .setDirections(DecodeConstants.DRIVE_DIRECTIONS)
                 .setLocalizer(new PinpointLocalizer(hardwareMap, Constants.localizerConstants))
-                .invertControls()
                 .build();
+        prompter = new Prompter(this, gamepad_1)
+                .prompt("motif", new OptionPrompt<>("Select motif", Globals.RandomizationState.values()));
+    }
+
+    @Override
+    public void RevAmpedInitLoop() {
+        prompter.run();
     }
 
     @Override
     public void RevAmpedStart() {
+        Globals.randomizationState = prompter.getOrDefault("motif", Globals.randomizationState);
         robot.teleopInitialize();
     }
 
@@ -58,7 +66,10 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_2.b.isPress()) {
             DecodeColorSensor.enableSensors();
             robot.turnTable.intake();
-            robot.shooter.setCurrentState(Types.ShooterState.REST);
+            //robot.shooter.setCurrentState(Types.ShooterState.REST);
+        }
+        if (gamepad_2.right_trigger != 0){
+            robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
         }
 
         if (gamepad_2.right_bumper.isPress()) {
@@ -98,6 +109,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_up.isPress()) {
             robot.turnTable.pop();
+            robot.updateLock();
         }
 
         if (gamepad_1.y.isPress()) {
@@ -134,6 +146,14 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_1.right_trigger > 0.3) {
             robot.turretMotor().fineTuneTicks((int) (gamepad_1.right_trigger * 20));
+        }
+
+        if (gamepad_1.right_bumper.isPress()){
+            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS);
+        }
+
+        if (gamepad_1.left_bumper.isPress()){
+            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS);
         }
     }
 

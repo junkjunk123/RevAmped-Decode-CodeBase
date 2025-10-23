@@ -33,6 +33,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public static double FLYWHEEL_FAR_VELOCITY;
     public static double FLYWHEEL_NEAR_VELOCITY;
+    public static double FLYWHEEL_MEDIUM_VELOCITY;
     private double targetVelocity;
     public static float AUTO_PRELOADS;
     public static float AUTO_SET_1;
@@ -48,6 +49,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
     public static double VELOCITY_ERROR_THRESHOLD;
     public static double kStatic;
+    private boolean updateLock = false;
 
     @Override
     public void buildStatePowerMap() {
@@ -65,7 +67,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
             prevPos = null;
             prevTimeNano = System.nanoTime();
         }
-        setCurrentState(FlywheelState.RUNNING);
+        motorState = FlywheelState.RUNNING;
     }
 
     public double controllerOutput() {
@@ -81,8 +83,9 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     }
 
     public void updateTargetVelocity(double dist) {
-        if (getCurrentState() != FlywheelState.RUNNING) return;
-        if (dist < 100) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
+        if (updateLock || (getCurrentState() != FlywheelState.RUNNING)) return;
+        if (dist <= 50) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
+        else if (50 < dist && dist < 100) targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
         else targetVelocity = FLYWHEEL_FAR_VELOCITY;
     }
 
@@ -110,8 +113,11 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         controllerMedium.reset();
         currentAcceleration.reset();
 
-        if (dist < 100) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
-        else targetVelocity = FLYWHEEL_FAR_VELOCITY;
+        if (!updateLock) {
+            if (dist <= 50) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
+            else if (50 < dist && dist < 100) targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
+            else targetVelocity = FLYWHEEL_FAR_VELOCITY;
+        }
     }
 
     @Override
@@ -187,5 +193,13 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public static double ticksPerInch() {
        return (double) COUNTS_PER_REVOLUTION / 2 / Math.PI / RADIUS;
+    }
+
+    public void setUpdateLock(boolean updateLock) {
+        this.updateLock = updateLock;
+    }
+
+    public boolean isUpdateLock() {
+        return updateLock;
     }
 }
