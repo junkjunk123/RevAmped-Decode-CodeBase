@@ -211,7 +211,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             leftColorSensor.update();
             rightColorSensor.update();
 
-            // Run test sequence
             if (testRunning) {
                 runTest();
             }
