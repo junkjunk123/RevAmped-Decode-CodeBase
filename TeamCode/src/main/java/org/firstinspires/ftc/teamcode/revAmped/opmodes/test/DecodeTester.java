@@ -215,7 +215,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                 runTest();
             }
 
-            // Display telemetry
             telemetry.clear();
             telemetry.addData("Color Sensor Tester", "");
             telemetry.addData("Left Color", leftColorSensor.getColor().toString());
