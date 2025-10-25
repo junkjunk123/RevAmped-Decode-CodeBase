@@ -22,14 +22,12 @@ import java.util.Arrays;
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;
-    //private HoodServo hoodServo;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
     private Prompter prompter;
 
     @Override
     public void RevAmpedInit() {
-        //hoodServo = new HoodServo(hardwareMap,true);
         robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
@@ -56,28 +54,26 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        telemetry.addData("color",robot.intakeColor().getColor());
-        telemetry.addData("balls", Arrays.toString(robot.turnTable.getBallColors()));
-        telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
-        telemetry.addData("Color",robot.intakeColor().getColor());
-
         if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
 
         if (gamepad_2.b.isPress()) {
             DecodeColorSensor.enableSensors();
             robot.turnTable.intake();
-            //robot.shooter.setCurrentState(Types.ShooterState.REST);
         }
         if (gamepad_2.right_trigger != 0){
             robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
         }
 
         if (gamepad_2.right_bumper.isPress()) {
-            robot.intakeMotor().stop();
+            robot.turnTable.manualTransfer();
+        }
+
+        if (gamepad_2.left_bumper.isPress()) {
+            robot.turnTable.correctJam();
         }
 
         if (gamepad_2.a.isPress()) {
-            robot.turnTable.manualTransfer();
+            robot.intakeMotor().setCurrentState(Types.IntakeState.STOP);
         }
 
         if (gamepad_2.x.isPress()) {
@@ -117,20 +113,14 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.dpad_up.isPress()) {
-            try {
-                robot.shooter.toggleHoodTracking();
-            } catch (Exception e) {
-                throw new UnsupportedOperationException("Hood tracking has not been implemented yet");
-            }
-
-            //Erics hood
-            //hoodServo.setCurrentState((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? HoodServo.HoodState.FAR : HoodServo.HoodState.CLOSE);
-            //robot.flywheel().run((hoodServo.getCurrentState() == HoodServo.HoodState.CLOSE) ? Flywheel.FLYWHEEL_NEAR_VELOCITY : Flywheel.FLYWHEEL_FAR_VELOCITY);
+            //robot.shooter.setCurrentState();
         }
 
         if (gamepad_1.dpad_down.isPress()) {
             robot.shooter.toggleTurretTracking();
         }
+
+
 
         if (gamepad_2.left_stick_x > 0.3) {
             robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35));

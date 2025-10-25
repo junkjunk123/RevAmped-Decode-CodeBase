@@ -173,6 +173,10 @@ public class TurnTable implements ArtifactQueuer {
         compartments.manualTransfer();
     }
 
+    public void correctJam() {
+        compartments.correctJam();
+    }
+
     public boolean canPop() {
         return compartments.getEmptyIndices().length == 3;
     }

@@ -181,16 +181,19 @@ public class TableCompartmentManager {
     }
 
     public void manualTransfer() {
-        if (compartments[currentIndex].isNone()) {
+        if (compartments[currentIndex].isNone())
             compartments[currentIndex].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
 
-            int nextIntakeIndex = findNextIntakeIndex();
-            if (nextIntakeIndex != currentIndex) {
-                advanceIntakeIndex(nextIntakeIndex);
-            } else {
-                toggleCycleState.run();
-            }
+        int nextIntakeIndex = findNextIntakeIndex();
+        if (nextIntakeIndex != currentIndex) {
+            advanceIntakeIndex(nextIntakeIndex);
+        } else {
+            toggleCycleState.run();
         }
+    }
+
+    public void correctJam() {
+        advanceIntakeIndex((currentIndex + 2) % compartments.length);
     }
 
     public int findNextIntakeIndex() {

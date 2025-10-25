@@ -68,8 +68,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
         return Robot.OpModeType.TEST;
     }
 
-    // Popper Test
-    @TeleOp(name = "PopperTest", group = "Test")
     public static class PopperTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
         private Popper popper;
         private ElapsedTime testTimer;
@@ -181,8 +179,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
         }
     }
 
-    // Color Sensor
-    @TeleOp(name = "ColorTest", group = "Test")
     public static class ColorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
         private IntakeColor leftColorSensor;
         private IntakeColor rightColorSensor;
@@ -277,8 +273,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
         }
     }
 
-    // Turntable Test
-    @TeleOp(name = "TurntableTest", group = "Test")
     public static class TurntableTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
         private TableServo tableServo;
         private IntakeMotor intakeMotor;
@@ -379,8 +373,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
         }
     }
 
-    // Motor Test
-    @TeleOp(name = "MotorTest", group = "Test")
     public static class MotorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
         private Flywheel flywheel;
         private TeleOpMecanumDrive drivetrain;
@@ -546,8 +538,6 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
         }
     }
 
-    // Full Test Sequence - Runs all tests automatically
-    @TeleOp(name = "FullTestSequence", group = "Test")
     public static class FullTestSequence extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
         private Popper popper;
         private IntakeColor leftColorSensor;

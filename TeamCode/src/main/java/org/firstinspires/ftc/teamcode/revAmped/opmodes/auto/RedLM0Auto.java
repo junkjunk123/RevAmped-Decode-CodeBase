@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Command;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.DelayChain;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.OptionalDelay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Pause;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
@@ -63,7 +60,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
         new DelayChain("ian loves jasmine",
                 //Shoot Preloads
                 new DelayChain(
-                        popAll(0),
+                        new Command(robot::shootAll),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
                                 () -> robot.shooter.setCurrentState(Types.ShooterState.REST)
@@ -109,7 +106,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         ).setMaxTimeToRun(2500),
                         new Delay(
                                 () -> Globals.randomizationState != null,
-                                () -> popAll(1)
+                                robot::shootAll
                         ).setMaxTimeToRun(1000),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
@@ -138,7 +135,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         ),
                         new Delay(
                                 () -> followerManager.finished(true),
-                                () -> popAll(1)
+                                robot::shootAll
                         ).setMaxTimeToRun(3000),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
@@ -167,7 +164,7 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                         ),
                         new Delay(
                                 () -> followerManager.finished(true),
-                                () -> popAll(1)
+                                robot::shootAll
                         ).setMaxTimeToRun(3000),
                         new Delay(
                                 Popper.POP_TIME_MILLIS,
@@ -176,56 +173,6 @@ public class RedLM0Auto extends DecodeRevAmpedOpMode {
                 ),
                 new DelayChain(
                         new Command(followerManager::followNextChain)
-                )
-        );
-    }
-
-    private DelayChain popAll(int set) {
-        if (!robot.turnTable.canPop()) return new DelayChain();
-        if (set == 0) {
-            return new DelayChain(
-                    new Command(
-                            () -> robot.shooter.shootAutoSet(set)
-                    ),
-                    new Delay(
-                            300,
-                            () -> robot.turnTable.pop()
-                    ),
-                    new Delay(
-                            Popper.POP_TIME_MILLIS,
-                            () -> robot.turnTable.pop()
-                    ),
-                    new Delay(
-                            Popper.POP_TIME_MILLIS,
-                            () -> robot.turnTable.pop()
-                    )
-            );
-        }
-
-        return new DelayChain(
-                new Command(
-                        () -> robot.shooter.shootAutoSet(set)
-                ),
-                new OptionalDelay (
-                        robot.turnTable.canPop(),
-                        300,
-                        () -> {
-                            if (robot.turnTable.canPop()) robot.turnTable.pop();
-                        }
-                ),
-                new OptionalDelay (
-                        robot.turnTable.canPop(),
-                        Popper.POP_TIME_MILLIS,
-                        () -> {
-                            if (robot.turnTable.canPop()) robot.turnTable.pop();
-                        }
-                ),
-                new OptionalDelay (
-                        robot.turnTable.canPop(),
-                        Popper.POP_TIME_MILLIS,
-                        () -> {
-                            if (robot.turnTable.canPop()) robot.turnTable.pop();
-                        }
                 )
         );
     }
