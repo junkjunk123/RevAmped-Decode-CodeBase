@@ -1,13 +1,20 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
+import static org.firstinspires.ftc.teamcode.pedro.Tuning.follower;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSlide2;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
@@ -18,11 +25,19 @@ import java.util.Objects;
 @TeleOp
 public class AutomatedTest extends DecodeRevAmpedOpMode {
     private Robot robot;
+    private Follower follower;
+    private boolean stop = false;
+    private boolean driveTestComplete = false;
+    private double forwardDisp;
+    private double lateralDisp;
+    private final Pose prevPose = new Pose();
+    int driveTestState = 0;
 
     @Override
     public void RevAmpedInit() {
         robot = new Robot(this);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        follower = Constants.createFollower(hardwareMap);
     }
 
     @Override
@@ -31,9 +46,7 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
             telemetry.addData("Testing", type.name());
             telemetry.update();
             for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(type))) {
-                if (!device.testResponse()) {
-                    Logger.permaLog(device.getId(), "FAILED");
-                }
+                device.testResponse().andThen(b -> telemetry.addData(device.getId() + " " + "passed", b));
             }
         }
 
@@ -42,27 +55,50 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        if (gamepad1.aWasPressed()) {
-            if (robot.allDevices.containsKey(HwDevice.DeviceType.MOTOR)) {
-                for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(HwDevice.DeviceType.MOTOR))) {
-                    if (device instanceof HwSlide2<?> slide) {
-                        DelayedResult<Integer> result = slide.testEncodersAndSwitch();
-                        result.andThen(worked -> {
-                            if (worked == -1) {
-                                Logger.permaLog(slide.getId() + " encoder", "FAILED");
-                            } else if (worked == -2) {
-                                Logger.permaLog(slide.getId() + " limit switch", "FAILED");
-                            }
-                        });
-                    }
+        if (stop) driveTestState++;
+
+        switch (driveTestState) {
+            case 0:
+                if (gamepad1.aWasPressed()) {
+                    follower.startTeleopDrive(false);
+                    follower.update();
+                    follower.setTeleOpDrive(1,1,1,true);
+                    stop = true;
+                    driveTestState++;
                 }
-            }
+                break;
+            case 1:
+                if (stop) {
+                    follower.startTeleopDrive(true);
+                    follower.setTeleOpDrive(0,0,0,true);
+                    stop = false;
+                    driveTestState++;
+                    scheduler.add(new Delay(() -> follower.getVelocity().getMagnitude() < PathConstraints.defaultConstraints.getVelocityConstraint(),
+                            () -> driveTestComplete = true));
+                }
+                break;
+            case 2:
+                if (!driveTestComplete) {
+                    Pose curPose = follower.getPose();
+                    forwardDisp += (curPose.getX() - prevPose.getX()) * Math.cos(curPose.getHeading());
+                    lateralDisp += (curPose.getY() - prevPose.getY()) * Math.sin(curPose.getHeading());
+                } else
+                    driveTestState++;
+                break;
+            case 3:
+                Pose currentPose = follower.getPose();
+                boolean headingLocalization = Math.abs(currentPose.getHeading()) > Math.toRadians(3);
+                telemetry.addData("Heading localization passed", headingLocalization);
+                telemetry.addData("Forward localization passed", forwardDisp > 0.5);
+                telemetry.addData("Lateral localization passed", lateralDisp > 0.5);
+                break;
         }
     }
 
     @Override
     public void update() {
         robot.update();
+        follower.update();
         Logger.update(telemetry);
         telemetry.update();
     }

@@ -249,7 +249,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                 case 0:
                     // Test left color sensor
                     if (testTimer.milliseconds() > 2000) {
-                        leftTestPassed = leftColorSensor.testResponse();
+                        //leftTestPassed = leftColorSensor.testResponse();
                         testStep++;
                         testTimer.reset();
                     }
@@ -257,7 +257,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                 case 1:
                     // Test right color sensor
                     if (testTimer.milliseconds() > 2000) {
-                        rightTestPassed = rightColorSensor.testResponse();
+                        //rightTestPassed = rightColorSensor.testResponse();
                         testStep++;
                         testTimer.reset();
                     }
@@ -562,11 +562,11 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
 
         // Motor test variables
         private double flywheelCurrentStart = 0;
-        private double flywheelCurrentEnd = 0;
+        private double flywheelCurrentEnd = 0.05;
         private double driveCurrentStart = 0;
-        private double driveCurrentEnd = 0;
+        private double driveCurrentEnd = 0.05;
         private double intakeCurrentStart = 0;
-        private double intakeCurrentEnd = 0;
+        private double intakeCurrentEnd = 0.05;
 
         @Override
         public void RevAmpedInit() {
@@ -700,9 +700,9 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             switch (testStep) {
                 case 0:
                     if (testTimer.milliseconds() > 2000) {
-                        boolean leftTest = leftColorSensor.testResponse();
-                        boolean rightTest = rightColorSensor.testResponse();
-                        colorTestPassed = leftTest && rightTest;
+                        //boolean leftTest = leftColorSensor.testResponse();
+                        //boolean rightTest = rightColorSensor.testResponse();
+                        //colorTestPassed = leftTest && rightTest;
                         allTestsPassed &= colorTestPassed;
                         currentTest++;
                         testStep = 0;

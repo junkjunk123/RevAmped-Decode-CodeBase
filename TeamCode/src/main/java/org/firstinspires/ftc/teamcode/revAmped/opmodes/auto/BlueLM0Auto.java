@@ -39,7 +39,7 @@ public class BlueLM0Auto extends DecodeRevAmpedOpMode {
         robot = new Robot(this, Globals.AllianceColor.Blue);
         followerManager = new FollowerManager(hardwareMap, new ThreeBallPath());
         //limelight = new DecodeLimelight(hardwareMap);
-        build(robot, () -> delay, followerManager);
+        build(robot, followerManager, false);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         prompter = new Prompter(this, gamepad_1)
                 .prompt("delay", new ValuePrompt("Choose delay in seconds", 10, 2));

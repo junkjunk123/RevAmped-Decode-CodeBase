@@ -4,8 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
 
 public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends HwMotor {
     protected final HashMap<MotorState, MotorPower> statePowerMap = new HashMap<>();
@@ -69,8 +74,19 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
     }
 
     @Override
-    public boolean testResponse() {
-        return motor.getCurrent(CurrentUnit.AMPS) > 0.1;
+    public DelayedResult<Boolean> testResponse() {
+        setPower(0.4);
+        CalcHandler integrator = new CalcHandler();
+        double nominalCurrent = motor.getCurrent(CurrentUnit.AMPS);
+        BooleanSupplier timeout = MathUtil.booleanSupplierfromTimeDelay(5000);
+        return new DelayedResult<>(() -> {
+            if (!timeout.getAsBoolean()) {
+                integrator.update(Math.abs(nominalCurrent - motor.getCurrent(CurrentUnit.AMPS)));
+                return null;
+            } else {
+                return integrator.getIntegral() > 0.15;
+            }
+        });
     }
 
     public abstract void buildStatePowerMap();

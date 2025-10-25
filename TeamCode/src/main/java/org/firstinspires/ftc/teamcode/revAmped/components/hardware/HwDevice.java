@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+
 /**
  * Interface representing a hardware device.
  */
@@ -96,7 +98,7 @@ public interface HwDevice {
 
     DeviceType getDeviceType();
 
-    default boolean testResponse() {
-        return true;
+    default DelayedResult<Boolean> testResponse() {
+        return new DelayedResult<>(() -> true);
     }
 }

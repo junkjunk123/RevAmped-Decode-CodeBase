@@ -5,7 +5,13 @@ import android.provider.Settings;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
+
+import java.util.function.BooleanSupplier;
 
 @Config
 public class IntakeColor extends DecodeColor<IntakeColor.Color> implements DecodeColorSensor {
@@ -25,8 +31,19 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     }
 
     @Override
-    public boolean testResponse() {
-        return Math.abs(getHSVValues().getH() - 152.4) < 0.3;
+    public DelayedResult<Boolean> testResponse() {
+        CalcHandler integrator = new CalcHandler();
+        double nominalHue = getHue();
+        BooleanSupplier timeout = MathUtil.booleanSupplierfromTimeDelay(5000);
+        return new DelayedResult<>(() -> {
+                if (!timeout.getAsBoolean()) {
+                    integrator.update(Math.abs(nominalHue - getHue()));
+                    return null;
+                } else {
+                    return integrator.getIntegral() > 0.08;
+                }
+            }
+        );
     }
 
     @Override

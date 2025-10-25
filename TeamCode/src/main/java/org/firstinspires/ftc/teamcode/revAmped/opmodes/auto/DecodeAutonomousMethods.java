@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.ThreeBa
 
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -39,7 +40,7 @@ public class DecodeAutonomousMethods {
         overallTimer = Globals.aae.overallTimer;
     }
 
-    public static void build(Robot robot, DoubleSupplier delay, FollowerManager followerManager) {
+    public static void build(Robot robot, FollowerManager followerManager, boolean far) {
         new DelayChain("ian loves jasmine",
                 //Shoot Preloads
                 new DelayChain(
@@ -53,9 +54,10 @@ public class DecodeAutonomousMethods {
                                 robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS);
                         }),
                         new Delay(
-                                () -> !followerManager.follower.isBusy(),
+                                () -> !followerManager.follower.isBusy() || (far &&
+                                        followerManager.follower.getVelocity().getMagnitude() < PathConstraints.defaultConstraints.getVelocityConstraint()),
                                 () -> {}
-                        ).setMaxTimeToRun(3500),
+                        ).setMaxTimeToRun(!far? 3500 : 7500),
                         new Delay(
                                 1500,
                                 robot::shootAll

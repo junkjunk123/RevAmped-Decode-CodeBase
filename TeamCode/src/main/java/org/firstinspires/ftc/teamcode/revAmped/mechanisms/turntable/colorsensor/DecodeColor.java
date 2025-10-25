@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 
 import java.util.function.Supplier;
 
@@ -25,7 +26,7 @@ public abstract class DecodeColor<T extends Enum<T> & DecodeColor.DetectionColor
     }
 
     @Override
-    public abstract boolean testResponse();
+    public abstract DelayedResult<Boolean> testResponse();
 
     public abstract T getPurple();
     public abstract T getGreen();

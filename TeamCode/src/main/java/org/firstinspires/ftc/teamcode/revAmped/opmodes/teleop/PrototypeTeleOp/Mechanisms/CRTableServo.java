@@ -67,11 +67,6 @@ public class CRTableServo extends HwCRServo2<CRTableServo.TableState> {
         statePowerMap.put(TableState.REST, ServoPower.constant(0f));
     }
 
-    @Override
-    public boolean testResponse() {
-        return super.testResponse();
-    }
-
     public enum TableState implements CRServoInternal.ServoState{
         REST;
     }
