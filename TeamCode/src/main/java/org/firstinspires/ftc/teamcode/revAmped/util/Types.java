@@ -131,7 +131,7 @@ public interface Types {
         }
 
         public boolean isPreset() {
-            return this == NEAR_PRESET || this == FAR_PRESET;
+            return this == NEAR_PRESET || this == FAR_PRESET || this == MED_PRESET;
         }
     }
 

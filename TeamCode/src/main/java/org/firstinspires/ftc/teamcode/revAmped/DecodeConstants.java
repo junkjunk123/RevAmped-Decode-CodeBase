@@ -35,7 +35,7 @@ public final class DecodeConstants implements Constants {
         Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.0003);
         Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.0008);
         Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1575; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 1300; Flywheel.GEAR_RATIO = 1; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1575; Flywheel.FLYWHEEL_NEAR_VELOCITY = 1100; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 1300; Flywheel.GEAR_RATIO = 1; Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
         Flywheel.VELOCITY_ERROR_THRESHOLD = 0.5;
@@ -44,7 +44,7 @@ public final class DecodeConstants implements Constants {
         HoodServo.HOOD_REST = 2/255f; HoodServo.HOOD_MAX_POS = 0f; HoodServo.HOOD_MIN_POS = 0f; HoodServo.HOOD_MAX_RAD = 0f; HoodServo.HOOD_MIN_RAD = 0f;
         HoodServo.AUTO_PRELOADS = 0f; HoodServo.AUTO_SET_1 = 0f; HoodServo.AUTO_SET_2 = 0f; HoodServo.AUTO_SET_3 = 0f;
         //HOOD POSITIONS FOR TELEOP
-        HoodServo.TELE_FAR_PRESET = 158/255f; HoodServo.TELE_NEAR_PRESET = 50/255f; HoodServo.TELE_MED_PRESET = 110/255;
+        HoodServo.TELE_FAR_PRESET = 158/255f; HoodServo.TELE_NEAR_PRESET = 10/255f; HoodServo.TELE_MED_PRESET = 110/255f;
 
         //Turret Constants
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
