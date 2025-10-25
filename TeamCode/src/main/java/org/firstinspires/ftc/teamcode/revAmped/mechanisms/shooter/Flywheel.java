@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.FlywheelState;
 
+@Config
 public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     private final PIDFController controllerLarge;
     private final PIDFController controllerMedium;
@@ -100,7 +102,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         currentAcceleration.reset();
 
         if (motorState == FlywheelState.RUNNING) {
-            targetVelocity = FLYWHEEL_NEAR_VELOCITY;
+            targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
         }
     }
 

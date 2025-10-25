@@ -87,11 +87,9 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         if (currentState == ShooterState.TRACKING) {
             Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
             Pose currentPos = pinpoint().getPose();
-            Globals.telemetry.addData("currentPose", currentPos);
             Vector offset = new Vector();
             offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
-            Globals.telemetry.addData("offset", offset);
-            double dist = offset.getMagnitude();
+            //double dist = offset.getMagnitude();
             Vector robotVelocity = pinpoint.getVelocityVector();
             //if (robotVelocity.getMagnitude() < 4) hardware.flywheel().updateTargetVelocity(dist);
 
@@ -100,11 +98,9 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             if (trackTurret) {
                 if (robotVelocity.getMagnitude() < 4) {
                     double targetAngle = offset.getTheta() + Math.PI;
-                    Globals.telemetry.addData("hoodTargetAngleDeg", Math.toDegrees(targetAngle));
                     double currentAngle = pinpoint().getPose().getHeading();
                     deltaAngle = MathUtil.normalizeAnglePi(targetAngle - currentAngle);
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
-                    Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else if (velocityCompensationOnTurret) {
                     Vector iHat = offset.normalize();
@@ -258,9 +254,5 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public void toggleState() {
         if (currentState == ShooterState.REST) setCurrentState(ShooterState.TRACKING);
         else setCurrentState(ShooterState.REST);
-    }
-
-    public Localizer getPinpoint() {
-        return pinpoint;
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 @Config
 public class LM0AutoPaths implements PathSupplier {
-    public static ColoredDecodePose START_POSE = new ColoredDecodePose(22.460, 119.469, Math.toRadians(-90));
+    public static ColoredDecodePose START_POSE = new ColoredDecodePose(66.50, 136, Math.toRadians(-90));
     public static ColoredDecodePose WAYPOINT_1 = new ColoredDecodePose(14.800, 94.600);
     public static ColoredDecodePose INTAKE_FIRST_ELEMENT_SET = new ColoredDecodePose(24.250, 85.250, Math.toRadians(-65));
     public static ColoredDecodePose OPEN_GATE = new ColoredDecodePose(12.250, 70.000, Math.toRadians(180));

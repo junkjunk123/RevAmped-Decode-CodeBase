@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
@@ -29,7 +30,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        robot = Robot.getAutonomousInstance(this, Globals.allianceColor);
+        robot = new Robot(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
         drivetrain = new TeleOpDrivetrainHandler.TeleOpDrivetrainBuilder()
@@ -55,7 +56,13 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        if (gamepad_1.a.isPress()) drivetrain.toggleSlowMode();
+        if (gamepad_1.a.isPress()) {
+            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, 0);
+        }
+
+        if (gamepad_1.b.isPress()) {
+            robot.turnTable.populateAndShoot();
+        }
 
         if (gamepad_2.b.isPress()) {
             DecodeColorSensor.enableSensors();
@@ -66,11 +73,17 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.right_bumper.isPress()) {
-            robot.turnTable.manualTransfer();
+            if (robot.turnTable.getCurrentState().getCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
+                robot.turnTable.manualTransfer();
+            else
+                robot.turnTable.incrementPopIndex();
         }
 
         if (gamepad_2.left_bumper.isPress()) {
-            robot.turnTable.correctJam();
+            if (robot.turnTable.getCurrentState().getCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
+                robot.turnTable.correctJam();
+            else
+                robot.turnTable.decrementPopIndex();
         }
 
         if (gamepad_2.a.isPress()) {
@@ -84,10 +97,6 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.y.isPress()) {
             robot.shootAll();
-        }
-
-        if (gamepad_1.b.isPress()) {
-            drivetrain.toggleFieldCentric();
         }
 
         if (gamepad_1.x.isPress()) {

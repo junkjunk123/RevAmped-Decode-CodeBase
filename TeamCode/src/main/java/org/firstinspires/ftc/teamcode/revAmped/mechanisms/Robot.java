@@ -266,18 +266,18 @@ public class Robot {
     }
 
     public void updateLock() {
-        boolean hoodLock = hoodServo().isUpdateLock();
-        boolean flywheelLock = flywheel().isUpdateLock();
+        if (hoodServo().isUpdateLock() && flywheel().isUpdateLock()) return;
+
         hoodServo().setUpdateLock(true);
         flywheel().setUpdateLock(true);
 
         scheduler.add(
                 new Delay(() -> turnTable.getNumberOfBalls() == 0, () -> {
-                    hoodServo().setUpdateLock(hoodLock);
-                    flywheel().setUpdateLock(flywheelLock);
+                    hoodServo().setUpdateLock(false);
+                    flywheel().setUpdateLock(false);
                 })
                 .setCancellation(() -> turnTable.getCurrentState().getCycleState() != TurnTableInternals.TurnTableCycleState.POP)
-                .setCancellation(() -> shooter.getPinpoint().getVelocityVector().getMagnitude() > 6)
+                .setCancellation(() -> shooter.pinpoint().getVelocityVector().getMagnitude() > 6)
                 .setMaxTimeToRun(3500)
         );
     }

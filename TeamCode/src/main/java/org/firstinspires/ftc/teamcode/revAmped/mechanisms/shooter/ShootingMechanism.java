@@ -32,5 +32,4 @@ public interface ShootingMechanism<T> {
     void toggleHoodTracking();
     void toggleTurretTracking();
     void toggleState();
-    Localizer getPinpoint();
 }

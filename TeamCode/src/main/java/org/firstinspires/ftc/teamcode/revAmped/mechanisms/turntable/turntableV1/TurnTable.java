@@ -8,12 +8,15 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableState;
@@ -36,7 +39,7 @@ public class TurnTable implements ArtifactQueuer {
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, voltageSensor);
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
-        DualIntakeColor intakeColor = new DualIntakeColor(hardwareMap);
+        IntakeColor intakeColor = new IntakeColor(hardwareMap, "color_left", 0d);
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor);
         compartments = new TableCompartmentManager(
                 ball -> {
@@ -62,9 +65,7 @@ public class TurnTable implements ArtifactQueuer {
                             intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
                             scheduler.add(new Delay(bigIntakeDelay, intakeMotor::stop));
                         }
-                        case INTAKE -> {
-                            //shooterStateConsumer.accept(Types.ShooterState.REST);
-                        }
+                        case INTAKE -> Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
                     }
                 }
         );
@@ -112,7 +113,6 @@ public class TurnTable implements ArtifactQueuer {
         compartments.update();
 
         if (currentState.getCycleState() == TurnTableCycleState.INTAKE && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
-        compartments.getNextMotifPopIndex();
     }
 
     @Override
@@ -177,6 +177,19 @@ public class TurnTable implements ArtifactQueuer {
         compartments.correctJam();
     }
 
+    public void incrementPopIndex() {
+        compartments.incrementPopIndex();
+    }
+
+    public void decrementPopIndex() {
+        compartments.decrementPopIndex();
+    }
+
+    @Override
+    public void populateAndShoot() {
+        compartments.populateAndShoot();
+    }
+
     public boolean canPop() {
         return compartments.getEmptyIndices().length == 3;
     }
@@ -208,5 +221,9 @@ public class TurnTable implements ArtifactQueuer {
 
     public boolean currentIndexHasArtifact() {
         return !compartments.currentCompartment().isNone();
+    }
+
+    public void fillWithPurple() {
+        compartments.fillWithPurple();
     }
 }

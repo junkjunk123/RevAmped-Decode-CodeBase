@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.HoodState;
 
+@Config
 public class HoodServo extends Hood {
     public HoodServo(HardwareMap hardwareMap, boolean setPosition) throws IllegalArgumentException {
         super(hardwareMap, "hood", setPosition, HoodState.REST, ServoBrand.AXON_MAX);
@@ -48,7 +50,6 @@ public class HoodServo extends Hood {
     }
 
     public void updatePreset(double dist) {
-        Globals.telemetry.addData("distance",dist);
         //if (updateLock || !isPreset()) return;
         if (dist <= 50) setCurrentState(HoodState.NEAR_PRESET);
         else if (50 < dist && dist < 100) setCurrentState(HoodState.MED_PRESET);

@@ -26,7 +26,7 @@ public class ColorTest extends DecodeRevAmpedOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         dualColor = new DualIntakeColor(hardwareMap);
         dualColor.setOffset(offset);
-        leftColor = new IntakeColor(hardwareMap,"color_left",offset);
+        leftColor = new IntakeColor(hardwareMap,"color_left", 0d);
         rightColor = new IntakeColor(hardwareMap,"color_right",0d);
         intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
         intakeMotor.setVoltageCompensation();
@@ -56,7 +56,7 @@ public class ColorTest extends DecodeRevAmpedOpMode {
         telemetry.addData("color_left Hue",leftColor.getHue());
         telemetry.addData("Distance",leftColor.getDistanceMM());
         telemetry.addData("=======================","");
-        telemetry.addData("dual color",dualColor.getColor());
+        telemetry.addData("dual color",leftColor.getColor());
         /*
         telemetry.addData("Intake Power",intakeMotor.getPower());
         telemetry.addData("Intake Current",intakeMotor.getCurrentAmps());

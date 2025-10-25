@@ -62,7 +62,7 @@ public class Pause implements RunnableTask {
                 }
             }
 
-            if (time.getAsBoolean()) {
+            if (time != null && time.getAsBoolean()) {
                 complete = true;
                 return true;
             }

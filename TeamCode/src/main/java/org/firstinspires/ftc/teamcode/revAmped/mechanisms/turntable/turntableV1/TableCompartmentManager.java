@@ -196,6 +196,14 @@ public class TableCompartmentManager {
         advanceIntakeIndex((currentIndex + 2) % compartments.length);
     }
 
+    public void decrementPopIndex() {
+        advancePopIndex((currentIndex + 2) % compartments.length);
+    }
+
+    public void incrementPopIndex() {
+        advancePopIndex((currentIndex + 1) % compartments.length);
+    }
+
     public int findNextIntakeIndex() {
         if (compartments[currentIndex].isNone()) return currentIndex;
 
@@ -256,7 +264,6 @@ public class TableCompartmentManager {
         if (compartments[currentIndex].isGreen()) return currentIndex;
 
         TableCompartment[] sorted = sort(DecodeColorSensor.ArtifactColor.GREEN);
-        Globals.telemetry.addLine(Arrays.toString(Arrays.stream(sorted).map(t -> t.color).toArray()));
         if (sorted[0].isNone()) return currentIndex;
         if (sorted[0].color.getY() < compartments[currentIndex].color.getY() + 0.03) return currentIndex;
 
@@ -301,21 +308,15 @@ public class TableCompartmentManager {
     public int getNextMotifPopIndex() {
         DecodeColorSensor.ArtifactColor targetColor = getNextPopColor();
 
-        Globals.telemetry.addData("color", targetColor);
-
         if (targetColor == DecodeColorSensor.ArtifactColor.GREEN) {
             int index = nextGreen();
-            Globals.telemetry.addData("index", index);
             if (index != currentIndex) return index;
-            Globals.telemetry.addData("state", "searchingforpurple");
             return nextPurple();
         }
 
         else {
             int index = nextPurple();
-            Globals.telemetry.addData("index", index);
             if (index != currentIndex) return index;
-            Globals.telemetry.addData("state", "searchingforgreen");
             return nextGreen();
         }
     }
@@ -359,5 +360,18 @@ public class TableCompartmentManager {
         if (defaultRandomizationStateGreenIndex == 1) return Globals.RandomizationState.GPP;
         else if (defaultRandomizationStateGreenIndex == 2) return Globals.RandomizationState.PGP;
         return Globals.RandomizationState.PPG;
+    }
+
+    public void populateAndShoot() {
+        for (TableCompartment compartment : compartments) {
+            if (compartment.isNone()) compartment.setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
+        }
+        toggleCycleState.run();
+    }
+
+    public void fillWithPurple() {
+        for (TableCompartment compartment : compartments) {
+            compartment.setColor(DecodeColorSensor.ArtifactColor.PURPLE);
+        }
     }
 }

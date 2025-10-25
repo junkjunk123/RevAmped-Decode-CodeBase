@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 public class DualIntakeColor implements DecodeColorSensor {
     private boolean rightColorRead = true;
     private static boolean useLeft = true;
-    private static boolean useRight = true;
+    private static boolean useRight = false;
     private final IntakeColor leftColor;
     private final IntakeColor rightColor;
 
@@ -19,7 +19,7 @@ public class DualIntakeColor implements DecodeColorSensor {
         leftColor = new IntakeColor(hardwareMap, "color_left", LEFT_OFFSET);
         rightColor = new IntakeColor(hardwareMap, "color_right",0);
         useLeft = true;
-        useRight = true;
+        useRight = false;
     }
 
     public ArtifactColor getColor() {
@@ -36,12 +36,12 @@ public class DualIntakeColor implements DecodeColorSensor {
     }
 
     private ArtifactColor leftColor() {
-        IntakeColor.Color.currentSensor = IntakeColor.CurrentSensor.LEFT;
+        //IntakeColor.Color.currentSensor = IntakeColor.CurrentSensor.LEFT;
         return leftColor.getColor();
     }
 
     private ArtifactColor rightColor() {
-        IntakeColor.Color.currentSensor = IntakeColor.CurrentSensor.RIGHT;
+        //IntakeColor.Color.currentSensor = IntakeColor.CurrentSensor.RIGHT;
         return rightColor.getColor();
     }
 
@@ -68,7 +68,7 @@ public class DualIntakeColor implements DecodeColorSensor {
 
     public static void enableSensors() {
         useLeft = true;
-        useRight = true;
+        useRight = false;
     }
     public void setOffset(double leftOffset){
         LEFT_OFFSET = leftOffset;
@@ -79,7 +79,7 @@ public class DualIntakeColor implements DecodeColorSensor {
     }
 
     public void enableRight() {
-        useRight = true;
+        useRight = false;
     }
 
     @Override

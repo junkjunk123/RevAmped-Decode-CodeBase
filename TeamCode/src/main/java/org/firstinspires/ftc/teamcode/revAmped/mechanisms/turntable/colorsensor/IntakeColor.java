@@ -60,8 +60,6 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     public enum Color implements DecodeColor.DetectionColor {
         PURPLE, GREEN, NEUTRAL;
 
-        public static CurrentSensor currentSensor = CurrentSensor.RIGHT;
-
         @Override
         public boolean evaluateHue(double hue) {
             return switch (this) {
@@ -74,8 +72,8 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
         @Override
         public boolean evaluateDistance(double distance) {
             return switch (this) {
-                case PURPLE -> distance <= currentSensor.getMaxPurpleDistance();
-                case GREEN -> distance <= currentSensor.getMaxGreenDistance();
+                case PURPLE -> distance <= IntakeColor.maxPurpleLeftDistance;
+                case GREEN -> distance <= IntakeColor.maxGreenLeftDistance;
                 default -> true;
             };
         }
