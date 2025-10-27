@@ -8,7 +8,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
+
+import java.util.function.BooleanSupplier;
 
 public class TableServo extends HwCRServo2<TableState> {
     public static PIDFCoefficients TABLE_PIDF_COEFFICIENTS;
@@ -84,5 +88,12 @@ public class TableServo extends HwCRServo2<TableState> {
     public void resetPosition() {
         finetuneTicks = 0;
         super.resetPosition();
+    }
+
+    @Override
+    public DelayedResult<Boolean> testResponse() {
+        setCurrentState(TableState.BALL2);
+        BooleanSupplier delay = () -> (Math.abs(getLastError()) < 50 || (getVelocity() < 10 && Math.abs(getLastError()) < 500));
+        return new DelayedSupplier<>(delay, delay::getAsBoolean).setMaxTime(1500).get();
     }
 }

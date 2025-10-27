@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.MovingAverage;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
@@ -17,6 +18,7 @@ public class MotorSlipCalibrator extends DecodeRevAmpedOpMode {
     private MovingAverage omega_i;
     private MovingAverage omega_f;
     private double eta;
+    private Popper popper;
 
     private enum State {
         V_I,
@@ -30,10 +32,15 @@ public class MotorSlipCalibrator extends DecodeRevAmpedOpMode {
         flywheel = new Flywheel(hardwareMap, Types.FlywheelState.RUNNING);
         omega_i = new MovingAverage(10);
         omega_f = new MovingAverage(10);
+        popper = new Popper(hardwareMap, true);
     }
 
     @Override
     public void RevAmpedLoop() {
+        if (gamepad1.aWasPressed()) {
+            popper.setCurrentState(Types.PopperState.POP);
+        }
+
         switch (currentState) {
             case V_I -> {
                 if (startedLaunch()) currentState = State.V_F;
@@ -63,7 +70,7 @@ public class MotorSlipCalibrator extends DecodeRevAmpedOpMode {
 
     private boolean startedLaunch() {
         //todo: fill this out
-        return false;
+        return popper.reached(Types.PopperVoltageState.FULLY_UP);
     }
 
     @Override

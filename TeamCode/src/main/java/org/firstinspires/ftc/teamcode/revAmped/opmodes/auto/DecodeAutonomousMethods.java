@@ -55,7 +55,8 @@ public class DecodeAutonomousMethods {
                         }),
                         new Delay(
                                 () -> !followerManager.follower.isBusy() || (far &&
-                                        followerManager.follower.getVelocity().getMagnitude() < PathConstraints.defaultConstraints.getVelocityConstraint()),
+                                        followerManager.follower.getVelocity().getMagnitude() < PathConstraints.defaultConstraints.getVelocityConstraint()
+                                && followerManager.distanceFromTarget() < 5),
                                 () -> {}
                         ).setMaxTimeToRun(!far? 3500 : 7500),
                         new Delay(

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.TwoMotorMechanism;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.FlywheelState;
 
@@ -46,7 +47,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double GEAR_RATIO;
     public static double STALL_TORQUE; //Kg * cm
     public static double STALL_CURRENT; //Amps
-    public static double k_T = 0.0980665 * STALL_TORQUE / STALL_CURRENT;
+    public static double k_T;
     public static double MOMENT_OF_INERTIA;
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
     public static double VELOCITY_ERROR_THRESHOLD;
@@ -183,6 +184,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public double getBallLaunchVelocity() {
         return getAngularVelocity() * RADIUS * LAUNCH_ETA;
+    }
+
+    public double getTheoreticalLaunchVelocity() {
+        return targetVelocity * LAUNCH_ETA;
     }
 
     public boolean canShoot() {

@@ -33,7 +33,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
     public static Pose APRIL_TAG_POSE_RED = new Pose(139, 138);
-    public static Pose APRIL_TAG_POSE_BLUE = new Pose(5, 138);
+    public static Pose APRIL_TAG_POSE_BLUE = new Pose(0, 144);
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
@@ -97,16 +97,20 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
             if (trackTurret) {
                 if (robotVelocity.getMagnitude() < 4) {
+                    Globals.telemetry.addData("offset", offset);
                     double targetAngle = offset.getTheta() + Math.PI;
+                    Globals.telemetry.addData("targetAngle", targetAngle);
                     double currentAngle = pinpoint().getPose().getHeading();
+                    Globals.telemetry.addData("currentAngle", currentAngle);
                     deltaAngle = MathUtil.normalizeAnglePi(targetAngle - currentAngle);
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
+                    Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else if (velocityCompensationOnTurret) {
                     Vector iHat = offset.normalize();
                     Vector jHat = new Vector();
                     jHat.setOrthogonalComponents(-offset.getYComponent(), offset.getXComponent());
-                    double flywheelLaunchSpeed = hardware.flywheel().getBallLaunchVelocity();
+                    double flywheelLaunchSpeed = hardware.flywheel().getTheoreticalLaunchVelocity();
                     Vector invertediHat = new Vector();
                     invertediHat.setOrthogonalComponents(iHat.getYComponent(), iHat.getXComponent());
                     double normalizedTurretNormalComponent = robotVelocity.getMagnitude() *

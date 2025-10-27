@@ -177,7 +177,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
-        telemetry.update();
+        //telemetry.update();
     }
 
     @Override

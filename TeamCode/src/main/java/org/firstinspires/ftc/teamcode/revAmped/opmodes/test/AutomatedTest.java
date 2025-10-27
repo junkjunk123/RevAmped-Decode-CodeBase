@@ -17,11 +17,12 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Objects;
 
-@Disabled
 @TeleOp
 public class AutomatedTest extends DecodeRevAmpedOpMode {
     private Robot robot;
@@ -42,15 +43,20 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedStart() {
-        for (HwDevice.DeviceType type : robot.allDevices.keySet()) {
-            telemetry.addData("Testing", type.name());
-            telemetry.update();
-            for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(type))) {
-                device.testResponse().andThen(b -> telemetry.addData(device.getId() + " " + "passed", b));
-            }
-        }
-
-        Logger.permaLog("Testing", "Complete");
+        robot.popper().testResponse().andThen(r -> {
+            Logger.permaLog(robot.popper().getId() + " " + "passed", r);
+            robot.popper().setCurrentState(Types.PopperState.NEUTRAL);
+            scheduler.add(new Delay(600, () -> {
+                for (HwDevice.DeviceType type : robot.allDevices.keySet()) {
+                    telemetry.addData("Testing", type.name());
+                    telemetry.update();
+                    for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(type))) {
+                        if (!(device instanceof Popper))
+                            device.testResponse().andThen(b -> Logger.permaLog(device.getId() + " " + "passed", b));
+                    }
+                }
+            }));
+        });
     }
 
     @Override

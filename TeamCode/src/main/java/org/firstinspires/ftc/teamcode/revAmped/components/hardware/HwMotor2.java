@@ -75,7 +75,7 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
 
     @Override
     public DelayedResult<Boolean> testResponse() {
-        setPower(0.4);
+        setPower(0.5);
         CalcHandler integrator = new CalcHandler();
         double nominalCurrent = motor.getCurrent(CurrentUnit.AMPS);
         BooleanSupplier timeout = MathUtil.booleanSupplierfromTimeDelay(5000);
@@ -84,7 +84,8 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
                 integrator.update(Math.abs(nominalCurrent - motor.getCurrent(CurrentUnit.AMPS)));
                 return null;
             } else {
-                return integrator.getIntegral() > 0.15;
+                setPower(0);
+                return integrator.getIntegral() > 0.08;
             }
         });
     }

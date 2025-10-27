@@ -3,10 +3,16 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.IntakeState;
+
+import java.util.function.BooleanSupplier;
 
 public class IntakeMotor extends HwMotor2<IntakeState> {
     private final HwVoltageSensor voltageSensor;
@@ -45,5 +51,22 @@ public class IntakeMotor extends HwMotor2<IntakeState> {
     @Override
     public void setVoltageCompensation() {
         useVoltageCompensation = true;
+    }
+
+    @Override
+    public DelayedResult<Boolean> testResponse() {
+        setCurrentState(IntakeState.INTAKE, 0.5f);
+        CalcHandler integrator = new CalcHandler();
+        double nominalCurrent = motor.getCurrent(CurrentUnit.AMPS);
+        BooleanSupplier timeout = MathUtil.booleanSupplierfromTimeDelay(5000);
+        return new DelayedResult<>(() -> {
+            if (!timeout.getAsBoolean()) {
+                integrator.update(Math.abs(nominalCurrent - motor.getCurrent(CurrentUnit.AMPS)));
+                return null;
+            } else {
+                setCurrentState(IntakeState.STOP);
+                return integrator.getIntegral() > 0.08;
+            }
+        });
     }
 }
