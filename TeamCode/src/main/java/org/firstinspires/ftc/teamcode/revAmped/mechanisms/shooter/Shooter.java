@@ -58,7 +58,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         velocityCompensationOnTurret = false;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
-        robotAcceleration = new PoseDifferentiator(Pose::new, pinpoint()::getVelocity);
+        robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());
     }
 
     public Localizer pinpoint() {
@@ -114,20 +114,21 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
                     Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
-                } else if (velocityCompensationOnTurret) {
+                } else if (velocityCompensationOnTurret && hardware().flywheel().getCurrentState() == Types.FlywheelState.RUNNING || Globals.OpModeType.isTest()) {
                     Pose adjustedRobotPose = currentPos.plus(robotVelPose.scale(BALL_LAUNCH_MS / 1000.0)).plus(
                             robotAcceleration.scale(0.5 * Math.pow(BALL_LAUNCH_MS / 1000.0, 2))
                     );
                     Vector offset = targetPos.minus(adjustedRobotPose).getAsVector();
+                    Globals.telemetry.addData("offset", offset);
 
                     Vector iHat = offset.normalize();
                     Vector jHat = new Vector();
-                    jHat.setOrthogonalComponents(-offset.getYComponent(), offset.getXComponent());
+                    jHat.setOrthogonalComponents(-iHat.getYComponent(), iHat.getXComponent());
                     double flywheelLaunchSpeed = hardware.flywheel().getTheoreticalLaunchVelocity();
+                    //Globals.telemetry.addData("flywheelLaunchSpeed", flywheelLaunchSpeed);
                     Vector invertediHat = new Vector();
                     invertediHat.setOrthogonalComponents(iHat.getYComponent(), iHat.getXComponent());
-                    double normalizedTurretNormalComponent = robotVelocity.getMagnitude() *
-                            robotVelocity.dot(invertediHat) / flywheelLaunchSpeed;
+                    double normalizedTurretNormalComponent = Range.clip(robotVelocity.dot(invertediHat) / flywheelLaunchSpeed, -1, 1);
                     Vector flywheelDirectionVector = new Vector();
                     flywheelDirectionVector.setOrthogonalComponents(
                             Math.sqrt(1 - Math.pow(normalizedTurretNormalComponent, 2)),
@@ -138,11 +139,14 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                             {jHat.getXComponent(), jHat.getYComponent()}
                     });
                     double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta() + Math.PI;
+                    Globals.telemetry.addData("targetAngle", targetAngle);
                     double currentAngle = pinpoint().getPose().getHeading();
-                    double projectedAngle = currentAngle + robotVelPose.getHeading() * (BALL_LAUNCH_MS / 1000.0) +
-                            0.5 * robotAcceleration.getHeading() * Math.pow(BALL_LAUNCH_MS / 1000.0, 2);
+                    Globals.telemetry.addData("currentAngle", currentAngle);
+                    double projectedAngle = currentAngle + robotVelPose.getHeading() * (BALL_LAUNCH_MS / 1000.0);
+                    Globals.telemetry.addData("projectedAngle", projectedAngle);
                     deltaAngle = MathUtil.normalizeAnglePi(targetAngle - projectedAngle);
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
+                    Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else {
                     deltaAngle = hardware.turretMotor().getPrevFineTuneAngle();

@@ -164,10 +164,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     @Override
     public void update() {
-        super.update();
-        prevPos = currentPos;
         velocity = null;
         currentAcceleration.update();
+        super.update();
+        prevPos = currentPos;
     }
 
     @Override

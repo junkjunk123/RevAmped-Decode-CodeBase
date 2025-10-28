@@ -109,6 +109,10 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
             robot.turnTable.prepareGreen();
         }
 
+        if (gamepad_1.dpad_right.isPress()) {
+            robot.shooter.toggleTurretTracking();
+        }
+
         if (gamepad_2.dpad_left.isPress()) {
             robot.turnTable.preparePurple();
         }
@@ -139,6 +143,8 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
             robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
             //robot.shooter.toggleTurretTracking();
         }
+
+
 
         if (gamepad_1.dpad_left.isPress()){
             robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
