@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Del
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
@@ -121,12 +122,24 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     public void pop() {
+        boolean isHoodTracking = Shooter.trackHood;
+        boolean isTurretTracking = Shooter.trackTurret;
+        Shooter.trackHood = false;
+        Shooter.trackTurret = false;
         setCycleState(TurnTableCycleState.POP);
         hardware.popper().setCurrentState(Types.PopperState.POP);
         scheduler.add(new Delay(() -> hardware.popper().reached(Types.PopperVoltageState.FULLY_UP), () -> scheduler.add(new Delay(150, () -> {
             hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
             scheduler.add(new Delay(() -> hardware().popper().reached(Types.PopperVoltageState.FULLY_DOWN),
-                    () -> scheduler.add(new Delay(300, compartments::pop))
+                    () -> scheduler.add(new Delay(300, () -> {
+                        compartments.pop();
+                        scheduler.add(new Delay(() -> hardware().turntable().getVelocity() < 10 && Math.abs(hardware().turntable().getLastError()) < 100,
+                                () -> {
+                                    Shooter.trackHood = isHoodTracking;
+                                    Shooter.trackTurret = isTurretTracking;
+                                }
+                        ));
+                    }))
             ));
         }))));
     }
