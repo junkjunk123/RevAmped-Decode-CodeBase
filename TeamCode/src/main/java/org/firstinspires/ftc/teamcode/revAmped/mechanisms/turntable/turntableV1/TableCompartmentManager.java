@@ -2,25 +2,30 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwUltrasonicSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 @Config
 public class TableCompartmentManager {
     public static int defaultRandomizationStateGreenIndex = 1;
+    private final DecodeColorSensor colorSensor;
+    private final IntakeUltrasonic ultrasonicSensor;
 
-    public TableCompartmentManager(Consumer<Integer> switchIntakeState, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
-        this.switchIntakeState = switchIntakeState;
+    public TableCompartmentManager(DecodeColorSensor colorSensor, IntakeUltrasonic ultrasonicSensor, BiConsumer<Integer, TableCompartment[]> uponIntake, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
+        this.colorSensor = colorSensor;
+        this.ultrasonicSensor = ultrasonicSensor;
         this.switchPopState = switchPopState;
+        this.uponIntake = uponIntake;
         this.toggleCycleState = toggleCycleState;
     }
 
@@ -99,8 +104,8 @@ public class TableCompartmentManager {
     private DecodeColorSensor.ArtifactColor lastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
     private DecodeColorSensor.ArtifactColor prevLastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
     private boolean motifMode = false;
-    private final Consumer<Integer> switchIntakeState;
     private final Consumer<Integer> switchPopState;
+    private final BiConsumer<Integer, TableCompartment[]> uponIntake;
     private final Runnable toggleCycleState;
 
     public void setCurrentIndex(int currentIntakeIndex) {
@@ -161,39 +166,24 @@ public class TableCompartmentManager {
         }
     }
 
-    public void intake(DecodeColorSensor.ArtifactColor color) {
-        if (color == DecodeColorSensor.ArtifactColor.NONE) return;
-        if (compartments[currentIndex].isNone()) {
-            compartments[currentIndex].setColor(color);
+    public void intake() {
+        if (!ultrasonicSensor.hasArtifact()) return;
+        updateColor();
+    }
 
-            Scheduler.getInstance().add(new Delay(
-                    100,
-                    () -> {
-                        int nextIntakeIndex = findNextIntakeIndex();
-                        if (nextIntakeIndex != currentIndex) {
-                            advanceIntakeIndex(nextIntakeIndex);
-                        } else {
-                            toggleCycleState.run();
-                        }
-                    }
-            ));
-        }
+    private void updateColor() {
+        //TODO: Fill this out
+        Scheduler.getInstance().add(new Delay(
+                100,
+                () -> {
+                    if (switchToPop()) toggleCycleState.run();
+                }
+        ));
     }
 
     public void manualTransfer() {
-        if (compartments[currentIndex].isNone())
-            compartments[currentIndex].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
-
-        int nextIntakeIndex = findNextIntakeIndex();
-        if (nextIntakeIndex != currentIndex) {
-            advanceIntakeIndex(nextIntakeIndex);
-        } else {
-            toggleCycleState.run();
-        }
-    }
-
-    public void correctJam() {
-        advanceIntakeIndex((currentIndex + 2) % compartments.length);
+        uponIntake.accept(currentIndex, compartments);
+        if (switchToPop()) toggleCycleState.run();
     }
 
     public void decrementPopIndex() {
@@ -204,17 +194,8 @@ public class TableCompartmentManager {
         advancePopIndex((currentIndex + 1) % compartments.length);
     }
 
-    public int findNextIntakeIndex() {
-        if (compartments[currentIndex].isNone()) return currentIndex;
-
-        for (int i = 0; i <= compartments.length; i++) {
-            int nextIndex = (currentIndex + i) % compartments.length;
-            if (compartments[nextIndex].isNone()) {
-                return nextIndex;
-            }
-        }
-
-        return currentIndex; // All compartments are full
+    public boolean switchToPop() {
+        return getEmptyIndices().length == 0;
     }
 
     public int findNextPopIndex() {
@@ -228,11 +209,6 @@ public class TableCompartmentManager {
         }
 
         return currentIndex; // All compartments are empty
-    }
-
-    public void advanceIntakeIndex(int newIndex) {
-        currentIndex = newIndex % compartments.length;
-        switchIntakeState.accept(currentIndex);
     }
 
     public void advancePopIndex(int newIndex) {

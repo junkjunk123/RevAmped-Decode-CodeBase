@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
@@ -13,10 +12,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
@@ -41,20 +40,12 @@ public class TurnTable implements ArtifactQueuer {
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
         IntakeColor intakeColor = new IntakeColor(hardwareMap, "color_left", 0d);
-        hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor);
+        IntakeUltrasonic ultrasonic = new IntakeUltrasonic(hardwareMap, "intake_ultrasonic");
+        hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor, ultrasonic);
         compartments = new TableCompartmentManager(
-                ball -> {
-                    intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
-                    setCurrentState(TurnTableInternalState.values()[ball]);
-                    scheduler.add(new Delay(smallIntakeDelay, () -> {
-                        hardware.intakeColor().disable();
-                        intakeMotor.stop();
-                        scheduler.add(new Delay(() -> Math.abs(tableServo.getLastError()) < 50 || (tableServo.getVelocity() < 10 && Math.abs(tableServo.getLastError()) < 500), () -> {
-                            intake();
-                            DecodeColorSensor.enableSensors();
-                        }).setMaxTimeToRun(2200));
-                    }));
-                },
+                hardware.intakeColor(),
+                hardware.ultrasonic(),
+                (ball, compartments) -> {},
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {
                     setCycleState(getCurrentState().getCycleState().toggle());
@@ -113,7 +104,7 @@ public class TurnTable implements ArtifactQueuer {
         hardware.update();
         compartments.update();
 
-        if (currentState.getCycleState() == TurnTableCycleState.INTAKE && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) compartments.intake(hardware.intakeColor().getColor());
+        if (currentState.getCycleState() == TurnTableCycleState.INTAKE && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) compartments.intake();
     }
 
     @Override
@@ -184,10 +175,6 @@ public class TurnTable implements ArtifactQueuer {
 
     public void manualTransfer() {
         compartments.manualTransfer();
-    }
-
-    public void correctJam() {
-        compartments.correctJam();
     }
 
     public void incrementPopIndex() {

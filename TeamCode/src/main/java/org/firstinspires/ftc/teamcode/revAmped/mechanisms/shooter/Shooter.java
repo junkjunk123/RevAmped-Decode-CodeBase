@@ -38,7 +38,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
-    public static double BALL_LAUNCH_MS = 200; //not including pop time
+    public static double BALL_LAUNCH_MS = 300; //not including pop time
     private double confidence;
 
     public static boolean velocityCompensationOnTurret;
@@ -55,7 +55,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
         trackTurret = false;
-        velocityCompensationOnTurret = false;
+        velocityCompensationOnTurret = true;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
         robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());

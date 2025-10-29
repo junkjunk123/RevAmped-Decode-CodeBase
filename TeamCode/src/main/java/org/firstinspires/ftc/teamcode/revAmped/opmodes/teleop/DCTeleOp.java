@@ -80,10 +80,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.left_bumper.isPress()) {
-            if (robot.turnTable.getCurrentState().getCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
-                robot.turnTable.correctJam();
-            else
-                robot.turnTable.decrementPopIndex();
+            robot.turnTable.decrementPopIndex();
         }
 
         if (gamepad_2.a.isPress()) {
@@ -141,7 +138,6 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_1.dpad_down.isPress()) {
             robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
             robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
-            //robot.shooter.toggleTurretTracking();
         }
 
 

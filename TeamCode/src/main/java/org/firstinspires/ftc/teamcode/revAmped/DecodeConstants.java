@@ -37,7 +37,7 @@ public final class DecodeConstants implements Constants {
         Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
         Flywheel.FLYWHEEL_FAR_VELOCITY = 1575; Flywheel.FLYWHEEL_NEAR_VELOCITY = 1100; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 1350; Flywheel.GEAR_RATIO = 1;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
-        Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.9; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
+        Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.75; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
         Flywheel.VELOCITY_ERROR_THRESHOLD = 0.5;
 

@@ -34,7 +34,6 @@ public interface ArtifactQueuer {
     void manualTransfer();
     TurnTableInternals.TurnTableState getCurrentState();
     boolean currentIndexHasArtifact();
-    void correctJam();
     void populateAndShoot();
     void incrementPopIndex();
     void decrementPopIndex();
