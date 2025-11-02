@@ -12,6 +12,12 @@ import java.util.Arrays;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
+import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.SelectableRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
@@ -52,6 +58,9 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                 l.add("ColorTest", ColorTest::new);
                 l.add("TurntableTest", TurntableTest::new);
                 l.add("MotorTest", MotorTest::new);
+                l.add("IsolatedMotorTest", IsolatedMotorTest::new);
+                l.add("IsolatedServoTest", IsolatedServoTest::new);
+                l.add("IsolatedSensorTest", IsolatedSensorTest::new);
             });
             s.folder("ShooterTuning", l -> {
                 l.add("MomentOfInertiaCalibrator", MomentOfInertiaCalibrator::new);
@@ -785,4 +794,158 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             }
         }
     }
+
+    public static class IsolatedMotorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
+        private HwMotor testMotor;
+        private RevAmpedGamepad gp1;
+        private String motorName = "intake"; // Default motor name, can be changed via config
+
+        @Override
+        public void RevAmpedInit() {
+            gp1 = new RevAmpedGamepad(gamepad1);
+            testMotor = new HwMotor(hardwareMap, motorName, DcMotor.Direction.FORWARD);
+        }
+
+        @Override
+        public void RevAmpedLoop() {
+            // Manual control - A for forward, B for reverse
+            if (gp1.a.isTrue()) {
+                testMotor.setPower(0.3f);
+            } else if (gp1.b.isTrue()) {
+                testMotor.setPower(-0.3f);
+            } else {
+                testMotor.setPower(0f);
+            }
+
+            // Display telemetry
+            telemetry.clear();
+            telemetry.addData("ISOLATED MOTOR TESTER", "");
+            telemetry.addData("Motor Name", motorName);
+            telemetry.addData("Motor Current", String.format(Locale.US, "%.2f", testMotor.getCurrentAmps()) + "A");
+            telemetry.addData("Motor Power", String.format(Locale.US, "%.2f", testMotor.getPower()));
+            telemetry.addData("Motor Position", testMotor.getCurrentPosition());
+            telemetry.addData("Motor Velocity", String.format(Locale.US, "%.2f", testMotor.getVelocity()));
+            telemetry.addData("Controls", "A: Forward | B: Reverse");
+
+            telemetry.update();
+        }
+
+        @Override
+        public void update() {
+            gp1.update();
+        }
+
+        @Override
+        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
+            return Robot.OpModeType.TEST;
+        }
+    }
+
+    public static class IsolatedServoTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
+        private HwServo testServo;
+        private RevAmpedGamepad gp1;
+        private String servoName = "servo0"; // Default servo name, can be changed via config
+
+        @Override
+        public void RevAmpedInit() {
+            gp1 = new RevAmpedGamepad(gamepad1);
+            testServo = new HwServo(hardwareMap, servoName, 0.5f);
+        }
+
+        @Override
+        public void RevAmpedLoop() {
+            // Manual control - A: 0.0, B: 0.5, X: 1.0, Y: initial position
+            if (gp1.a.isPress()) {
+                testServo.setPosition(0.0f);
+            }
+            if (gp1.b.isPress()) {
+                testServo.setPosition(0.5f);
+            }
+            if (gp1.x.isPress()) {
+                testServo.setPosition(1.0f);
+            }
+            if (gp1.y.isPress()) {
+                testServo.setPosition(testServo.getInitialPosition());
+            }
+
+            // Display telemetry
+            telemetry.clear();
+            telemetry.addData("ISOLATED SERVO TESTER", "");
+            telemetry.addData("Servo Name", servoName);
+            telemetry.addData("Servo Position", String.format(Locale.US, "%.3f", testServo.getPosition()));
+            telemetry.addData("Initial Position", String.format(Locale.US, "%.3f", testServo.getInitialPosition()));
+            telemetry.addData("Controls", "A: 0.0 | B: 0.5 | X: 1.0 | Y: Initial");
+
+            telemetry.update();
+        }
+
+        @Override
+        public void update() {
+            gp1.update();
+        }
+
+        @Override
+        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
+            return Robot.OpModeType.TEST;
+        }
+    }
+
+    public static class IsolatedSensorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
+        private HwColorSensor colorSensor;
+        private HwSwitch digitalSwitch;
+        private String sensorType = "color"; // "color" or "switch"
+        private String sensorName = "color_left"; // Default sensor name
+
+        @Override
+        public void RevAmpedInit() {
+            // Initialize sensor based on type - adjust sensorType and sensorName as needed
+            if (sensorType.equals("color")) {
+                colorSensor = new HwColorSensor(hardwareMap, sensorName);
+            } else if (sensorType.equals("switch")) {
+                digitalSwitch = new HwSwitch(hardwareMap, sensorName, true, false);
+            }
+        }
+
+        @Override
+        public void RevAmpedLoop() {
+            // Update sensors
+            if (colorSensor != null) {
+                colorSensor.update();
+            }
+            if (digitalSwitch != null) {
+                digitalSwitch.update();
+            }
+
+            // Display telemetry
+            telemetry.clear();
+            telemetry.addData("ISOLATED SENSOR TESTER", "");
+            telemetry.addData("Sensor Type", sensorType.toUpperCase());
+            telemetry.addData("Sensor Name", sensorName);
+
+            if (sensorType.equals("color") && colorSensor != null) {
+                telemetry.addData("Hue", String.format(Locale.US, "%.1f", colorSensor.getHSVValues().getH()));
+                telemetry.addData("Saturation", String.format(Locale.US, "%.1f", colorSensor.getHSVValues().getS()));
+                telemetry.addData("Value", String.format(Locale.US, "%.1f", colorSensor.getHSVValues().getV()));
+                telemetry.addData("Distance", String.format(Locale.US, "%.1f", colorSensor.getDistanceMM()) + "mm");
+                telemetry.addData("RGB", String.format(Locale.US, "R:%.0f G:%.0f B:%.0f",
+                        colorSensor.getRGBValues().getR(),
+                        colorSensor.getRGBValues().getG(),
+                        colorSensor.getRGBValues().getB()));
+            } else if (sensorType.equals("switch") && digitalSwitch != null) {
+                telemetry.addData("Switch State", digitalSwitch.isTouch() ? "PRESSED" : "RELEASED");
+            }
+
+            telemetry.update();
+        }
+
+        @Override
+        public void update() {}
+
+        @Override
+        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
+            return Robot.OpModeType.TEST;
+        }
+    }
 }
+
+//UDPATES
