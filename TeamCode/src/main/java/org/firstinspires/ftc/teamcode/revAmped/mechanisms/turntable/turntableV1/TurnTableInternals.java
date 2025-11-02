@@ -8,7 +8,7 @@ public final class TurnTableInternals {
     public enum TurnTableInternalState {
         BALL1,
         BALL2,
-        BALL3;
+        BALL3
     }
 
     public interface TurnTableStateInterface {
@@ -106,11 +106,16 @@ public final class TurnTableInternals {
                 hardware.intakeMotor().stop();
             } else {
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                compartmentManager.startIntake(internalState);
             }
         }
 
         private void switchInternalCompartmentState() {
             compartmentManager.setCurrentIndex(internalState.ordinal());
+
+            if (cycleState == TurnTableCycleState.INTAKE) {
+                compartmentManager.startIntake(internalState);
+            }
         }
     }
 }

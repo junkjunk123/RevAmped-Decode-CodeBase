@@ -18,8 +18,6 @@ import java.util.function.Consumer;
 @Config
 public class TableCompartmentManager {
     public static int defaultRandomizationStateGreenIndex = 1;
-    private final ColorManager colorManager;
-    private final IntakeUltrasonic ultrasonicSensor;
     private int currentIndex = 0;
     private DecodeColorSensor.ArtifactColor lastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
     private DecodeColorSensor.ArtifactColor prevLastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
@@ -30,12 +28,10 @@ public class TableCompartmentManager {
     private final IntakeThread intakeThread;
 
     public TableCompartmentManager(ColorManager colorManager, IntakeUltrasonic ultrasonicSensor, BiConsumer<Integer, TableCompartment[]> uponIntake, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
-        this.colorManager = colorManager;
-        this.ultrasonicSensor = ultrasonicSensor;
         this.switchPopState = switchPopState;
         this.uponIntake = uponIntake;
         this.toggleCycleState = toggleCycleState;
-        this.intakeThread = new IntakeThread(colorManager, ultrasonicSensor, compartments);
+        this.intakeThread = new IntakeThread(colorManager, ultrasonicSensor, compartments, uponIntake);
     }
 
     public static final class TableCompartment {
@@ -178,12 +174,19 @@ public class TableCompartmentManager {
     public void intake() {
         intakeThread.run();
 
-        if (getEmptyIndices().length == 3)
+        if (switchToPop()) {
             toggleCycleState.run();
+        }
+    }
+
+    public void startIntake(TurnTableInternals.TurnTableInternalState state) {
+        intakeThread.startIntake(state);
     }
 
     public void manualTransfer() {
         uponIntake.accept(currentIndex, compartments);
+        if (getEmptyIndices().length == 1 && compartments[0].isNone())
+            compartments[0].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
         if (switchToPop()) toggleCycleState.run();
     }
 
