@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
@@ -61,8 +62,11 @@ public final class DecodeConstants implements Constants {
         TurnTable.smallIntakeDelay = 60; TurnTable.bigIntakeDelay=800;
 
         //ColorSensor Constants
-        IntakeColor.maxGreenHue = 170; IntakeColor.minGreenHue = 155; IntakeColor.maxPurpleHue = 250; IntakeColor.minPurpleHue = 208;
-        IntakeColor.maxPurpleLeftDistance = 80; IntakeColor.maxGreenLeftDistance = 67; IntakeColor.maxPurpleRightDistance = 40; IntakeColor.maxGreenRightDistance = 30;
-        DualIntakeColor.LEFT_OFFSET = 10;
+        ColorManager.maxGreenDistanceOne = 12.0f; ColorManager.maxPurpleDistanceOne = 12.0f;
+        ColorManager.maxGreenDistanceTwo = 12.0f; ColorManager.maxPurpleDistanceTwo = 12.0f;
+        ColorManager.maxPurpleHueOne = 290.0f; ColorManager.minPurpleHueOne = 230.0f;
+        ColorManager.maxPurpleHueTwo = 290.0f; ColorManager.minPurpleHueTwo = 230.0f;
+        ColorManager.maxGreenHueOne = 140.0f; ColorManager.minGreenHueOne = 80.0f;
+        ColorManager.maxGreenHueTwo = 140.0f; ColorManager.minGreenHueTwo = 80.0f;
     }
 }

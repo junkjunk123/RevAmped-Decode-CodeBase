@@ -24,7 +24,9 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.ShootingMechan
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
@@ -138,7 +140,8 @@ public class Robot {
         ));
         allDevices.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(
                 List.of(
-                        turnTable.hardware().intakeColor()
+                        turnTable.hardware().intakeColor().getSensorOne(),
+                        turnTable.hardware().intakeColor().getSensorTwo()
                 )
         ));
         turnTable.hardware().turntable().resetPosition();
@@ -207,7 +210,7 @@ public class Robot {
         return shooter.hardware().flywheel();
     }
 
-    public DecodeColorSensor intakeColor() {
+    public ColorManager intakeColor() {
         return turnTable.hardware().intakeColor();
     }
 
@@ -230,7 +233,8 @@ public class Robot {
 
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> buildIDMap() {
         HashMap<Class<? extends HwDevice>, HashSet<String>> map = new HashMap<>();
-        map.put(DecodeColorSensor.class, new HashSet<>(List.of("intakeColor")));
+        map.put(DecodeColorSensor.class, new HashSet<>(List.of("colorOne", "colorTwo")));
+        map.put(IntakeUltrasonic.class, new HashSet<>(List.of("intake_ultrasonic")));
         map.put(Flywheel.class, new HashSet<>(List.of("flywheel1", "flywheel2")));
         map.put(TurretMotor.class, new HashSet<>(List.of("turret")));
         map.put(IntakeMotor.class, new HashSet<>(List.of("intake")));

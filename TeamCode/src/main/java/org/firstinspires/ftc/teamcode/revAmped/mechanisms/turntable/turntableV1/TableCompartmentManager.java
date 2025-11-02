@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwUltrasonicSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 
 import java.util.Comparator;
@@ -18,15 +18,24 @@ import java.util.function.Consumer;
 @Config
 public class TableCompartmentManager {
     public static int defaultRandomizationStateGreenIndex = 1;
-    private final DecodeColorSensor colorSensor;
+    private final ColorManager colorManager;
     private final IntakeUltrasonic ultrasonicSensor;
+    private int currentIndex = 0;
+    private DecodeColorSensor.ArtifactColor lastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
+    private DecodeColorSensor.ArtifactColor prevLastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
+    private boolean motifMode = false;
+    private final Consumer<Integer> switchPopState;
+    private final BiConsumer<Integer, TableCompartment[]> uponIntake;
+    private final Runnable toggleCycleState;
+    private final IntakeThread intakeThread;
 
-    public TableCompartmentManager(DecodeColorSensor colorSensor, IntakeUltrasonic ultrasonicSensor, BiConsumer<Integer, TableCompartment[]> uponIntake, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
-        this.colorSensor = colorSensor;
+    public TableCompartmentManager(ColorManager colorManager, IntakeUltrasonic ultrasonicSensor, BiConsumer<Integer, TableCompartment[]> uponIntake, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
+        this.colorManager = colorManager;
         this.ultrasonicSensor = ultrasonicSensor;
         this.switchPopState = switchPopState;
         this.uponIntake = uponIntake;
         this.toggleCycleState = toggleCycleState;
+        this.intakeThread = new IntakeThread(colorManager, ultrasonicSensor, compartments);
     }
 
     public static final class TableCompartment {
@@ -98,15 +107,15 @@ public class TableCompartmentManager {
             else if (purple == 2) color = new Vector2D(Math.sqrt(0.1), Math.sqrt(0.9));
             else if (purple == 1) color = new Vector2D(Math.sqrt(0.5), Math.sqrt(0.5));
         }
-    }
 
-    private int currentIndex = 0;
-    private DecodeColorSensor.ArtifactColor lastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
-    private DecodeColorSensor.ArtifactColor prevLastPoppedColor = DecodeColorSensor.ArtifactColor.NONE;
-    private boolean motifMode = false;
-    private final Consumer<Integer> switchPopState;
-    private final BiConsumer<Integer, TableCompartment[]> uponIntake;
-    private final Runnable toggleCycleState;
+        public static Vector2D greenAmplitudes() {
+            return new Vector2D(0, 1);
+        }
+
+        public static Vector2D purpleAmplitudes() {
+            return new Vector2D(1, 0);
+        }
+    }
 
     public void setCurrentIndex(int currentIntakeIndex) {
         this.currentIndex = currentIntakeIndex;
@@ -167,18 +176,10 @@ public class TableCompartmentManager {
     }
 
     public void intake() {
-        if (!ultrasonicSensor.hasArtifact()) return;
-        updateColor();
-    }
+        intakeThread.run();
 
-    private void updateColor() {
-        //TODO: Fill this out
-        Scheduler.getInstance().add(new Delay(
-                100,
-                () -> {
-                    if (switchToPop()) toggleCycleState.run();
-                }
-        ));
+        if (getEmptyIndices().length == 3)
+            toggleCycleState.run();
     }
 
     public void manualTransfer() {

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueu
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
@@ -39,7 +40,7 @@ public class TurnTable implements ArtifactQueuer {
         IntakeMotor intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, voltageSensor);
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
-        IntakeColor intakeColor = new IntakeColor(hardwareMap, "color_left", 0d);
+        ColorManager intakeColor = new ColorManager(hardwareMap);
         IntakeUltrasonic ultrasonic = new IntakeUltrasonic(hardwareMap, "intake_ultrasonic");
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor, ultrasonic);
         compartments = new TableCompartmentManager(
@@ -104,7 +105,9 @@ public class TurnTable implements ArtifactQueuer {
         hardware.update();
         compartments.update();
 
-        if (currentState.getCycleState() == TurnTableCycleState.INTAKE && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) compartments.intake();
+        if (currentState.getCycleState() == TurnTableCycleState.INTAKE
+                && hardware.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE)
+            compartments.intake();
     }
 
     @Override

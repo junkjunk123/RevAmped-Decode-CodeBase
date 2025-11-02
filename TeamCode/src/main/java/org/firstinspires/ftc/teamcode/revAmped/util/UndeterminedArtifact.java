@@ -29,4 +29,12 @@ public class UndeterminedArtifact extends Artifact {
         else if (purple == 2) setProbabilityAmplitudes(new Vector2D(Math.sqrt(0.1), Math.sqrt(0.9)));
         else if (purple == 1) setProbabilityAmplitudes(new Vector2D(Math.sqrt(0.5), Math.sqrt(0.5)));
     }
+
+    public static Vector2D greenAmplitudes() {
+        return new Vector2D(1, 0);
+    }
+
+    public static Vector2D purpleAmplitudes() {
+        return new Vector2D(0, 1);
+    }
 }

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 
@@ -191,7 +192,7 @@ public interface Types {
         }
     }
 
-    record QueuerHardwareComponents(HwCRServo2<TableState> turntable, HwServoWithVoltage<Types.PopperState, Types.PopperVoltageState> popper, HwMotor2<Types.IntakeState> intakeMotor, DecodeColorSensor intakeColor, IntakeUltrasonic ultrasonic) {
+    record QueuerHardwareComponents(HwCRServo2<TableState> turntable, HwServoWithVoltage<Types.PopperState, Types.PopperVoltageState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();

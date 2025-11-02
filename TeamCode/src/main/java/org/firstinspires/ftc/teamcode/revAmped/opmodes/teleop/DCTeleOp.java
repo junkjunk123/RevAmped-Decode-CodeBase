@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
+import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
@@ -19,6 +21,8 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @TeleOp(name = "DCTeleOp", group = "TeleOp")
 public class DCTeleOp extends DecodeRevAmpedOpMode {
@@ -126,21 +130,12 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         if (gamepad_1.dpad_up.isPress()) {
             robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
             robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY);
-            /*
-            try {
-                robot.shooter.toggleHoodTracking();
-            } catch (Exception e) {
-                throw new UnsupportedOperationException("Hood tracking has not been implemented yet");
-            }
-            */
         }
 
         if (gamepad_1.dpad_down.isPress()) {
             robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
             robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
         }
-
-
 
         if (gamepad_1.dpad_left.isPress()){
             robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
