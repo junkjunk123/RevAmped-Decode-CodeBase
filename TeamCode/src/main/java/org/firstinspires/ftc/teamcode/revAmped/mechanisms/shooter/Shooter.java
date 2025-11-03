@@ -281,4 +281,17 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         if (currentState == ShooterState.REST) setCurrentState(ShooterState.TRACKING);
         else setCurrentState(ShooterState.REST);
     }
+
+    public void turntableAutomationControls(ShooterState state) {
+        switch (state) {
+            case REST -> intake();
+            case TRACKING -> setCurrentState(ShooterState.TRACKING);
+        }
+    }
+
+    public void intake() {
+        currentState = ShooterState.REST;
+        hardware().hoodServo().setCurrentState(Types.HoodState.REST);
+        hardware().turretMotor().setCurrentState(Types.TurretState.HOLD);
+    }
 }

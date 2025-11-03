@@ -61,7 +61,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedLoop() {
         if (gamepad_1.a.isPress()) {
-            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, 0);
+            robot.turretMotor().setCurrentState(Types.TurretState.HOLD);
         }
 
         if (gamepad_1.b.isPress()) {

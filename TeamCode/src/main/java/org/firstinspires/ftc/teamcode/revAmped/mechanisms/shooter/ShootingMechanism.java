@@ -32,4 +32,6 @@ public interface ShootingMechanism<T> {
     void toggleHoodTracking();
     void toggleTurretTracking();
     void toggleState();
+
+    void turntableAutomationControls(T state);
 }

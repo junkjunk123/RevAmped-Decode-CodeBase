@@ -8,8 +8,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSlide2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Turret;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
@@ -18,6 +22,8 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
 public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {
         super(hardwareMap, "turret", DcMotorSimple.Direction.REVERSE, motorState);
+        if (useTurretSwitch) this.limitSwitch = new HwSwitch(hardwareMap, "turret_switch", true, false);
+        else this.limitSwitch = null;
         controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     }
 
@@ -35,8 +41,9 @@ public class TurretMotor extends Turret<TurretState> {
     public static int TURRET_POSITIVE_LIMIT_TICKS;
     public static int TURRET_NEGATIVE_LIMIT_TICKS;
     public static double TURRET_RAD_LIMIT;
-
+    public final HwSwitch limitSwitch;
     private double prevFineTuneAngle = 0;
+    public static boolean useTurretSwitch = true;
 
     @Override
     public int ticksPerRotation() {
@@ -46,7 +53,10 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void buildStatePowerMap() {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
-        statePowerMap.put(TurretState.HOLD, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()));
+        statePowerMap.put(TurretState.HOLD, () -> {
+            float feedforward = targetPosition == 0 ? 0.15f : 0;
+            return (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()) + feedforward;
+        });
         statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()));
     }
 
@@ -61,6 +71,9 @@ public class TurretMotor extends Turret<TurretState> {
         targetPosition = motorState.getPos();
         controller.reset();
         prevFineTuneAngle = 0;
+
+        if (targetPosition == 0 && useTurretSwitch)
+            Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition));
     }
 
     public void setCurrentState(TurretState motorState, int targetPosition) {

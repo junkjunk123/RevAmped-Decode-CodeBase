@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@Config
 public class TableCompartmentManager {
     public static int defaultRandomizationStateGreenIndex = 1;
     private int currentIndex = 0;

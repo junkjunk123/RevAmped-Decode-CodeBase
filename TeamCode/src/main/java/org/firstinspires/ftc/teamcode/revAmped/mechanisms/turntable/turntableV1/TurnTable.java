@@ -58,7 +58,10 @@ public class TurnTable implements ArtifactQueuer {
                             intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
                             scheduler.add(new Delay(bigIntakeDelay, intakeMotor::stop));
                         }
-                        case INTAKE -> Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
+                        case INTAKE -> {
+                            Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
+                            shooterStateConsumer.accept(Types.ShooterState.REST);
+                        }
                     }
                 }
         );

@@ -123,7 +123,7 @@ public class Robot {
         voltageSensor = new HwVoltageSensor(hardwareMap);
         boolean setPositions = !opModeType.isTeleOp();
         shooter = new Shooter(hardwareMap, setPositions, scheduler);
-        turnTable = new TurnTable(scheduler, setPositions, hardwareMap, shooter::setCurrentState, voltageSensor);
+        turnTable = new TurnTable(scheduler, setPositions, hardwareMap, shooter::turntableAutomationControls, voltageSensor);
         allDevices.put(HwDevice.DeviceType.MOTOR, new HashSet<>(
                 List.of(
                         turnTable.hardware().intakeMotor(),
