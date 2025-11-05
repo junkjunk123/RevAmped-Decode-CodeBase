@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.DCTeleOpV2;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 public interface ArtifactQueuer {
     void preparePurple();
     void prepareGreen();
-    void pop();
+    void launch(boolean all, boolean forwardRotation);
+    void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh);
     Vector2D[] getBallColors();
     void intake();
     void update();

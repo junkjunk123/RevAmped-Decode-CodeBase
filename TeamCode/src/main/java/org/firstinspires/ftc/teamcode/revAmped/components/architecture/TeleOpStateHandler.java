@@ -68,21 +68,6 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      */
     public interface State extends GraphElement {
         /**
-         * The componentStates method returns a list of component states that correspond to this state.
-         * @return a list of component states
-         */
-        List<? extends Enum<?>> componentStates();
-
-        /**
-         * Gets the component state at the specified index.
-         * @param i the index of the component state
-         * @return the component state at the specified index
-         */
-        default Enum<?> getComponentState(int i) {
-            return componentStates().get(i);
-        }
-
-        /**
          * Gets the transition vector for this state.
          * The transition vector is a binary vector that represents the possible transitions from this state.
          * @return a binary vector representing the transition vector
@@ -512,5 +497,11 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      */
     public boolean isForce() {
         return force;
+    }
+
+    public T nextState() {
+        if (currentGraphElement instanceof State state) return (T) state;
+        else if (currentGraphElement instanceof Transition transition) return (T) transition.next;
+        else return null;
     }
 }

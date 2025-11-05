@@ -108,16 +108,16 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             telemetry.addData("Popper Tester", "");
             telemetry.addData("State", popper.getCurrentState().toString());
             telemetry.addData("Position", String.format(Locale.US, "%.3f", popper.getPosition()));
-            telemetry.addData("Voltage", String.format(Locale.US, "%.3f", popper.getVoltage()) + "V");
+            //telemetry.addData("Voltage", String.format(Locale.US, "%.3f", popper.getVoltage()) + "V");
             telemetry.addData("UP Threshold", String.format(Locale.US, "%.3f", Popper.UP_VOLTAGE) + "V");
             telemetry.addData("DOWN Threshold", String.format(Locale.US, "%.3f", Popper.DOWN_VOLTAGE) + "V");
 
             // Voltage status indicators
-            double currentVoltage = popper.getVoltage();
-            boolean atUpPosition = currentVoltage >= Popper.UP_VOLTAGE;
-            boolean atDownPosition = currentVoltage <= Popper.DOWN_VOLTAGE;
-            telemetry.addData("At UP Position", atUpPosition ? "YES" : "NO");
-            telemetry.addData("At DOWN Position", atDownPosition ? "YES" : "NO");
+            //double currentVoltage = popper.getVoltage();
+            //boolean atUpPosition = currentVoltage >= Popper.UP_VOLTAGE;
+            //boolean atDownPosition = currentVoltage <= Popper.DOWN_VOLTAGE;
+            //telemetry.addData("At UP Position", atUpPosition ? "YES" : "NO");
+            //telemetry.addData("At DOWN Position", atDownPosition ? "YES" : "NO");
 
             if (testRunning) {
                 telemetry.addData("Mode", "AUTO TEST - Step " + (testStep + 1) + "/4");
@@ -141,6 +141,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
 
         private void runTest() {
             switch (testStep) {
+                /*
                 case 0:
                     // Move to POP
                     popper.setCurrentState(Types.PopperState.POP);
@@ -171,6 +172,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                     }
                     break;
                 case 3:
+                    /*
                     // Check NEUTRAL voltage - verify it reached FULLY_DOWN state
                     boolean downVoltageReached = popper.reached(Types.PopperVoltageState.FULLY_DOWN);
                     if (downVoltageReached || testTimer.milliseconds() > 3000) {
@@ -183,7 +185,13 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                         testPassed = downVoltageReached;
                         telemetry.addData("Test", testPassed ? "PASSED - Popper working correctly!" : "FAILED - Voltage thresholds not met!");
                     }
-                    break;
+
+
+                break;
+
+            }
+
+                 */
             }
         }
     }
@@ -671,6 +679,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
 
         private void runPopperTest() {
             switch (testStep) {
+                /*
                 case 0:
                     popper.setCurrentState(Types.PopperState.POP);
                     if (testTimer.milliseconds() > 2000) {
@@ -702,6 +711,8 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                         testTimer.reset();
                     }
                     break;
+
+                 */
             }
         }
 

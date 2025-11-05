@@ -61,7 +61,7 @@ public class DecodeAutonomousMethods {
                         ).setMaxTimeToRun(!far? 3500 : 7500),
                         new Delay(
                                 1500,
-                                robot::shootAll
+                                () -> robot.turnTable.launch(true, true)
                         ),
                         new Pause(
                                 () -> robot.turnTable.getNumberOfBalls() == 0,

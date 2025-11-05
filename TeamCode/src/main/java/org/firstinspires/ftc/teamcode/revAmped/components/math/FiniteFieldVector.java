@@ -141,4 +141,8 @@ public class FiniteFieldVector<T extends FiniteFieldVector.Parameters> extends V
             // No additional methods needed, just a marker interface
         };
     }
+
+    public static FiniteFieldVector<FiniteFieldVector.BinaryVector> binaryVectorOf(double... values) {
+        return new FiniteFieldVector<>(binaryVector(), values);
+    }
 }

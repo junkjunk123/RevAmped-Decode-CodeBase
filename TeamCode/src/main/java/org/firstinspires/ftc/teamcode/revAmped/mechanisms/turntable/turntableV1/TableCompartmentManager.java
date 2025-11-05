@@ -154,7 +154,7 @@ public class TableCompartmentManager {
                 .toArray();
     }
 
-    public void pop() {
+    public void pop(boolean advance) {
         if (!compartments[currentIndex].isNone()) {
             prevLastPoppedColor = lastPoppedColor;
             lastPoppedColor = compartments[currentIndex].getGuessedColor();
@@ -162,11 +162,14 @@ public class TableCompartmentManager {
 
             int nextPopIndex = motifMode ? getNextMotifPopIndex() : findNextPopIndex();
 
-            if (nextPopIndex != currentIndex) {
-                advancePopIndex(nextPopIndex);
-            } else {
+            if (advance) {
+                if (nextPopIndex != currentIndex) {
+                    advancePopIndex(nextPopIndex);
+                } else {
+                    toggleCycleState.run();
+                }
+            } else if (getEmptyIndices().length == 3)
                 toggleCycleState.run();
-            }
         }
     }
 

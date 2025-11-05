@@ -70,7 +70,7 @@ public class MotorSlipCalibrator extends DecodeRevAmpedOpMode {
 
     private boolean startedLaunch() {
         //todo: fill this out
-        return popper.reached(Types.PopperVoltageState.FULLY_UP);
+        return false;
     }
 
     @Override

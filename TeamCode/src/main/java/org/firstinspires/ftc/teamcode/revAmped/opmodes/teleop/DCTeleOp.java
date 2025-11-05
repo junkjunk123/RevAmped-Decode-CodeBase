@@ -5,10 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
-import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
@@ -19,10 +17,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @TeleOp(name = "DCTeleOp", group = "TeleOp")
 public class DCTeleOp extends DecodeRevAmpedOpMode {
@@ -97,7 +91,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.y.isPress()) {
-            robot.shootAll();
+            //robot.shootAll();
         }
 
         if (gamepad_1.x.isPress()) {
@@ -119,7 +113,7 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.dpad_up.isPress()) {
-            robot.turnTable.pop();
+            //robot.turnTable.launch();
             robot.updateLock();
         }
 

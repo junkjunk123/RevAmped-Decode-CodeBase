@@ -28,7 +28,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltras
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
@@ -214,11 +213,11 @@ public class Robot {
         return turnTable.hardware().intakeColor();
     }
 
-    public HwCRServo2<Types.TableState> tableServo() {
+    public TableServo tableServo() {
         return turnTable.hardware().turntable();
     }
 
-    public HwServoWithVoltage<Types.PopperState, Types.PopperVoltageState> popper() {
+    public HwServo2<Types.PopperState> popper() {
         return turnTable.hardware().popper();
     }
 
@@ -257,32 +256,31 @@ public class Robot {
         return allHardwareClasses.get(type).stream().map(t -> idMap.get(t)).flatMap(Set::stream).collect(Collectors.toCollection(HashSet::new));
     }
 
-    public void shootAll() {
-        int balls = turnTable.getNumberOfBalls();
-        if (balls == 0) return;
-
-        turnTable.pop();
-        updateLock();
-        if (balls > 1) scheduler.add(new Delay(() -> tableServo().getVelocity() < 10
-                && Math.abs(tableServo().getLastError()) < 100
-                && turnTable.getNumberOfBalls() < balls, this::shootAll
-        ));
-    }
-
     public void updateLock() {
         if (hoodServo().isUpdateLock() && flywheel().isUpdateLock()) return;
 
         hoodServo().setUpdateLock(true);
         flywheel().setUpdateLock(true);
 
-        scheduler.add(
-                new Delay(() -> turnTable.getNumberOfBalls() == 0, () -> {
-                    hoodServo().setUpdateLock(false);
-                    flywheel().setUpdateLock(false);
-                })
-                .setCancellation(() -> turnTable.getCurrentState().getCycleState() != TurnTableInternals.TurnTableCycleState.POP)
-                .setCancellation(() -> shooter.pinpoint().getVelocityVector().getMagnitude() > 6)
-                .setMaxTimeToRun(3500)
-        );
+        Delay delay = new Delay(() -> turnTable.getNumberOfBalls() == 0, () -> {
+            hoodServo().setUpdateLock(false);
+            flywheel().setUpdateLock(false);
+        }).setMaxTimeToRun(3500);
+
+        if (opModeType.isTeleOp()) {
+            delay.setCancellation(() -> turnTable.getCurrentState().getCycleState() != TurnTableInternals.TurnTableCycleState.POP)
+                    .setCancellation(() -> shooter.pinpoint().getVelocityVector().getMagnitude() > 6);
+        }
+
+        scheduler.add(delay);
+    }
+
+    public Delay lockTillLaunchedAll(Runnable andThen) {
+        Delay delay = new Delay(() -> turnTable.getNumberOfBalls() == 0, andThen).setMaxTimeToRun(3500);
+        if (opModeType == OpModeType.TELEOP) {
+            delay.setCancellation(() -> turnTable.getCurrentState().getCycleState() != TurnTableInternals.TurnTableCycleState.POP)
+                    .setCancellation(() -> shooter.pinpoint().getVelocityVector().getMagnitude() > 6);
+        }
+        return delay;
     }
 }

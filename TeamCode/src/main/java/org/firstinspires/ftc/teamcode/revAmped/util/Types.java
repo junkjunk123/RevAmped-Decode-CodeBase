@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
@@ -69,7 +70,8 @@ public interface Types {
         REST,
         BALL1,
         BALL2,
-        BALL3;
+        BALL3,
+        ABSOLUTE_ROTATION;
 
         public int getPosition() {
             switch (this) {
@@ -82,9 +84,10 @@ public interface Types {
                 case BALL3 -> {
                     return TableServo.BALL3;
                 }
+                default -> {
+                    return 0;
+                }
             }
-
-            return 0;
         }
     }
 
@@ -192,7 +195,7 @@ public interface Types {
         }
     }
 
-    record QueuerHardwareComponents(HwCRServo2<TableState> turntable, HwServoWithVoltage<Types.PopperState, Types.PopperVoltageState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
+    record QueuerHardwareComponents(TableServo turntable, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();

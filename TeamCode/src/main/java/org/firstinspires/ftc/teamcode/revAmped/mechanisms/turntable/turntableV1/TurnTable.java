@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
@@ -21,6 +23,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableState;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.DCTeleOpV2;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.QueuerHardwareComponents;
 
@@ -49,9 +52,6 @@ public class TurnTable implements ArtifactQueuer {
                 (ball, compartments) -> {},
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {
-                    setCycleState(getCurrentState().getCycleState().toggle());
-                    compartments.resetPopHistory();
-
                     switch (getCurrentCycleState()) {
                         case POP -> {
                             shooterStateConsumer.accept(Types.ShooterState.TRACKING);
@@ -61,8 +61,12 @@ public class TurnTable implements ArtifactQueuer {
                         case INTAKE -> {
                             Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
                             shooterStateConsumer.accept(Types.ShooterState.REST);
+                            hardware().turntable().resetToRelativeRotation();
                         }
                     }
+
+                    setCycleState(getCurrentState().getCycleState().toggle());
+                    compartments.resetPopHistory();
                 }
         );
         currentState = new TurnTableState(TurnTableCycleState.INTAKE, TurnTableInternalState.BALL1, hardware, scheduler, compartments);
@@ -118,31 +122,74 @@ public class TurnTable implements ArtifactQueuer {
         return compartments.isMotifMode();
     }
 
-    public void pop() {
-        boolean isHoodTracking = Shooter.trackHood;
-        boolean isTurretTracking = Shooter.trackTurret;
-        Shooter.trackHood = false;
-        Shooter.trackTurret = false;
+    public void launch(boolean all, boolean forwardRotation) {
+        if (!all) {
+            shootOne(() -> {}, forwardRotation);
+        } else {
+            shootAll(() -> {}, forwardRotation, getNumberOfBalls());
+        }
+    }
+
+    private void shootOne(Runnable andThen, boolean forwardRotation) {
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
+        Robot.INSTANCE.updateLock();
+        if (forwardRotation) hardware.turntable().setNextState();
+        else hardware.turntable().setPreviousState();
         setCycleState(TurnTableCycleState.POP);
-        hardware.popper().setCurrentState(Types.PopperState.POP);
-        scheduler.add(new Delay(() -> hardware.popper().reached(Types.PopperVoltageState.FULLY_UP), () -> scheduler.add(new Delay(150, () -> {
-            hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
-            scheduler.add(new Delay(() -> hardware().popper().reached(Types.PopperVoltageState.FULLY_DOWN),
-                    () -> scheduler.add(new Delay(300, () -> {
-                        compartments.pop();
-                        scheduler.add(new Delay(() -> hardware().turntable().getVelocity() < 10 && Math.abs(hardware().turntable().getLastError()) < 100,
-                                () -> {
-                                    Shooter.trackHood = isHoodTracking;
-                                    Shooter.trackTurret = isTurretTracking;
-                                }
-                        ));
-                    }))
-            ));
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(300, () -> {
+            compartments.pop(true);
+            andThen.run();
         }))));
+        scheduler.add(Robot.INSTANCE.lockTillLaunchedAll(hardware.intakeMotor()::stop));
+    }
+
+    private void shootAll(Runnable andThen, boolean forwardRotation, int numBalls) {
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
+        if (forwardRotation) hardware.turntable().absoluteRotate(4.0/3.0);
+        else hardware.turntable().absoluteRotate(-4.0/3.0);
+        setCycleState(TurnTableCycleState.POP);
+        Robot.INSTANCE.updateLock();
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> {
+            scheduler.add(new Delay(800, () -> {
+                for (int j = 0; j < numBalls; j++) {
+                    compartments.pop(false);
+                    andThen.run();
+                }
+                hardware.intakeMotor().stop();
+            }));
+        }));
+    }
+
+    @Override
+    public void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh) {
+        DCTeleOpV2.CycleState cycleState = tsh.nextState();
+        tsh.runTransition(c -> {
+            if (!all) {
+                int i = getNumberOfBalls();
+                if (i == 0) return;
+
+                if (i == 1) {
+                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation), DCTeleOpV2.CycleState.INTAKING);
+                } else {
+                    if (cycleState == DCTeleOpV2.CycleState.SHOOTING) {
+                        tsh.task(() -> shootOne(() -> {
+                        }, forwardRotation), FiniteFieldVector.binaryVectorOf(0, 0, 1));
+                    } else if (cycleState == DCTeleOpV2.CycleState.DRIVING_TO_SHOOTING) {
+                        tsh.runTransition(t -> shootOne(() -> {}, forwardRotation), DCTeleOpV2.CycleState.SHOOTING);
+                    }
+                }
+            } else {
+                int i = getNumberOfBalls();
+                if (i == 0) return;
+
+                tsh.runTransition(t -> shootAll(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKING);
+            }
+        }, DCTeleOpV2.CycleState.SHOOTING);
     }
 
     public void switchStateToPop() {
         setCycleState(TurnTableCycleState.POP);
+        hardware().popper().setCurrentState(Types.PopperState.POP);
     }
 
     public void intake() {

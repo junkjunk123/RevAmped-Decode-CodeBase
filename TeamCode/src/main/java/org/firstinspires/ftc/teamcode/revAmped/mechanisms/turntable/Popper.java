@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwAnalogEncoder;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.PopperState;
 
-public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageState> {
+public class Popper extends HwServo2<PopperState> {
     public static double POP_TIME_MILLIS;
 
     public static float NEUTRAL;
@@ -24,7 +25,6 @@ public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageS
                 "popper",
                 setPosition,
                 PopperState.NEUTRAL,
-                new HwAnalogEncoder(hardwareMap, "popper_voltage"),
                 ServoBrand.AXON_MINI
         );
     }
@@ -35,17 +35,7 @@ public class Popper extends HwServoWithVoltage<PopperState, Types.PopperVoltageS
                 "popper",
                 initialPosition,
                 PopperState.NEUTRAL,
-                new HwAnalogEncoder(hardwareMap, "popper_voltage"),
                 ServoBrand.AXON_MINI
         );
-    }
-
-    @Override
-    public DelayedResult<Boolean> testResponse() {
-        setCurrentState(PopperState.POP);
-        return new DelayedSupplier<>(() -> reached(Types.PopperVoltageState.FULLY_UP),
-                () -> reached(Types.PopperVoltageState.FULLY_UP))
-                .setMaxTime(500)
-                .get();
     }
 }

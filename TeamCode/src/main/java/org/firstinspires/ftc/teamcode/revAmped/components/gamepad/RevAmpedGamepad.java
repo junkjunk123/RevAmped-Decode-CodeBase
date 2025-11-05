@@ -59,7 +59,7 @@ public class RevAmpedGamepad {
     public volatile float right_trigger = 0f;
 
     private final Gamepad gamepad;
-    public List<CustomButton> customButtons = new ArrayList<>();
+    public final List<CustomButton> customButtons = new ArrayList<>();
 
     private Button2 lastButton = null;
 
@@ -287,5 +287,9 @@ public class RevAmpedGamepad {
 
     public void setLastButton(Button2 lastButton) {
         this.lastButton = lastButton;
+    }
+
+    public Button2 getLastButton() {
+        return lastButton;
     }
 }
