@@ -41,4 +41,5 @@ public interface ArtifactQueuer {
     void incrementPopIndex();
     void decrementPopIndex();
     void fillWithPurple();
+    void updateColors();
 }

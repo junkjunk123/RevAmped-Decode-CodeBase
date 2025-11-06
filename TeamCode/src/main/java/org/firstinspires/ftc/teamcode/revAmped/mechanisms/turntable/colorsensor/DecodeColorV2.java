@@ -43,8 +43,8 @@ public abstract class DecodeColorV2 extends HwColorSensor implements DecodeColor
     }
 
     protected ArtifactColor fromDetectionColor(DetectionColor color) {
-        if (color == DetectionColor.PURPLE) return ArtifactColor.GREEN;
-        if (color == DetectionColor.GREEN) return ArtifactColor.PURPLE;
+        if (color == DetectionColor.PURPLE) return ArtifactColor.PURPLE;
+        if (color == DetectionColor.GREEN) return ArtifactColor.GREEN;
         return ArtifactColor.NONE;
     }
 
@@ -69,9 +69,9 @@ public abstract class DecodeColorV2 extends HwColorSensor implements DecodeColor
         currentColor = null;
     }
 
-    public EnumMap<DetectionColor, ColorEvaluator> colorEvaluators = buildColorEvaluatorMap();
+    public final EnumMap<DetectionColor, ColorEvaluator> colorEvaluators = buildColorEvaluatorMap();
 
-    public abstract EnumMap<DetectionColor, ColorEvaluator> buildColorEvaluatorMap();
+    protected abstract EnumMap<DetectionColor, ColorEvaluator> buildColorEvaluatorMap();
 
     public double getHue() {
         return getHSVValues().getH();

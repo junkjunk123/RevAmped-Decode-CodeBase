@@ -131,12 +131,17 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             robot.intakeMotor().setCurrentState(Types.IntakeState.STOP);
         }
 
+        if (gamepad_2.y.isPress()) {
+            tsh.task(() -> robot.turnTable.updateColors(), CycleState.INTAKING);
+        }
+
         if (gamepad_2.x.isPress()) {
-            tsh.runTransition(t -> {
-                robot.shooter.turntableAutomationControls(Types.ShooterState.TRACKING);
-                robot.turnTable.switchStateToPop();
-                scheduler.add(new Delay(300, () -> t.accept(true)));
-            }, CycleState.DRIVING_TO_SHOOTING);
+            if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) {
+                tsh.runTransition(t -> {
+                    robot.turnTable.switchStateToPop();
+                    scheduler.add(new Delay(300, () -> t.accept(true)));
+                }, CycleState.DRIVING_TO_SHOOTING);
+            }
         }
 
         if (gamepad_2.dpad_up.isPress()) {

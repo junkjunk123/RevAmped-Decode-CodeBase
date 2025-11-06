@@ -97,6 +97,11 @@ public class IntakeThread extends Lockable {
             setColor(0, new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
     }
 
+    public void updateColors(TurnTableInternals.TurnTableInternalState state) {
+        transformedCompartments = getTransformation(state, compartments);
+        updateColors(transformedCompartments);
+    }
+
     public boolean intookBall() {
         return intookBall;
     }
@@ -114,6 +119,16 @@ public class IntakeThread extends Lockable {
         for (int i = 0; i < 3; i++) {
             transformedCompartments[i] = compartments[(i + state.ordinal()) % 3];
         }
+    }
+
+    public static TableCompartmentManager.TableCompartment[] getTransformation(TurnTableInternals.TurnTableInternalState state, TableCompartmentManager.TableCompartment[] compartments) {
+        TableCompartmentManager.TableCompartment[] transformedCompartments = new TableCompartmentManager.TableCompartment[3];
+
+        for (int i = 0; i < 3; i++) {
+            transformedCompartments[i] = compartments[(i + state.ordinal()) % 3];
+        }
+
+        return transformedCompartments;
     }
 
     public HwDevice.Sensor<?> getSensor(int sensor) {

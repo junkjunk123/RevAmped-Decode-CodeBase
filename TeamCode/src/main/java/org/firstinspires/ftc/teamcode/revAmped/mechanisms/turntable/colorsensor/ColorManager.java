@@ -7,8 +7,8 @@ import java.util.EnumMap;
 
 @Config
 public class ColorManager {
-    private final DecodeColorV2 compartmentOneColor;
-    private final DecodeColorV2 compartmentTwoColor;
+    private final ColorOne compartmentOneColor;
+    private final ColorTwo compartmentTwoColor;
     private int currentSensor = 1;
 
     public static float minPurpleHueOne = 270;
@@ -33,34 +33,8 @@ public class ColorManager {
     private ReadMode readMode = ReadMode.BOTH;
 
     public ColorManager(HardwareMap hardwareMap) {
-        compartmentOneColor = new DecodeColorV2(hardwareMap, "colorOne") {
-            @Override
-            public EnumMap<DetectionColor, ColorEvaluator> buildColorEvaluatorMap() {
-                EnumMap<DetectionColor, ColorEvaluator> map = new EnumMap<>(DetectionColor.class);
-                map.put(DetectionColor.PURPLE, (hue, distance) ->
-                    hue >= minPurpleHueOne && hue <= maxPurpleHueOne && distance <= maxPurpleDistanceOne
-                );
-                map.put(DetectionColor.GREEN, (hue, distance) ->
-                    hue >= minGreenHueOne && hue <= maxGreenHueOne && distance <= maxGreenDistanceOne
-                );
-
-                return map;
-            }
-        };
-
-        compartmentTwoColor = new DecodeColorV2(hardwareMap, "colorTwo") {
-            @Override
-            public EnumMap<DetectionColor, ColorEvaluator> buildColorEvaluatorMap() {
-                EnumMap<DetectionColor, ColorEvaluator> map = new EnumMap<>(DetectionColor.class);
-                map.put(DetectionColor.PURPLE, (hue, distance) ->
-                    hue >= minPurpleHueTwo && hue <= maxPurpleHueTwo && distance <= maxPurpleDistanceTwo
-                );
-                map.put(DetectionColor.GREEN, (hue, distance) ->
-                    hue >= minGreenHueTwo && hue <= maxGreenHueTwo && distance <= maxGreenDistanceTwo
-                );
-                return map;
-            }
-        };
+        compartmentOneColor = new ColorOne(hardwareMap);
+        compartmentTwoColor = new ColorTwo(hardwareMap);
     }
 
     public void update() {

@@ -356,4 +356,8 @@ public class TableCompartmentManager {
             compartment.setColor(DecodeColorSensor.ArtifactColor.PURPLE);
         }
     }
+
+    public IntakeThread getIntakeThread() {
+        return intakeThread;
+    }
 }

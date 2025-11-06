@@ -44,7 +44,7 @@ public class TurnTable implements ArtifactQueuer {
         TableServo tableServo = new TableServo(hardwareMap, Types.TableState.REST, HwCRServo.Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap,setPositions);
         ColorManager intakeColor = new ColorManager(hardwareMap);
-        IntakeUltrasonic ultrasonic = new IntakeUltrasonic(hardwareMap, "intake_ultrasonic");
+        IntakeUltrasonic ultrasonic = new IntakeUltrasonic(hardwareMap);
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor, ultrasonic);
         compartments = new TableCompartmentManager(
                 hardware.intakeColor(),
@@ -279,5 +279,9 @@ public class TurnTable implements ArtifactQueuer {
 
     public void fillWithPurple() {
         compartments.fillWithPurple();
+    }
+
+    public void updateColors() {
+        compartments.getIntakeThread().updateColors(currentState.getInternalState());
     }
 }
