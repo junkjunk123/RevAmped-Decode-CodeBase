@@ -461,6 +461,14 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
     }
 
     /**
+     * Executes this setting after the current transition is completed, or immediately if the current graph element isn't a transition.
+     */
+    public void setting(Runnable setting) {
+        if (currentGraphElement instanceof State) setting.run();
+        else scheduler.add(new Delay(() -> currentElement() instanceof State, setting));
+    }
+
+    /**
      * Executes a task if the current state matches the component vector.
      * The component vector is a binary vector that indicates which components are active in the current state.
      * @param task the task to be executed
@@ -534,9 +542,23 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
     }
 
     public T nextState() {
-        if (currentGraphElement instanceof State state) return (T) state;
-        else if (currentGraphElement instanceof Transition transition) return (T) transition.next;
-        else return null;
+        if (currentGraphElement instanceof State state) {
+            try {
+                return enumClass.cast(state);
+            } catch (Exception ignored) {
+                throw new RuntimeException();
+            }
+        }
+
+        else if (currentGraphElement instanceof Transition transition) {
+            try {
+                return enumClass.cast(transition.next);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return null;
     }
 
     public static Transition referenceTransition(State current, State next) {

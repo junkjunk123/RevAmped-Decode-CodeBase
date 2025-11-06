@@ -167,28 +167,27 @@ public class TurnTable implements ArtifactQueuer {
     @Override
     public void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh) {
         DCTeleOpV2.CycleState cycleState = tsh.nextState();
-        tsh.runTransition(c -> {
+        tsh.runTransition(TeleOpStateHandler.TransitionCommand.fromRunnable(() -> {
             if (!all) {
                 int i = getNumberOfBalls();
                 if (i == 0) return;
 
                 if (i == 1) {
-                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation), DCTeleOpV2.CycleState.INTAKING);
+                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation), DCTeleOpV2.CycleState.INTAKING, 800);
                 } else {
                     if (cycleState == DCTeleOpV2.CycleState.SHOOTING) {
-                        tsh.task(() -> shootOne(() -> {
-                        }, forwardRotation), FiniteFieldVector.binaryVectorOf(0, 0, 1));
+                        tsh.task(() -> shootOne(() -> {}, forwardRotation), FiniteFieldVector.binaryVectorOf(0, 0, 1));
                     } else if (cycleState == DCTeleOpV2.CycleState.DRIVING_TO_SHOOTING) {
-                        tsh.runTransition(t -> shootOne(() -> {}, forwardRotation), DCTeleOpV2.CycleState.SHOOTING);
+                        tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation), DCTeleOpV2.CycleState.SHOOTING, 800);
                     }
                 }
             } else {
                 int i = getNumberOfBalls();
                 if (i == 0) return;
 
-                tsh.runTransition(t -> shootAll(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKING);
+                tsh.runTransition(t -> shootAll(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKING, 3500);
             }
-        }, DCTeleOpV2.CycleState.SHOOTING);
+        }), DCTeleOpV2.CycleState.SHOOTING);
     }
 
     public void switchStateToPop() {

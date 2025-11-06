@@ -89,11 +89,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedLoop() {
         if (gamepad_1.a.isPress()) {
-            tsh.task(() -> {
-                if (robot.turretMotor().getCurrentState() == Types.TurretState.TRACKING)
-                    robot.turretMotor().setCurrentState(Types.TurretState.HOLD);
-                else robot.turretMotor().setCurrentState(Types.TurretState.TRACKING);
-            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
+            tsh.task(() -> robot.shooter.toggleTurretTracking(), FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
 
         if (gamepad_1.b.isPress()) {
@@ -104,8 +100,13 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             tsh.runTransition(t -> {
                 robot.turnTable.intake();
                 DecodeColorSensor.enableSensors();
+                t.accept(true);
                 }, CycleState.INTAKING
             );
+        }
+
+        if (gamepad_1.y.isPress()) {
+            tsh.setForce(!tsh.isForce());
         }
 
         if (gamepad_2.customButtons.get(0).isPress()) {
@@ -134,21 +135,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             tsh.runTransition(t -> {
                 robot.shooter.turntableAutomationControls(Types.ShooterState.TRACKING);
                 robot.turnTable.switchStateToPop();
+                scheduler.add(new Delay(300, () -> t.accept(true)));
             }, CycleState.DRIVING_TO_SHOOTING);
-        }
-
-        if (gamepad_2.y.isPress()) {
-            //robot.shootAll();
-        }
-
-        if (gamepad_1.x.isPress()) {
-            robot.turnTable.toggleMotifMode();
-            gamepad_1.rumble(500);
-            gamepad_2.rumble(500);
-        }
-
-        if (gamepad_1.dpad_right.isPress()) {
-            robot.shooter.toggleTurretTracking();
         }
 
         if (gamepad_2.dpad_up.isPress()) {
@@ -167,48 +155,53 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             robot.turnTable.launch(false, false, tsh);
         }
 
-        if (gamepad_1.y.isPress()) {
-            robot.shooter.toggleState();
-        }
-
         if (gamepad_1.dpad_up.isPress()) {
-            robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
-            robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY);
+            tsh.task(() -> {
+                robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
+                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY);
+            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
 
         if (gamepad_1.dpad_down.isPress()) {
-            robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
-            robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+            tsh.task(() -> {
+                robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
+                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
 
-        if (gamepad_1.dpad_left.isPress()){
-            robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
-            robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
+        if (gamepad_1.dpad_left.isPress()) {
+            tsh.task(() -> {
+                robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
+                robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
+            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
 
         if (gamepad_2.left_stick_x > 0.3) {
-            Scheduler.getInstance().add(new Delay(() -> tsh.currentElement() instanceof CycleState,
-                    () -> robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35))));
+            tsh.setting(() -> robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35)));
         }
 
         if (gamepad_2.right_stick_button.isPress()) {
-            robot.tableServo().resetPosition();
+            tsh.setting(robot.tableServo()::resetPosition);
         }
 
         if (gamepad_1.left_trigger > 0.3) {
-            robot.turretMotor().fineTuneTicks((int) (-gamepad_1.left_trigger * 20));
+            if (tsh.nextState() != CycleState.INTAKING)
+                tsh.setting(() -> robot.turretMotor().fineTuneTicks((int) (-gamepad_1.left_trigger * 20)));
         }
 
         if (gamepad_1.right_trigger > 0.3) {
-            robot.turretMotor().fineTuneTicks((int) (gamepad_1.right_trigger * 20));
+            if (tsh.nextState() != CycleState.INTAKING)
+                tsh.setting(() -> robot.turretMotor().fineTuneTicks((int) (gamepad_1.right_trigger * 20)));
         }
 
         if (gamepad_1.right_bumper.isPress()) {
-            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS);
+            if (tsh.nextState() != CycleState.INTAKING)
+                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS));
         }
 
-        if (gamepad_1.left_bumper.isPress()){
-            robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS);
+        if (gamepad_1.left_bumper.isPress()) {
+            if (tsh.nextState() != CycleState.INTAKING)
+                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS));
         }
     }
 
