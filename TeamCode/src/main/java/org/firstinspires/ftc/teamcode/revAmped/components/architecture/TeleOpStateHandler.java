@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Del
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -88,7 +89,7 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * Transition is a record that represents a transition between two states in the state machine.
      * It implements the GraphElement interface and contains the current state, next state, and the transition command.
      */
-    private record Transition(State current, State next, TransitionOperator transitionCommand) implements GraphElement {
+    public record Transition(State current, State next, TransitionOperator transitionCommand) implements GraphElement {
         /**
          * Gets the current state, before the transition.
          * @return the current state of this transition
@@ -120,6 +121,18 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
          */
         public boolean isRunning() {
             return !isAborted() && !isComplete();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Transition that)) return false;
+            return Objects.equals(next, that.next) && Objects.equals(current, that.current);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(current, next);
         }
     }
 
@@ -454,7 +467,28 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * @param componentVector the binary vector representing the active components in the current state
      */
     public void task(Runnable task, FiniteFieldVector<FiniteFieldVector.BinaryVector> componentVector) {
-        if (componentVector.get(currentState().ordinal()) == 1) task.run();
+        if (currentGraphElement instanceof State) {
+            if (componentVector.get(currentState().ordinal()) == 1) task.run();
+        }
+
+        else if (currentGraphElement instanceof Transition transition)
+            if (componentVector.get(enumClass.cast(transition.next()).ordinal()) == 1)
+                scheduler.add(new Delay(transition::isComplete, task).setCancellation(transition::isAborted));
+    }
+
+    /**
+     * Executes a task if the current state matches the specified state.
+     * @param task the task to be executed
+     * @param state the state to check against the current state
+     */
+    public void task(Runnable task, T state) {
+        if (currentGraphElement instanceof State curState) {
+            if (curState == state) task.run();
+        }
+
+        else if (currentGraphElement instanceof Transition transition)
+            if (enumClass.cast(transition) == state)
+                scheduler.add(new Delay(transition::isComplete, task).setCancellation(transition::isAborted));
     }
 
     /**
@@ -503,5 +537,9 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
         if (currentGraphElement instanceof State state) return (T) state;
         else if (currentGraphElement instanceof Transition transition) return (T) transition.next;
         else return null;
+    }
+
+    public static Transition referenceTransition(State current, State next) {
+        return new Transition(current, next, new TransitionOperator(t -> {}));
     }
 }

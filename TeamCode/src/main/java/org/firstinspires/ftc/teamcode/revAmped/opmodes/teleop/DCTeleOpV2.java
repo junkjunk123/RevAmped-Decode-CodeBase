@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
@@ -95,11 +97,15 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.b.isPress()) {
-            tsh.runTransition(t -> robot.turnTable.populateAndShoot(), CycleState.DRIVING_TO_SHOOTING);
+            tsh.task(robot.turnTable::populateAndShoot, FiniteFieldVector.binaryVectorOf(1, 0, 0));
         }
 
         if (gamepad_2.b.isPress()) {
-            tsh.runTransition(t -> {robot.turnTable.intake(); DecodeColorSensor.enableSensors();}, CycleState.INTAKING);
+            tsh.runTransition(t -> {
+                robot.turnTable.intake();
+                DecodeColorSensor.enableSensors();
+                }, CycleState.INTAKING
+            );
         }
 
         if (gamepad_2.customButtons.get(0).isPress()) {
@@ -110,8 +116,9 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.right_bumper.isPress()) {
-            if (robot.turnTable.getCurrentState().getCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE) robot.turnTable.manualTransfer();
-            else robot.turnTable.incrementPopIndex();
+            if (robot.turnTable.getCurrentState().getCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
+                tsh.task(robot.turnTable::manualTransfer, CycleState.INTAKING);
+            else tsh.task(robot.turnTable::incrementPopIndex, FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
 
         if (gamepad_2.left_bumper.isPress()) {
@@ -119,12 +126,15 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.a.isPress()) {
+            //no tsh needed
             robot.intakeMotor().setCurrentState(Types.IntakeState.STOP);
         }
 
         if (gamepad_2.x.isPress()) {
-            robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
-            robot.turnTable.switchStateToPop();
+            tsh.runTransition(t -> {
+                robot.shooter.turntableAutomationControls(Types.ShooterState.TRACKING);
+                robot.turnTable.switchStateToPop();
+            }, CycleState.DRIVING_TO_SHOOTING);
         }
 
         if (gamepad_2.y.isPress()) {
@@ -177,7 +187,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.left_stick_x > 0.3) {
-            robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35));
+            Scheduler.getInstance().add(new Delay(() -> tsh.currentElement() instanceof CycleState,
+                    () -> robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35))));
         }
 
         if (gamepad_2.right_stick_button.isPress()) {

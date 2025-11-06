@@ -143,10 +143,14 @@ public class TurnTable implements ArtifactQueuer {
         scheduler.add(Robot.INSTANCE.lockTillLaunchedAll(hardware.intakeMotor()::stop));
     }
 
+    private double computeRotation(int numberOfBalls) {
+        return numberOfBalls / 3.0 + 1.0 / 3.0;
+    }
+
     private void shootAll(Runnable andThen, boolean forwardRotation, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
-        if (forwardRotation) hardware.turntable().absoluteRotate(4.0/3.0);
-        else hardware.turntable().absoluteRotate(-4.0/3.0);
+        if (forwardRotation) hardware.turntable().absoluteRotate(computeRotation(numBalls));
+        else hardware.turntable().absoluteRotate(-computeRotation(numBalls));
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
         scheduler.add(new Delay(hardware.turntable()::reached, () -> {

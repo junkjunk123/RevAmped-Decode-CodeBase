@@ -102,9 +102,7 @@ public final class TurnTableInternals {
         }
 
         private void cycleStateInitAction() {
-            if (cycleState == TurnTableCycleState.POP) {
-                hardware.popper().setCurrentState(Types.PopperState.POP);
-            } else {
+            if (cycleState == TurnTableCycleState.INTAKE) {
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
                 compartmentManager.startIntake(internalState);
             }
