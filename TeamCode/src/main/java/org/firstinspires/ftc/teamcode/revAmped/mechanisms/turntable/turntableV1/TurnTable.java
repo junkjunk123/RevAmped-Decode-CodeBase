@@ -153,15 +153,13 @@ public class TurnTable implements ArtifactQueuer {
         else hardware.turntable().absoluteRotate(-computeRotation(numBalls));
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> {
-            scheduler.add(new Delay(800, () -> {
-                for (int j = 0; j < numBalls; j++) {
-                    compartments.pop(false);
-                    andThen.run();
-                }
-                hardware.intakeMotor().stop();
-            }));
-        }));
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(800, () -> {
+            for (int j = 0; j < numBalls; j++) {
+                compartments.pop(false);
+                andThen.run();
+            }
+            hardware.intakeMotor().stop();
+        }))));
     }
 
     @Override

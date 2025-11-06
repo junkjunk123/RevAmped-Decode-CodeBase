@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class IntakeThread extends Lockable {
     private final ColorManager colorManager;
     private final IntakeUltrasonic intakeUltrasonic;
-    public static int INTAKE_DELAY = 400;
+    public static int INTAKE_DELAY;
     private final TableCompartmentManager.TableCompartment[] compartments;
     public List<Supplier<Vector2D>> sensors;
     private boolean intookBall;
