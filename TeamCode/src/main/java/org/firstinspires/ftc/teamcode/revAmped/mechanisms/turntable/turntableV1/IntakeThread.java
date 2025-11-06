@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 import com.acmerobotics.dashboard.config.Config;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
@@ -111,6 +113,20 @@ public class IntakeThread extends Lockable {
 
         for (int i = 0; i < 3; i++) {
             transformedCompartments[i] = compartments[(i + state.ordinal()) % 3];
+        }
+    }
+
+    public HwDevice.Sensor<?> getSensor(int sensor) {
+        switch (sensor) {
+            case 1 -> {
+                return colorManager.getSensorOne();
+            }
+            case 2 -> {
+                return colorManager.getSensorTwo();
+            }
+            default -> {
+                return intakeUltrasonic;
+            }
         }
     }
 }

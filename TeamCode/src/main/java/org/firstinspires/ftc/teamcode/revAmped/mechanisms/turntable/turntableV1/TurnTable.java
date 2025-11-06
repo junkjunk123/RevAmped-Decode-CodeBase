@@ -214,7 +214,7 @@ public class TurnTable implements ArtifactQueuer {
     public Vector2D[] getBallColors() {
         return Arrays.stream(compartments.getCompartments())
                 .map(TableCompartmentManager.TableCompartment::getColor)
-                .toArray(org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D[]::new);
+                .toArray(Vector2D[]::new);
     }
 
     public void prepareGreen() {

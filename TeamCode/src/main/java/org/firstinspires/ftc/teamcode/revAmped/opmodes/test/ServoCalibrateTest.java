@@ -34,7 +34,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
     private List<String> servos;
     private String currentServo;
     private boolean selecting = true;
-    private AnalogInput voltage;
+    //private AnalogInput voltage;
     private final HashMap<String, Integer> calibratedPositions = new HashMap<>();
     private Prompter prompter;
 
@@ -43,7 +43,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
         servos = List.of("hood","popper");
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        voltage = hardwareMap.get(AnalogInput.class,"popper_voltage");
+        //voltage = hardwareMap.get(AnalogInput.class,"popper_voltage");
         telemetry.addData(">>", "Press start to continue");
         telemetry.update();
         prompter = new Prompter(this, gamepad_1)
@@ -138,7 +138,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
         telemetryA.addData("TICK_CHANGE",TICK_CHANGE);
         telemetry.addData("PWM",
                 Integer.toString((int) (posJoy1*1805.2/255f+591.68)));
-        telemetryA.addData("Voltage",voltage.getVoltage());
+        //telemetryA.addData("Voltage",voltage.getVoltage());
         telemetryA.update();
     }
 
