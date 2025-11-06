@@ -109,4 +109,14 @@ public class TurretMotor extends Turret<TurretState> {
     public int getTargetPosition() {
         return targetPosition;
     }
+
+    public HwSwitch getLimitSwitch() {
+        return limitSwitch;
+    }
+
+    @Override
+    public void update() {
+        limitSwitch.update();
+        super.update();
+    }
 }

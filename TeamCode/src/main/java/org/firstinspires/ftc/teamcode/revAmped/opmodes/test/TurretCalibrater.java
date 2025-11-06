@@ -43,6 +43,7 @@ public class TurretCalibrater extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
         telemetry.addData("turretState", robot.turretMotor().getCurrentState());
+        telemetry.addData("turretSwitch", robot.turretMotor().limitSwitch.isTouch());
 
         if (gamepad_1.a.isPress()) {
             robot.shooter.toggleTurretTracking();

@@ -9,6 +9,7 @@
             <ContinuousRotationServo name="table" port="0"/>
             <Servo name="popper" port="1"/>
             <Servo name="hood" port="5"/>
+            <DigitalDevice name="turret_switch" port="0"/>
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="motor_lf" port="0"/>
