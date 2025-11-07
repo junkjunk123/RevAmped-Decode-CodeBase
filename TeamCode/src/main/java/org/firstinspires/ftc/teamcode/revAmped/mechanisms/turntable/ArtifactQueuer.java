@@ -13,6 +13,7 @@ public interface ArtifactQueuer {
     void launch(boolean all, boolean forwardRotation);
     void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh);
     Vector2D[] getBallColors();
+    DecodeColorSensor.ArtifactColor[] getPredictedBallColors();
     void intake();
     void update();
     boolean isMotifMode();

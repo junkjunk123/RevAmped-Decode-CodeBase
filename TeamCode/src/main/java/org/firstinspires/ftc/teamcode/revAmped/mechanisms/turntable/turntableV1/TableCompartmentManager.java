@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
@@ -109,6 +110,11 @@ public class TableCompartmentManager {
 
         public static Vector2D purpleAmplitudes() {
             return new Vector2D(1, 0);
+        }
+
+        public static DecodeColorSensor.ArtifactColor getGuessedColor(Vector2D color) {
+            if (color.magnitude() < 0.1) return DecodeColorSensor.ArtifactColor.NONE;
+            return color.getX() > color.getY() ? DecodeColorSensor.ArtifactColor.PURPLE : DecodeColorSensor.ArtifactColor.GREEN;
         }
     }
 

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public abstract class TwoMotorMechanism<T extends Enum<T> & HwMotor2.MotorState> extends HwMotor2<T> {
-    private final HwMotor motor2;
+    public final HwMotor motor2;
 
     protected TwoMotorMechanism(HardwareMap hardwareMap, String id, String id2, DcMotorSimple.Direction direction, DcMotorSimple.Direction direction2, T motorState) throws IllegalArgumentException {
         super(hardwareMap, id, direction, motorState);

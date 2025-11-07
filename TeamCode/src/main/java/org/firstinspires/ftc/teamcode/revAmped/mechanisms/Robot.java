@@ -46,7 +46,7 @@ public class Robot {
     public static Robot AUTONOMOUS_INSTANCE;
     private List<LynxModule> allHubs;
     private Scheduler scheduler;
-    public ArtifactQueuer turnTable;
+    public TurnTable turnTable;
     public ShootingMechanism<Types.ShooterState> shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> idMap = buildIDMap();

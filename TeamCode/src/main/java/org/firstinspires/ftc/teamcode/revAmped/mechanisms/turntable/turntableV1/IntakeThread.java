@@ -35,6 +35,8 @@ public class IntakeThread extends Lockable {
                 () -> this.colorManager.getCompartmentOneColor().amplitudes(),
                 () -> this.colorManager.getCompartmentTwoColor().amplitudes()
         );
+
+        transformedCompartments = compartments;
     }
 
     @Override
@@ -143,5 +145,9 @@ public class IntakeThread extends Lockable {
                 return intakeUltrasonic;
             }
         }
+    }
+
+    public TableCompartmentManager.TableCompartment[] getCompartments() {
+        return compartments;
     }
 }

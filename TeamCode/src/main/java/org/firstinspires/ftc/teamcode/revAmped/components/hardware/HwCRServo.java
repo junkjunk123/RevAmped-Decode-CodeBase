@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
@@ -77,6 +78,20 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
                 @Override
                 public double getVelocity() {
                     return otherMotor.motor.getVelocity();
+                }
+            };
+        }
+
+        static Encoder external(DcMotorEx otherMotor) {
+            return new Encoder() {
+                @Override
+                public int getPosition() {
+                    return otherMotor.getCurrentPosition();
+                }
+
+                @Override
+                public double getVelocity() {
+                    return otherMotor.getVelocity();
                 }
             };
         }

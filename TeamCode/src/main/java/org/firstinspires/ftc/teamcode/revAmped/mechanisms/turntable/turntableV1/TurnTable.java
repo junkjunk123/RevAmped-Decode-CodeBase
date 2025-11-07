@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpSta
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
@@ -217,6 +218,19 @@ public class TurnTable implements ArtifactQueuer {
                 .toArray(Vector2D[]::new);
     }
 
+    @Override
+    public ArtifactColor[] getPredictedBallColors() {
+        return Arrays.stream(compartments.getCompartments())
+                .map(TableCompartmentManager.TableCompartment::getGuessedColor)
+                .toArray(ArtifactColor[]::new);
+    }
+
+    public static ArtifactColor[] getPredictedBallColors(TableCompartmentManager.TableCompartment[] compartments) {
+        return Arrays.stream(compartments)
+                .map(TableCompartmentManager.TableCompartment::getGuessedColor)
+                .toArray(ArtifactColor[]::new);
+    }
+
     public void prepareGreen() {
         compartments.prepareGreenForPop();
         setCycleState(TurnTableCycleState.POP);
@@ -283,5 +297,9 @@ public class TurnTable implements ArtifactQueuer {
 
     public void updateColors() {
         compartments.getIntakeThread().updateColors(currentState.getInternalState());
+    }
+
+    public TableCompartmentManager getCompartments() {
+        return compartments;
     }
 }

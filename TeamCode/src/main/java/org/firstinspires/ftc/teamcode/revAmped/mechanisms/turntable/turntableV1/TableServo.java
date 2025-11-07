@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
 
 import java.util.function.BooleanSupplier;
 
+@Config
 public class TableServo extends HwCRServo2<TableState> {
     public static PIDFCoefficients TABLE_PIDF_COEFFICIENTS;
     private final PIDFController controller;
@@ -26,6 +28,7 @@ public class TableServo extends HwCRServo2<TableState> {
     private final Differentiator velocityComputer;
     private int finetuneTicks = 0;
     private int absoluteRotationTarget = 0;
+    public static DcMotorSimple.Direction direction = DcMotorSimple.Direction.REVERSE;
 
     @Override
     public int ticksPerRotation() {
@@ -42,7 +45,7 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
-        super(hardwareMap, "table", DcMotorSimple.Direction.REVERSE, state, encoder);
+        super(hardwareMap, "table", direction, state, encoder);
         controller = new PIDFController(TABLE_PIDF_COEFFICIENTS);
         resetPosition();
         velocityComputer = new Differentiator(encoder);

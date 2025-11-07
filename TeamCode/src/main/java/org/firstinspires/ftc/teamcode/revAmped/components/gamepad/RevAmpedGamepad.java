@@ -233,9 +233,9 @@ public class RevAmpedGamepad {
      * A builder class to create custom buttons with specific conditions.
      */
     public static class CustomButtonCreator {
-        private BooleanSupplier button = () -> true;
-        private Supplier<Float> buttonVal;
-        private String id;
+        private BooleanSupplier button;
+        private final Supplier<Float> buttonVal;
+        private final String id;
 
         /**
          * Constructor to initialize the CustomButtonCreator with a BooleanSupplier.
@@ -253,7 +253,12 @@ public class RevAmpedGamepad {
          * @return the CustomButtonCreator instance for method chaining
          */
         public CustomButtonCreator greaterThan(float threshold) {
-            button = () -> button.getAsBoolean() && buttonVal.get() > threshold;
+            if (button == null) {
+                button = () -> buttonVal.get() > threshold;
+                return this;
+            }
+            BooleanSupplier button1 = button;
+            button = () -> button1.getAsBoolean() && buttonVal.get() > threshold;
             return this;
         }
 
@@ -263,7 +268,12 @@ public class RevAmpedGamepad {
          * @return the CustomButtonCreator instance for method chaining
          */
         public CustomButtonCreator lessThan(float threshold) {
-            button = () -> button.getAsBoolean() && buttonVal.get() < threshold;
+            if (button == null) {
+                button = () -> buttonVal.get() < threshold;
+                return this;
+            }
+            BooleanSupplier button1 = button;
+            button = () -> button1.getAsBoolean() && buttonVal.get() < threshold;
             return this;
         }
 

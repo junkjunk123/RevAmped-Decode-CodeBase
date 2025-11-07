@@ -1,6 +1,13 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.math;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
+
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
 /**
  * A class that handles calculations for integral, derivative, and average values.
  * It uses an ElapsedTime instance to measure time intervals for these calculations.

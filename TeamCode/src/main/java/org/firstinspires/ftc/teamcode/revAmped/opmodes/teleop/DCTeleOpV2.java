@@ -18,10 +18,12 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -136,12 +138,10 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.x.isPress()) {
-            if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) {
-                tsh.runTransition(t -> {
-                    robot.turnTable.switchStateToPop();
-                    scheduler.add(new Delay(300, () -> t.accept(true)));
-                }, CycleState.DRIVING_TO_SHOOTING);
-            }
+            tsh.runTransition(t -> {
+                robot.turnTable.switchStateToPop();
+                scheduler.add(new Delay(300, () -> t.accept(true)));
+            }, CycleState.DRIVING_TO_SHOOTING);
         }
 
         if (gamepad_2.dpad_up.isPress()) {
@@ -217,7 +217,12 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
-        //telemetry.update();
+        telemetry.addData("tableCompartments", Arrays.toString(robot.turnTable.getPredictedBallColors()));
+        telemetry.addData("streamCompartments", Arrays.toString(TurnTable.getPredictedBallColors(robot.turnTable.getCompartments().getIntakeThread().getCompartments())));
+        telemetry.addData("currentState", tsh.currentState());
+        boolean inTransition = tsh.currentElement() instanceof TeleOpStateHandler.Transition;
+        telemetry.addData("inTransition", inTransition + " " + tsh.nextState());
+        telemetry.update();
     }
 
     @Override
