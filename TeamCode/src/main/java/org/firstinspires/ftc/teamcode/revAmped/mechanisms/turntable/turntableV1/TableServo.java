@@ -68,6 +68,7 @@ public class TableServo extends HwCRServo2<TableState> {
 
     @Override
     public int getCurrentPosition() {
+        if (getCurrentState() == TableState.ABSOLUTE_ROTATION) return super.getCurrentPosition();
         return super.getCurrentPosition() % TICKS_PER_ROTATION;
     }
 
@@ -138,5 +139,10 @@ public class TableServo extends HwCRServo2<TableState> {
         int normalizedTarget = absoluteRotationTarget % TICKS_PER_ROTATION;
         if (normalizedTarget < 0) normalizedTarget += TICKS_PER_ROTATION;
         setCurrentState(closestState(normalizedTarget));
+        absoluteRotationTarget = 0;
+    }
+
+    public int getAbsoluteRotationTarget() {
+        return absoluteRotationTarget;
     }
 }

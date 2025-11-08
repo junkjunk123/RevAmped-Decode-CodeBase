@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
@@ -80,8 +81,8 @@ public final class TurnTableInternals {
 
         public void switchInternalState(boolean init) {
             if (cycleState == TurnTableCycleState.POP) {
-                int nextPopIndex = compartmentManager.isMotifMode() ? compartmentManager.getNextMotifPopIndex() : compartmentManager.findNextPopIndex();
-                setInternalState(TurnTableInternalState.values()[nextPopIndex], init);
+                //int nextPopIndex = compartmentManager.isMotifMode() ? compartmentManager.getNextMotifPopIndex() : compartmentManager.findNextPopIndex();
+                //setInternalState(TurnTableInternalState.values()[nextPopIndex], init);
             }
         }
 
@@ -104,7 +105,10 @@ public final class TurnTableInternals {
         private void cycleStateInitAction() {
             if (cycleState == TurnTableCycleState.INTAKE) {
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-                compartmentManager.startIntake(internalState);
+                scheduler.add(new Delay(hardware.turntable()::reached, () -> {
+                    hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
+                    compartmentManager.startIntake(internalState);
+                }).setMaxTimeToRun(3500));
             }
         }
 

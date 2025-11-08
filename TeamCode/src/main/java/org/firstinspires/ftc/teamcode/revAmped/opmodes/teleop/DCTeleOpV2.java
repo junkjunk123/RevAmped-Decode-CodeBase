@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop;
 
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable.BIG_INTAKE_DELAY;
+
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -94,17 +96,24 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             tsh.task(() -> robot.shooter.toggleTurretTracking(), FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
 
-        if (gamepad_1.b.isPress()) {
-            tsh.task(robot.turnTable::populateAndShoot, FiniteFieldVector.binaryVectorOf(1, 0, 0));
-        }
-
         if (gamepad_2.b.isPress()) {
-            tsh.runTransition(t -> {
-                robot.turnTable.intake();
-                DecodeColorSensor.enableSensors();
-                t.accept(true);
-                }, CycleState.INTAKING
-            );
+            if (robot.intakeMotor().getCurrentState() != Types.IntakeState.INTAKE) {
+                tsh.runTransition(t -> {
+                            if (robot.turnTable.getCurrentCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
+                                robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
+
+                            robot.turnTable.intake();
+                            DecodeColorSensor.enableSensors();
+                            t.accept(true);
+                        }, CycleState.INTAKING
+                );
+            } else {
+                robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
+                scheduler.add(new Delay(BIG_INTAKE_DELAY, () -> {
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                    scheduler.add(new Delay(BIG_INTAKE_DELAY, robot.intakeMotor()::stop));
+                }));
+            }
         }
 
         if (gamepad_1.y.isPress()) {
@@ -119,13 +128,11 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.right_bumper.isPress()) {
-            if (robot.turnTable.getCurrentState().getCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
-                tsh.task(robot.turnTable::manualTransfer, CycleState.INTAKING);
-            else tsh.task(robot.turnTable::incrementPopIndex, FiniteFieldVector.binaryVectorOf(0, 1, 1));
+            tsh.task(robot.turnTable::incrementPopIndex, FiniteFieldVector.binaryVectorOf(1,0,0));
         }
 
         if (gamepad_2.left_bumper.isPress()) {
-            tsh.task(robot.turnTable::decrementPopIndex, FiniteFieldVector.binaryVectorOf(0, 1, 1));
+            tsh.task(robot.turnTable::decrementPopIndex, FiniteFieldVector.binaryVectorOf(1,0,0));
         }
 
         if (gamepad_2.a.isPress()) {
@@ -133,15 +140,19 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             robot.intakeMotor().setCurrentState(Types.IntakeState.STOP);
         }
 
-        if (gamepad_2.y.isPress()) {
-            tsh.task(() -> robot.turnTable.updateColors(), CycleState.INTAKING);
-        }
-
         if (gamepad_2.x.isPress()) {
-            tsh.runTransition(t -> {
-                robot.turnTable.switchStateToPop();
-                scheduler.add(new Delay(300, () -> t.accept(true)));
-            }, CycleState.DRIVING_TO_SHOOTING);
+            if (tsh.currentState() == CycleState.INTAKING) {
+                robot.turnTable.updateColors();
+                scheduler.add(new Delay(20, () -> tsh.runTransition(t -> {
+                    robot.turnTable.switchStateToPop();
+                    robot.intakeMotor().stop();
+                    robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
+                    scheduler.add(new Delay(() -> robot.popper().getCurrentState() == Types.PopperState.POP,
+                            () -> scheduler.add(new Delay(300, () -> t.accept(true)))));
+                }, CycleState.DRIVING_TO_SHOOTING)));
+            } else {
+                robot.turnTable.updateColors();
+            }
         }
 
         if (gamepad_2.dpad_up.isPress()) {
@@ -150,14 +161,6 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_down.isPress()) {
             robot.turnTable.launch(false, true, tsh);
-        }
-
-        if (gamepad_2.dpad_right.isPress()) {
-            robot.turnTable.launch(false, true, tsh);
-        }
-
-        if (gamepad_2.dpad_left.isPress()) {
-            robot.turnTable.launch(false, false, tsh);
         }
 
         if (gamepad_1.dpad_up.isPress()) {
@@ -214,7 +217,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
     public void update() {
         gamepad_1.update();
         gamepad_2.update();
-        if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) drivetrain.updateLocalization();
+        if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING)
+            drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
         telemetry.addData("tableCompartments", Arrays.toString(robot.turnTable.getPredictedBallColors()));
@@ -222,6 +226,17 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         telemetry.addData("currentState", tsh.currentState());
         boolean inTransition = tsh.currentElement() instanceof TeleOpStateHandler.Transition;
         telemetry.addData("inTransition", inTransition + " " + tsh.nextState());
+        int currentIndex = robot.turnTable.compartments.getCurrentIndex();
+        telemetry.addData("currentIndex", currentIndex);
+        telemetry.addData("tableServoState", robot.tableServo().getCurrentState());
+        telemetry.addData("isNone", robot.turnTable.getCompartments().getCompartment(currentIndex).isNone());
+        telemetry.addData("reached", robot.tableServo().reached());
+        telemetry.addData("turntableState", robot.turnTable.getCurrentState().getCycleState());
+        telemetry.addData("encoder", robot.tableServo().getCurrentPosition());
+        telemetry.addData("target", robot.tableServo().getAbsoluteRotationTarget());
+        telemetry.addData("numBalls", robot.turnTable.getNumberOfBalls());
+        telemetry.addData("shooterState", robot.shooter.getCurrentState());
+        telemetry.addData("turretState", robot.turretMotor().getCurrentState());
         telemetry.update();
     }
 

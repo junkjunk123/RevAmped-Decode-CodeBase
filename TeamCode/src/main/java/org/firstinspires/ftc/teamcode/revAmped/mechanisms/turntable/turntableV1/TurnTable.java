@@ -6,21 +6,17 @@ import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpSta
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableState;
@@ -32,8 +28,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class TurnTable implements ArtifactQueuer {
-    public static int smallIntakeDelay;
-    public static int bigIntakeDelay;
+    public static int SMALL_INTAKE_DELAY;
+    public static int BIG_INTAKE_DELAY;
     private final Scheduler scheduler;
     public TableCompartmentManager compartments;
     public final QueuerHardwareComponents hardware;
@@ -53,20 +49,15 @@ public class TurnTable implements ArtifactQueuer {
                 (ball, compartments) -> {},
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {
+                    setCycleState(getCurrentState().getCycleState().toggle());
                     switch (getCurrentCycleState()) {
-                        case POP -> {
-                            shooterStateConsumer.accept(Types.ShooterState.TRACKING);
-                            intakeMotor.setCurrentState(Types.IntakeState.OUTTAKE);
-                            scheduler.add(new Delay(bigIntakeDelay, intakeMotor::stop));
-                        }
+                        case POP -> shooterStateConsumer.accept(Types.ShooterState.TRACKING);
                         case INTAKE -> {
                             Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
                             shooterStateConsumer.accept(Types.ShooterState.REST);
                             hardware().turntable().resetToRelativeRotation();
                         }
                     }
-
-                    setCycleState(getCurrentState().getCycleState().toggle());
                     compartments.resetPopHistory();
                 }
         );
@@ -125,13 +116,13 @@ public class TurnTable implements ArtifactQueuer {
 
     public void launch(boolean all, boolean forwardRotation) {
         if (!all) {
-            shootOne(() -> {}, forwardRotation);
+            shootOne(() -> {}, forwardRotation, getNumberOfBalls());
         } else {
-            shootAll(() -> {}, forwardRotation, getNumberOfBalls());
+            shootAll(() -> {}, getNumberOfBalls());
         }
     }
 
-    private void shootOne(Runnable andThen, boolean forwardRotation) {
+    private void shootOne(Runnable andThen, boolean forwardRotation, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
         Robot.INSTANCE.updateLock();
         if (forwardRotation) hardware.turntable().setNextState();
@@ -140,27 +131,32 @@ public class TurnTable implements ArtifactQueuer {
         scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(300, () -> {
             compartments.pop(true);
             andThen.run();
-        }))));
+
+            if (numBalls == 1)
+                compartments.toggleCycleState();
+        }))).setMaxTimeToRun(3500));
         scheduler.add(Robot.INSTANCE.lockTillLaunchedAll(hardware.intakeMotor()::stop));
     }
 
+    /*
     private double computeRotation(int numberOfBalls) {
         return numberOfBalls / 3.0 + 1.0 / 3.0;
     }
 
-    private void shootAll(Runnable andThen, boolean forwardRotation, int numBalls) {
+     */
+
+    private void shootAll(Runnable andThen, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
-        if (forwardRotation) hardware.turntable().absoluteRotate(computeRotation(numBalls));
-        else hardware.turntable().absoluteRotate(-computeRotation(numBalls));
+        hardware.turntable().absoluteRotate(4.0/3.0);
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(800, () -> {
+        scheduler.add(new Delay(hardware().turntable()::reached, () -> scheduler.add(new Delay(800, () -> {
             for (int j = 0; j < numBalls; j++) {
                 compartments.pop(false);
-                andThen.run();
             }
-            hardware.intakeMotor().stop();
-        }))));
+            compartments.toggleCycleState();
+            andThen.run();
+        }))).setMaxTimeToRun(3500));
     }
 
     @Override
@@ -169,29 +165,26 @@ public class TurnTable implements ArtifactQueuer {
         tsh.runTransition(TeleOpStateHandler.TransitionCommand.fromRunnable(() -> {
             if (!all) {
                 int i = getNumberOfBalls();
-                if (i == 0) return;
 
                 if (i == 1) {
-                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation), DCTeleOpV2.CycleState.INTAKING, 800);
+                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKING, 800);
                 } else {
                     if (cycleState == DCTeleOpV2.CycleState.SHOOTING) {
-                        tsh.task(() -> shootOne(() -> {}, forwardRotation), FiniteFieldVector.binaryVectorOf(0, 0, 1));
+                        tsh.task(() -> shootOne(() -> {}, forwardRotation, i), FiniteFieldVector.binaryVectorOf(0, 0, 1));
                     } else if (cycleState == DCTeleOpV2.CycleState.DRIVING_TO_SHOOTING) {
-                        tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation), DCTeleOpV2.CycleState.SHOOTING, 800);
+                        tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.SHOOTING, 800);
                     }
                 }
             } else {
                 int i = getNumberOfBalls();
-                if (i == 0) return;
-
-                tsh.runTransition(t -> shootAll(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKING, 3500);
+                tsh.runTransition(t -> shootAll(() -> t.accept(true), i), DCTeleOpV2.CycleState.INTAKING, 3500);
             }
         }), DCTeleOpV2.CycleState.SHOOTING);
     }
 
     public void switchStateToPop() {
         setCycleState(TurnTableCycleState.POP);
-        hardware().popper().setCurrentState(Types.PopperState.POP);
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> hardware().popper().setCurrentState(Types.PopperState.POP)).setMaxTimeToRun(3500));
     }
 
     public void intake() {

@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
 public class Shooter implements ShootingMechanism<ShooterState> {
     public final Scheduler scheduler;
     public static boolean trackHood = false;
-    public static boolean trackTurret = false;
+    public static boolean trackTurret = true;
 
     public final ShooterHardwareComponents hardware;
 
@@ -38,7 +38,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
-    public static double BALL_LAUNCH_MS = 300; //not including pop time
+    public static double BALL_LAUNCH_MS = 400; //not including pop time
     private double confidence;
 
     public static boolean velocityCompensationOnTurret;
@@ -54,7 +54,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
-        trackTurret = false;
+        trackTurret = true;
         velocityCompensationOnTurret = true;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
@@ -83,7 +83,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     @Override
     public void toggleTurretTracking() {
         trackTurret = !trackTurret;
-        if (hardware().turretMotor().getCurrentState() == Types.TurretState.TRACKING && !trackTurret) hardware().turretMotor().setCurrentState(Types.TurretState.HOLD);
+        if (hardware().turretMotor().getCurrentState() == Types.TurretState.TRACKING && !trackTurret)
+            hardware().turretMotor().setCurrentState(Types.TurretState.HOLD);
     }
 
     public void update() {
@@ -203,8 +204,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                 confidence = 0;
             }
             case TRACKING -> {
-                Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
-                double dist = targetPos.distanceFrom(targetPos);
+                //Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
+                //double dist = targetPos.distanceFrom(targetPos);
                 //hardware.hoodServo().setPreset(dist);
                 hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
                 hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
