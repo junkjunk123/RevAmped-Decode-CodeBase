@@ -55,7 +55,9 @@ public class TurretMotor extends Turret<TurretState> {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
         statePowerMap.put(TurretState.HOLD, () -> {
             float feedforward = targetPosition == 0 ? 0.15f : 0;
-            return (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()) + feedforward;
+            float val = (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()) + feedforward;
+            if (targetPosition == 0) val *= 0.5;
+            return val;
         });
         statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()));
     }
@@ -68,12 +70,12 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void setCurrentState(TurretState motorState) {
         super.setCurrentState(motorState);
+        if (this.motorState != TurretState.HOLD && this.motorState != TurretState.IDLE && motorState == TurretState.HOLD && useTurretSwitch) {
+            Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition));
+        }
         targetPosition = motorState.getPos();
         controller.reset();
         prevFineTuneAngle = 0;
-
-        if (targetPosition == 0 && useTurretSwitch)
-            Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition));
     }
 
     public void setCurrentState(TurretState motorState, int targetPosition) {

@@ -164,27 +164,33 @@ public class TableCompartmentManager {
         if (!compartments[currentIndex].isNone()) {
             prevLastPoppedColor = lastPoppedColor;
             lastPoppedColor = compartments[currentIndex].getGuessedColor();
-            compartments[currentIndex].releaseBall();
-
-            int nextPopIndex = motifMode ? getNextMotifPopIndex() : findNextPopIndex();
-
-            if (advance) {
-                if (nextPopIndex != currentIndex) {
-                    advancePopIndex(nextPopIndex);
-                } else {
-                    toggleCycleState.run();
-                }
-            } else if (getEmptyIndices().length == 3)
-                toggleCycleState.run();
         }
+
+        compartments[currentIndex].releaseBall();
+
+        int nextPopIndex = motifMode ? getNextMotifPopIndex() : findNextPopIndex();
+
+        if (advance) {
+            if (nextPopIndex != currentIndex) {
+                advancePopIndex(nextPopIndex);
+            } else {
+                toggleCycleState.run();
+            }
+        }
+    }
+
+    public void toggleCycleState() {
+        toggleCycleState.run();
     }
 
     public void intake() {
         intakeThread.run();
 
+        /*
         if (switchToPop()) {
             toggleCycleState.run();
         }
+         */
     }
 
     public void startIntake(TurnTableInternals.TurnTableInternalState state) {
@@ -195,7 +201,7 @@ public class TableCompartmentManager {
         uponIntake.accept(currentIndex, compartments);
         if (getEmptyIndices().length == 1 && compartments[0].isNone())
             compartments[0].setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
-        if (switchToPop()) toggleCycleState.run();
+        //if (switchToPop()) toggleCycleState.run();
     }
 
     public void decrementPopIndex() {
@@ -354,7 +360,7 @@ public class TableCompartmentManager {
         for (TableCompartment compartment : compartments) {
             if (compartment.isNone()) compartment.setColor(new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
         }
-        toggleCycleState.run();
+        //toggleCycleState.run();
     }
 
     public void fillWithPurple() {
@@ -365,5 +371,9 @@ public class TableCompartmentManager {
 
     public IntakeThread getIntakeThread() {
         return intakeThread;
+    }
+
+    public int getCurrentIndex() {
+        return currentIndex;
     }
 }

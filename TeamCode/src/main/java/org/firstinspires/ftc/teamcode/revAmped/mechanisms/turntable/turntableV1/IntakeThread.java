@@ -96,7 +96,7 @@ public class IntakeThread extends Lockable {
 
         //Compartment 1
         if (!compartments[1].isNone() && !compartments[2].isNone() && intakeUltrasonic.hasArtifact())
-            setColor(0, new Vector2D(Math.sqrt((double) 1 /3), Math.sqrt((double) 2 / 3)));
+            setColor(0, new Vector2D(Math.sqrt((double) 2 /3), Math.sqrt((double) 1 / 3)));
     }
 
     public void updateColors(TurnTableInternals.TurnTableInternalState state) {

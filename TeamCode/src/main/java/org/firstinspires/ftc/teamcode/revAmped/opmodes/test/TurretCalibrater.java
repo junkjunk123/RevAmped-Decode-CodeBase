@@ -60,6 +60,9 @@ public class TurretCalibrater extends DecodeRevAmpedOpMode {
         if (robot.shooter.getCurrentState() == Types.ShooterState.TRACKING) drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
+        telemetry.addData("turretPos", robot.turretMotor().getCurrentPosition());
+        telemetry.addData("limSwitch", robot.turretMotor().limitSwitch.isTouch());
+        telemetry.addData("turretRawPos", robot.turretMotor().motor.getCurrentPosition());
         telemetry.update();
     }
 
