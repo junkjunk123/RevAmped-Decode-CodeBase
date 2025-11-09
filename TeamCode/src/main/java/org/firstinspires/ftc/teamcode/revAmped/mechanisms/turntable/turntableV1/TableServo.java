@@ -28,7 +28,7 @@ public class TableServo extends HwCRServo2<TableState> {
     private final Differentiator velocityComputer;
     private int finetuneTicks = 0;
     private int absoluteRotationTarget = 0;
-    public static DcMotorSimple.Direction direction = DcMotorSimple.Direction.REVERSE;
+    public static DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
 
     @Override
     public int ticksPerRotation() {

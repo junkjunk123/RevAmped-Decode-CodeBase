@@ -18,10 +18,11 @@ public class DecodeLimelight implements HwDevice {
     private final String id;
     private LLResult latestResult;
     private Vector detectionResult;
+    public static boolean usingLimelight = false;
 
     public enum Pipeline {
         NONE(-1),
-        OBELISK(0),
+        OBELISK(6),
         SHOOTING_ALIGNMENT(1),
         ELEMENT_DETECTION(2);
 
@@ -85,6 +86,7 @@ public class DecodeLimelight implements HwDevice {
                     }
                 }
             }
+
             case SHOOTING_ALIGNMENT -> {
                 double tagID = Globals.allianceColor.getTagID();
                 List<LLResultTypes.FiducialResult> r = limelight.getLatestResult().getFiducialResults();

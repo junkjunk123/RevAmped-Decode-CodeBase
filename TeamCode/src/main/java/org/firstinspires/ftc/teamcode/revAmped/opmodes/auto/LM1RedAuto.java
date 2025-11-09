@@ -20,6 +20,7 @@ public class LM1RedAuto extends DecodeRevAmpedAutonomous {
     @Override
     public void setRobot() {
         robot = new Robot(this, Globals.AllianceColor.Red);
+
     }
 
     @Override

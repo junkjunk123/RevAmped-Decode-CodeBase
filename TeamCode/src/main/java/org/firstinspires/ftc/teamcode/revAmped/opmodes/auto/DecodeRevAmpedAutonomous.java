@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.architecture.Autonomou
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
@@ -29,6 +30,8 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     public void RevAmpedInit() {
         setRobot();
         setPaths();
+
+        if (DecodeLimelight.usingLimelight) DAM.limelight = new DecodeLimelight(hardwareMap);
 
         followerManager = new FollowerManager(hardwareMap, paths);
 

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
@@ -17,6 +18,7 @@ public class DAM {
     public static Telemetry telemetry;
     public static ElapsedTime overallTimer;
     public static ElapsedTime driveTimer;
+    public static DecodeLimelight limelight;
 
     public static void initialize() {
         robot = Globals.aae.parameters.getRobot();
@@ -27,8 +29,8 @@ public class DAM {
         overallTimer = Globals.aae.overallTimer;
     }
 
-    private static boolean isBusy() {
-        return followerManager.follower.isBusy();
+    private static boolean notBusy() {
+        return !followerManager.follower.isBusy();
     }
 
     public static AutonomousEnumeratedAction shootPreloads() {
@@ -43,15 +45,21 @@ public class DAM {
             protected void loop() {
                 if (finishedDriving()) {
                     robot.turnTable.shootAllAuto(() -> {
-                        completed = true;
-                        robot.intakeMotor().stop();
+                        if (DecodeLimelight.usingLimelight) {
+                            limelight.setCurrentPipeline(DecodeLimelight.Pipeline.OBELISK);
+                            robot.turretMotor().limelightDetection();
+                            scheduler.add(new Delay(() -> Globals.randomizationState != null, () -> completed = true));
+                        } else {
+                            completed = true;
+                            robot.intakeMotor().stop();
+                        }
                     });
                 }
             }
 
             @Override
             public boolean isFinishedDriving() {
-                return !isBusy();
+                return notBusy();
             }
         };
     }
@@ -72,7 +80,7 @@ public class DAM {
 
             @Override
             public boolean isFinishedDriving() {
-                return !isBusy();
+                return notBusy();
             }
         };
     }
@@ -93,7 +101,7 @@ public class DAM {
 
             @Override
             public boolean isFinishedDriving() {
-                return !isBusy();
+                return notBusy();
             }
         };
     }
@@ -117,7 +125,7 @@ public class DAM {
 
             @Override
             public boolean isFinishedDriving() {
-                return !isBusy();
+                return notBusy();
             }
         };
     }
@@ -137,7 +145,7 @@ public class DAM {
 
             @Override
             public boolean isFinishedDriving() {
-                return !isBusy();
+                return notBusy();
             }
         };
     }
