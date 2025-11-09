@@ -158,6 +158,10 @@ public class HwMotor implements HwDevice, HwDevice.Motor {
         if (!testing) encoderBase = motor.getCurrentPosition();
     }
 
+    public void resetPosition(int currentPos) {
+        if (!testing) encoderBase = motor.getCurrentPosition() - currentPos;
+    }
+
     /**
      * set the motor runMode
      * @param runMode motor mode

@@ -142,6 +142,10 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
         if (!testing) encoderBase = encoder.getPosition();
     }
 
+    public void resetPosition(int currentPos) {
+        if (!testing) encoderBase = encoder.getPosition() - currentPos;
+    }
+
     @Override
     public String getId() {
         return id;

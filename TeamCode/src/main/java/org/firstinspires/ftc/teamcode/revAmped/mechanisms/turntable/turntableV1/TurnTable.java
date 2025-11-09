@@ -159,6 +159,24 @@ public class TurnTable implements ArtifactQueuer {
         }))).setMaxTimeToRun(3500));
     }
 
+    public void shootAllAuto(Runnable andThen, double flywheelDelay) {
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
+        hardware.turntable().absoluteRotate(4.0/9.0);
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(flywheelDelay, () -> {
+            hardware.turntable().absoluteRotate(4.0/9.0);
+            scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(flywheelDelay, () -> {
+                hardware.turntable().absoluteRotate(4.0/9.0);
+                scheduler.add(new Delay(hardware().turntable()::reached, () -> scheduler.add(new Delay(800, andThen))).setMaxTimeToRun(3500));
+            }))).setMaxTimeToRun(1000));
+        }))).setMaxTimeToRun(1000));
+    }
+
+    public void shootAllAuto(Runnable andThen) {
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
+        hardware.turntable().absoluteRotate(4.0/9.0);
+        scheduler.add(new Delay(hardware.turntable()::reached, andThen).setMaxTimeToRun(3500));
+    }
+
     @Override
     public void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh) {
         DCTeleOpV2.CycleState cycleState = tsh.nextState();

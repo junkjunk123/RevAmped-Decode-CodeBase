@@ -29,7 +29,7 @@ public abstract class DecodeAutonomousActionExecutor extends AutonomousActionExe
     public DecodeAutonomousActionExecutor(DecodeAutonomousParameters parameters) {
         super();
         this.parameters = parameters;
-        DecodeAutonomousMethods.initialize();
+        DAM.initialize();
         Globals.aae = this;
     }
 }

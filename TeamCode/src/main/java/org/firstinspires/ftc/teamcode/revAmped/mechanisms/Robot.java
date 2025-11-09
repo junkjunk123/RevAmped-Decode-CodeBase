@@ -5,12 +5,11 @@ import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.al
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
@@ -22,7 +21,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.ShootingMechanism;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
@@ -43,7 +41,6 @@ import java.util.stream.Collectors;
 
 public class Robot {
     public static Robot INSTANCE;
-    public static Robot AUTONOMOUS_INSTANCE;
     private List<LynxModule> allHubs;
     private Scheduler scheduler;
     public TurnTable turnTable;
@@ -109,13 +106,6 @@ public class Robot {
         opModeType = (OpModeType) opMode.getOpModeType();
     }
 
-    public static Robot getAutonomousInstance(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
-        if (AUTONOMOUS_INSTANCE == null) return new Robot(opMode, allianceColor);
-        AUTONOMOUS_INSTANCE.updateOpMode(opMode, allianceColor);
-        DecodeColorSensor.enableSensors();
-        return AUTONOMOUS_INSTANCE;
-    }
-
     public void init(HardwareMap hardwareMap) {
         allHubs = hardwareMap.getAll(LynxModule.class);
         setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
@@ -143,9 +133,10 @@ public class Robot {
                         turnTable.hardware().intakeColor().getSensorTwo()
                 )
         ));
-        turnTable.hardware().turntable().resetPosition();
+
+        turnTable.hardware().turntable().resetPosition(OpModeCommunication.turntablePos);
         shooter.hardware().flywheel().resetPosition();
-        shooter.hardware().turretMotor().resetPosition();
+        shooter.hardware().turretMotor().resetPosition(OpModeCommunication.turretPos);
         intakeMotor().setVoltageCompensation();
     }
 

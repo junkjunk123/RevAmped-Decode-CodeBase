@@ -15,6 +15,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     private DecodeAutonomousActionExecutor aee;
     protected PathSupplier paths;
     protected List<AutonomousEnumeratedAction> autoActions;
+    protected boolean finished = false;
 
     public abstract void setPaths();
     public abstract void buildAutoActions();
@@ -45,7 +46,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        if (aee.update()) {
+        if (!finished && aee.update()) {
             setNextState();
         }
     }
@@ -67,7 +68,6 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     public void RevAmpedStop() {
         scheduler.clear();
         TeleOpDrivetrainHandler.setInitialPose(followerManager.follower.getPose());
-        Robot.AUTONOMOUS_INSTANCE = robot;
     }
 
     private void setAutoState(int autoState) {
@@ -79,6 +79,12 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     private void setNextState() {
         int current = aee.getAutoState();
         int next = aee.getAutoStateAction(current).nextStateGenerator().nextState(current);
+
+        if (next > aee.getSize()) {
+            finished = true;
+            return;
+        }
+
         setAutoState(next);
     }
 }

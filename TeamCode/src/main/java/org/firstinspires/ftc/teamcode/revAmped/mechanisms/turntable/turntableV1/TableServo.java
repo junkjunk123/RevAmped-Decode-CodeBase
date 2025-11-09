@@ -96,6 +96,12 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     @Override
+    public void resetPosition(int currentPos) {
+        finetuneTicks = 0;
+        super.resetPosition(currentPos);
+    }
+
+    @Override
     public DelayedResult<Boolean> testResponse() {
         setCurrentState(TableState.BALL2);
         BooleanSupplier delay = () -> (Math.abs(getLastError()) < 50 || (getVelocity() < 10 && Math.abs(getLastError()) < 500));

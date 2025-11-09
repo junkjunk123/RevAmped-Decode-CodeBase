@@ -215,4 +215,8 @@ public abstract class AutonomousActionExecutor {
     public int nextIndex() {
         return nextIndex(identifiers.get(autoState));
     }
+
+    public int getSize() {
+        return size;
+    }
 }
