@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 @TeleOp
-public class TurretCalibrater extends DecodeRevAmpedOpMode {
+public class TurretCalibrator extends DecodeRevAmpedOpMode {
     private Robot robot;
     private RevAmpedGamepad gamepad_1;
     private TeleOpDrivetrainHandler drivetrain;
