@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector3D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterHardwareComponents;
@@ -33,7 +34,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
-    public static Pose APRIL_TAG_POSE_RED = new Pose(139, 138);
+    public static Pose APRIL_TAG_POSE_RED = new Pose(144, 144);
     public static Pose APRIL_TAG_POSE_BLUE = new Pose(0, 144);
     public static Vector3D BLUE_SHOOT_ZONE;
 
@@ -103,7 +104,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             double deltaAngle;
 
             if (trackTurret) {
-                if (robotVelocity.getMagnitude() < 4) {
+                if (robotVelocity.getMagnitude() < 8) {
                     Vector offset = new Vector();
                     offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
                     Globals.telemetry.addData("offset", offset);
@@ -115,7 +116,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
                     Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
-                } else if (velocityCompensationOnTurret && hardware().flywheel().getCurrentState() == Types.FlywheelState.RUNNING || Globals.OpModeType.isTest()) {
+                } else if (velocityCompensationOnTurret && (hardware().flywheel().getCurrentState() == Types.FlywheelState.RUNNING || Robot.INSTANCE.getOpModeType().isTest())) {
                     Pose adjustedRobotPose = currentPos.plus(robotVelPose.scale(BALL_LAUNCH_MS / 1000.0)).plus(
                             robotAcceleration.scale(0.5 * Math.pow(BALL_LAUNCH_MS / 1000.0, 2))
                     );
@@ -126,6 +127,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     Vector jHat = new Vector();
                     jHat.setOrthogonalComponents(-iHat.getYComponent(), iHat.getXComponent());
                     double flywheelLaunchSpeed = hardware.flywheel().getTheoreticalLaunchVelocity();
+                    if (hardware.flywheel().getCurrentState() == Types.FlywheelState.STOPPED) flywheelLaunchSpeed = Flywheel.FLYWHEEL_MEDIUM_VELOCITY;
                     //Globals.telemetry.addData("flywheelLaunchSpeed", flywheelLaunchSpeed);
                     Vector invertediHat = new Vector();
                     invertediHat.setOrthogonalComponents(iHat.getYComponent(), iHat.getXComponent());

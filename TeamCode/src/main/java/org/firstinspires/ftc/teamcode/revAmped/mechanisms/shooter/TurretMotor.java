@@ -54,10 +54,9 @@ public class TurretMotor extends Turret<TurretState> {
     public void buildStatePowerMap() {
         statePowerMap.put(TurretState.IDLE, MotorPower.constant(0f));
         statePowerMap.put(TurretState.HOLD, () -> {
-            float feedforward = targetPosition == 0 ? 0.15f : 0;
-            float val = (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()) + feedforward;
-            if (targetPosition == 0) val *= 0.5;
-            return val;
+            float mult = targetPosition == 0 ? 0.5f : 1f;
+            float val = (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition());
+            return val * mult;
         });
         statePowerMap.put(TurretState.TRACKING, () -> (float) controller.runWithError(!TURRET_LIMITS_ENABLED ? getError(targetPosition) : targetPosition - getCurrentPosition()));
     }
