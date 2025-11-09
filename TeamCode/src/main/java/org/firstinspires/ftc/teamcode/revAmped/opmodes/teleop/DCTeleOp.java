@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop;
 
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
+@Disabled
 @TeleOp(name = "DCTeleOp", group = "TeleOp")
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;

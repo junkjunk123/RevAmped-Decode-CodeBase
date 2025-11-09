@@ -167,7 +167,7 @@ public class TurnTable implements ArtifactQueuer {
                 int i = getNumberOfBalls();
 
                 if (i == 1) {
-                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKING, 800);
+                    tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKE, 800);
                 } else {
                     if (cycleState == DCTeleOpV2.CycleState.SHOOTING) {
                         tsh.task(() -> shootOne(() -> {}, forwardRotation, i), FiniteFieldVector.binaryVectorOf(0, 0, 1));
@@ -177,7 +177,7 @@ public class TurnTable implements ArtifactQueuer {
                 }
             } else {
                 int i = getNumberOfBalls();
-                tsh.runTransition(t -> shootAll(() -> t.accept(true), i), DCTeleOpV2.CycleState.INTAKING, 3500);
+                tsh.runTransition(t -> shootAll(() -> t.accept(true), i), DCTeleOpV2.CycleState.INTAKE, 3500);
             }
         }), DCTeleOpV2.CycleState.SHOOTING);
     }

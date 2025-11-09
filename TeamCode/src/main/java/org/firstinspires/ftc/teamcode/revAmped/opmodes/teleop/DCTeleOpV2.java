@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
@@ -26,8 +25,6 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @TeleOp(name = "DCTeleOpRedesign", group = "TeleOp")
 public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
@@ -39,14 +36,14 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
     private TeleOpStateHandler<CycleState> tsh;
 
     public enum CycleState implements TeleOpStateHandler.State {
-        INTAKING,
+        INTAKE,
         DRIVING_TO_SHOOTING,
         SHOOTING;
 
         @Override
         public FiniteFieldVector<FiniteFieldVector.BinaryVector> getTransitionVector() {
             switch (this) {
-                case INTAKING -> {
+                case INTAKE -> {
                     return FiniteFieldVector.binaryVectorOf(1, 1, 0);
                 }
                 case SHOOTING -> {
@@ -72,7 +69,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                 .build();
         prompter = new Prompter(this, gamepad_1)
                 .prompt("motif", new OptionPrompt<>("Select motif", Globals.RandomizationState.values()));
-        tsh = new TeleOpStateHandler<>(CycleState.INTAKING, scheduler);
+        tsh = new TeleOpStateHandler<>(CycleState.INTAKE, scheduler);
 
         new RevAmpedGamepad.CustomButtonCreator("right_trigger_button", () -> gamepad_2.right_trigger)
                 .greaterThan(0.3f)
@@ -105,7 +102,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                             robot.turnTable.intake();
                             DecodeColorSensor.enableSensors();
                             t.accept(true);
-                        }, CycleState.INTAKING
+                        }, CycleState.INTAKE
                 );
             } else {
                 robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
@@ -141,7 +138,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.x.isPress()) {
-            if (tsh.currentState() == CycleState.INTAKING) {
+            if (tsh.currentState() == CycleState.INTAKE) {
                 robot.turnTable.updateColors();
                 scheduler.add(new Delay(20, () -> tsh.runTransition(t -> {
                     robot.turnTable.switchStateToPop();
@@ -193,22 +190,22 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.left_trigger > 0.3) {
-            if (tsh.nextState() != CycleState.INTAKING)
+            if (tsh.nextState() != CycleState.INTAKE)
                 tsh.setting(() -> robot.turretMotor().fineTuneTicks((int) (-gamepad_1.left_trigger * 20)));
         }
 
         if (gamepad_1.right_trigger > 0.3) {
-            if (tsh.nextState() != CycleState.INTAKING)
+            if (tsh.nextState() != CycleState.INTAKE)
                 tsh.setting(() -> robot.turretMotor().fineTuneTicks((int) (gamepad_1.right_trigger * 20)));
         }
 
         if (gamepad_1.right_bumper.isPress()) {
-            if (tsh.nextState() != CycleState.INTAKING)
+            if (tsh.nextState() != CycleState.INTAKE)
                 tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS));
         }
 
         if (gamepad_1.left_bumper.isPress()) {
-            if (tsh.nextState() != CycleState.INTAKING)
+            if (tsh.nextState() != CycleState.INTAKE)
                 tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS));
         }
     }
