@@ -39,25 +39,25 @@ public class FollowerManager {
     /**
      * A PathSupplier that provides the paths to be followed.
      */
-    private PathSupplier pathSupplier;
+    private final PathSupplier pathSupplier;
 
     /**
      * A Stuck instance that checks if the Follower is stuck at the end of a path.
      * It evaluates whether the Follower's position is not changing significantly.
      */
-    public final Stuck position;
+    //public final Stuck position;
 
     /**
      * A Stuck instance that checks if the Follower's heading is not changing significantly.
      * It evaluates whether the angular velocity of the Follower is below a certain threshold.
      */
-    public final Stuck heading;
+    //public final Stuck heading;
 
     /**
      * An ObstacleAvoidanceHandler that manages obstacle avoidance for the Follower.
      * It checks for obstacles and handles navigation around them.
      */
-    public final ObstacleAvoidanceHandler obstacleAvoider;
+    //public final ObstacleAvoidanceHandler obstacleAvoider;
 
     /**
      * Constructor for FollowerManager.
@@ -70,17 +70,7 @@ public class FollowerManager {
         this.pathSupplier = pathSupplier;
         setStartingPose();
         buildPaths();
-        position = new Stuck(follower);
-        heading = new Stuck(() -> {
-            if (follower.getCurrentPath() == null) return false;
-            return follower.poseTracker.getAngularVelocity() < 0.007;
-        }, 400);
-
-        if (pathSupplier.getPlayingField() != null) {
-            obstacleAvoider = new ObstacleAvoidanceHandler(follower, pathSupplier.getPlayingField());
-        } else {
-            obstacleAvoider = null;
-        }
+        follower.update();
     }
 
     /**
@@ -110,14 +100,18 @@ public class FollowerManager {
      * Updates the Follower's state.
      */
     public void update(boolean useObstacleAvoidance) {
-        if (!Globals.disableDrive) follower.update();
+        if (!Globals.disableDrive)
+            follower.update();
         currentPathIndex = follower.getChainIndex();
-        heading.update();
-        position.update();
+        //heading.update();
+        //position.update();
 
+        /*
         if (useObstacleAvoidance && obstacleAvoider != null) {
             obstacleAvoider.update();
         }
+
+         */
     }
 
     /**
@@ -260,13 +254,8 @@ public class FollowerManager {
         if (follower.atParametricEnd() && parametricEnd) return true;
         if (follower.getVelocity().getMagnitude() > follower.getCurrentPath().getConstraints().getVelocityConstraint()) return false;
         if (follower.getAngularVelocity() > follower.getCurrentPath().getConstraints().getVelocityConstraint()) return false;
-        if (!(position.evaluate() && distanceFromTarget() < 1.5) && !(follower.atParametricEnd() || follower.getTranslationalError().getMagnitude() > follower.getCurrentPath().getConstraints().getTranslationalConstraint())) return false;
-        return (parametricEnd || heading.evaluate() && headingFromTarget() < 0.055 || follower.getHeadingError() < follower.getCurrentPath().getConstraints().getHeadingConstraint());
-    }
-
-    public void setPlayingField(PlayingField field) {
-        if (obstacleAvoider != null) {
-            obstacleAvoider.setField(field);
-        }
+        //if (!(position.evaluate() && distanceFromTarget() < 1.5) && !(follower.atParametricEnd() || follower.getTranslationalError().getMagnitude() > follower.getCurrentPath().getConstraints().getTranslationalConstraint())) return false;
+        //return (parametricEnd || heading.evaluate() && headingFromTarget() < 0.055 || follower.getHeadingError() < follower.getCurrentPath().getConstraints().getHeadingConstraint());
+        return !follower.isBusy();
     }
 }

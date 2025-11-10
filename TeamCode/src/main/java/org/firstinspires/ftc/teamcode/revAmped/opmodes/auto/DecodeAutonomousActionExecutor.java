@@ -9,8 +9,8 @@ public abstract class DecodeAutonomousActionExecutor extends AutonomousActionExe
     public DecodeAutonomousParameters parameters;
 
     public static class DecodeAutonomousParameters {
-        private Robot robot;
-        private FollowerManager followerManager;
+        private final Robot robot;
+        private final FollowerManager followerManager;
 
         public DecodeAutonomousParameters(Robot robot, FollowerManager follower) {
             this.robot = robot;
@@ -29,7 +29,7 @@ public abstract class DecodeAutonomousActionExecutor extends AutonomousActionExe
     public DecodeAutonomousActionExecutor(DecodeAutonomousParameters parameters) {
         super();
         this.parameters = parameters;
-        DAM.initialize();
         Globals.aae = this;
+        DAM.initialize();
     }
 }

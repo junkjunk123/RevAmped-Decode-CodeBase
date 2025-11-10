@@ -82,6 +82,7 @@ public class Robot {
     private OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
+        opModeType = (OpModeType) opMode.getOpModeType();
         updateOpMode(opMode, allianceColor);
         HardwareMap hardwareMap = opMode.hardwareMap;
         init(hardwareMap);
@@ -93,7 +94,9 @@ public class Robot {
     }
 
     public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+        this.opModeType = opModeType;
         updateOpMode(opMode, allianceColor);
+        Globals.OpModeType = opModeType;
         HardwareMap hardwareMap = opMode.hardwareMap;
         init(hardwareMap);
         INSTANCE = this;
@@ -103,7 +106,6 @@ public class Robot {
         Globals.OpModeType = opModeType;
         Globals.allianceColor = allianceColor;
         scheduler = opMode.scheduler;
-        opModeType = (OpModeType) opMode.getOpModeType();
     }
 
     public void init(HardwareMap hardwareMap) {

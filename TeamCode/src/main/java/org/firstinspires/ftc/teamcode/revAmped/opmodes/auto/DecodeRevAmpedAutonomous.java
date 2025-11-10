@@ -12,7 +12,7 @@ import java.util.List;
 
 public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     protected Robot robot;
-    private FollowerManager followerManager;
+    protected FollowerManager followerManager;
     private DecodeAutonomousActionExecutor aee;
     protected PathSupplier paths;
     protected List<AutonomousEnumeratedAction> autoActions;
@@ -31,7 +31,8 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
         setRobot();
         setPaths();
 
-        if (DecodeLimelight.usingLimelight) DAM.limelight = new DecodeLimelight(hardwareMap);
+        if (DecodeLimelight.usingLimelight)
+            DAM.limelight = new DecodeLimelight(hardwareMap);
 
         followerManager = new FollowerManager(hardwareMap, paths);
 
@@ -43,6 +44,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
                 actions = autoActions;
             }
         };
+
         buildAutoActions();
         aee.build();
     }
@@ -57,8 +59,8 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     @Override
     public void update() {
         telemetry.update();
-        robot.update();
         followerManager.update();
+        robot.update();
     }
 
     @Override
