@@ -25,7 +25,8 @@ public abstract class AutonomousEnumeratedAction {
      * @return true if the action is finished driving or the preload drive timer has exceeded the specified milliseconds to drive,
      */
     public boolean finishedDriving() {
-        boolean result = (isFinishedDriving() || Globals.aae.preloadDriveTimer.milliseconds() > millisToDrive()) && Globals.aae.driving;
+        boolean result = (isFinishedDriving() ||
+                (Globals.aae.preloadDriveTimer.milliseconds() > millisToDrive() && millisToDrive() > 0)) && Globals.aae.driving;
         if (result) Globals.aae.driving = false;
         return result;
     }
@@ -48,7 +49,8 @@ public abstract class AutonomousEnumeratedAction {
      */
     public boolean update() {
         if (!initCompleted) {
-            if (millisToDrive() > 0) Globals.aae.preloadDriveTimer.reset();
+            if (millisToDrive() > 0)
+                Globals.aae.preloadDriveTimer.reset();
             init();
             initCompleted = true;
         } else if (!completed) {

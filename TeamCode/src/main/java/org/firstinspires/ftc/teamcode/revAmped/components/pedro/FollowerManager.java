@@ -32,11 +32,6 @@ public class FollowerManager {
     private int currentChainIndex = 0;
 
     /**
-     * The index of the current path in the current path chain
-     */
-    private int currentPathIndex = 0;
-
-    /**
      * A PathSupplier that provides the paths to be followed.
      */
     private final PathSupplier pathSupplier;
@@ -93,7 +88,7 @@ public class FollowerManager {
      * Updates the Follower's state.
      */
     public void update() {
-        update(false);
+        follower.update();
     }
 
     /**
@@ -102,7 +97,6 @@ public class FollowerManager {
     public void update(boolean useObstacleAvoidance) {
         if (!Globals.disableDrive)
             follower.update();
-        currentPathIndex = follower.getChainIndex();
         //heading.update();
         //position.update();
 
@@ -184,7 +178,7 @@ public class FollowerManager {
      * @return the current path
      */
     public Path getCurrentPath() {
-        return getCurrentPathChain().getPath(currentPathIndex);
+        return getCurrentPathChain().getPath(follower.getChainIndex());
     }
 
     /**
@@ -192,7 +186,7 @@ public class FollowerManager {
      * @return the current path index in the current path chain
      */
     public int getCurrentPathIndex() {
-        return currentPathIndex;
+        return follower.getChainIndex();
     }
 
     /**

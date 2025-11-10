@@ -174,7 +174,10 @@ public class TurnTable implements ArtifactQueuer {
     public void shootAllAuto(Runnable andThen) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
         hardware.turntable().absoluteRotate(4.0/3.0);
-        scheduler.add(new Delay(hardware.turntable()::reached, andThen).setMaxTimeToRun(3500));
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> {
+            andThen.run();
+            hardware.turntable().resetToRelativeRotation();
+        }).setMaxTimeToRun(3500));
     }
 
     @Override

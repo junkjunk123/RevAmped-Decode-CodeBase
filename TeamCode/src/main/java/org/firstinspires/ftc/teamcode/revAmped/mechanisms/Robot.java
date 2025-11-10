@@ -136,9 +136,14 @@ public class Robot {
                 )
         ));
 
-        turnTable.hardware().turntable().resetPosition(OpModeCommunication.turntablePos);
+        if (opModeType == OpModeType.TELEOP) {
+            turnTable.hardware().turntable().resetPosition(OpModeCommunication.turntablePos);
+            shooter.hardware().turretMotor().resetPosition(OpModeCommunication.turretPos);
+        } else {
+            turnTable.hardware.turntable().resetPosition();
+            shooter.hardware().turretMotor().resetPosition();
+        }
         shooter.hardware().flywheel().resetPosition();
-        shooter.hardware().turretMotor().resetPosition(OpModeCommunication.turretPos);
         intakeMotor().setVoltageCompensation();
     }
 

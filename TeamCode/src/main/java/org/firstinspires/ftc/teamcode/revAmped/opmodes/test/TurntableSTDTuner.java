@@ -23,10 +23,10 @@ public class TurntableSTDTuner extends DecodeRevAmpedOpMode {
     private DcMotorEx intake;
     private int initialPos;
     private PIDFController controller;
-    public static double P = 0.00028;
+    public static double P = 0.000244;
     public static double I;
     public static double D = 0.00001;
-    public static double F = 0.02;
+    public static double F = 0.025;
     public static int targetPosition = TableServo.BALL2;
 
     @Override
@@ -36,7 +36,7 @@ public class TurntableSTDTuner extends DecodeRevAmpedOpMode {
         initialPos = intake.getCurrentPosition();
         controller = new PIDFController(new PIDFCoefficients(P, I, D, F));
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor.setDirection(TableServo.direction);
     }
 
     @Override

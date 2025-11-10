@@ -29,6 +29,7 @@ public class TableServo extends HwCRServo2<TableState> {
     private int finetuneTicks = 0;
     private int absoluteRotationTarget = 0;
     public static DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
+    public float mult = 1f;
 
     @Override
     public int ticksPerRotation() {
@@ -41,7 +42,7 @@ public class TableServo extends HwCRServo2<TableState> {
         statePowerMap.put(TableState.BALL1, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL1 + finetuneTicks)), -1, 1));
         statePowerMap.put(TableState.BALL2, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL2 + finetuneTicks)), -1, 1));
         statePowerMap.put(TableState.BALL3, () -> (float) MathFunctions.clamp(controller.runWithError(getError(BALL3 + finetuneTicks)), -1, 1));
-        statePowerMap.put(TableState.ABSOLUTE_ROTATION, () -> (float) MathFunctions.clamp(controller.runWithError(absoluteRotationTarget - getCurrentPosition()), -1, 1));
+        statePowerMap.put(TableState.ABSOLUTE_ROTATION, () -> mult * (float)  MathFunctions.clamp(controller.runWithError(absoluteRotationTarget - getCurrentPosition()), -1, 1));
     }
 
     public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
@@ -109,7 +110,7 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     public boolean reached() {
-        return getVelocity() < 10 && Math.abs(getLastError()) < 100;
+        return (getVelocity() < 10 && Math.abs(getLastError()) < 500) || Math.abs(getLastError()) < 50;
     }
 
     public void setNextState() {
@@ -150,5 +151,22 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public int getAbsoluteRotationTarget() {
         return absoluteRotationTarget;
+    }
+
+    public void updatePIDFCoefficients(PIDFCoefficients coefficients) {
+        controller.updateConstants(coefficients);
+    }
+
+    public void setAbsoluteRotationTarget(int absoluteRotationTarget) {
+        setCurrentState(TableState.ABSOLUTE_ROTATION);
+        this.absoluteRotationTarget = absoluteRotationTarget;
+    }
+
+    public void setMult(float mult) {
+        this.mult = mult;
+    }
+
+    public float getMult() {
+        return mult;
     }
 }

@@ -58,7 +58,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
 
     @Override
     public void update() {
-        telemetry.update();
+        //telemetry.update();
         followerManager.update();
         robot.update();
     }

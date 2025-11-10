@@ -31,10 +31,10 @@ public class TurretMotor extends Turret<TurretState> {
     public final PIDFController controller;
     public static int TURRET_TICKS_PER_ROTATION;
     private int targetPosition;
-    public static float AUTO_PRELOADS;
-    public static float AUTO_SET_1;
-    public static float AUTO_SET_2;
-    public static float AUTO_SET_3;
+    public static int AUTO_PRELOADS;
+    public static int AUTO_SET_1;
+    public static int AUTO_SET_2;
+    public static int AUTO_SET_3;
     public static float LL_DETECTION_RED;
     public static float LL_DETECTION_BLUE;
     public static boolean TURRET_LIMITS_ENABLED;
@@ -69,9 +69,8 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void setCurrentState(TurretState motorState) {
         super.setCurrentState(motorState);
-        if (this.motorState != TurretState.HOLD && this.motorState != TurretState.IDLE && motorState == TurretState.HOLD && useTurretSwitch) {
+        if (this.motorState != TurretState.HOLD && this.motorState != TurretState.IDLE && motorState == TurretState.HOLD && useTurretSwitch)
             Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition));
-        }
         targetPosition = motorState.getPos();
         controller.reset();
         prevFineTuneAngle = 0;

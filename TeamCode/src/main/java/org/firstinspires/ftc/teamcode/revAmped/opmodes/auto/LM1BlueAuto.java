@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM1AutoPaths;
 import java.util.Arrays;
 
 @Autonomous
-public class LM1RedAuto extends DecodeRevAmpedAutonomous {
+public class LM1BlueAuto extends DecodeRevAmpedAutonomous {
     @Override
     public void setPaths() {
         paths = new LM1AutoPaths();
@@ -17,7 +17,7 @@ public class LM1RedAuto extends DecodeRevAmpedAutonomous {
 
     @Override
     public void buildAutoActions() {
-        autoActions = Arrays.asList(DAM.shootPreloads(), DAM.intake(), DAM.openGate(), DAM.shoot(),
+        autoActions = Arrays.asList(DAM.shootPreloads(), DAM.intake(), DAM.shoot(),
                 DAM.intake(), DAM.shoot(), DAM.intake(), DAM.shoot(), DAM.park());
     }
 

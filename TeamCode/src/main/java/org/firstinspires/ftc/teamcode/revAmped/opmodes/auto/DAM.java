@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 public class DAM {
@@ -39,21 +40,22 @@ public class DAM {
             protected void init() {
                 robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
                 robot.turretMotor().setCurrentState(Types.TurretState.HOLD);
+                robot.popper().setCurrentState(Types.PopperState.POP);
+                robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
             }
 
             @Override
             protected void loop() {
                 if (finishedDriving()) {
-                    robot.turnTable.shootAllAuto(() -> {
+                    scheduler.add(new Delay(1500, () -> robot.turnTable.shootAllAuto(() -> {
                         if (DecodeLimelight.usingLimelight) {
                             limelight.setCurrentPipeline(DecodeLimelight.Pipeline.OBELISK);
                             robot.turretMotor().limelightDetection();
                             scheduler.add(new Delay(() -> Globals.randomizationState != null, () -> completed = true));
                         } else {
                             completed = true;
-                            robot.intakeMotor().stop();
                         }
-                    });
+                    })));
                 }
             }
 
@@ -68,7 +70,8 @@ public class DAM {
         return new AutonomousEnumeratedAction() {
             @Override
             protected void init() {
-                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.75,
+                scheduler.add(new Delay(300, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)));
+                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.5,
                         () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE)));
             }
 
@@ -80,6 +83,9 @@ public class DAM {
 
             @Override
             public boolean isFinishedDriving() {
+                if (Globals.aae.currentIterationNumber() == 1)
+                    return followerManager.follower.getVelocity().getMagnitude() < followerManager.getCurrentPath().getPathEndVelocityConstraint() &&
+                            followerManager.distanceFromTarget() < 4;
                 return notBusy();
             }
         };
@@ -108,18 +114,21 @@ public class DAM {
 
     public static AutonomousEnumeratedAction shoot() {
         return new AutonomousEnumeratedAction() {
+            private boolean popperIn = false;
+
             @Override
             protected void init() {
-
+                scheduler.add(new Delay(700, () -> {
+                    robot.popper().setCurrentState(Types.PopperState.POP);
+                    robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_SET_1);
+                    popperIn = true;
+                }));
             }
 
             @Override
             protected void loop() {
                 if (finishedDriving()) {
-                    robot.turnTable.shootAllAuto(() -> {
-                        completed = true;
-                        robot.intakeMotor().stop();
-                    });
+                    scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true)));
                 }
             }
 

@@ -51,11 +51,11 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
-        TurretMotor.AUTO_PRELOADS = 0; TurretMotor.AUTO_SET_1 = 0; TurretMotor.AUTO_SET_2 = 0; TurretMotor.AUTO_SET_3 = 0;
+        TurretMotor.AUTO_PRELOADS = 493; TurretMotor.AUTO_SET_1 = 523; TurretMotor.AUTO_SET_2 = 523; TurretMotor.AUTO_SET_3 = 523;
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
 
         //Table Constants
-        TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);
+        TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.000244, 0, 0.00001, 0.025);
         TableServo.BALL1 = 0; TableServo.BALL2 = 2730; TableServo.BALL3 = 5461;
         TableServo.TICKS_PER_ROTATION = 8192;
         TurnTable.SMALL_INTAKE_DELAY = 60; TurnTable.BIG_INTAKE_DELAY = 800;
