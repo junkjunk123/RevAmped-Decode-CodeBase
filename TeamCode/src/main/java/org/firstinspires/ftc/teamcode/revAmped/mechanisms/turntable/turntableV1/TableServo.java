@@ -169,9 +169,9 @@ public class TableServo extends HwCRServo2<TableState> {
         setCurrentState(TableState.ABSOLUTE_ROTATION);
         absoluteRotationTarget = nextFullRotation(super.getCurrentPosition());
         Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
-                resetPosition(getClosestFullRotation(super.getCurrentPosition()));
+                resetPosition(absoluteRotationTarget);
                 setCurrentState(TableState.BALL1);
-        }));
+        }).setCancellation(750, () -> setCurrentState(TableState.BALL1)));
     }
 
     public int getAbsoluteRotationTarget() {

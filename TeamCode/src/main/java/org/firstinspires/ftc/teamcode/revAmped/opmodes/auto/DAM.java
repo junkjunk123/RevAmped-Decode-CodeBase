@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.architecture.Autonomou
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.FiniteFailsafeDelay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
@@ -166,6 +167,7 @@ public class DAM {
 
     public static AutonomousEnumeratedAction shoot() {
         return new AutonomousEnumeratedAction() {
+            private boolean updatedColors = false;
             private boolean popperIn = false;
             private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
 
@@ -179,14 +181,17 @@ public class DAM {
                     scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.75, () -> {
                         if (Globals.randomizationState != null) {
                             updateColors();
-                            robot.tableServo().setCurrentState(computeTableRotation());
+                            Scheduler.getInstance().add(new FiniteFailsafeDelay(() -> updatedColors,
+                                    () -> robot.tableServo().setCurrentState(computeTableRotation()))
+                                    .setFailsafe(50, t -> updateColors(), 6,
+                                            () -> robot.tableServo().setCurrentState(computeTableRotation())));
                         }
 
                         scheduler.addOptionalDelay(Globals.randomizationState == null,
                                 new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     scheduler.add(new Delay(500, () -> popperIn = true));
-                                }))));
+                                }))).setMaxTimeToRun(1500));
                         robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_SET_1);
                     }));
                 }));
@@ -210,6 +215,9 @@ public class DAM {
                 ColorManager colorManager = robot.intakeColor();
                 artifactColors[1] = colorManager.getCompartmentOneColor();
                 artifactColors[2] = colorManager.getCompartmentTwoColor();
+
+                if (!(artifactColors[1] == DecodeColorSensor.ArtifactColor.NONE || artifactColors[2] == DecodeColorSensor.ArtifactColor.NONE))
+                    updatedColors = true;
 
                 if (artifactColors[1] == DecodeColorSensor.ArtifactColor.GREEN || artifactColors[2] == DecodeColorSensor.ArtifactColor.GREEN)
                     artifactColors[0] = DecodeColorSensor.ArtifactColor.PURPLE;
