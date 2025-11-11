@@ -26,7 +26,9 @@ public abstract class AutonomousEnumeratedAction {
      */
     public boolean finishedDriving() {
         boolean result = (isFinishedDriving() ||
-                (Globals.aae.preloadDriveTimer.milliseconds() > millisToDrive() && millisToDrive() > 0)) && Globals.aae.driving;
+                (Globals.aae.preloadDriveTimer.milliseconds() > millisToDrive() && millisToDrive() > 0
+                        && Globals.followerManager.follower.getVelocity().getMagnitude()
+                        < Globals.followerManager.getCurrentPath().getPathEndVelocityConstraint())) && Globals.aae.driving;
         if (result) Globals.aae.driving = false;
         return result;
     }

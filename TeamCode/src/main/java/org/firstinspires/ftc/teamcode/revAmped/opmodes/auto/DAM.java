@@ -109,13 +109,21 @@ public class DAM {
                 index = (index + 3) % 3;
                 return tableStates.get(index);
             }
+
+            @Override
+            public double millisToDrive() {
+                return 5000;
+            }
         };
     }
 
     public static AutonomousEnumeratedAction intake() {
         return new AutonomousEnumeratedAction() {
+            private int currentIteration;
+
             @Override
             protected void init() {
+                currentIteration = Globals.aae.currentIterationNumber();
                 scheduler.add(new Delay(robot.tableServo()::reached,
                         () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)).setMaxTimeToRun(1500));
                 scheduler.add(new Delay(500, () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 1)));
@@ -125,7 +133,7 @@ public class DAM {
             protected void loop() {
                 if (finishedDriving()) {
                     robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
-                    boolean firstIteration = Globals.aae.currentIterationNumber() == 1;
+                    boolean firstIteration = currentIteration == 0;
                     int outtakeTime = firstIteration ? 350 : 200;
                     scheduler.add(new Delay(outtakeTime, () -> {
                         scheduler.add(new Delay(100, () -> completed = true));
@@ -136,10 +144,15 @@ public class DAM {
 
             @Override
             public boolean isFinishedDriving() {
-                if (Globals.aae.currentIterationNumber() == 1)
+                if (currentIteration == 1)
                     return followerManager.follower.getVelocity().getMagnitude() < followerManager.getCurrentPath().getPathEndVelocityConstraint() &&
                             followerManager.distanceFromTarget() < 4;
                 return notBusy();
+            }
+
+            @Override
+            public double millisToDrive() {
+                return currentIteration * 2500 + 4000;
             }
         };
     }
@@ -170,10 +183,12 @@ public class DAM {
             private boolean updatedColors = false;
             private boolean popperIn = false;
             private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
+            private int currentIteration;
 
             @Override
             protected void init() {
-                boolean firstIteration = Globals.aae.currentIterationNumber() == 0;
+                currentIteration = Globals.aae.currentIterationNumber();
+                boolean firstIteration = currentIteration == 0;
                 if (!firstIteration)
                     robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
                 scheduler.addOptionalDelay(firstIteration, new Delay(650, () -> {
@@ -234,6 +249,11 @@ public class DAM {
                 int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
                 return tableStates.get(index);
+            }
+
+            @Override
+            public double millisToDrive() {
+                return currentIteration * 2500 + 4000;
             }
         };
     }
