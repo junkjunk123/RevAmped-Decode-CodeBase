@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 @Autonomous
 public class LM1BlueAuto extends DecodeRevAmpedAutonomous {
+
     @Override
     public void setPaths() {
         paths = new LM1AutoPaths();
@@ -23,13 +24,12 @@ public class LM1BlueAuto extends DecodeRevAmpedAutonomous {
 
     @Override
     public void RevAmpedInitLoop() {
-        telemetry.addData("curPose", followerManager.follower.getPose());
-        telemetry.update();
+
     }
 
     @Override
     public void setRobot() {
-        DecodeLimelight.usingLimelight = false;
+        DecodeLimelight.usingLimelight = true;
         robot = new Robot(this, Globals.AllianceColor.Blue, Robot.OpModeType.AUTO);
 
     }

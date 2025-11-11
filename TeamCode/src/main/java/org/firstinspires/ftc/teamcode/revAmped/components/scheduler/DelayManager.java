@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.revAmped.components.scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.BooleanSupplier;
 
@@ -16,7 +19,7 @@ public class DelayManager {
      * A set of Delay objects that are managed by this DelayManager.
      * It uses a ConcurrentSkipListSet to allow for thread-safe operations and sorted access.
      */
-    private final ConcurrentSkipListSet<Delay> delays = new ConcurrentSkipListSet<>(Comparator.comparingInt(Delay::hashCode));
+    private final ConcurrentLinkedQueue<Delay> delays = new ConcurrentLinkedQueue<>();
 
     public DelayManager() {}
 
@@ -24,7 +27,7 @@ public class DelayManager {
      * Adds a Delay object to the set.
      */
     public void add(Delay delay) {
-        delays.add(delay);
+        delays.offer(delay);
     }
 
     /**
@@ -87,11 +90,6 @@ public class DelayManager {
      */
     public void update() {
         // Iterate through the set and check for completed delays
-        for (Delay delay : delays) {
-            delay.update();
-            if (delay.isCompleted()) {
-                delays.remove(delay);  // Remove the completed delay from the set
-            }
-        }
+        delays.removeIf(Delay::update);
     }
 }

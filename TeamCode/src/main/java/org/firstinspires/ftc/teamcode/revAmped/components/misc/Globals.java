@@ -83,6 +83,20 @@ public final class Globals {
         public List<DecodeColorSensor.ArtifactColor> getColors() {
             return colors;
         }
+
+        public int getGreenIndex() {
+            switch (this) {
+                case PGP -> {
+                    return 1;
+                }
+                case PPG -> {
+                    return 2;
+                }
+                default -> {
+                    return 0;
+                }
+            }
+        }
     }
 
     public static RandomizationState randomizationState;

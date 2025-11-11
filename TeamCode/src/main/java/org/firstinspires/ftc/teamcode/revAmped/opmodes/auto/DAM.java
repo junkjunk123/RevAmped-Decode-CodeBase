@@ -10,7 +10,13 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DAM {
     public static Robot robot;
@@ -20,6 +26,7 @@ public class DAM {
     public static ElapsedTime overallTimer;
     public static ElapsedTime driveTimer;
     public static DecodeLimelight limelight;
+    private static int greenIndex = -1;
 
     public static void initialize() {
         robot = Globals.aae.parameters.getRobot();
@@ -36,32 +43,70 @@ public class DAM {
 
     public static AutonomousEnumeratedAction shootPreloads() {
         return new AutonomousEnumeratedAction() {
+            private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
+
             @Override
             protected void init() {
                 robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
-                robot.turretMotor().setCurrentState(Types.TurretState.HOLD);
-                robot.popper().setCurrentState(Types.PopperState.POP);
-                robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
             }
 
             @Override
             protected void loop() {
+                if (limelight != null)
+                    limelight.update();
+
                 if (finishedDriving()) {
-                    scheduler.add(new Delay(1500, () -> robot.turnTable.shootAllAuto(() -> {
-                        if (DecodeLimelight.usingLimelight) {
-                            limelight.setCurrentPipeline(DecodeLimelight.Pipeline.OBELISK);
-                            robot.turretMotor().limelightDetection();
-                            scheduler.add(new Delay(() -> Globals.randomizationState != null, () -> completed = true));
-                        } else {
-                            completed = true;
-                        }
-                    })));
+                    if (DecodeLimelight.usingLimelight) {
+                        limelight.setCurrentPipeline(DecodeLimelight.Pipeline.OBELISK);
+                        robot.turretMotor().limelightDetection();
+                        scheduler.add(new Delay(() -> Globals.randomizationState != null,
+                                () -> {
+                                    updateColors();
+                                    robot.tableServo().setCurrentState(computeTableRotation());
+                                    robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
+                                    scheduler.add(new Delay(robot.tableServo()::reached, () -> {
+                                        scheduler.add(new Delay(650, () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
+                                                () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)).setMaxTimeToRun(250))));
+                                        scheduler.add(new Delay(150, () -> robot.popper().setCurrentState(Types.PopperState.POP)));
+                                    }));
+                                }).setCancellation(4000, () -> {
+                                    robot.popper().setCurrentState(Types.PopperState.POP);
+                                    robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
+                                    scheduler.add(new Delay(750, () -> robot.turnTable.shootAllAuto(() -> completed = true)));
+                                }));
+                    } else {
+                        robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
+                        robot.popper().setCurrentState(Types.PopperState.POP);
+                        scheduler.add(new Delay(1500, () -> robot.turnTable.shootAllAuto(() -> completed = true)));
+                    }
                 }
             }
 
             @Override
             public boolean isFinishedDriving() {
                 return notBusy();
+            }
+
+            private void updateColors() {
+                ColorManager colorManager = robot.intakeColor();
+                artifactColors[1] = colorManager.getCompartmentOneColor();
+                artifactColors[2] = colorManager.getCompartmentTwoColor();
+
+                if (artifactColors[1] == DecodeColorSensor.ArtifactColor.GREEN || artifactColors[2] == DecodeColorSensor.ArtifactColor.GREEN)
+                    artifactColors[0] = DecodeColorSensor.ArtifactColor.PURPLE;
+                else artifactColors[0] = DecodeColorSensor.ArtifactColor.GREEN;
+            }
+
+            private Types.TableState computeTableRotation() {
+                List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
+                greenIndex = Globals.randomizationState.getGreenIndex();
+                int curGreenIndex = 0;
+                for (int i = 0; i < 3; i++)
+                    if (artifactColors[i] == DecodeColorSensor.ArtifactColor.GREEN)
+                        curGreenIndex = i;
+                int index = tableStates.indexOf(robot.tableServo().getCurrentState()) - greenIndex + curGreenIndex;
+                index = (index + 3) % 3;
+                return tableStates.get(index);
             }
         };
     }
@@ -70,15 +115,22 @@ public class DAM {
         return new AutonomousEnumeratedAction() {
             @Override
             protected void init() {
-                scheduler.add(new Delay(300, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)));
-                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.5,
-                        () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE)));
+                scheduler.add(new Delay(robot.tableServo()::reached,
+                        () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)).setMaxTimeToRun(1500));
+                scheduler.add(new Delay(500, () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 1)));
             }
 
             @Override
             protected void loop() {
-                if (finishedDriving())
-                    completed = true;
+                if (finishedDriving()) {
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
+                    boolean firstIteration = Globals.aae.currentIterationNumber() == 1;
+                    int outtakeTime = firstIteration ? 350 : 200;
+                    scheduler.add(new Delay(outtakeTime, () -> {
+                        scheduler.add(new Delay(100, () -> completed = true));
+                        robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                    }));
+                }
             }
 
             @Override
@@ -115,26 +167,65 @@ public class DAM {
     public static AutonomousEnumeratedAction shoot() {
         return new AutonomousEnumeratedAction() {
             private boolean popperIn = false;
+            private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
 
             @Override
             protected void init() {
-                scheduler.add(new Delay(700, () -> {
-                    robot.popper().setCurrentState(Types.PopperState.POP);
-                    robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_SET_1);
-                    popperIn = true;
+                boolean firstIteration = Globals.aae.currentIterationNumber() == 0;
+                if (!firstIteration)
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
+                scheduler.addOptionalDelay(firstIteration, new Delay(650, () -> {
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                    scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.75, () -> {
+                        if (Globals.randomizationState != null) {
+                            updateColors();
+                            robot.tableServo().setCurrentState(computeTableRotation());
+                        }
+
+                        scheduler.addOptionalDelay(Globals.randomizationState == null,
+                                new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
+                                    robot.popper().setCurrentState(Types.PopperState.POP);
+                                    scheduler.add(new Delay(500, () -> popperIn = true));
+                                }))));
+                        robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_SET_1);
+                    }));
                 }));
             }
 
             @Override
             protected void loop() {
+                telemetry.addData("colors", Arrays.toString(artifactColors));
+
                 if (finishedDriving()) {
-                    scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true)));
+                    scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)));
                 }
             }
 
             @Override
             public boolean isFinishedDriving() {
                 return notBusy();
+            }
+
+            private void updateColors() {
+                ColorManager colorManager = robot.intakeColor();
+                artifactColors[1] = colorManager.getCompartmentOneColor();
+                artifactColors[2] = colorManager.getCompartmentTwoColor();
+
+                if (artifactColors[1] == DecodeColorSensor.ArtifactColor.GREEN || artifactColors[2] == DecodeColorSensor.ArtifactColor.GREEN)
+                    artifactColors[0] = DecodeColorSensor.ArtifactColor.PURPLE;
+                else artifactColors[0] = DecodeColorSensor.ArtifactColor.GREEN;
+            }
+
+            private Types.TableState computeTableRotation() {
+                List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
+                int curGreenIndex = 0;
+                for (int i = 0; i < 3; i++)
+                    if (artifactColors[i] == DecodeColorSensor.ArtifactColor.GREEN)
+                        curGreenIndex = i;
+                //int index = tableStates.indexOf(robot.tableServo().getCurrentState()) - greenIndex + curGreenIndex;
+                int index = curGreenIndex - greenIndex;
+                index = (index + 3) % 3;
+                return tableStates.get(index);
             }
         };
     }

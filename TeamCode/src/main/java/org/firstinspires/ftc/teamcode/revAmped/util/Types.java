@@ -22,7 +22,8 @@ public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
         INTAKE(1.0f),
         STOP(0.0f),
-        OUTTAKE(-0.5f);
+        OUTTAKE(-0.5f),
+        SLOW_OUTTAKE(-0.3f);
 
         final float power;
 

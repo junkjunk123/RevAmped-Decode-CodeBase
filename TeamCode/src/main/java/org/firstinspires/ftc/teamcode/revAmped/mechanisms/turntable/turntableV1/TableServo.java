@@ -5,11 +5,13 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.sun.tools.javac.util.Name;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
@@ -30,6 +32,7 @@ public class TableServo extends HwCRServo2<TableState> {
     private int absoluteRotationTarget = 0;
     public static DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
     public float mult = 1f;
+    public final HwSwitch limitSwitch;
 
     @Override
     public int ticksPerRotation() {
@@ -47,9 +50,16 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public TableServo(HardwareMap hardwareMap, TableState state, Encoder encoder) throws IllegalArgumentException{
         super(hardwareMap, "table", direction, state, encoder);
+        this.limitSwitch = new HwSwitch(hardwareMap, "table_switch", true, true);
         controller = new PIDFController(TABLE_PIDF_COEFFICIENTS);
         resetPosition();
         velocityComputer = new Differentiator(encoder);
+    }
+
+    @Override
+    public void update() {
+        limitSwitch.update();
+        super.update();
     }
 
     @Override
@@ -128,7 +138,20 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public void absoluteRotate(double rotations) {
         setCurrentState(TableState.ABSOLUTE_ROTATION);
-        absoluteRotationTarget = getCurrentPosition() + (int) (TICKS_PER_ROTATION * rotations);
+        int currentPos = super.getCurrentPosition();
+        absoluteRotationTarget = currentPos + (int) (TICKS_PER_ROTATION * rotations);
+    }
+
+    private int getClosestFullRotation(int currentPos) {
+        int revolutions = currentPos / TICKS_PER_ROTATION;
+        if (currentPos <= (revolutions + 0.5) * TICKS_PER_ROTATION)
+            return revolutions * TICKS_PER_ROTATION;
+        return (revolutions + 1) * TICKS_PER_ROTATION;
+    }
+
+    private int nextFullRotation(int currentPos) {
+        int revolutions = currentPos / TICKS_PER_ROTATION;
+        return (revolutions + 1) * TICKS_PER_ROTATION;
     }
 
     public Types.TableState closestState(int pos) {
@@ -143,10 +166,12 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     public void resetToRelativeRotation() {
-        int normalizedTarget = absoluteRotationTarget % TICKS_PER_ROTATION;
-        if (normalizedTarget < 0) normalizedTarget += TICKS_PER_ROTATION;
-        setCurrentState(closestState(normalizedTarget));
-        absoluteRotationTarget = 0;
+        setCurrentState(TableState.ABSOLUTE_ROTATION);
+        absoluteRotationTarget = nextFullRotation(super.getCurrentPosition());
+        Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
+                resetPosition(getClosestFullRotation(super.getCurrentPosition()));
+                setCurrentState(TableState.BALL1);
+        }));
     }
 
     public int getAbsoluteRotationTarget() {

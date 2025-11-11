@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import java.util.List;
 
 public class DecodeLimelight implements HwDevice {
-    private final Limelight3A limelight;
+    public final Limelight3A limelight;
     private final String id;
     private LLResult latestResult;
     private Vector detectionResult;
@@ -22,7 +22,7 @@ public class DecodeLimelight implements HwDevice {
 
     public enum Pipeline {
         NONE(-1),
-        OBELISK(6),
+        OBELISK(7),
         SHOOTING_ALIGNMENT(1),
         ELEMENT_DETECTION(2);
 
@@ -55,33 +55,37 @@ public class DecodeLimelight implements HwDevice {
         return id;
     }
 
-    public void computeRandomizationState() {
-        setCurrentPipeline(Pipeline.OBELISK);
-    }
-
     public void setCurrentPipeline(Pipeline pipeline) {
-        if (pipeline != Pipeline.NONE) limelight.pipelineSwitch(pipeline.getPipeline());
+        if (pipeline != Pipeline.NONE) {
+            limelight.pipelineSwitch(pipeline.getPipeline());
+            limelight.start();
+        }
         else limelight.pause();
         currentPipeline = pipeline;
     }
 
     private void computeLatestResult() {
         LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) latestResult = result;
+        if (result != null && result.isValid())
+            latestResult = result;
     }
 
     @Override
     public void update() {
         if (currentPipeline == Pipeline.NONE) return;
         computeLatestResult();
+        if (latestResult == null) return;
+
         switch (currentPipeline) {
             case OBELISK -> {
+                if (latestResult.getFiducialResults() == null || latestResult.getFiducialResults().isEmpty())
+                    return;
                 LLResultTypes.FiducialResult result = latestResult.getFiducialResults().get(0);
                 int id = result.getFiducialId();
                 for (Globals.RandomizationState state : Globals.RandomizationState.values()) {
                     if (id == state.getID()) {
                         Globals.randomizationState = state;
-                        currentPipeline = Pipeline.NONE;
+                        setCurrentPipeline(Pipeline.NONE);
                         return;
                     }
                 }
@@ -89,7 +93,7 @@ public class DecodeLimelight implements HwDevice {
 
             case SHOOTING_ALIGNMENT -> {
                 double tagID = Globals.allianceColor.getTagID();
-                List<LLResultTypes.FiducialResult> r = limelight.getLatestResult().getFiducialResults();
+                List<LLResultTypes.FiducialResult> r = latestResult.getFiducialResults();
                 LLResultTypes.FiducialResult target = null;
                 for (LLResultTypes.FiducialResult i: r) {
                     if (i != null && i.getFiducialId() == tagID) {
@@ -119,5 +123,9 @@ public class DecodeLimelight implements HwDevice {
     @Override
     public DeviceType getDeviceType() {
         return DeviceType.CAMERA;
+    }
+
+    public Pipeline getCurrentPipeline() {
+        return currentPipeline;
     }
 }

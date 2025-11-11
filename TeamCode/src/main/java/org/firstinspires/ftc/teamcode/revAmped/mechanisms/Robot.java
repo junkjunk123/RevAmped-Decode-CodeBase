@@ -144,7 +144,7 @@ public class Robot {
             shooter.hardware().turretMotor().resetPosition();
         }
         shooter.hardware().flywheel().resetPosition();
-        intakeMotor().setVoltageCompensation();
+        //intakeMotor().setVoltageCompensation();
     }
 
     public void update() {

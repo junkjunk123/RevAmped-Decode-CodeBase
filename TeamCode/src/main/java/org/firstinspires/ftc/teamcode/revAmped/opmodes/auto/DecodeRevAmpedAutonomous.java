@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
@@ -58,7 +59,10 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
 
     @Override
     public void update() {
-        //telemetry.update();
+        if (Globals.randomizationState != null)
+            telemetry.addData("motif", Globals.randomizationState);
+        else telemetry.addData("motif detected", false);
+        telemetry.update();
         followerManager.update();
         robot.update();
     }

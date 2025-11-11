@@ -15,6 +15,6 @@ public class IntakeUltrasonic extends HwUltrasonicSensor {
     }
 
     public boolean hasArtifact() {
-        return getDistance() < DISTANCE_THRESHOLD;
+        return false;
     }
 }

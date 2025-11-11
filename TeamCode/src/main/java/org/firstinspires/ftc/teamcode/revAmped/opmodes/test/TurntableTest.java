@@ -67,6 +67,7 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
         //telemetry.addData("intakePos", intakeMotor.motor.getCurrentPosition());
         telemetry.addData("targetPos", tableServo.getAbsoluteRotationTarget());
         telemetry.addData("error", tableServo.getLastError());
+        telemetry.addData("limSwitch", tableServo.limitSwitch.isTouch());
 
         telemetry.update();
     }

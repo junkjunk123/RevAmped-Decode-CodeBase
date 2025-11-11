@@ -94,7 +94,7 @@ public class ColoredDecodePose implements FuturePose {
         return pose;
     }
 
-    public double heading() {
+    public double getHeading() {
         return getPose().getHeading();
     }
 

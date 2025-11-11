@@ -49,8 +49,8 @@ public class TurnTable implements ArtifactQueuer {
                 (ball, compartments) -> {},
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {
-                    setCycleState(getCurrentState().getCycleState().toggle());
-                    switch (getCurrentCycleState()) {
+                    TurnTableCycleState cycleState = getCurrentState().getCycleState().toggle();
+                    switch (cycleState) {
                         case POP -> shooterStateConsumer.accept(Types.ShooterState.TRACKING);
                         case INTAKE -> {
                             Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
@@ -58,6 +58,7 @@ public class TurnTable implements ArtifactQueuer {
                             hardware().turntable().resetToRelativeRotation();
                         }
                     }
+                    setCycleState(cycleState);
                     compartments.resetPopHistory();
                 }
         );
@@ -123,7 +124,7 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     private void shootOne(Runnable andThen, boolean forwardRotation, int numBalls) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
         Robot.INSTANCE.updateLock();
         if (forwardRotation) hardware.turntable().setNextState();
         else hardware.turntable().setPreviousState();
@@ -150,33 +151,38 @@ public class TurnTable implements ArtifactQueuer {
         hardware.turntable().absoluteRotate(4.0/3.0);
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
-        scheduler.add(new Delay(hardware().turntable()::reached, () -> scheduler.add(new Delay(800, () -> {
+        scheduler.add(new Delay(hardware().turntable()::reached, () -> {
             for (int j = 0; j < numBalls; j++) {
                 compartments.pop(false);
             }
             compartments.toggleCycleState();
             andThen.run();
-        }))).setMaxTimeToRun(3500));
+        }).setMaxTimeToRun(3500));
     }
 
     public void shootAllAuto(Runnable andThen, double flywheelDelay) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
-        hardware.turntable().absoluteRotate(4.0/9.0);
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(flywheelDelay, () -> {
-            hardware.turntable().absoluteRotate(4.0/9.0);
-            scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(flywheelDelay, () -> {
-                hardware.turntable().absoluteRotate(4.0/9.0);
-                scheduler.add(new Delay(hardware().turntable()::reached, () -> scheduler.add(new Delay(800, andThen))).setMaxTimeToRun(3500));
-            }))).setMaxTimeToRun(1000));
-        }))).setMaxTimeToRun(1000));
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+        hardware.turntable().absoluteRotate(1.0/3.0);
+        scheduler.add(new Delay(hardware.turntable()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+            hardware.turntable().absoluteRotate(1.0/3.0);
+            hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+            scheduler.add(new Delay(hardware.turntable()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+                hardware.turntable().absoluteRotate(1.0);
+                hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+                scheduler.add(new Delay(hardware().turntable()::reached, () -> {
+                    hardware.turntable().resetToRelativeRotation();
+                    andThen.run();
+                }).setMaxTimeToRun(2500));
+            })); hardware().popper().setCurrentState(Types.PopperState.POP, Popper.POP_LAST); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
+        })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
     }
 
     public void shootAllAuto(Runnable andThen) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
         hardware.turntable().absoluteRotate(4.0/3.0);
         scheduler.add(new Delay(hardware.turntable()::reached, () -> {
-            andThen.run();
             hardware.turntable().resetToRelativeRotation();
+            scheduler.add(new Delay(hardware.turntable().limitSwitch::isTouch, andThen).setMaxTimeToRun(500));
         }).setMaxTimeToRun(3500));
     }
 

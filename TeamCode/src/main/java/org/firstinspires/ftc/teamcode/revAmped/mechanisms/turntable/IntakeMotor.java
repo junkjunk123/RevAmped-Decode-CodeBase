@@ -53,6 +53,10 @@ public class IntakeMotor extends HwMotor2<IntakeState> {
         useVoltageCompensation = true;
     }
 
+    public void setUseVoltageCompensation(boolean useVoltageCompensation) {
+        this.useVoltageCompensation = useVoltageCompensation;
+    }
+
     @Override
     public DelayedResult<Boolean> testResponse() {
         setCurrentState(IntakeState.INTAKE, 0.5f);

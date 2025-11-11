@@ -28,7 +28,7 @@ public final class DecodeConstants implements Constants {
     );
     public void build() {
         //Popper Constants
-        Popper.POP = 21/255f; Popper.NEUTRAL = 109/255f;
+        Popper.POP = 18/255f; Popper.POP_LAST = 14/255f; Popper.NEUTRAL = 104/255f;
 
         //Flywheel Constants
         Flywheel.kStatic = 0.05;
@@ -51,7 +51,7 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
-        TurretMotor.AUTO_PRELOADS = 493; TurretMotor.AUTO_SET_1 = 523; TurretMotor.AUTO_SET_2 = 523; TurretMotor.AUTO_SET_3 = 523;
+        TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 523; TurretMotor.AUTO_SET_2 = 523; TurretMotor.AUTO_SET_3 = 523;
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
 
         //Table Constants
@@ -69,6 +69,6 @@ public final class DecodeConstants implements Constants {
         ColorManager.maxGreenHueOne = 165.0f; ColorManager.minGreenHueOne = 155.0f;
         ColorManager.maxGreenHueTwo = 165.0f; ColorManager.minGreenHueTwo = 155.0f;
 
-        IntakeUltrasonic.DISTANCE_THRESHOLD = 0.19f;
+        IntakeUltrasonic.DISTANCE_THRESHOLD = 0.5f;
     }
 }

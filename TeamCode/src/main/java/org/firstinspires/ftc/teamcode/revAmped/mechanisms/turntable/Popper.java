@@ -15,6 +15,7 @@ public class Popper extends HwServo2<PopperState> {
 
     public static float NEUTRAL;
     public static float POP;
+    public static float POP_LAST;
 
     public static float UP_VOLTAGE;
     public static float DOWN_VOLTAGE;

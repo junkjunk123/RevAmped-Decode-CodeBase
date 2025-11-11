@@ -70,7 +70,7 @@ public class TurretMotor extends Turret<TurretState> {
     public void setCurrentState(TurretState motorState) {
         super.setCurrentState(motorState);
         if (this.motorState != TurretState.HOLD && this.motorState != TurretState.IDLE && motorState == TurretState.HOLD && useTurretSwitch)
-            Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition));
+            Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition).setCancellation(1500));
         targetPosition = motorState.getPos();
         controller.reset();
         prevFineTuneAngle = 0;
