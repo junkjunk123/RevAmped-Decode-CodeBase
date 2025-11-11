@@ -14,8 +14,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -193,7 +191,7 @@ public class DAM {
                     robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
                 scheduler.addOptionalDelay(firstIteration, new Delay(650, () -> {
                     robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-                    scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.75, () -> {
+                    scheduler.add(new Delay(() -> followerManager.follower.atParametricEnd(), () -> {
                         if (Globals.randomizationState != null) {
                             updateColors();
                             Scheduler.getInstance().add(new FiniteFailsafeDelay(() -> updatedColors,
