@@ -211,7 +211,7 @@ public class TurnTable implements ArtifactQueuer {
 
     public void switchStateToPop() {
         setCycleState(TurnTableCycleState.POP);
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> hardware().popper().setCurrentState(Types.PopperState.POP)).setMaxTimeToRun(3500));
+        hardware().popper().setCurrentState(Types.PopperState.POP);
     }
 
     public void intake() {
