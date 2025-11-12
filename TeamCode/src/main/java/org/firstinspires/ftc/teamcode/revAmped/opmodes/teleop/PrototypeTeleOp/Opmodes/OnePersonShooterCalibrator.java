@@ -77,7 +77,7 @@ public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
     public void RevAmpedLoop() {
         //Telemetry statements
         telemetry.addData("Hood Position", hoodServo.getPosition());
-        //telemetry.addData("Motor Velocity", flywheel.getVelocity());
+        telemetry.addData("Motor Velocity", flywheel.getVelocity());
         telemetry.addData("ShootState",shootState);
         telemetry.addData("=========Current=========","");
         telemetry.addData("intakeCurrent",intakeMotor.motor.getCurrent(CurrentUnit.AMPS));
