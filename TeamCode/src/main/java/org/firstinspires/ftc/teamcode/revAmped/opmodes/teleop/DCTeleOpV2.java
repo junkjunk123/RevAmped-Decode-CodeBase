@@ -234,6 +234,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         telemetry.addData("numBalls", robot.turnTable.getNumberOfBalls());
         telemetry.addData("shooterState", robot.shooter.getCurrentState());
         telemetry.addData("turretState", robot.turretMotor().getCurrentState());
+        telemetry.addData("popperState",robot.popper().getCurrentState());
         telemetry.update();
     }
 
