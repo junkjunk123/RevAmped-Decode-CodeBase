@@ -124,12 +124,12 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     public void setNextState() {
-        TableState[] values = Types.TableState.values();
+        TableState[] values = Types.TableState.relativeStates();
         setCurrentState(values[(servoState.ordinal() + 1) % values.length]);
     }
 
     public void setPreviousState() {
-        TableState[] values = Types.TableState.values();
+        TableState[] values = Types.TableState.relativeStates();
         int index = (servoState.ordinal() - 1) % values.length;
         if (index < 0)
             index += values.length;

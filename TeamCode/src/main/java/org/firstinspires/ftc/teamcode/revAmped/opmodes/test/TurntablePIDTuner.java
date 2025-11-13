@@ -7,7 +7,6 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
@@ -15,10 +14,11 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.revAmped.util.LoopTimer;
 
 @Config
 @TeleOp
-public class TurntableSTDTuner extends DecodeRevAmpedOpMode {
+public class TurntablePIDTuner extends DecodeRevAmpedOpMode {
     private CRServoImplEx motor;
     private DcMotorEx intake;
     private int initialPos;
@@ -28,6 +28,9 @@ public class TurntableSTDTuner extends DecodeRevAmpedOpMode {
     public static double D = 0.00001;
     public static double F = 0.025;
     public static int targetPosition = TableServo.BALL2;
+    public static double targetLoopTimeMillis = 20;
+    private LoopTimer loopTimer = new LoopTimer(10000000);
+    private double prevSleep;
 
     @Override
     public void RevAmpedInit() {
@@ -47,8 +50,13 @@ public class TurntableSTDTuner extends DecodeRevAmpedOpMode {
         telemetry.update();
     }
 
+    @Override
+    public void RevAmpedStart() {
+        loopTimer.begin();
+    }
+
     private int getPos() {
-        return intake.getCurrentPosition() - initialPos;
+        return -intake.getCurrentPosition() - initialPos;
     }
 
     private int getError() {
@@ -72,6 +80,11 @@ public class TurntableSTDTuner extends DecodeRevAmpedOpMode {
         telemetry.addData("currentPos", getPos());
         telemetry.addData("error", error);
         telemetry.addData("power", power);
+
+        loopTimer.update();
+        prevSleep += targetLoopTimeMillis - loopTimer.getInterval();
+        if (prevSleep >= 0)
+            sleep((long) (prevSleep));
     }
 
     @Override

@@ -55,7 +55,7 @@ public class TurnTable implements ArtifactQueuer {
                         case INTAKE -> {
                             Robot.INSTANCE.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
                             shooterStateConsumer.accept(Types.ShooterState.REST);
-                            hardware().turntable().resetToRelativeRotation();
+                            hardware().tableServo().resetToRelativeRotation();
                         }
                     }
                     setCycleState(cycleState);
@@ -126,10 +126,12 @@ public class TurnTable implements ArtifactQueuer {
     private void shootOne(Runnable andThen, boolean forwardRotation, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
         Robot.INSTANCE.updateLock();
-        if (forwardRotation) hardware.turntable().setNextState();
-        else hardware.turntable().setPreviousState();
+        if (forwardRotation)
+            hardware.tableServo().setNextState();
+        else
+            hardware.tableServo().setPreviousState();
         setCycleState(TurnTableCycleState.POP);
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> scheduler.add(new Delay(300, () -> {
+        scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(300, () -> {
             compartments.pop(true);
             andThen.run();
 
@@ -148,10 +150,10 @@ public class TurnTable implements ArtifactQueuer {
 
     private void shootAll(Runnable andThen, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
-        hardware.turntable().absoluteRotate(4.0/3.0);
+        hardware.tableServo().absoluteRotate(4.0/3.0);
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
-        scheduler.add(new Delay(hardware().turntable()::reached, () -> {
+        scheduler.add(new Delay(hardware().tableServo()::reached, () -> {
             for (int j = 0; j < numBalls; j++) {
                 compartments.pop(false);
             }
@@ -162,15 +164,15 @@ public class TurnTable implements ArtifactQueuer {
 
     public void shootAllAuto(Runnable andThen, double flywheelDelay) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
-        hardware.turntable().absoluteRotate(1.0/3.0);
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
-            hardware.turntable().absoluteRotate(1.0/3.0);
+        hardware.tableServo().absoluteRotate(1.0/3.0);
+        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+            hardware.tableServo().absoluteRotate(1.0/3.0);
             hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
-            scheduler.add(new Delay(hardware.turntable()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
-                hardware.turntable().absoluteRotate(1.0);
+            scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+                hardware.tableServo().absoluteRotate(1.0);
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
-                scheduler.add(new Delay(hardware().turntable()::reached, () -> {
-                    hardware.turntable().resetToRelativeRotation();
+                scheduler.add(new Delay(hardware().tableServo()::reached, () -> {
+                    hardware.tableServo().resetToRelativeRotation();
                     andThen.run();
                 }).setMaxTimeToRun(2500));
             })); hardware().popper().setCurrentState(Types.PopperState.POP, Popper.POP_LAST); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
@@ -179,10 +181,10 @@ public class TurnTable implements ArtifactQueuer {
 
     public void shootAllAuto(Runnable andThen) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.75f);
-        hardware.turntable().absoluteRotate(4.0/3.0);
-        scheduler.add(new Delay(hardware.turntable()::reached, () -> {
-            hardware.turntable().resetToRelativeRotation();
-            scheduler.add(new Delay(hardware.turntable().limitSwitch::isTouch, andThen).setMaxTimeToRun(500));
+        hardware.tableServo().absoluteRotate(4.0/3.0);
+        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
+            hardware.tableServo().resetToRelativeRotation();
+            scheduler.add(new Delay(hardware.tableServo().limitSwitch::isTouch, andThen).setMaxTimeToRun(500));
         }).setMaxTimeToRun(3500));
     }
 
@@ -190,9 +192,8 @@ public class TurnTable implements ArtifactQueuer {
     public void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh) {
         DCTeleOpV2.CycleState cycleState = tsh.nextState();
         tsh.runTransition(TeleOpStateHandler.TransitionCommand.fromRunnable(() -> {
+            int i = getNumberOfBalls();
             if (!all) {
-                int i = getNumberOfBalls();
-
                 if (i == 1) {
                     tsh.runTransition(t -> shootOne(() -> t.accept(true), forwardRotation, i), DCTeleOpV2.CycleState.INTAKE, 800);
                 } else {
@@ -203,7 +204,6 @@ public class TurnTable implements ArtifactQueuer {
                     }
                 }
             } else {
-                int i = getNumberOfBalls();
                 tsh.runTransition(t -> shootAll(() -> t.accept(true), i), DCTeleOpV2.CycleState.INTAKE, 3500);
             }
         }), DCTeleOpV2.CycleState.SHOOTING);

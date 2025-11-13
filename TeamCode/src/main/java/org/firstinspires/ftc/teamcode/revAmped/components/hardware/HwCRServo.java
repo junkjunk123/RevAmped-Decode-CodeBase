@@ -50,6 +50,31 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
         }
     }
 
+    /**
+     * initialize the motor
+     * @param hardwareMap HardwareMap to get motor from
+     * @param id name of motor
+     * @param direction direction of motor
+     */
+
+    public HwCRServo (HardwareMap hardwareMap,
+                      String id,
+                      DcMotor.Direction direction)
+            throws IllegalArgumentException
+    {
+        this.id = id;
+        if (!testing) {
+            try {
+                this.servo = hardwareMap.get(CRServo.class, id);
+            } catch (Exception e) {
+                throw new InitializationException(this);
+            }
+            this.servo.setDirection(direction);
+        } else {
+            servo = null;
+        }
+    }
+
     public interface Encoder {
         int getPosition();
         double getVelocity();
@@ -95,20 +120,26 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
                 }
             };
         }
+
+        default Encoder reverse() {
+            return new Encoder() {
+                @Override
+                public int getPosition() {
+                    return -Encoder.this.getPosition();
+                }
+
+                @Override
+                public double getVelocity() {
+                    return -Encoder.this.getVelocity();
+                }
+            };
+        }
     }
 
     public void setPower(float power) {
         if (Math.abs(this.power - power) >= 0.01) {
             if (!testing) servo.setPower(power);
             this.power = power;
-        }
-    }
-
-    public void setPower(double power) {
-        power = Range.clip(power, -1, 1);
-        if (Math.abs(this.power - power) >= 0.01) {
-            if (!testing) servo.setPower(power);
-            this.power = (float) power;
         }
     }
 
@@ -128,6 +159,8 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
      */
     public int getCurrentPosition() {
         if (currentPos == -1) {
+            if (encoder == null)
+                throw new UnsupportedOperationException("Encoder not defined for motor " + getId());
             if (!testing) currentPos = encoder.getPosition() - encoderBase;
             else return 1;
         }
@@ -139,11 +172,13 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
      * reset the motor encoder value
      */
     public void resetPosition() {
-        if (!testing) encoderBase = encoder.getPosition();
+        if (!testing && encoder != null)
+            encoderBase = encoder.getPosition();
     }
 
     public void resetPosition(int currentPos) {
-        if (!testing) encoderBase = encoder.getPosition() - currentPos;
+        if (!testing && encoder != null)
+            encoderBase = encoder.getPosition() - currentPos;
     }
 
     @Override

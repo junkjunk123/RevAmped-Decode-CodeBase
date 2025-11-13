@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.revAmped.util;
 import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo.HOOD_REST;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.CRServoInternal;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
@@ -14,9 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
@@ -89,6 +86,10 @@ public interface Types {
                     return 0;
                 }
             }
+        }
+
+        public static TableState[] relativeStates() {
+            return new TableState[] {BALL1, BALL2, BALL3};
         }
     }
 
@@ -196,11 +197,11 @@ public interface Types {
         }
     }
 
-    record QueuerHardwareComponents(TableServo turntable, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
+    record QueuerHardwareComponents(TableServo tableServo, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();
-            turntable.update();
+            tableServo.update();
             popper.update();
             ultrasonic.update();
         }

@@ -6,7 +6,7 @@ public class LoopTimer {
     private long previousTime;
     private long interval = 1;
     private long maxInterval = 1;
-    private MovingAverage average;
+    private final MovingAverage average;
 
     public LoopTimer(int period) {
         average = new MovingAverage(period);
@@ -39,5 +39,9 @@ public class LoopTimer {
 
     public long getInterval() {
         return interval;
+    }
+
+    public double getAverageHz() {
+        return 1000.0 / getAverageLoopTime();
     }
 }

@@ -124,7 +124,7 @@ public class Robot {
         ));
         allDevices.put(HwDevice.DeviceType.SERVO, new HashSet<>(
                 List.of(
-                        turnTable.hardware().turntable(),
+                        turnTable.hardware().tableServo(),
                         turnTable.hardware().popper(),
                         shooter.hardware().hoodServo()
                 )
@@ -137,10 +137,10 @@ public class Robot {
         ));
 
         if (opModeType == OpModeType.TELEOP) {
-            turnTable.hardware().turntable().resetPosition(OpModeCommunication.turntablePos);
+            turnTable.hardware().tableServo().resetPosition(OpModeCommunication.turntablePos);
             shooter.hardware().turretMotor().resetPosition(OpModeCommunication.turretPos);
         } else {
-            turnTable.hardware.turntable().resetPosition();
+            turnTable.hardware.tableServo().resetPosition();
             shooter.hardware().turretMotor().resetPosition();
         }
         shooter.hardware().flywheel().resetPosition();
@@ -212,7 +212,7 @@ public class Robot {
     }
 
     public TableServo tableServo() {
-        return turnTable.hardware().turntable();
+        return turnTable.hardware().tableServo();
     }
 
     public HwServo2<Types.PopperState> popper() {

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
@@ -34,7 +35,7 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
         //intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
         //intakeMotor.setVoltageCompensation();
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, HwCRServo.Encoder.external(intake));
+        tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, HwCRServo.Encoder.external(intake).reverse());
     }
 
     @Override
@@ -43,7 +44,7 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
         tableServo.setMult(mult);
 
         if (gamepad1.xWasPressed()) {
-            tableServo.setAbsoluteRotationTarget(target + tableServo.getCurrentPosition());
+            tableServo.setAbsoluteRotationTarget(target + tableServo.getAbsoluteRotationTarget());
         }
 
         if (gamepad1.aWasPressed()) {
