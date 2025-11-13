@@ -35,7 +35,7 @@ public final class DecodeConstants implements Constants {
         Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.0003);
         Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.0008);
         Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1575; Flywheel.FLYWHEEL_NEAR_VELOCITY = 1050; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 1100; Flywheel.GEAR_RATIO = 1;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1200; Flywheel.FLYWHEEL_NEAR_VELOCITY = 900; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 1100; Flywheel.GEAR_RATIO = 1;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.75; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
@@ -45,7 +45,7 @@ public final class DecodeConstants implements Constants {
         HoodServo.HOOD_REST = 2/255f; HoodServo.HOOD_MAX_POS = 0f; HoodServo.HOOD_MIN_POS = 0f; HoodServo.HOOD_MAX_RAD = 0f; HoodServo.HOOD_MIN_RAD = 0f;
         HoodServo.AUTO_PRELOADS = 0f; HoodServo.AUTO_SET_1 = 0f; HoodServo.AUTO_SET_2 = 0f; HoodServo.AUTO_SET_3 = 0f;
         //HOOD POSITIONS FOR TELEOP
-        HoodServo.TELE_FAR_PRESET = 158/255f; HoodServo.TELE_NEAR_PRESET = 10/255f; HoodServo.TELE_MED_PRESET = 90/255f;
+        HoodServo.TELE_FAR_PRESET = 90/255f; HoodServo.TELE_NEAR_PRESET = 10/255f; HoodServo.TELE_MED_PRESET = 90/255f;
 
         //Turret Constants
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
@@ -56,6 +56,7 @@ public final class DecodeConstants implements Constants {
 
         //Table Constants
         TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.000244, 0, 0.00001, 0.025);
+        TableServo.SINGLE_SERVO_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);
         TableServo.BALL1 = 0; TableServo.BALL2 = 2730; TableServo.BALL3 = 5461;
         TableServo.TICKS_PER_ROTATION = 8192;
         TurnTable.SMALL_INTAKE_DELAY = 60; TurnTable.BIG_INTAKE_DELAY = 800;

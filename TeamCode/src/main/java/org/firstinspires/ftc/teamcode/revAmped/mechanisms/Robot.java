@@ -260,7 +260,7 @@ public class Robot {
         hoodServo().setUpdateLock(true);
         flywheel().setUpdateLock(true);
 
-        Delay delay = new Delay(() -> turnTable.getNumberOfBalls() == 0, () -> {
+        Delay delay = new Delay(() -> turnTable.isEmpty(), () -> {
             hoodServo().setUpdateLock(false);
             flywheel().setUpdateLock(false);
         }).setMaxTimeToRun(3500);
@@ -274,7 +274,7 @@ public class Robot {
     }
 
     public Delay lockTillLaunchedAll(Runnable andThen) {
-        Delay delay = new Delay(() -> turnTable.getNumberOfBalls() == 0, andThen).setMaxTimeToRun(3500);
+        Delay delay = new Delay(() -> turnTable.isEmpty(), andThen).setMaxTimeToRun(3500);
         if (opModeType == OpModeType.TELEOP) {
             delay.setCancellation(() -> turnTable.getCurrentState().getCycleState() != TurnTableInternals.TurnTableCycleState.POP)
                     .setCancellation(() -> shooter.pinpoint().getVelocityVector().getMagnitude() > 6);

@@ -6,7 +6,8 @@
             <goBILDA5202SeriesMotor name="flywheel_left" port="2"/>
             <goBILDA5202SeriesMotor name="turret" port="0"/>
             <RevColorSensorV3 name="colorTwo" port="0" bus="1"/>
-            <ContinuousRotationServo name="table" port="0"/>
+            <ContinuousRotationServo name="table" port="2"/>
+            <ContinuousRotationServo name="table_two" port="3"/>
             <Servo name="popper" port="1"/>
             <Servo name="hood" port="5"/>
             <DigitalDevice name="turret_switch" port="0"/>

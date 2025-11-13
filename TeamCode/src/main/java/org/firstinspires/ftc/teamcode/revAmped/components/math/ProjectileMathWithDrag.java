@@ -102,7 +102,7 @@ public class ProjectileMathWithDrag {
         Vector2D velocity = getVelocity(t, v_0, theta_0);
         double theta = velocity.getTheta();
         double invertedCost = Math.cos(Math.toRadians(3) - theta);
-        return Range.scale(invertedCost, Math.cos(Math.toRadians(18)), 1.0, 0.25, 0.95);
+        return Range.scale(invertedCost, Math.cos(Math.toRadians(8)), 1.0, 0.25, 0.95);
     }
 
     public static double invertX(double xPos, double v_0, double theta_0) {

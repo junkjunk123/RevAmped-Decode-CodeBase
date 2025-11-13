@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class DAM {
     public static Robot robot;
@@ -49,6 +49,7 @@ public class DAM {
             @Override
             protected void init() {
                 robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+                robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
             }
 
             @Override
@@ -66,10 +67,11 @@ public class DAM {
                                     robot.tableServo().setCurrentState(computeTableRotation());
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
                                     scheduler.add(new Delay(robot.tableServo()::reached, () -> {
-                                        scheduler.add(new Delay(650, () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
+                                        scheduler.add(new Delay(650,
+                                                () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
                                                 () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)).setMaxTimeToRun(250))));
                                         scheduler.add(new Delay(150, () -> robot.popper().setCurrentState(Types.PopperState.POP)));
-                                    }));
+                                    }).setMaxTimeToRun(1500));
                                 }).setCancellation(4000, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
@@ -105,7 +107,7 @@ public class DAM {
                 for (int i = 0; i < 3; i++)
                     if (artifactColors[i] == DecodeColorSensor.ArtifactColor.GREEN)
                         curGreenIndex = i;
-                int index = tableStates.indexOf(robot.tableServo().getCurrentState()) - greenIndex + curGreenIndex;
+                int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
                 return tableStates.get(index);
             }
@@ -125,7 +127,7 @@ public class DAM {
             protected void init() {
                 currentIteration = Globals.aae.currentIterationNumber();
                 scheduler.add(new Delay(robot.tableServo()::reached,
-                        () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)).setMaxTimeToRun(1500));
+                        () -> scheduler.add(new Delay(100, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)))).setMaxTimeToRun(1500));
                 scheduler.add(new Delay(500, () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 1)));
             }
 
@@ -184,8 +186,9 @@ public class DAM {
             private boolean popperIn = false;
             private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
             private int currentIteration;
-            private LoopTimer loopTimer = new LoopTimer(50);
-            private boolean runTimer = false;
+            private boolean executed = false;
+            private int greenIndex;
+            private int tableIndex;
 
             @Override
             protected void init() {
@@ -195,11 +198,11 @@ public class DAM {
                     robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
                 scheduler.addOptionalDelay(firstIteration, new Delay(650, () -> {
                     robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-                    scheduler.add(new Delay(() -> followerManager.follower.atParametricEnd(), () -> {
+                    scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.75, () -> {
                         if (Globals.randomizationState != null) {
                             updateColors();
                             Scheduler.getInstance().add(new FiniteFailsafeDelay(() -> updatedColors,
-                                    () -> {robot.tableServo().setCurrentState(computeTableRotation()); runTimer = true; loopTimer.begin();})
+                                    () -> {robot.tableServo().setCurrentState(computeTableRotation()); executed = true;})
                                     .setFailsafe(50, t -> updateColors(), 6,
                                             () -> robot.tableServo().setCurrentState(computeTableRotation())));
                         }
@@ -208,7 +211,6 @@ public class DAM {
                                 new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     scheduler.add(new Delay(500, () -> popperIn = true));
-                                    runTimer = false;
                                 }))).setMaxTimeToRun(1500));
                         robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_SET_1);
                     }));
@@ -217,13 +219,16 @@ public class DAM {
 
             @Override
             protected void loop() {
-                if (runTimer)
-                    loopTimer.update();
                 telemetry.addData("colors", Arrays.toString(artifactColors));
-                Logger.permaLog("avg loop time", loopTimer.getAverageLoopTime());
 
                 if (finishedDriving()) {
-                    scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)));
+                    scheduler.add(new Delay(() -> popperIn, () -> {
+                        robot.turnTable.shootAllAuto(() -> completed = true, 250);
+                        if (!executed)
+                            throw new RuntimeException("didn't execute");
+                        else
+                            Logger.permaLog("sorting", greenIndex + " " + tableIndex);
+                    }));
                 }
             }
 
@@ -246,12 +251,17 @@ public class DAM {
             }
 
             private Types.TableState computeTableRotation() {
+                if (IntStream.range(0, artifactColors.length).noneMatch(i -> artifactColors[i] == DecodeColorSensor.ArtifactColor.NONE))
+                    throw new RuntimeException("color not detected");
+                if (robot.tableServo().getCurrentState() == Types.TableState.BALL1)
+                    throw new RuntimeException("incorrect table state");
+                if (Math.abs(robot.tableServo().getCurrentPosition()) < 500)
+                    throw new RuntimeException("incorrect table pos");
                 List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
                 int curGreenIndex = 0;
                 for (int i = 0; i < 3; i++)
                     if (artifactColors[i] == DecodeColorSensor.ArtifactColor.GREEN)
                         curGreenIndex = i;
-                //int index = tableStates.indexOf(robot.tableServo().getCurrentState()) - greenIndex + curGreenIndex;
                 int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
                 return tableStates.get(index);

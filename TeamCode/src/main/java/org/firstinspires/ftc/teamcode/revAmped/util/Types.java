@@ -101,12 +101,14 @@ public interface Types {
     enum TurretState implements HwMotor2.MotorState {
         IDLE,
         HOLD,
-        TRACKING,
-        LEFT90,
-        RIGHT90;
+        TRACKING;
 
         public int getPos() {
             return 0;
+        }
+
+        public static int[] getPresets() {
+            return new int[] {TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS, 0, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS};
         }
     }
 

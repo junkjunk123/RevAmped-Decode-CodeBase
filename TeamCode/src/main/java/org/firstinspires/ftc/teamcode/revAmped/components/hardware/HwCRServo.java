@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.te
 import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImpl;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,7 +18,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Range;
  * Created by zwang on 2/7/2016.
  */
 public class HwCRServo implements HwDevice, HwDevice.Motor {
-    public final CRServo servo;
+    public final CRServoImplEx servo;
     protected float power;
     protected int currentPos = -1;
     protected int encoderBase = 0;
@@ -39,7 +41,7 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
         this.id = id;
         if (!testing) {
             try {
-                this.servo = hardwareMap.get(CRServo.class, id);
+                this.servo = hardwareMap.get(CRServoImplEx.class, id);
             } catch (Exception e) {
                 throw new InitializationException(this);
             }
@@ -65,7 +67,7 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
         this.id = id;
         if (!testing) {
             try {
-                this.servo = hardwareMap.get(CRServo.class, id);
+                this.servo = hardwareMap.get(CRServoImplEx.class, id);
             } catch (Exception e) {
                 throw new InitializationException(this);
             }

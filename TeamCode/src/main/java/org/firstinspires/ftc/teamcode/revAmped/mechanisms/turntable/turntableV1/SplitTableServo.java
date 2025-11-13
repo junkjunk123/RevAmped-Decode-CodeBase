@@ -20,6 +20,11 @@ public class SplitTableServo extends TableServo {
 
     public void setUsingBoth(boolean usingBoth) {
         this.usingBoth = usingBoth;
+        if (!usingBoth) {
+            updatePIDFCoefficients(SINGLE_SERVO_COEFFICIENTS);
+        } else {
+            updatePIDFCoefficients(TABLE_PIDF_COEFFICIENTS);
+        }
     }
 
     @Override
@@ -27,5 +32,7 @@ public class SplitTableServo extends TableServo {
         super.setPower(power);
         if (usingBoth)
             secondaryServo.setPower(power);
+        else
+            secondaryServo.setPower(power * 0.5f);
     }
 }

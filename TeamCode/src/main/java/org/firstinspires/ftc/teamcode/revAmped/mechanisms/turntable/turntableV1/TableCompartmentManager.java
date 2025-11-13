@@ -10,11 +10,13 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 public class TableCompartmentManager {
     public static int defaultRandomizationStateGreenIndex = 1;
@@ -160,6 +162,16 @@ public class TableCompartmentManager {
                 .toArray();
     }
 
+    public boolean isFull() {
+        return IntStream.range(0, compartments.length)
+                .noneMatch(i -> compartments[i].isNone());
+    }
+
+    public boolean isEmpty() {
+        return IntStream.range(0, compartments.length)
+                .allMatch(i -> compartments[i].isNone());
+    }
+
     public void pop(boolean advance) {
         if (!compartments[currentIndex].isNone()) {
             prevLastPoppedColor = lastPoppedColor;
@@ -213,7 +225,7 @@ public class TableCompartmentManager {
     }
 
     public boolean switchToPop() {
-        return getEmptyIndices().length == 0;
+        return isFull();
     }
 
     public int findNextPopIndex() {
@@ -367,6 +379,20 @@ public class TableCompartmentManager {
         for (TableCompartment compartment : compartments) {
             compartment.setColor(DecodeColorSensor.ArtifactColor.PURPLE);
         }
+    }
+
+    public void sortForMotifs(Types.TableState currentTableState) {
+        List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
+        int greenIndex = Globals.randomizationState.getGreenIndex();
+        int curGreenIndex = 0;
+        for (int i = 0; i < 3; i++)
+            if (compartments[i].isGreen())
+                curGreenIndex = i;
+        int index = - greenIndex + curGreenIndex - tableStates.indexOf(currentTableState);
+        while (index < 0)
+            index += 3;
+        index = index % 3;
+        switchPopState.accept(index);
     }
 
     public IntakeThread getIntakeThread() {

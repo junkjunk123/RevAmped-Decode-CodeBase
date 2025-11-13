@@ -200,13 +200,25 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.right_bumper.isPress()) {
-            if (tsh.nextState() != CycleState.INTAKE)
-                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS));
+            if (tsh.nextState() != CycleState.INTAKE) {
+                int target = (int) (((robot.turretMotor().getTargetPosition() / 500.0) + 1) * 500);
+                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, target));
+            }
         }
 
         if (gamepad_1.left_bumper.isPress()) {
-            if (tsh.nextState() != CycleState.INTAKE)
-                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.TURRET_POSITIVE_LIMIT_TICKS));
+            if (tsh.nextState() != CycleState.INTAKE) {
+                int target = (int) (((robot.turretMotor().getTargetPosition() / 500.0) + 1) * 500);
+                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, target));
+            }
+        }
+
+        if (gamepad_1.b.isPress()) {
+            scheduler.add(new Delay(robot.turretMotor().limitSwitch::isTouch, robot.turretMotor()::resetPosition));
+        }
+
+        if (gamepad_2.y.isPress()) {
+            robot.turnTable.compartments.sortForMotifs(robot.tableServo().getCurrentState());
         }
     }
 

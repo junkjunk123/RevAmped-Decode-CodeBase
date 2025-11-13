@@ -29,7 +29,7 @@ public class TurntablePIDTuner extends DecodeRevAmpedOpMode {
     public static double F = 0.025;
     public static int targetPosition = TableServo.BALL2;
     public static double targetLoopTimeMillis = 20;
-    private LoopTimer loopTimer = new LoopTimer(10000000);
+    private final LoopTimer loopTimer = new LoopTimer(10000000);
     private double prevSleep;
 
     @Override
@@ -80,11 +80,6 @@ public class TurntablePIDTuner extends DecodeRevAmpedOpMode {
         telemetry.addData("currentPos", getPos());
         telemetry.addData("error", error);
         telemetry.addData("power", power);
-
-        loopTimer.update();
-        prevSleep += targetLoopTimeMillis - loopTimer.getInterval();
-        if (prevSleep >= 0)
-            sleep((long) (prevSleep));
     }
 
     @Override

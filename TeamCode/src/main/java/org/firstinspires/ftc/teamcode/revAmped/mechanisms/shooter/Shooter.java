@@ -56,7 +56,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
         trackTurret = true;
-        velocityCompensationOnTurret = true;
+        velocityCompensationOnTurret = false;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
         robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,6 +23,8 @@ import java.util.function.BooleanSupplier;
 @Config
 public class TableServo extends HwCRServo2<TableState> {
     public static PIDFCoefficients TABLE_PIDF_COEFFICIENTS;
+    public static PIDFCoefficients SINGLE_SERVO_COEFFICIENTS;
+    public static PIDFCoefficients RESET_COEFFICIENTS;
     private final PIDFController controller;
     public static int BALL1;
     public static int BALL2;
@@ -123,6 +126,10 @@ public class TableServo extends HwCRServo2<TableState> {
         return (getVelocity() < 10 && Math.abs(getLastError()) < 500) || Math.abs(getLastError()) < 50;
     }
 
+    public boolean stopped() {
+        return (getVelocity() < 10 && Math.abs(getLastError()) < 500);
+    }
+
     public void setNextState() {
         TableState[] values = Types.TableState.relativeStates();
         setCurrentState(values[(servoState.ordinal() + 1) % values.length]);
@@ -167,11 +174,12 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public void resetToRelativeRotation() {
         setCurrentState(TableState.ABSOLUTE_ROTATION);
+        setUsingBoth(false);
         absoluteRotationTarget = nextFullRotation(super.getCurrentPosition());
         Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
                 resetPosition(absoluteRotationTarget);
                 setCurrentState(TableState.BALL1);
-        }).setCancellation(750, () -> setCurrentState(TableState.BALL1)));
+        }).setCancellation(1500, () -> setCurrentState(TableState.BALL1)));
     }
 
     public int getAbsoluteRotationTarget() {
@@ -193,5 +201,15 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public float getMult() {
         return mult;
+    }
+
+    public boolean isUsingBoth() {
+        return true;
+    }
+
+    public void setUsingBoth(boolean usingBoth) {}
+
+    public void updateF(double feedforward) {
+        TABLE_PIDF_COEFFICIENTS.F = feedforward;
     }
 }
