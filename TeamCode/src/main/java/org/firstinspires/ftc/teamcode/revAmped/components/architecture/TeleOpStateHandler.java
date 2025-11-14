@@ -457,6 +457,11 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * @param dependencies the list of graph elements that this setting depends on
      */
     public void setting(Runnable setting, List<GraphElement> dependencies) {
+        if (force) {
+            setting.run();
+            return;
+        }
+
         scheduler.add(new Delay(() -> !dependencies.contains(currentGraphElement), setting));
     }
 
@@ -464,6 +469,11 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * Executes this setting after the current transition is completed, or immediately if the current graph element isn't a transition.
      */
     public void setting(Runnable setting) {
+        if (force) {
+            setting.run();
+            return;
+        }
+
         if (currentGraphElement instanceof State) setting.run();
         else scheduler.add(new Delay(() -> currentElement() instanceof State, setting));
     }
@@ -475,6 +485,11 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * @param componentVector the binary vector representing the active components in the current state
      */
     public void task(Runnable task, FiniteFieldVector<FiniteFieldVector.BinaryVector> componentVector) {
+        if (force) {
+            task.run();
+            return;
+        }
+
         if (currentGraphElement instanceof State) {
             if (componentVector.get(currentState().ordinal()) == 1) task.run();
         }
@@ -490,6 +505,11 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * @param state the state to check against the current state
      */
     public void task(Runnable task, T state) {
+        if (force) {
+            task.run();
+            return;
+        }
+
         if (currentGraphElement instanceof State curState) {
             if (curState == state) task.run();
         }

@@ -128,4 +128,8 @@ public class DecodeLimelight implements HwDevice {
     public Pipeline getCurrentPipeline() {
         return currentPipeline;
     }
+
+    public void close() {
+        limelight.close();
+    }
 }

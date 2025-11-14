@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
+import com.pedropathing.geometry.BezierPoint;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM1AutoPaths;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import java.util.Arrays;
 import java.util.List;
@@ -44,12 +46,14 @@ public class DAM {
 
     public static AutonomousEnumeratedAction shootPreloads() {
         return new AutonomousEnumeratedAction() {
-            private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
-
             @Override
             protected void init() {
                 robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
                 robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
+                if (Globals.allianceColor == Globals.AllianceColor.Red) {
+                    TurretMotor.AUTO_PRELOADS *= -1;
+                    TurretMotor.AUTO_SET_1 *= -1;
+                }
             }
 
             @Override
@@ -63,11 +67,10 @@ public class DAM {
                         robot.turretMotor().limelightDetection();
                         scheduler.add(new Delay(() -> Globals.randomizationState != null,
                                 () -> {
-                                    updateColors();
                                     robot.tableServo().setCurrentState(computeTableRotation());
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
-                                    scheduler.add(new Delay(robot.tableServo()::reached, () -> {
-                                        scheduler.add(new Delay(650,
+                                    scheduler.add(new Delay(robot.tableServo()::stopped, () -> {
+                                        scheduler.add(new Delay(800,
                                                 () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
                                                 () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)).setMaxTimeToRun(250))));
                                         scheduler.add(new Delay(150, () -> robot.popper().setCurrentState(Types.PopperState.POP)));
@@ -90,23 +93,10 @@ public class DAM {
                 return notBusy();
             }
 
-            private void updateColors() {
-                ColorManager colorManager = robot.intakeColor();
-                artifactColors[1] = colorManager.getCompartmentOneColor();
-                artifactColors[2] = colorManager.getCompartmentTwoColor();
-
-                if (artifactColors[1] == DecodeColorSensor.ArtifactColor.GREEN || artifactColors[2] == DecodeColorSensor.ArtifactColor.GREEN)
-                    artifactColors[0] = DecodeColorSensor.ArtifactColor.PURPLE;
-                else artifactColors[0] = DecodeColorSensor.ArtifactColor.GREEN;
-            }
-
             private Types.TableState computeTableRotation() {
                 List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
                 greenIndex = Globals.randomizationState.getGreenIndex();
                 int curGreenIndex = 0;
-                for (int i = 0; i < 3; i++)
-                    if (artifactColors[i] == DecodeColorSensor.ArtifactColor.GREEN)
-                        curGreenIndex = i;
                 int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
                 return tableStates.get(index);
@@ -115,6 +105,11 @@ public class DAM {
             @Override
             public double millisToDrive() {
                 return 5000;
+            }
+
+            @Override
+            public String identifier() {
+                return "preloads";
             }
         };
     }
@@ -126,6 +121,7 @@ public class DAM {
             @Override
             protected void init() {
                 currentIteration = Globals.aae.currentIterationNumber();
+                if (currentIteration == 2) robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY + 50);
                 scheduler.add(new Delay(robot.tableServo()::reached,
                         () -> scheduler.add(new Delay(100, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)))).setMaxTimeToRun(1500));
                 scheduler.add(new Delay(500, () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 1)));
@@ -156,6 +152,11 @@ public class DAM {
             public double millisToDrive() {
                 return currentIteration * 2500 + 4000;
             }
+
+            @Override
+            public String identifier() {
+                return "intake";
+            }
         };
     }
 
@@ -177,40 +178,38 @@ public class DAM {
             public boolean isFinishedDriving() {
                 return notBusy();
             }
+
+            @Override
+            public String identifier() {
+                return "openGate";
+            }
         };
     }
 
     public static AutonomousEnumeratedAction shoot() {
         return new AutonomousEnumeratedAction() {
-            private boolean updatedColors = false;
             private boolean popperIn = false;
-            private final DecodeColorSensor.ArtifactColor[] artifactColors = new DecodeColorSensor.ArtifactColor[3];
             private int currentIteration;
-            private boolean executed = false;
-            private int greenIndex;
-            private int tableIndex;
 
             @Override
             protected void init() {
                 currentIteration = Globals.aae.currentIterationNumber();
                 boolean firstIteration = currentIteration == 0;
+
                 if (!firstIteration)
                     robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
+
                 scheduler.addOptionalDelay(firstIteration, new Delay(650, () -> {
                     robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
                     scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() > 0.75, () -> {
-                        if (Globals.randomizationState != null) {
-                            updateColors();
-                            Scheduler.getInstance().add(new FiniteFailsafeDelay(() -> updatedColors,
-                                    () -> {robot.tableServo().setCurrentState(computeTableRotation()); executed = true;})
-                                    .setFailsafe(50, t -> updateColors(), 6,
-                                            () -> robot.tableServo().setCurrentState(computeTableRotation())));
+                        if (Globals.randomizationState != null && currentIteration != 2) {
+                            computeTableRotation();
                         }
 
-                        scheduler.addOptionalDelay(Globals.randomizationState == null,
-                                new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
+                        scheduler.addOptionalDelay(Globals.randomizationState == null && currentIteration == 2,
+                                new Delay(robot.tableServo()::stopped, () -> scheduler.add(new Delay(150, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
-                                    scheduler.add(new Delay(500, () -> popperIn = true));
+                                    scheduler.add(new Delay(650, () -> popperIn = true));
                                 }))).setMaxTimeToRun(1500));
                         robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_SET_1);
                     }));
@@ -219,57 +218,49 @@ public class DAM {
 
             @Override
             protected void loop() {
-                telemetry.addData("colors", Arrays.toString(artifactColors));
-
                 if (finishedDriving()) {
-                    scheduler.add(new Delay(() -> popperIn, () -> {
-                        robot.turnTable.shootAllAuto(() -> completed = true, 250);
-                        if (!executed)
-                            throw new RuntimeException("didn't execute");
-                        else
-                            Logger.permaLog("sorting", greenIndex + " " + tableIndex);
-                    }));
+                    if (currentIteration != 2)
+                        scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)));
+                    else
+                        scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true)));
                 }
             }
 
             @Override
             public boolean isFinishedDriving() {
-                return notBusy();
+                return followerManager.follower.atParametricEnd() || followerManager.distanceFromTarget() < 1.5;
             }
 
-            private void updateColors() {
-                ColorManager colorManager = robot.intakeColor();
-                artifactColors[1] = colorManager.getCompartmentOneColor();
-                artifactColors[2] = colorManager.getCompartmentTwoColor();
-
-                if (!(artifactColors[1] == DecodeColorSensor.ArtifactColor.NONE || artifactColors[2] == DecodeColorSensor.ArtifactColor.NONE))
-                    updatedColors = true;
-
-                if (artifactColors[1] == DecodeColorSensor.ArtifactColor.GREEN || artifactColors[2] == DecodeColorSensor.ArtifactColor.GREEN)
-                    artifactColors[0] = DecodeColorSensor.ArtifactColor.PURPLE;
-                else artifactColors[0] = DecodeColorSensor.ArtifactColor.GREEN;
+            private int getGreenIndex() {
+                if (currentIteration == 0)
+                    return 0;
+                else if (currentIteration == 1)
+                    return 2;
+                else
+                    return 1;
             }
 
-            private Types.TableState computeTableRotation() {
-                if (IntStream.range(0, artifactColors.length).noneMatch(i -> artifactColors[i] == DecodeColorSensor.ArtifactColor.NONE))
-                    throw new RuntimeException("color not detected");
-                if (robot.tableServo().getCurrentState() == Types.TableState.BALL1)
-                    throw new RuntimeException("incorrect table state");
-                if (Math.abs(robot.tableServo().getCurrentPosition()) < 500)
-                    throw new RuntimeException("incorrect table pos");
+            private void computeTableRotation() {
                 List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
-                int curGreenIndex = 0;
-                for (int i = 0; i < 3; i++)
-                    if (artifactColors[i] == DecodeColorSensor.ArtifactColor.GREEN)
-                        curGreenIndex = i;
+                int curGreenIndex = getGreenIndex();
                 int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
-                return tableStates.get(index);
+
+                if (index != 2)
+                    robot.tableServo().setCurrentState(tableStates.get(index));
+                else
+                    robot.tableServo().absoluteRotate(2.0/3.0);
             }
+
 
             @Override
             public double millisToDrive() {
                 return currentIteration * 2500 + 4000;
+            }
+
+            @Override
+            public String identifier() {
+                return "shoot";
             }
         };
     }
@@ -291,6 +282,15 @@ public class DAM {
             public boolean isFinishedDriving() {
                 return notBusy();
             }
+
+            @Override
+            public String identifier() {
+                return "park";
+            }
         };
+    }
+
+    public static void close() {
+        limelight.close();
     }
 }

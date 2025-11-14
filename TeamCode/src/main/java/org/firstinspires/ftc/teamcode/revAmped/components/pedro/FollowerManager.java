@@ -252,4 +252,8 @@ public class FollowerManager {
         //return (parametricEnd || heading.evaluate() && headingFromTarget() < 0.055 || follower.getHeadingError() < follower.getCurrentPath().getConstraints().getHeadingConstraint());
         return !follower.isBusy();
     }
+
+    public boolean velocityCondition() {
+        return follower.getVelocity().getMagnitude() < getCurrentPath().getPathEndVelocityConstraint();
+    }
 }

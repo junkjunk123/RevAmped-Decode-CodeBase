@@ -94,7 +94,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.b.isPress()) {
-            if (robot.intakeMotor().getCurrentState() != Types.IntakeState.INTAKE) {
+            if (tsh.currentState() == CycleState.DRIVING_TO_SHOOTING || robot.intakeMotor().getCurrentState() != Types.IntakeState.INTAKE) {
                 tsh.runTransition(t -> {
                             if (robot.turnTable.getCurrentCycleState() == TurnTableInternals.TurnTableCycleState.INTAKE)
                                 robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
@@ -138,7 +138,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.x.isPress()) {
-            if (tsh.currentState() == CycleState.INTAKE) {
+            if (tsh.currentState() == CycleState.INTAKE && robot.popper().getCurrentState() == Types.PopperState.NEUTRAL) {
                 robot.turnTable.updateColors();
                 scheduler.add(new Delay(20, () -> tsh.runTransition(t -> {
                     robot.turnTable.switchStateToPop();
@@ -147,8 +147,6 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                     scheduler.add(new Delay(() -> robot.popper().getCurrentState() == Types.PopperState.POP,
                             () -> scheduler.add(new Delay(300, () -> t.accept(true)))));
                 }, CycleState.DRIVING_TO_SHOOTING)));
-            } else {
-                robot.turnTable.updateColors();
             }
         }
 
@@ -161,24 +159,24 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.dpad_up.isPress()) {
-            tsh.task(() -> {
+            tsh.setting(() -> {
                 robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
                 robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY);
-            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
+            });
         }
 
         if (gamepad_1.dpad_down.isPress()) {
-            tsh.task(() -> {
+            tsh.setting(() -> {
                 robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
                 robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
-            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
+            });
         }
 
         if (gamepad_1.dpad_left.isPress()) {
-            tsh.task(() -> {
+            tsh.setting(() -> {
                 robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
                 robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
-            }, FiniteFieldVector.binaryVectorOf(0, 1, 1));
+            });
         }
 
         if (gamepad_2.left_stick_x > 0.3) {
@@ -200,17 +198,11 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.right_bumper.isPress()) {
-            if (tsh.nextState() != CycleState.INTAKE) {
-                int target = (int) (((robot.turretMotor().getTargetPosition() / 500.0) + 1) * 500);
-                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, target));
-            }
+            robot.turretMotor().nextPresetState();
         }
 
         if (gamepad_1.left_bumper.isPress()) {
-            if (tsh.nextState() != CycleState.INTAKE) {
-                int target = (int) (((robot.turretMotor().getTargetPosition() / 500.0) + 1) * 500);
-                tsh.setting(() -> robot.turretMotor().setCurrentState(Types.TurretState.HOLD, target));
-            }
+            robot.turretMotor().previousPresetState();
         }
 
         if (gamepad_1.b.isPress()) {

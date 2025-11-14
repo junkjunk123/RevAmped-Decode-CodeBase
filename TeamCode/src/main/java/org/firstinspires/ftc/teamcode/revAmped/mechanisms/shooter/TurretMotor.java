@@ -2,19 +2,15 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.PIDFCoefficients;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSlide2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Turret;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
 
@@ -45,6 +41,50 @@ public class TurretMotor extends Turret<TurretState> {
     private double prevFineTuneAngle = 0;
     public static boolean useTurretSwitch = true;
 
+    public enum PresetState {
+        LEFT_135,
+        LEFT_90,
+        LEFT_45,
+        RESET,
+        RIGHT_45,
+        RIGHT_90,
+        RIGHT_135;
+
+        public int pos() {
+            switch (this) {
+                case LEFT_90 -> {
+                    return TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS;
+                }
+
+                case LEFT_45 -> {
+                    return TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS / 2;
+                }
+
+                case RIGHT_45 -> {
+                    return TurretMotor.TURRET_POSITIVE_LIMIT_TICKS / 2;
+                }
+
+                case RIGHT_90 -> {
+                    return TurretMotor.TURRET_POSITIVE_LIMIT_TICKS;
+                }
+
+                case LEFT_135 -> {
+                    return (int) (TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS * 1.5);
+                }
+
+                case RIGHT_135 -> {
+                    return (int) (TurretMotor.TURRET_POSITIVE_LIMIT_TICKS * 1.5);
+                }
+
+                default -> {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    private PresetState presetState;
+
     @Override
     public int ticksPerRotation() {
         return (int) ((TURRET_POSITIVE_LIMIT_TICKS) * (Math.PI * 2 / TURRET_RAD_LIMIT));
@@ -74,6 +114,7 @@ public class TurretMotor extends Turret<TurretState> {
         targetPosition = motorState.getPos();
         controller.reset();
         prevFineTuneAngle = 0;
+        presetState = PresetState.RESET;
     }
 
     public void setCurrentState(TurretState motorState, int targetPosition) {
@@ -81,6 +122,7 @@ public class TurretMotor extends Turret<TurretState> {
         this.targetPosition = targetPosition;
         controller.reset();
         prevFineTuneAngle = 0;
+        presetState = PresetState.RESET;
     }
     
     public void finetuneAngle(double rad) {
@@ -114,9 +156,32 @@ public class TurretMotor extends Turret<TurretState> {
         return limitSwitch;
     }
 
+    public PresetState getPresetState() {
+        return presetState;
+    }
+
     @Override
     public void update() {
         limitSwitch.update();
         super.update();
+    }
+
+    public void setPresetState(PresetState presetState) {
+        if (motorState == TurretState.HOLD)
+            targetPosition = presetState.pos();
+        else
+            setCurrentState(TurretState.HOLD, targetPosition);
+        this.presetState = presetState;
+    }
+
+    public void nextPresetState() {
+        if (presetState != PresetState.RIGHT_135)
+            setPresetState(PresetState.values()[(presetState.ordinal() + 1) % PresetState.values().length]);
+    }
+
+    public void previousPresetState() {
+        int length = PresetState.values().length;
+        if (presetState != PresetState.LEFT_135)
+            setPresetState(PresetState.values()[(presetState.ordinal() - 1 + length) % length]);
     }
 }

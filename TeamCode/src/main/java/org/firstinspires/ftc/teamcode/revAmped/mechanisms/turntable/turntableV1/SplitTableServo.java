@@ -6,33 +6,36 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 public class SplitTableServo extends TableServo {
-    private boolean usingBoth = false;
+    public enum SplitState {
+        USING_BOTH,
+        USING_ONE,
+        RESETTING
+    }
+
     private final HwCRServo secondaryServo;
+    private SplitState splitState = SplitState.USING_ONE;
 
     public SplitTableServo(HardwareMap hardwareMap, Types.TableState state, Encoder encoder) throws IllegalArgumentException {
         super(hardwareMap, state, encoder);
         secondaryServo = new HwCRServo(hardwareMap, "table_two", TableServo.direction);
     }
 
-    public boolean isUsingBoth() {
-        return usingBoth;
-    }
-
-    public void setUsingBoth(boolean usingBoth) {
-        this.usingBoth = usingBoth;
-        if (!usingBoth) {
-            updatePIDFCoefficients(SINGLE_SERVO_COEFFICIENTS);
-        } else {
-            updatePIDFCoefficients(TABLE_PIDF_COEFFICIENTS);
-        }
-    }
-
     @Override
     public void setPower(float power) {
         super.setPower(power);
-        if (usingBoth)
+        if (splitState == SplitState.USING_BOTH)
             secondaryServo.setPower(power);
+        else if (splitState == SplitState.RESETTING)
+            secondaryServo.setPower(power * 0.15f);
         else
             secondaryServo.setPower(power * 0.5f);
+    }
+
+    public SplitState getSplitState() {
+        return splitState;
+    }
+
+    public void setSplitState(SplitState splitState) {
+        this.splitState = splitState;
     }
 }

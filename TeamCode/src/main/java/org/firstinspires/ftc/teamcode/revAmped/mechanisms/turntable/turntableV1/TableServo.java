@@ -174,12 +174,13 @@ public class TableServo extends HwCRServo2<TableState> {
 
     public void resetToRelativeRotation() {
         setCurrentState(TableState.ABSOLUTE_ROTATION);
-        setUsingBoth(false);
+        setSplitState(SplitTableServo.SplitState.RESETTING);
         absoluteRotationTarget = nextFullRotation(super.getCurrentPosition());
         Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
                 resetPosition(absoluteRotationTarget);
                 setCurrentState(TableState.BALL1);
-        }).setCancellation(1500, () -> setCurrentState(TableState.BALL1)));
+                setSplitState(SplitTableServo.SplitState.USING_ONE);
+        }).setCancellation(1500, () -> {setCurrentState(TableState.BALL1); setSplitState(SplitTableServo.SplitState.USING_ONE);}));
     }
 
     public int getAbsoluteRotationTarget() {
@@ -199,15 +200,13 @@ public class TableServo extends HwCRServo2<TableState> {
         this.mult = mult;
     }
 
+    public SplitTableServo.SplitState getSplitState() {return SplitTableServo.SplitState.USING_BOTH;}
+
+    public void setSplitState(SplitTableServo.SplitState splitState) {}
+
     public float getMult() {
         return mult;
     }
-
-    public boolean isUsingBoth() {
-        return true;
-    }
-
-    public void setUsingBoth(boolean usingBoth) {}
 
     public void updateF(double feedforward) {
         TABLE_PIDF_COEFFICIENTS.F = feedforward;

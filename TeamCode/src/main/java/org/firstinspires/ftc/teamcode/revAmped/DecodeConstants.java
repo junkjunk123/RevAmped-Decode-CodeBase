@@ -28,7 +28,7 @@ public final class DecodeConstants implements Constants {
     );
     public void build() {
         //Popper Constants
-        Popper.POP = 18/255f; Popper.POP_LAST = 14/255f; Popper.NEUTRAL = 104/255f;
+        Popper.POP = 18/255f; Popper.NEUTRAL = 104/255f;
 
         //Flywheel Constants
         Flywheel.kStatic = 0.05;

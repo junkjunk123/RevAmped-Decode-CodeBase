@@ -77,6 +77,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     public void RevAmpedStop() {
         scheduler.clear();
         TeleOpDrivetrainHandler.setInitialPose(followerManager.follower.getPose());
+        DAM.close();
     }
 
     private void setAutoState(int autoState) {

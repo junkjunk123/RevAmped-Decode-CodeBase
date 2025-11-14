@@ -25,7 +25,7 @@ public class LM1AutoPaths implements PathSupplier {
     public static ColoredDecodePose SECOND_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
     public static ColoredDecodePose THIRD_INTAKE_START = new ColoredDecodePose(52, 36, Math.toRadians(180));
     public static ColoredDecodePose THIRD_INTAKE_END = new ColoredDecodePose(24, 36, Math.toRadians(180));
-    public static ColoredDecodePose THIRD_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
+    public static ColoredDecodePose THIRD_SHOOT = new ColoredDecodePose(66, 108, Math.toRadians(240));
     public static ColoredDecodePose PARK = new ColoredDecodePose(52, 120, Math.toRadians(240));
 
     @Override
