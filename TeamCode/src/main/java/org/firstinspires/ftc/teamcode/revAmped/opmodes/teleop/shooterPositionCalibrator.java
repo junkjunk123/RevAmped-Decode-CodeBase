@@ -80,6 +80,9 @@ public class shooterPositionCalibrator extends DecodeRevAmpedOpMode {
             robot.turnTable.switchStateToPop();
             robot.intakeMotor().stop();
         }
+        if(gamepad_1.a.isPress()){
+            robot.turnTable.intake();
+        }
         if (gamepad_1.dpad_right.isPress()) {
             robot.turnTable.shootAllAuto(()->{});
         }
