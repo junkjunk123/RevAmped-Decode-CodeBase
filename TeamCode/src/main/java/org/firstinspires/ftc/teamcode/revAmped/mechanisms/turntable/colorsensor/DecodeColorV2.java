@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import java.util.EnumMap;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 public abstract class DecodeColorV2 extends HwColorSensor implements DecodeColorSensor {
     public enum DetectionColor {
@@ -27,7 +28,7 @@ public abstract class DecodeColorV2 extends HwColorSensor implements DecodeColor
     }
 
     @Override
-    public DelayedResult<Boolean> testResponse() {
+    public DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
         CalcHandler integrator = new CalcHandler();
         double nominalHue = getHue();
         BooleanSupplier timeout = MathUtil.booleanSupplierfromTimeDelay(5000);

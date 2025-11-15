@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.GamepadMapper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
+@Disabled
 public class OnePersonTeleOp extends DecodeRevAmpedOpMode {
     private final DCTeleOp dcTeleOp = new DCTeleOp();
 

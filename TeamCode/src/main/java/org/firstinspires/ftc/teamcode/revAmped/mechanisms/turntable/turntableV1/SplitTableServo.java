@@ -26,7 +26,7 @@ public class SplitTableServo extends TableServo {
         if (splitState == SplitState.USING_BOTH)
             secondaryServo.setPower(power);
         else if (splitState == SplitState.RESETTING)
-            secondaryServo.setPower(power * 0.15f);
+            secondaryServo.setPower(power * 0.25f);
         else
             secondaryServo.setPower(power * 0.5f);
     }

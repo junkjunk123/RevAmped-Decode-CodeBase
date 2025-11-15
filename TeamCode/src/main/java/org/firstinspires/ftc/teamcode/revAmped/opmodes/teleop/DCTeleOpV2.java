@@ -125,7 +125,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.customButtons.get(0).isPress()) {
             tsh.task(() -> {
-                if (robot.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE) robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
+                if (robot.intakeMotor().getCurrentState() == Types.IntakeState.INTAKE)
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
                 else robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
             }, FiniteFieldVector.binaryVectorOf(1, 0, 0));
         }

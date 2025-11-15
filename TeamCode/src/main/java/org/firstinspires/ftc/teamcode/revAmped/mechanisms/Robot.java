@@ -136,13 +136,8 @@ public class Robot {
                 )
         ));
 
-        if (opModeType == OpModeType.TELEOP) {
-            turnTable.hardware().tableServo().resetPosition(OpModeCommunication.turntablePos);
-            shooter.hardware().turretMotor().resetPosition(OpModeCommunication.turretPos);
-        } else {
-            turnTable.hardware.tableServo().resetPosition();
-            shooter.hardware().turretMotor().resetPosition();
-        }
+        turnTable.hardware.tableServo().resetPosition();
+        shooter.hardware().turretMotor().resetPosition();
         shooter.hardware().flywheel().resetPosition();
         //intakeMotor().setVoltageCompensation();
     }

@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
@@ -18,13 +20,14 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.Delayed
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 @Config
 public class TableServo extends HwCRServo2<TableState> {
     public static PIDFCoefficients TABLE_PIDF_COEFFICIENTS;
     public static PIDFCoefficients SINGLE_SERVO_COEFFICIENTS;
-    public static PIDFCoefficients RESET_COEFFICIENTS;
     private final PIDFController controller;
     public static int BALL1;
     public static int BALL2;
@@ -116,10 +119,33 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     @Override
-    public DelayedResult<Boolean> testResponse() {
-        setCurrentState(TableState.BALL2);
-        BooleanSupplier delay = () -> (Math.abs(getLastError()) < 50 || (getVelocity() < 10 && Math.abs(getLastError()) < 500));
-        return new DelayedSupplier<>(delay, delay::getAsBoolean).setMaxTime(1500).get();
+    public DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
+        absoluteRotate(2.0/3.0);
+        AtomicBoolean reset = new AtomicBoolean(false);
+        BooleanSupplier timeout1 = MathUtil.booleanSupplierfromTimeDelay(2500);
+        BooleanSupplier timeout2 = MathUtil.booleanSupplierfromTimeDelay(5000);
+        AtomicBoolean passed = new AtomicBoolean(false);
+        AtomicBoolean passedSwitch = new AtomicBoolean(false);
+
+        return new DelayedResult<>(() -> {
+            if (!reset.get()) {
+                if (reached() || timeout1.getAsBoolean()) {
+                    reset.set(true);
+                    resetToRelativeRotation();
+                }
+                return null;
+            } else if (passedSwitch.get() == false && limitSwitch.isTouch()) {
+                passed.set(true);
+                return null;
+            } else if (reached()) {
+                passed.set(true);
+            } else if (!timeout2.getAsBoolean()) {
+                telemetry.accept("table switch -> " + passedSwitch.get());
+                return passed.get();
+            }
+
+            return false;
+        });
     }
 
     public boolean reached() {
@@ -211,4 +237,6 @@ public class TableServo extends HwCRServo2<TableState> {
     public void updateF(double feedforward) {
         TABLE_PIDF_COEFFICIENTS.F = feedforward;
     }
+
+
 }

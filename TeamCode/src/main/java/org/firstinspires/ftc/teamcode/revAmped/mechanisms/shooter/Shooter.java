@@ -303,6 +303,6 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public void intake() {
         currentState = ShooterState.REST;
         hardware().hoodServo().setCurrentState(Types.HoodState.REST);
-        hardware().turretMotor().setCurrentState(Types.TurretState.HOLD);
+        hardware().turretMotor().resetTurret();
     }
 }

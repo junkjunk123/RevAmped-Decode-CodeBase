@@ -269,7 +269,7 @@ public class DAM {
         return new AutonomousEnumeratedAction() {
             @Override
             protected void init() {
-
+                robot.turretMotor().setCurrentState(Types.TurretState.HOLD);
             }
 
             @Override

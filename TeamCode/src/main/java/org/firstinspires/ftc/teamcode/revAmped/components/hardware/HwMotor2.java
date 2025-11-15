@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.Delayed
 
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends HwMotor {
     protected final HashMap<MotorState, MotorPower> statePowerMap = new HashMap<>();
@@ -74,7 +75,7 @@ public abstract class HwMotor2<T extends Enum<T> & HwMotor2.MotorState> extends 
     }
 
     @Override
-    public DelayedResult<Boolean> testResponse() {
+    public DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
         setPower(0.5);
         CalcHandler integrator = new CalcHandler();
         double nominalCurrent = motor.getCurrent(CurrentUnit.AMPS);

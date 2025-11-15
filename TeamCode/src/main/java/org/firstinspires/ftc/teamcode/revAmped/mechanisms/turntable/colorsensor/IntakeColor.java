@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor;
 
-import android.provider.Settings;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 @Config
 public class IntakeColor extends DecodeColor<IntakeColor.Color> implements DecodeColorSensor {
@@ -31,7 +28,7 @@ public class IntakeColor extends DecodeColor<IntakeColor.Color> implements Decod
     }
 
     @Override
-    public DelayedResult<Boolean> testResponse() {
+    public DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
         CalcHandler integrator = new CalcHandler();
         double nominalHue = getHue();
         BooleanSupplier timeout = MathUtil.booleanSupplierfromTimeDelay(5000);

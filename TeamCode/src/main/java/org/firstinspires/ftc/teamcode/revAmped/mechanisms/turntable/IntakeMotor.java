@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.IntakeState;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 public class IntakeMotor extends HwMotor2<IntakeState> {
     private final HwVoltageSensor voltageSensor;
@@ -58,7 +59,7 @@ public class IntakeMotor extends HwMotor2<IntakeState> {
     }
 
     @Override
-    public DelayedResult<Boolean> testResponse() {
+    public DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
         setCurrentState(IntakeState.INTAKE, 0.5f);
         CalcHandler integrator = new CalcHandler();
         double nominalCurrent = motor.getCurrent(CurrentUnit.AMPS);

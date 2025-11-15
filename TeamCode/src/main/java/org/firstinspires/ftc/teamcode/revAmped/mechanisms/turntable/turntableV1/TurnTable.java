@@ -132,7 +132,7 @@ public class TurnTable implements ArtifactQueuer {
         else
             hardware.tableServo().setPreviousState();
         setCycleState(TurnTableCycleState.POP);
-        scheduler.add(new Delay(hardware.tableServo()::stopped, () -> scheduler.add(new Delay(300, () -> {
+        scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(300, () -> {
             compartments.pop(true);
             andThen.run();
 
@@ -142,12 +142,9 @@ public class TurnTable implements ArtifactQueuer {
         scheduler.add(Robot.INSTANCE.lockTillLaunchedAll(hardware.intakeMotor()::stop));
     }
 
-    /*
     private double computeRotation(int numberOfBalls) {
         return numberOfBalls / 3.0 + 1.0 / 3.0;
     }
-
-     */
 
     private void shootAll(Runnable andThen, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
@@ -155,7 +152,7 @@ public class TurnTable implements ArtifactQueuer {
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
         hardware.tableServo().setSplitState(SplitTableServo.SplitState.USING_BOTH);
-        scheduler.add(new Delay(hardware.tableServo()::stopped, () -> {
+        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
             for (int j = 0; j < numBalls; j++) {
                 compartments.pop(false);
             }

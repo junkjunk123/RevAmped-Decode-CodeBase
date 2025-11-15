@@ -5,20 +5,29 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Turret;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 @Config
 public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {
         super(hardwareMap, "turret", DcMotorSimple.Direction.REVERSE, motorState);
-        if (useTurretSwitch) this.limitSwitch = new HwSwitch(hardwareMap, "turret_switch", true, false);
+        if (useTurretSwitch)
+            this.limitSwitch = new HwSwitch(hardwareMap, "turret_switch", true, false);
         else this.limitSwitch = null;
         controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     }
@@ -109,12 +118,18 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void setCurrentState(TurretState motorState) {
         super.setCurrentState(motorState);
-        if (this.motorState != TurretState.HOLD && this.motorState != TurretState.IDLE && motorState == TurretState.HOLD && useTurretSwitch)
-            Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, this::resetPosition).setCancellation(1500));
         targetPosition = motorState.getPos();
         controller.reset();
         prevFineTuneAngle = 0;
         presetState = PresetState.RESET;
+    }
+
+    public void resetTurret() {
+        Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
+            resetPosition();
+            setCurrentState(TurretState.HOLD);
+        }).setCancellation(1500, () -> setCurrentState(TurretState.HOLD)));
+        hold(-100 * (int) Math.signum(motor.getCurrentPosition()));
     }
 
     public void setCurrentState(TurretState motorState, int targetPosition) {
@@ -166,6 +181,11 @@ public class TurretMotor extends Turret<TurretState> {
         super.update();
     }
 
+    public void hold(int targetPosition) {
+        setCurrentState(TurretState.HOLD);
+        this.targetPosition = targetPosition;
+    }
+
     public void setPresetState(PresetState presetState) {
         if (motorState == TurretState.HOLD)
             targetPosition = presetState.pos();
@@ -183,5 +203,36 @@ public class TurretMotor extends Turret<TurretState> {
         int length = PresetState.values().length;
         if (presetState != PresetState.LEFT_135)
             setPresetState(PresetState.values()[(presetState.ordinal() - 1 + length) % length]);
+    }
+
+    @Override
+    public DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
+        hold(500);
+        CalcHandler integrator = new CalcHandler();
+        double nominalCurrent = motor.getCurrent(CurrentUnit.AMPS);
+        BooleanSupplier timeout1 = MathUtil.booleanSupplierfromTimeDelay(2500);
+        BooleanSupplier timeout2 = MathUtil.booleanSupplierfromTimeDelay(5000);
+        AtomicBoolean changedTarget = new AtomicBoolean(false);
+        AtomicBoolean limitSwitchWorks = new AtomicBoolean(true);
+        return new DelayedResult<>(() -> {
+            if (!timeout1.getAsBoolean()) {
+                integrator.update(Math.abs(nominalCurrent - motor.getCurrent(CurrentUnit.AMPS)));
+                return null;
+            } else if (!timeout2.getAsBoolean() && !changedTarget.get()) {
+                if (limitSwitch.isTouch())
+                    limitSwitchWorks.set(false);
+                changedTarget.set(true);
+                setCurrentState(TurretState.HOLD);
+                return null;
+            } else if (!timeout2.getAsBoolean()) {
+                return null;
+            } else {
+                if (!limitSwitch.isTouch())
+                    limitSwitchWorks.set(false);
+                telemetry.accept("turret switch -> " + limitSwitchWorks.get());
+                setCurrentState(TurretState.IDLE);
+                return integrator.getIntegral() > 0.08;
+            }
+        });
     }
 }

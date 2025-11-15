@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 
+import java.util.function.Consumer;
+
 /**
  * Interface representing a hardware device.
  */
@@ -98,7 +100,7 @@ public interface HwDevice {
 
     DeviceType getDeviceType();
 
-    default DelayedResult<Boolean> testResponse() {
+    default DelayedResult<Boolean> testResponse(Consumer<String> telemetry) {
         return new DelayedResult<>(() -> true);
     }
 }

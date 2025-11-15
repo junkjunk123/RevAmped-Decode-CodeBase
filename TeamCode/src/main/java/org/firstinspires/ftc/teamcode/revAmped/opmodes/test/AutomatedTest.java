@@ -1,21 +1,17 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
-import static org.firstinspires.ftc.teamcode.pedro.Tuning.follower;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathConstraints;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSlide2;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
@@ -43,7 +39,7 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedStart() {
-        robot.popper().testResponse().andThen(r -> {
+        robot.popper().testResponse(s -> telemetry.addData("passed: ", s)).andThen(r -> {
             Logger.permaLog(robot.popper().getId() + " " + "passed", r);
             robot.popper().setCurrentState(Types.PopperState.NEUTRAL);
             scheduler.add(new Delay(600, () -> {
@@ -52,7 +48,7 @@ public class AutomatedTest extends DecodeRevAmpedOpMode {
                     telemetry.update();
                     for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(type))) {
                         if (!(device instanceof Popper))
-                            device.testResponse().andThen(b -> Logger.permaLog(device.getId() + " " + "passed", b));
+                            device.testResponse(s -> telemetry.addData("passed: ", s)).andThen(b -> Logger.permaLog(device.getId() + " " + "passed", b));
                     }
                 }
             }));

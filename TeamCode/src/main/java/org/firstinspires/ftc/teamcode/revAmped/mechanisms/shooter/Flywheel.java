@@ -209,4 +209,9 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public boolean isUpdateLock() {
         return updateLock;
     }
+
+    @Override
+    public String getId() {
+        return "flywheel";
+    }
 }
