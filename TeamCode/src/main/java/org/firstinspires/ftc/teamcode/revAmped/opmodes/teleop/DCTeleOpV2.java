@@ -89,6 +89,10 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
+        if (gamepad_2.dpad_left.isPress()){
+            robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
+            scheduler.add(new Delay(250,() -> {robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);}));
+        }
         if (gamepad_1.a.isPress()) {
             tsh.task(() -> robot.shooter.toggleTurretTracking(), FiniteFieldVector.binaryVectorOf(0, 1, 1));
         }
