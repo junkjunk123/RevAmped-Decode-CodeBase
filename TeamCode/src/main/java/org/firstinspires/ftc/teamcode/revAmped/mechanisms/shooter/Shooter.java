@@ -202,7 +202,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     private void initAction() {
         switch (currentState) {
             case REST -> {
-                hardware.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
+                //hardware.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
                 //hardware.hoodServo().setCurrentState(Types.HoodState.REST);
 
                 if (hardware.turretMotor().getCurrentState() != Types.TurretState.HOLD)
@@ -216,7 +216,9 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
                 if (trackTurret)
                     hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
-                hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
+
+                if (hardware.flywheel().getCurrentState() != Types.FlywheelState.RUNNING)
+                    hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
             }
         }
     }

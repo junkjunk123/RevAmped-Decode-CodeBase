@@ -405,7 +405,7 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
     private void run(TransitionOperator command, T nextState, Integer timeout, T currentState) {
         command.run();
         currentGraphElement = new Transition(currentState, nextState, command);
-        Delay delay = new Delay(command::isComplete, () -> setCurrentState(nextState)).setCancellation(command::aborted);
+        Delay delay = new Delay(command::isComplete, () -> setCurrentState(nextState)).setCancellation(command::aborted, () -> setCurrentState(currentState()));
         if (timeout != null) delay.setMaxTimeToRun(timeout);
         scheduler.add(delay);
     }
