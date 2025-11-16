@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.Delayed
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -129,22 +131,25 @@ public class TableServo extends HwCRServo2<TableState> {
 
         return new DelayedResult<>(() -> {
             if (!reset.get()) {
-                if (reached() || timeout1.getAsBoolean()) {
+                if (!passed.get() && reached()) {
+                    passed.set(true);
+                }
+
+                if (timeout1.getAsBoolean()) {
                     reset.set(true);
                     resetToRelativeRotation();
                 }
                 return null;
-            } else if (passedSwitch.get() == false && limitSwitch.isTouch()) {
-                passed.set(true);
-                return null;
-            } else if (reached()) {
-                passed.set(true);
+            } else if (!passedSwitch.get() && limitSwitch.isTouch()) {
+                passedSwitch.set(true);
+                telemetry.accept("table switch -> " + passedSwitch.get());
+                return passed.get();
             } else if (!timeout2.getAsBoolean()) {
+                return null;
+            } else {
                 telemetry.accept("table switch -> " + passedSwitch.get());
                 return passed.get();
             }
-
-            return false;
         });
     }
 
@@ -157,16 +162,13 @@ public class TableServo extends HwCRServo2<TableState> {
     }
 
     public void setNextState() {
-        TableState[] values = Types.TableState.relativeStates();
-        setCurrentState(values[(servoState.ordinal() + 1) % values.length]);
+        List<TableState> values = Arrays.asList(TableState.relativeStates());
+        setCurrentState(values.get((values.indexOf(servoState) + 1) % values.size()));
     }
 
     public void setPreviousState() {
-        TableState[] values = Types.TableState.relativeStates();
-        int index = (servoState.ordinal() - 1) % values.length;
-        if (index < 0)
-            index += values.length;
-        setCurrentState(values[index]);
+        List<TableState> values = Arrays.asList(TableState.relativeStates());
+        setCurrentState(values.get((values.indexOf(servoState) - 1 + values.size()) % values.size()));
     }
 
     public void absoluteRotate(double rotations) {

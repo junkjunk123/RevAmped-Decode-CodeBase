@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 @Config
 @TeleOp
 public class SortTest extends DecodeRevAmpedOpMode {

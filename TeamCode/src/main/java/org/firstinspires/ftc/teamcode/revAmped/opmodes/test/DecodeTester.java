@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.DriveIntakeTest;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.shooterPositionCalibrator;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MomentOfInertiaCalibrator;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MotorSlipCalibrator;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
@@ -50,6 +51,8 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             });
             s.folder("SoftwareTest", l -> {
                 l.add("PromptTest", PromptTest::new);
+                l.add("SortTest", SortTest::new);
+                l.add("ObeliskDetectionTest", ObeliskDetectionTest::new);
             });
             s.folder("HardwareTest", l -> {
                 l.add("DriveTest", MotorPortTest::new);
@@ -57,14 +60,18 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
                 l.add("PopperTest", PopperTest::new);
                 l.add("ColorTest", ColorTest::new);
                 l.add("TurntableTest", TurntableTest::new);
+                l.add("TurntableTuner", TurntablePIDTuner::new);
                 l.add("MotorTest", MotorTest::new);
                 l.add("IsolatedMotorTest", IsolatedMotorTest::new);
                 l.add("IsolatedServoTest", IsolatedServoTest::new);
                 l.add("IsolatedSensorTest", IsolatedSensorTest::new);
+                l.add("TurretTest", TurretCalibrator::new);
+                l.add("TurretTuner", TurretPIDTuner::new);
             });
             s.folder("ShooterTuning", l -> {
                 l.add("MomentOfInertiaCalibrator", MomentOfInertiaCalibrator::new);
                 l.add("MotorSlipCalibrator", MotorSlipCalibrator::new);
+                l.add("AccuracyMaxxer", shooterPositionCalibrator::new);
             });
             s.folder("Misc", l -> {
                 l.add("DriveIntakePopperTest", DriveIntakeTest::new);

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.PrototypeTeleOp.O
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -26,6 +27,7 @@ Eric Zhao
 TeleOp for calibrating hood and motor powers/positions
  */
 
+@Disabled
 @TeleOp(name = "OnePersonShooterCalibrator", group = "TeleOp")
 @Config
 public class OnePersonShooterCalibrator extends DecodeRevAmpedOpMode {
