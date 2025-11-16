@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.DecodeRevAmpedAutonomous;
@@ -113,7 +114,7 @@ public class Robot {
         setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
         voltageSensor = new HwVoltageSensor(hardwareMap);
         boolean setPositions = !opModeType.isTeleOp();
-        shooter = new Shooter(hardwareMap, setPositions, scheduler);
+        shooter = new Shooter(hardwareMap, setPositions, scheduler, voltageSensor);
         turnTable = new TurnTable(scheduler, setPositions, hardwareMap, shooter::turntableAutomationControls, voltageSensor);
         allDevices.put(HwDevice.DeviceType.MOTOR, new HashSet<>(
                 List.of(
@@ -136,10 +137,9 @@ public class Robot {
                 )
         ));
 
-        turnTable.hardware.tableServo().resetPosition();
         shooter.hardware().turretMotor().resetPosition();
         shooter.hardware().flywheel().resetPosition();
-        //intakeMotor().setVoltageCompensation();
+        intakeMotor().setVoltageCompensation();
     }
 
     public void update() {
@@ -206,7 +206,7 @@ public class Robot {
         return turnTable.hardware().intakeColor();
     }
 
-    public TableServo tableServo() {
+    public TableServoV2 tableServo() {
         return turnTable.hardware().tableServo();
     }
 

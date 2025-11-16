@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 

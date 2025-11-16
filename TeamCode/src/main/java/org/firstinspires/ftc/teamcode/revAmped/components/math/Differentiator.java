@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.math;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 
 import java.util.function.Supplier;
@@ -21,12 +22,13 @@ public class Differentiator {
         this.optional = optional;
     }
 
-    public Differentiator(HwCRServo.Encoder encoder) {
+    public Differentiator(Encoder encoder) {
         this(encoder::getVelocity,() -> (double) encoder.getPosition());
     }
 
     public double calculate() {
-        if (cachedDerivative != null) return cachedDerivative;
+        if (cachedDerivative != null)
+            return cachedDerivative;
 
         if (previousValue == null) {
             previousValue = currentValue.get();

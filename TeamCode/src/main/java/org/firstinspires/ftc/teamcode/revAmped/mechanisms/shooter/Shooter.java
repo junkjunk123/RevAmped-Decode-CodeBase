@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrainHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.PoseDifferentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.ProjectileMathWithDrag;
@@ -48,11 +49,11 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     private Localizer pinpoint;
 
-    public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler) {
+    public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler, HwVoltageSensor voltageSensor) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
         TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? Types.TurretState.HOLD : Types.TurretState.IDLE);
-        Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
+        Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED, voltageSensor);
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
         trackTurret = false;
@@ -60,6 +61,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
         robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());
+        flywheel.setVoltageCompensation(true);
     }
 
     public Localizer pinpoint() {

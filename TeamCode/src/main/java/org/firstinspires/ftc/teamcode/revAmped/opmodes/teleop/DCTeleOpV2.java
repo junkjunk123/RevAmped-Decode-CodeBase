@@ -17,15 +17,10 @@ import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @TeleOp(name = "DCTeleOpRedesign", group = "TeleOp")
 public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
@@ -158,11 +153,11 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.dpad_up.isPress()) {
-            robot.turnTable.launch(true, true, tsh);
+            robot.turnTable.launch(false, tsh);
         }
 
         if (gamepad_2.dpad_down.isPress()) {
-            robot.turnTable.launch(false, true, tsh);
+            robot.turnTable.launch(true, tsh);
         }
 
         if (gamepad_1.dpad_up.isPress()) {
@@ -184,14 +179,6 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                 robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
                 robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
             });
-        }
-
-        if (gamepad_2.left_stick_x > 0.3) {
-            tsh.setting(() -> robot.tableServo().finetune((int) (gamepad_2.left_stick_x * 35)));
-        }
-
-        if (gamepad_2.right_stick_button.isPress()) {
-            tsh.setting(robot.tableServo()::resetPosition);
         }
 
         if (gamepad_1.left_trigger > 0.3) {
@@ -217,7 +204,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.y.isPress()) {
-            robot.turnTable.compartments.sortForMotifs(robot.tableServo().getCurrentState());
+            robot.turnTable.compartments.sortForMotifs();
         }
 
         if (gamepad_1.x.isPress()) {
@@ -234,7 +221,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
-        //telemetry.update();
+        telemetry.addData("currentPos", (int) (robot.tableServo().getPosition() * 255f));
+        telemetry.update();
     }
 
     @Override

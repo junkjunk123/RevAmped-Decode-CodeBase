@@ -2,13 +2,19 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms;
 
 import androidx.annotation.NonNull;
 
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.CoordinateSystem;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
 import java.util.List;
@@ -17,8 +23,9 @@ public class DecodeLimelight implements HwDevice {
     public final Limelight3A limelight;
     private final String id;
     private LLResult latestResult;
-    private Vector detectionResult;
+    private Pose detectionResult;
     public static boolean usingLimelight = false;
+    private long lastDetectionTime = 0;
 
     public enum Pipeline {
         NONE(-1),
@@ -68,6 +75,7 @@ public class DecodeLimelight implements HwDevice {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid())
             latestResult = result;
+        lastDetectionTime = result.getControlHubTimeStampNanos();
     }
 
     @Override
@@ -103,26 +111,30 @@ public class DecodeLimelight implements HwDevice {
                 }
 
                 if (target != null) {
-                    double x = target.getCameraPoseTargetSpace().getPosition().x; // right/left from tag
-                    double z = target.getCameraPoseTargetSpace().getPosition().z; // forward/back from tag
+                    double x = target.getCameraPoseTargetSpace().getPosition().toUnit(DistanceUnit.INCH).x; // right/left from tag
+                    double z = target.getCameraPoseTargetSpace().getPosition().toUnit(DistanceUnit.INCH).z; // forward/back from tag
+                    double h = target.getCameraPoseTargetSpace().getOrientation().getYaw(AngleUnit.RADIANS); // heading from tag
 
-                    detectionResult = new Vector();
-                    detectionResult.setOrthogonalComponents(z, x);
+                    detectionResult = new Pose(x, z, h, FTCCoordinates.INSTANCE);
                     return;
                 }
 
-                detectionResult = new Vector();
+                detectionResult = new Pose();
             }
         }
     }
 
-    public Vector getDetectionResult() {
+    public Pose getDetectionResult() {
         return detectionResult;
     }
 
     @Override
     public DeviceType getDeviceType() {
         return DeviceType.CAMERA;
+    }
+
+    public long getLastDetectionTimeNanos() {
+        return lastDetectionTime;
     }
 
     public Pipeline getCurrentPipeline() {

@@ -10,8 +10,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 public interface ArtifactQueuer {
     void preparePurple();
     void prepareGreen();
-    void launch(boolean all, boolean forwardRotation);
-    void launch(boolean all, boolean forwardRotation, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh);
+    void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh);
     Vector2D[] getBallColors();
     DecodeColorSensor.ArtifactColor[] getPredictedBallColors();
     void intake();

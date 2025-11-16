@@ -37,7 +37,6 @@ public class LM1RedAuto extends DecodeRevAmpedAutonomous {
     @Override
     public void RevAmpedStop() {
         super.RevAmpedStop();
-        OpModeCommunication.turntablePos = robot.tableServo().getCurrentPosition();
         OpModeCommunication.turretPos = robot.turretMotor().getCurrentPosition();
     }
 }

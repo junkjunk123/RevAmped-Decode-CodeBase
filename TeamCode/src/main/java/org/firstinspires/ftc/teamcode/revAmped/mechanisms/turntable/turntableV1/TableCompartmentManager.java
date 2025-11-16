@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
-import com.acmerobotics.dashboard.config.Config;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
@@ -381,18 +376,19 @@ public class TableCompartmentManager {
         }
     }
 
-    public void sortForMotifs(Types.TableState currentTableState) {
-        List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
-        int greenIndex = Globals.randomizationState.getGreenIndex();
-        int curGreenIndex = 0;
-        for (int i = 0; i < 3; i++)
-            if (compartments[i].isGreen())
-                curGreenIndex = i;
-        int index = - greenIndex + curGreenIndex - tableStates.indexOf(currentTableState);
-        while (index < 0)
-            index += 3;
-        index = index % 3;
-        switchPopState.accept(index);
+    public void sortForMotifs() {
+        if (Globals.randomizationState != null) {
+            int greenIndex = Globals.randomizationState.getGreenIndex();
+            int curGreenIndex = 0;
+            for (int i = 0; i < 3; i++)
+                if (compartments[i].isGreen())
+                    curGreenIndex = i;
+            int index = -greenIndex + curGreenIndex;
+            while (index < 0)
+                index += 3;
+            index = index % 3;
+            switchPopState.accept(index);
+        }
     }
 
     public IntakeThread getIntakeThread() {

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import java.util.Arrays;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor;
@@ -310,7 +311,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
         public void RevAmpedInit() {
             intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
             intakeMotor.setVoltageCompensation();
-            tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, HwCRServo.Encoder.external(intakeMotor));
+            tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, Encoder.external(intakeMotor));
             testTimer = new ElapsedTime();
             testRunning = true;
             testStep = 0;
@@ -600,7 +601,7 @@ public class DecodeTester extends SelectableRevAmpedOpMode {
             rightColorSensor = new IntakeColor(hardwareMap, "color_right", 0.0);
             intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
             intakeMotor.setVoltageCompensation();
-            tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, HwCRServo.Encoder.external(intakeMotor));
+            tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, Encoder.external(intakeMotor));
             flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
             drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(
                     DcMotorSimple.Direction.FORWARD,

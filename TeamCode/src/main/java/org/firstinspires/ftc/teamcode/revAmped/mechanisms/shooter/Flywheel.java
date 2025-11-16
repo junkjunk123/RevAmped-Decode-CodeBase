@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.TwoMotorMechanism;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
@@ -17,7 +18,6 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     private final PIDFController controllerLarge;
     private final PIDFController controllerMedium;
     private final PIDFController controllerSmall;
-
     public static PIDFCoefficients largeCoefficients;
     public static PIDFCoefficients mediumCoefficients;
     public static PIDFCoefficients smallCoefficients;
@@ -25,9 +25,20 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     private final Differentiator currentAcceleration;
     private Integer prevPos = null;
     private long prevTimeNano;
+    private final HwVoltageSensor voltageSensor;
 
     public Flywheel(HardwareMap hardwareMap, FlywheelState motorState) throws IllegalArgumentException {
         super(hardwareMap, "flywheel_right", "flywheel_left", DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, motorState);
+        this.voltageSensor = null;
+        controllerLarge = new PIDFController(largeCoefficients);
+        controllerMedium = new PIDFController(mediumCoefficients);
+        controllerSmall = new PIDFController(smallCoefficients);
+        currentAcceleration = new Differentiator(() -> 0.0, this::getVelocity);
+    }
+
+    public Flywheel(HardwareMap hardwareMap, FlywheelState motorState, HwVoltageSensor voltageSensor) throws IllegalArgumentException {
+        super(hardwareMap, "flywheel_right", "flywheel_left", DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, motorState);
+        this.voltageSensor = voltageSensor;
         controllerLarge = new PIDFController(largeCoefficients);
         controllerMedium = new PIDFController(mediumCoefficients);
         controllerSmall = new PIDFController(smallCoefficients);
@@ -53,6 +64,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double VELOCITY_ERROR_THRESHOLD;
     public static double kStatic;
     private boolean updateLock = false;
+    private boolean voltageCompensation = false;
 
     @Override
     public void buildStatePowerMap() {
@@ -82,7 +94,15 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public double runController(PIDFController controller, double error) {
         controller.updateError(error);
         controller.updateFeedForwardInput(targetVelocity);
-        return controller.runPIDF() + kStatic;
+
+        if (voltageCompensation && voltageSensor != null)
+            return (controller.runPIDF() + kStatic) * voltageSensor.getVoltageNormalized(12.75f);
+        else
+            return controller.runPIDF() + kStatic;
+    }
+
+    public void setVoltageCompensation(boolean voltageCompensation) {
+        this.voltageCompensation = voltageCompensation;
     }
 
     public void updateTargetVelocity(double dist) {

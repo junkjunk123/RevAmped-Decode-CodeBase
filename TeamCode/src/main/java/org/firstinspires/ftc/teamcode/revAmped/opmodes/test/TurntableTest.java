@@ -6,19 +6,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 @Config
 @TeleOp
 public class TurntableTest extends DecodeRevAmpedOpMode {
-    private TableServo tableServo;
+    private TableServoV2 tableServo;
     //private IntakeMotor intakeMotor;
     private DcMotorEx intake;
 
@@ -35,28 +37,33 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
         //intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
         //intakeMotor.setVoltageCompensation();
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, HwCRServo.Encoder.external(intake).reverse());
+        tableServo = new TableServoV2(hardwareMap, true, Types.TableState2.BALL2, Encoder.external(intake).reverse());
     }
 
     @Override
     public void RevAmpedLoop() {
-        tableServo.updatePIDFCoefficients(new PIDFCoefficients(P, I, D, F));
-        tableServo.setMult(mult);
+        if (gamepad1.dpadDownWasPressed()) {
+            tableServo.setCurrentState(Types.TableState2.BALL1_END);
+        }
 
-        if (gamepad1.xWasPressed()) {
-            tableServo.setAbsoluteRotationTarget(target + tableServo.getAbsoluteRotationTarget());
+        if (gamepad1.dpadRightWasPressed()) {
+            tableServo.setCurrentState(Types.TableState2.BALL2_END);
+        }
+
+        if (gamepad1.dpadUpWasPressed()) {
+            tableServo.setCurrentState(Types.TableState2.BALL3_END);
         }
 
         if (gamepad1.aWasPressed()) {
-            tableServo.setCurrentState(Types.TableState.BALL1);
+            tableServo.setCurrentState(Types.TableState2.BALL1);
         }
 
         if (gamepad1.bWasPressed()) {
-            tableServo.setCurrentState(Types.TableState.BALL2);
+            tableServo.setCurrentState(Types.TableState2.BALL2);
         }
 
         if (gamepad1.xWasPressed()) {
-            tableServo.setCurrentState(Types.TableState.BALL3);
+            tableServo.setCurrentState(Types.TableState2.BALL3);
         }
     }
 
@@ -64,12 +71,7 @@ public class TurntableTest extends DecodeRevAmpedOpMode {
     public void update() {
         //intakeMotor.update();
         tableServo.update();
-        telemetry.addData("turntablePos", tableServo.getCurrentPosition());
-        //telemetry.addData("intakePos", intakeMotor.motor.getCurrentPosition());
-        telemetry.addData("targetPos", tableServo.getAbsoluteRotationTarget());
-        telemetry.addData("error", tableServo.getLastError());
-        telemetry.addData("limSwitch", tableServo.limitSwitch.isTouch());
-
+        telemetry.addData("currentPos", (int) (tableServo.getPosition() * 255f));
         telemetry.update();
     }
 

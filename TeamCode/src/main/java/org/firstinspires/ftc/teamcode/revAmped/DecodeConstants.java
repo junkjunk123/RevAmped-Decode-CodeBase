@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.IntakeThread;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 
 import java.util.List;
@@ -55,10 +56,8 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
 
         //Table Constants
-        TableServo.TABLE_PIDF_COEFFICIENTS = new PIDFCoefficients(0.000244, 0, 0.00001, 0.025);
-        TableServo.SINGLE_SERVO_COEFFICIENTS = new PIDFCoefficients(0.00028, 0, 0.00001, 0.02);
-        TableServo.BALL1 = 0; TableServo.BALL2 = 2730; TableServo.BALL3 = 5461;
-        TableServo.TICKS_PER_ROTATION = 8192;
+        TableServoV2.BALL2 = 203/255f; TableServoV2.BALL3 = 166/255f; TableServoV2.BALL1 = 240/255f;
+        TableServoV2.BALL2_END = 53/255f; TableServoV2.BALL3_END = 16/255f; TableServoV2.BALL1_END = 90/255f;
         TurnTable.SMALL_INTAKE_DELAY = 60; TurnTable.BIG_INTAKE_DELAY = 800;
         IntakeThread.INTAKE_DELAY = 400;
 

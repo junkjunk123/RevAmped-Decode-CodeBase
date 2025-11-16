@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltras
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
+
+import java.util.List;
 
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
@@ -172,7 +175,7 @@ public interface Types {
         }
     }
 
-    enum VerticalMGNState implements HwServo2.ServoState{
+    enum VerticalMGNState implements HwServo2.ServoState {
         LOADED(0),
         OUT(0);
 
@@ -191,6 +194,56 @@ public interface Types {
         TRACKING
     }
 
+    enum TableState2 implements HwServo2.ServoState {
+        BALL1,
+        BALL2,
+        BALL3,
+        BALL1_REV2,
+        BALL2_REV2,
+        BALL1_END,
+        BALL2_END,
+        BALL3_END;
+
+        public float getPosition() {
+            switch (this) {
+                case BALL1 -> {
+                    return TableServoV2.BALL1;
+                }
+                case BALL2 -> {
+                    return TableServoV2.BALL2;
+                }
+                case BALL3 -> {
+                    return TableServoV2.BALL3;
+                }
+                case BALL1_END -> {
+                    return TableServoV2.BALL1_END;
+                }
+                case BALL2_END -> {
+                    return TableServoV2.BALL2_END;
+                }
+                case BALL3_END -> {
+                    return TableServoV2.BALL3_END;
+                }
+                case BALL1_REV2 -> {
+                    return TableServoV2.BALL1 - fullRotation();
+                }
+                case BALL2_REV2 -> {
+                    return TableServoV2.BALL2 - fullRotation();
+                }
+            }
+
+            return TableServoV2.BALL1;
+        }
+
+        public static float fullRotation() {
+            return (BALL2.getPosition() - BALL1.getPosition()) * 3f;
+        }
+
+        public static List<TableState2> relativeStates() {
+            return List.of(BALL1, BALL2, BALL3);
+        }
+    }
+
     record ShooterHardwareComponents(Hood hoodServo, TurretMotor turretMotor, Flywheel flywheel) {
         public void update() {
             hoodServo.update();
@@ -199,7 +252,7 @@ public interface Types {
         }
     }
 
-    record QueuerHardwareComponents(TableServo tableServo, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
+    record QueuerHardwareComponents(TableServoV2 tableServo, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();

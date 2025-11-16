@@ -69,7 +69,7 @@ public class DAM {
                                 () -> {
                                     robot.tableServo().setCurrentState(computeTableRotation());
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
-                                    scheduler.add(new Delay(robot.tableServo()::stopped, () -> {
+                                    scheduler.add(new Delay(robot.tableServo()::reached, () -> {
                                         scheduler.add(new Delay(800,
                                                 () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
                                                 () -> robot.turnTable.shootAllAuto(() -> completed = true, 250)).setMaxTimeToRun(250))));
@@ -93,10 +93,10 @@ public class DAM {
                 return notBusy();
             }
 
-            private Types.TableState computeTableRotation() {
-                List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
+            private Types.TableState2 computeTableRotation() {
+                List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
                 greenIndex = Globals.randomizationState.getGreenIndex();
-                int curGreenIndex = 0;
+                int curGreenIndex = 1;
                 int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
                 return tableStates.get(index);
@@ -207,7 +207,7 @@ public class DAM {
                         }
 
                         scheduler.addOptionalDelay(Globals.randomizationState == null && currentIteration == 2,
-                                new Delay(robot.tableServo()::stopped, () -> scheduler.add(new Delay(150, () -> {
+                                new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     scheduler.add(new Delay(650, () -> popperIn = true));
                                 }))).setMaxTimeToRun(1500));
@@ -233,23 +233,19 @@ public class DAM {
 
             private int getGreenIndex() {
                 if (currentIteration == 0)
-                    return 0;
-                else if (currentIteration == 1)
-                    return 2;
-                else
                     return 1;
+                else if (currentIteration == 1)
+                    return 0;
+                else
+                    return 2;
             }
 
             private void computeTableRotation() {
-                List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
+                List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
                 int curGreenIndex = getGreenIndex();
                 int index = curGreenIndex - greenIndex;
                 index = (index + 3) % 3;
-
-                if (index != 2)
-                    robot.tableServo().setCurrentState(tableStates.get(index));
-                else
-                    robot.tableServo().absoluteRotate(2.0/3.0);
+                robot.tableServo().setCurrentState(tableStates.get(index));
             }
 
 

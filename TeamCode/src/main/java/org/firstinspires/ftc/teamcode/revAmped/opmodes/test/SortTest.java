@@ -32,7 +32,7 @@ public class SortTest extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedStart() {
         robot.update();
-        List<Types.TableState> tableStates = List.of(Types.TableState.BALL1, Types.TableState.BALL2, Types.TableState.BALL3);
+        List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
         ColorManager colorManager = robot.intakeColor();
         artifactColors[1] = colorManager.getCompartmentOneColor();
         artifactColors[2] = colorManager.getCompartmentTwoColor();

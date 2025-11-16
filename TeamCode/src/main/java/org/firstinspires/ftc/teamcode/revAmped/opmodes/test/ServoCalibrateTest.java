@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BinaryOperator;
 
 @Config
 @TeleOp(name = "ServoCalibrateTest", group = "Test")
@@ -40,7 +41,7 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        servos = List.of("hood","popper");
+        servos = List.of("hood","popper","table");
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //voltage = hardwareMap.get(AnalogInput.class,"popper_voltage");

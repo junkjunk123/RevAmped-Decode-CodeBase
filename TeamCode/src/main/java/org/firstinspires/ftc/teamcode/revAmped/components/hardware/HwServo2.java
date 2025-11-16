@@ -17,7 +17,7 @@ public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implemen
     }
 
     public final ServoImplEx servo;
-    private T currentState;
+    protected T currentState;
     private final String id;
     protected float position = -1f;
     private final T initialState;

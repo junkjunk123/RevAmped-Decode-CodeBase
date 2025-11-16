@@ -31,7 +31,7 @@ public class IntakeMotor extends HwMotor2<IntakeState> {
                 if (state.getPower() == 0f || !useVoltageCompensation) {
                     return state.getPower();
                 } else {
-                    float compensatedPower = state.getPower() * voltageSensor.getVoltageNormalized();
+                    float compensatedPower = state.getPower() * voltageSensor.getVoltageNormalized(12.75f);
                     compensatedPower = Range.clip(compensatedPower, -1f, 1f);
                     return compensatedPower;
                 }

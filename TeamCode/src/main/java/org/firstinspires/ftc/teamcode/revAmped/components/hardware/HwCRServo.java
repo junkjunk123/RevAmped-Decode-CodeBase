@@ -77,67 +77,6 @@ public class HwCRServo implements HwDevice, HwDevice.Motor {
         }
     }
 
-    public interface Encoder {
-        int getPosition();
-        double getVelocity();
-
-        static Encoder fromLambdas(Supplier<Integer> position, Supplier<Double> velocity) {
-            return new Encoder() {
-                @Override
-                public int getPosition() {
-                    return position.get();
-                }
-
-                @Override
-                public double getVelocity() {
-                    return velocity.get();
-                }
-            };
-        }
-
-        static Encoder external(HwMotor2<?> otherMotor) {
-            return new Encoder() {
-                @Override
-                public int getPosition() {
-                    return otherMotor.motor.getCurrentPosition();
-                }
-
-                @Override
-                public double getVelocity() {
-                    return otherMotor.motor.getVelocity();
-                }
-            };
-        }
-
-        static Encoder external(DcMotorEx otherMotor) {
-            return new Encoder() {
-                @Override
-                public int getPosition() {
-                    return otherMotor.getCurrentPosition();
-                }
-
-                @Override
-                public double getVelocity() {
-                    return otherMotor.getVelocity();
-                }
-            };
-        }
-
-        default Encoder reverse() {
-            return new Encoder() {
-                @Override
-                public int getPosition() {
-                    return -Encoder.this.getPosition();
-                }
-
-                @Override
-                public double getVelocity() {
-                    return -Encoder.this.getVelocity();
-                }
-            };
-        }
-    }
-
     public void setPower(float power) {
         if (Math.abs(this.power - power) >= 0.01) {
             if (!testing) servo.setPower(power);

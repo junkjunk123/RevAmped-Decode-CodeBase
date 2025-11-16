@@ -95,21 +95,19 @@ public final class TurnTableInternals {
 
         private void initAction() {
             switch (internalState) {
-                case BALL1 -> hardware.tableServo().setCurrentState(Types.TableState.BALL1);
-                case BALL2 -> hardware.tableServo().setCurrentState(Types.TableState.BALL2);
-                case BALL3 -> hardware.tableServo().setCurrentState(Types.TableState.BALL3);
+                case BALL1 -> hardware.tableServo().setCurrentState(Types.TableState2.BALL1);
+                case BALL2 -> hardware.tableServo().setCurrentState(Types.TableState2.BALL2);
+                case BALL3 -> hardware.tableServo().setCurrentState(Types.TableState2.BALL3);
             }
         }
 
         private void cycleStateInitAction() {
             if (cycleState == TurnTableCycleState.INTAKE) {
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-                scheduler.add(new Delay(hardware.tableServo().limitSwitch::isTouch, () -> {
-                    scheduler.add(new Delay(100, () -> {
-                        hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
-                        compartmentManager.startIntake(internalState);
-                    }));
-                }).setMaxTimeToRun(3500));
+                scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(100, () -> {
+                    hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
+                    compartmentManager.startIntake(internalState);
+                }))).setMaxTimeToRun(3500));
             }
         }
 
