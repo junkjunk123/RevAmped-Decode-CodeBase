@@ -125,11 +125,15 @@ public class TurretMotor extends Turret<TurretState> {
     }
 
     public void resetTurret() {
+        resetTurret(getCurrentPosition());
+    }
+
+    public void resetTurret(int currentPos) {
         Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
             resetPosition();
             setCurrentState(TurretState.HOLD);
         }).setCancellation(1500, () -> setCurrentState(TurretState.HOLD)));
-        hold(-100 * (int) Math.signum(motor.getCurrentPosition()));
+        hold(-100 * (int) Math.signum(currentPos));
     }
 
     public void setCurrentState(TurretState motorState, int targetPosition) {

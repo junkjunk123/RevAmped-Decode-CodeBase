@@ -137,7 +137,8 @@ public class Robot {
                 )
         ));
 
-        shooter.hardware().turretMotor().resetPosition();
+        if (opModeType.isAuto())
+            shooter.hardware().turretMotor().resetPosition();
         shooter.hardware().flywheel().resetPosition();
         intakeMotor().setVoltageCompensation();
     }
@@ -184,6 +185,8 @@ public class Robot {
                 s.setPosition(s.getPosition());
             }
         }
+
+        turretMotor().resetTurret(OpModeCommunication.turretPos);
     }
 
     public HwMotor2<Types.IntakeState> intakeMotor() {

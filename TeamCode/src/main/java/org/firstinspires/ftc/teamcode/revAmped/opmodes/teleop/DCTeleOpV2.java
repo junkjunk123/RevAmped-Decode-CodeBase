@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrain
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
@@ -223,6 +224,12 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         drivetrain.arcadeDrive();
         telemetry.addData("currentPos", (int) (robot.tableServo().getPosition() * 255f));
         telemetry.update();
+    }
+
+    @Override
+    public void RevAmpedStop() {
+        super.RevAmpedStop();
+        OpModeCommunication.turretPos = 0;
     }
 
     @Override
