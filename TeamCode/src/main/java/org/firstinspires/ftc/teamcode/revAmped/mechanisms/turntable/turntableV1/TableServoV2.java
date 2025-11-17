@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.EncoderImpl;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 @Config
@@ -19,6 +21,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     public static float BALL2_END;
     public static float BALL3_END;
     private final EncoderImpl encoder;
+    private boolean finishedAccelerating = false;
 
     public TableServoV2(HardwareMap hardwareMap, boolean setPosition, Types.TableState2 initialState, Encoder encoder) throws IllegalArgumentException {
         super(hardwareMap, "table", setPosition, initialState, ServoBrand.GOBILDA_SUPERSPEED);
@@ -27,7 +30,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
 
     @Override
     public boolean reached() {
-        return encoder.getVelocity() < 10;
+        return finishedAccelerating && encoder.getVelocity() < 10;
     }
 
     public Types.TableState2[] getShootStates() {
@@ -54,15 +57,22 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
 
     @Override
     public void setCurrentState(Types.TableState2 state, float position) {
-        if (state != currentState)
+        if (state != currentState) {
             encoder.reset();
+            finishedAccelerating = false;
+            Scheduler.getInstance().add(new Delay(150, () -> finishedAccelerating = true));
+        }
+
         super.setCurrentState(state, position);
     }
 
     @Override
     public void setCurrentState(Types.TableState2 state) {
-        if (state != currentState)
+        if (state != currentState) {
             encoder.reset();
+            finishedAccelerating = false;
+            Scheduler.getInstance().add(new Delay(150, () -> finishedAccelerating = true));
+        }
         super.setCurrentState(state);
     }
 
