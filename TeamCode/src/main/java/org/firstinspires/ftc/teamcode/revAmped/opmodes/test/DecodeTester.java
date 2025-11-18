@@ -1,970 +1,322 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-
-import java.util.Arrays;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
-import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.SelectableRevAmpedOpMode;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DualIntakeColor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.IntakeColor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
-import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpMecanumDrive;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.DriveIntakeTest;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.teleop.shooterPositionCalibrator;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MomentOfInertiaCalibrator;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.ShootingCalibrater.MotorSlipCalibrator;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @TeleOp(name = "DecodeTester")
-public class DecodeTester extends SelectableRevAmpedOpMode {
-    public DecodeTester() {
-        super("Select a Testing OpMode.", s -> {
-            s.folder("Pre-Match Tester", l -> {
-                l.add("AutomatedTest", AutomatedTest::new);
-                l.add("FullTestSequence", FullTestSequence::new);
-            });
-            s.folder("Calibrator", l -> {
-                l.add("ServoCalibrateTest",ServoCalibrateTest::new);
-                l.add("SwitchTest",SwitchTest::new);
-            });
-            s.folder("SoftwareTest", l -> {
-                l.add("PromptTest", PromptTest::new);
-                l.add("SortTest", SortTest::new);
-                l.add("ObeliskDetectionTest", ObeliskDetectionTest::new);
-            });
-            s.folder("HardwareTest", l -> {
-                l.add("DriveTest", MotorPortTest::new);
-                l.add("SwitchTest",SwitchTest::new);
-                l.add("PopperTest", PopperTest::new);
-                l.add("ColorTest", ColorTest::new);
-                l.add("TurntableTest", TurntableTest::new);
-                l.add("TurntableTuner", TurntablePIDTuner::new);
-                l.add("MotorTest", MotorTest::new);
-                l.add("IsolatedMotorTest", IsolatedMotorTest::new);
-                l.add("IsolatedServoTest", IsolatedServoTest::new);
-                l.add("IsolatedSensorTest", IsolatedSensorTest::new);
-                l.add("TurretTest", TurretCalibrator::new);
-                l.add("TurretTuner", TurretPIDTuner::new);
-            });
-            s.folder("ShooterTuning", l -> {
-                l.add("MomentOfInertiaCalibrator", MomentOfInertiaCalibrator::new);
-                l.add("MotorSlipCalibrator", MotorSlipCalibrator::new);
-                l.add("AccuracyMaxxer", shooterPositionCalibrator::new);
-            });
-            s.folder("Misc", l -> {
-                l.add("DriveIntakePopperTest", DriveIntakeTest::new);
-            });
+public class DecodeTester extends DecodeRevAmpedOpMode {
+    private Robot robot;
+    private Follower follower;
+    
+    private List<HwDevice> devicesToTest;
+    private int currentDeviceIndex = -1;
+    private HwDevice currentDevice;
+    private boolean testRunning = false;
+    private Boolean testResult = null;
+    private String testStatusMessage = "";
+    
+    private boolean driveTestActive = false;
+    private boolean driveTestComplete = false;
+    private int driveTestState = 0;
+    private boolean stop = false;
+    private double forwardDisp = 0;
+    private double lateralDisp = 0;
+    private final Pose prevPose = new Pose();
+    
+    private enum TestPhase {
+        DEVICE_TESTING,
+        DRIVE_TESTING,
+        COMPLETE
+    }
+    private TestPhase currentPhase = TestPhase.DEVICE_TESTING;
+    
+    @Override
+    public void RevAmpedInit() {
+        robot = new Robot(this);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        follower = Constants.createFollower(hardwareMap);
+        
+        // Build list of all devices to test
+        devicesToTest = new ArrayList<>();
+        for (HwDevice.DeviceType type : robot.allDevices.keySet()) {
+            for (HwDevice device : Objects.requireNonNull(robot.allDevices.get(type))) {
+                devicesToTest.add(device);
+            }
+        }
+        
+        // Initialize pose tracking
+        prevPose.setX(follower.getPose().getX());
+        prevPose.setY(follower.getPose().getY());
+        prevPose.setHeading(follower.getPose().getHeading());
+    }
+    
+    @Override
+    public void RevAmpedStart() {
+        moveToNextDevice();
+    }
+    
+    @Override
+    public void RevAmpedLoop() {
+        if (currentPhase == TestPhase.DEVICE_TESTING) {
+            handleDeviceTesting();
+        }
+        else if (currentPhase == TestPhase.DRIVE_TESTING) {
+            handleDriveTesting();
+        }
+        else {
+            displayCompleteMessage();
+        }
+    }
+    
+    private void handleDeviceTesting() {
+        if (currentDeviceIndex >= devicesToTest.size()) {
+            // Wait for user to confirm before moving to drive test
+            if (gamepad1.aWasPressed()) {
+                currentPhase = TestPhase.DRIVE_TESTING;
+                driveTestState = 0;
+            }
+            displayDeviceTestTelemetry();
+            return;
+        }
+        
+        // Get current device
+        if (currentDevice == null && currentDeviceIndex < devicesToTest.size()) {
+            currentDevice = devicesToTest.get(currentDeviceIndex);
+        }
+        
+        if (!testRunning && testResult == null) {
+            if (gamepad1.aWasPressed()) {
+                startCurrentDeviceTest();
+            } else if (gamepad1.bWasPressed() && currentDeviceIndex > 0) {
+                moveToNextDevice();
+            }
+        } else if (testRunning) {
+            // Test is running, wait for completion
+        } else if (testResult != null) {
+            if (gamepad1.aWasPressed()) {
+                moveToNextDevice();
+            } else if (gamepad1.xWasPressed()) {
+                testResult = null;
+                testStatusMessage = "";
+            }
+        }
+        
+        displayDeviceTestTelemetry();
+    }
+    
+    private void startCurrentDeviceTest() {
+        if (currentDevice == null) return;
+        
+        testRunning = true;
+        testResult = null;
+        testStatusMessage = "Testing";
+        
+        // Start the test
+        currentDevice.testResponse(s -> {
+            testStatusMessage = s;
+            Logger.permaLog("Test Status", s);
+        }).andThen(result -> {
+            testRunning = false;
+            testResult = result;
+            if (result != null) {
+                testStatusMessage = result ? "PASSED" : "FAILED";
+                Logger.permaLog(currentDevice.getId() + " Result", result ? "PASSED" : "FAILED");
+                
+                // Special handling for Popper - set to NEUTRAL after test
+                if (currentDevice instanceof Popper) {
+                    ((Popper) currentDevice).setCurrentState(Types.PopperState.NEUTRAL);
+                }
+            } else {
+                testStatusMessage = "INCOMPLETE";
+            }
         });
     }
-
+    
+    private void moveToNextDevice() {
+        currentDeviceIndex++;
+        currentDevice = null;
+        testRunning = false;
+        testResult = null;
+        testStatusMessage = "";
+        
+        if (currentDeviceIndex < devicesToTest.size()) {
+            currentDevice = devicesToTest.get(currentDeviceIndex);
+        }
+    }
+    
+    private void displayDeviceTestTelemetry() {
+        telemetry.clear();
+        telemetry.addLine("MANUAL DEVICE TESTER");
+        telemetry.addLine("");
+        
+        if (currentDeviceIndex < devicesToTest.size()) {
+            telemetry.addData("Device", String.format(Locale.US, "%d/%d", currentDeviceIndex + 1, devicesToTest.size()));
+            telemetry.addData("Device Type", currentDevice != null ? currentDevice.getDeviceType().name() : "N/A");
+            telemetry.addData("Device ID", currentDevice != null ? currentDevice.getId() : "N/A");
+            telemetry.addLine("");
+            
+            if (!testRunning && testResult == null) {
+                telemetry.addLine("Press A to START TEST");
+                telemetry.addLine("Press B to SKIP this device");
+            } else if (testRunning) {
+                telemetry.addLine("TEST RUNNING");
+                telemetry.addData("Status", testStatusMessage);
+                telemetry.addLine("Please wait");
+            } else if (testResult != null) {
+                telemetry.addLine("TEST COMPLETE");
+                telemetry.addData("Result", testResult ? "PASSED" : "FAILED");
+                telemetry.addData("Status", testStatusMessage);
+                telemetry.addLine("");
+                telemetry.addLine("Press A to continue to next device");
+                telemetry.addLine("Press X to retry this test");
+            }
+        } else {
+            telemetry.addLine("All device tests complete!");
+            telemetry.addLine("Press A to start drive test");
+        }
+        
+        telemetry.addLine("");
+        Logger.update(telemetry);
+        telemetry.update();
+    }
+    
+    private void handleDriveTesting() {
+        if (stop) driveTestState++;
+        
+        switch (driveTestState) {
+            case 0:
+                if (gamepad1.aWasPressed()) {
+                    telemetry.addLine("Starting drive test");
+                    follower.startTeleopDrive(false);
+                    follower.update();
+                    follower.setTeleOpDrive(1, 1, 1, true);
+                    stop = true;
+                    driveTestState++;
+                }
+                break;
+            case 1:
+                if (stop) {
+                    follower.startTeleopDrive(true);
+                    follower.setTeleOpDrive(0, 0, 0, true);
+                    stop = false;
+                    driveTestState++;
+                    scheduler.add(new Delay(() -> follower.getVelocity().getMagnitude() < PathConstraints.defaultConstraints.getVelocityConstraint(),
+                            () -> driveTestComplete = true));
+                }
+                break;
+            case 2:
+                if (!driveTestComplete) {
+                    Pose curPose = follower.getPose();
+                    forwardDisp += (curPose.getX() - prevPose.getX()) * Math.cos(curPose.getHeading());
+                    lateralDisp += (curPose.getY() - prevPose.getY()) * Math.sin(curPose.getHeading());
+                    prevPose.setX(curPose.getX());
+                    prevPose.setY(curPose.getY());
+                    prevPose.setHeading(curPose.getHeading());
+                } else {
+                    driveTestState++;
+                }
+                break;
+            case 3:
+                Pose currentPose = follower.getPose();
+                boolean headingLocalization = Math.abs(currentPose.getHeading()) > Math.toRadians(3);
+                boolean forwardLocalization = forwardDisp > 0.5;
+                boolean lateralLocalization = lateralDisp > 0.5;
+                
+                if (gamepad1.aWasPressed()) {
+                    currentPhase = TestPhase.COMPLETE;
+                }
+                break;
+        }
+        
+        displayDriveTestTelemetry();
+    }
+    
+    private void displayDriveTestTelemetry() {
+        telemetry.clear();
+        telemetry.addLine("DRIVE/LOCALIZATION TEST");
+        telemetry.addLine("");
+        
+        switch (driveTestState) {
+            case 0:
+                telemetry.addLine("Press A to START drive test");
+                telemetry.addLine("");
+                telemetry.addLine("The robot will move forward, strafe, and rotate.");
+                telemetry.addLine("Then it will stop and measure displacement.");
+                break;
+            case 1:
+                telemetry.addLine("DRIVE TEST RUNNING");
+                telemetry.addLine("Robot is moving");
+                break;
+            case 2:
+                telemetry.addLine("STOPPING ROBOT");
+                telemetry.addLine("Waiting for robot to stop");
+                telemetry.addData("Forward Displacement", String.format(Locale.US, "%.3f", forwardDisp));
+                telemetry.addData("Lateral Displacement", String.format(Locale.US, "%.3f", lateralDisp));
+                break;
+            case 3:
+                Pose currentPose = follower.getPose();
+                boolean headingLocalization = Math.abs(currentPose.getHeading()) > Math.toRadians(3);
+                boolean forwardLocalization = forwardDisp > 0.5;
+                boolean lateralLocalization = lateralDisp > 0.5;
+                
+                telemetry.addLine("DRIVE TEST COMPLETE");
+                telemetry.addLine("");
+                telemetry.addData("Heading Localization", headingLocalization ? "✓ PASSED" : "✗ FAILED");
+                telemetry.addData("Forward Localization", forwardLocalization ? "✓ PASSED" : "✗ FAILED");
+                telemetry.addData("Lateral Localization", lateralLocalization ? "✓ PASSED" : "✗ FAILED");
+                telemetry.addLine("");
+                telemetry.addData("Forward Displacement", String.format(Locale.US, "%.3f", forwardDisp));
+                telemetry.addData("Lateral Displacement", String.format(Locale.US, "%.3f", lateralDisp));
+                telemetry.addData("Heading", String.format(Locale.US, "%.3f", Math.toDegrees(currentPose.getHeading())));
+                telemetry.addLine("");
+                telemetry.addLine("Press A to finish all tests");
+                break;
+        }
+        
+        telemetry.update();
+    }
+    
+    private void displayCompleteMessage() {
+        telemetry.clear();
+        telemetry.addLine("ALL TESTS COMPLETE");
+        telemetry.addLine("");
+        telemetry.addLine("Device tests: " + devicesToTest.size() + " devices tested");
+        telemetry.addLine("Drive test: Completed");
+        telemetry.addLine("");
+        telemetry.addLine("Check Logger output for detailed results.");
+        Logger.update(telemetry);
+        telemetry.update();
+    }
+    
     @Override
-    public OpModeType getOpModeType() {
+    public void update() {
+        robot.update();
+        follower.update();
+        Logger.update(telemetry);
+        telemetry.update();
+    }
+    
+    @Override
+    public Robot.OpModeType getOpModeType() {
         return Robot.OpModeType.TEST;
     }
-
-    public static class PopperTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private Popper popper;
-        private ElapsedTime testTimer;
-        private boolean testRunning = false;
-        private int testStep = 0;
-        private boolean testPassed = false;
-
-        @Override
-        public void RevAmpedInit() {
-            popper = new Popper(hardwareMap, false);
-            testTimer = new ElapsedTime();
-            testRunning = true;
-            testStep = 0;
-            testPassed = false;
-            testTimer.reset();
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            popper.update();
-
-            // Run automated test
-            if (testRunning) {
-                runTest();
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("Popper Tester", "");
-            telemetry.addData("State", popper.getCurrentState().toString());
-            telemetry.addData("Position", String.format(Locale.US, "%.3f", popper.getPosition()));
-            //telemetry.addData("Voltage", String.format(Locale.US, "%.3f", popper.getVoltage()) + "V");
-            telemetry.addData("UP Threshold", String.format(Locale.US, "%.3f", Popper.UP_VOLTAGE) + "V");
-            telemetry.addData("DOWN Threshold", String.format(Locale.US, "%.3f", Popper.DOWN_VOLTAGE) + "V");
-
-            // Voltage status indicators
-            //double currentVoltage = popper.getVoltage();
-            //boolean atUpPosition = currentVoltage >= Popper.UP_VOLTAGE;
-            //boolean atDownPosition = currentVoltage <= Popper.DOWN_VOLTAGE;
-            //telemetry.addData("At UP Position", atUpPosition ? "YES" : "NO");
-            //telemetry.addData("At DOWN Position", atDownPosition ? "YES" : "NO");
-
-            if (testRunning) {
-                telemetry.addData("Mode", "AUTO TEST - Step " + (testStep + 1) + "/4");
-                telemetry.addData("Time", String.format(Locale.US, "%.1f", testTimer.seconds()) + "s");
-            } else if (testPassed) {
-                telemetry.addData("Mode", "TEST PASSED. Popper working correctly.");
-            } else {
-                telemetry.addData("Mode", "TEST FAILED. Voltage thresholds not met.");
-            }
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {}
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-
-        private void runTest() {
-            switch (testStep) {
-                /*
-                case 0:
-                    // Move to POP
-                    popper.setCurrentState(Types.PopperState.POP);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 1:
-                    // Check POP voltage - verify it reached FULLY_UP state
-                    boolean upVoltageReached = popper.reached(Types.PopperVoltageState.FULLY_UP);
-                    if (upVoltageReached || testTimer.milliseconds() > 3000) {
-                        if (upVoltageReached) {
-                            telemetry.addData("Voltage Test", "UP position voltage reached: " + String.format(Locale.US, "%.3f", popper.getVoltage()) + "V");
-                        } else {
-                            telemetry.addData("Voltage Test", "UP position voltage FAILED: " + String.format(Locale.US, "%.3f", popper.getVoltage()) + "V (expected >= " + String.format(Locale.US, "%.3f", Popper.UP_VOLTAGE) + "V)");
-                        }
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 2:
-                    // Move to NEUTRAL
-                    popper.setCurrentState(Types.PopperState.NEUTRAL);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 3:
-                    /*
-                    // Check NEUTRAL voltage - verify it reached FULLY_DOWN state
-                    boolean downVoltageReached = popper.reached(Types.PopperVoltageState.FULLY_DOWN);
-                    if (downVoltageReached || testTimer.milliseconds() > 3000) {
-                        if (downVoltageReached) {
-                            telemetry.addData("Voltage Test", "DOWN position voltage reached: " + String.format(Locale.US, "%.3f", popper.getVoltage()) + "V");
-                        } else {
-                            telemetry.addData("Voltage Test", "DOWN position voltage FAILED: " + String.format(Locale.US, "%.3f", popper.getVoltage()) + "V (expected <= " + String.format(Locale.US, "%.3f", Popper.DOWN_VOLTAGE) + "V)");
-                        }
-                        testRunning = false;
-                        testPassed = downVoltageReached;
-                        telemetry.addData("Test", testPassed ? "PASSED - Popper working correctly!" : "FAILED - Voltage thresholds not met!");
-                    }
-
-
-                break;
-
-            }
-
-                 */
-            }
-        }
-    }
-
-    public static class ColorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private IntakeColor leftColorSensor;
-        private IntakeColor rightColorSensor;
-        private ElapsedTime testTimer;
-        private boolean testRunning = false;
-        private boolean testPassed = false;
-        private int testStep = 0;
-        private boolean leftTestPassed = false;
-        private boolean rightTestPassed = false;
-
-        @Override
-        public void RevAmpedInit() {
-            leftColorSensor = new IntakeColor(hardwareMap, "color_left", 0.0);
-            rightColorSensor = new IntakeColor(hardwareMap, "color_right", 0.0);
-            testTimer = new ElapsedTime();
-            testRunning = true;
-            testPassed = false;
-            testStep = 0;
-            leftTestPassed = false;
-            rightTestPassed = false;
-            testTimer.reset();
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            leftColorSensor.update();
-            rightColorSensor.update();
-
-            if (testRunning) {
-                runTest();
-            }
-
-            telemetry.clear();
-            telemetry.addData("Color Sensor Tester", "");
-            telemetry.addData("Left Color", leftColorSensor.getColor().toString());
-            telemetry.addData("Right Color", rightColorSensor.getColor().toString());
-            telemetry.addData("Left Hue", String.format(Locale.US, "%.1f", leftColorSensor.getHue()));
-            telemetry.addData("Right Hue", String.format(Locale.US, "%.1f", rightColorSensor.getHue()));
-
-            if (testRunning) {
-                telemetry.addData("Test", "Step " + (testStep + 1) + "/3");
-                telemetry.addData("Time", String.format(Locale.US, "%.1f", testTimer.seconds()) + "s");
-            } else if (testPassed) {
-                telemetry.addData("Test", "PASSED. Both color sensors working!");
-                telemetry.addData("Left Sensor", leftTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Right Sensor", rightTestPassed ? "PASS" : "FAIL");
-            } else if (testTimer.milliseconds() > 0) {
-                telemetry.addData("Test", "FAILED. Color sensors not working properly");
-                telemetry.addData("Left Sensor", leftTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Right Sensor", rightTestPassed ? "PASS" : "FAIL");
-            } else {
-                telemetry.addData("Test", "Test Complete");
-            }
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {}
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-
-        private void runTest() {
-            switch (testStep) {
-                case 0:
-                    // Test left color sensor
-                    if (testTimer.milliseconds() > 2000) {
-                        //leftTestPassed = leftColorSensor.testResponse();
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 1:
-                    // Test right color sensor
-                    if (testTimer.milliseconds() > 2000) {
-                        //rightTestPassed = rightColorSensor.testResponse();
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 2:
-                    // Finalize results
-                    if (testTimer.milliseconds() > 1000) {
-                        testPassed = leftTestPassed && rightTestPassed;
-                        testRunning = false;
-                    }
-                    break;
-            }
-        }
-    }
-
-    public static class TurntableTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private TableServo tableServo;
-        private IntakeMotor intakeMotor;
-        private ElapsedTime testTimer;
-        private boolean testRunning = false;
-        private boolean testPassed = false;
-        private int testStep = 0;
-        private double velocityThreshold = 0.1; // Velocity threshold to consider "stopped"
-
-        @Override
-        public void RevAmpedInit() {
-            intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
-            intakeMotor.setVoltageCompensation();
-            tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, Encoder.external(intakeMotor));
-            testTimer = new ElapsedTime();
-            testRunning = true;
-            testStep = 0;
-            testPassed = false;
-            testTimer.reset();
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            intakeMotor.update();
-            tableServo.update();
-
-            // Run automated test
-            if (testRunning) {
-                runTest();
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("Turntable Tester", "");
-            telemetry.addData("Table State", tableServo.getCurrentState().toString());
-            telemetry.addData("Table Position", tableServo.getCurrentPosition());
-            telemetry.addData("Table Velocity", String.format(Locale.US, "%.3f", tableServo.getVelocity()));
-            telemetry.addData("Intake State", intakeMotor.getCurrentState().toString());
-
-            if (testRunning) {
-                telemetry.addData("Mode", "AUTO TEST - Step " + (testStep + 1) + "/4");
-                telemetry.addData("Time", String.format(Locale.US, "%.1f", testTimer.seconds()) + "s");
-            } else if (testPassed) {
-                telemetry.addData("Mode", "TEST PASSED - Turntable working correctly!");
-            } else {
-                telemetry.addData("Mode", "TEST FAILED - Target positions not reached!");
-            }
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {}
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-
-        private void runTest() {
-            switch (testStep) {
-                case 0:
-                    // Move to BALL1
-                    tableServo.setCurrentState(Types.TableState.BALL1);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 1:
-                    // Check if velocity has reached 0 (target reached)
-                    if (Math.abs(tableServo.getVelocity()) < velocityThreshold || testTimer.milliseconds() > 3000) {
-                        boolean targetReached = Math.abs(tableServo.getVelocity()) < velocityThreshold;
-                        telemetry.addData("Target Test", targetReached ? "BALL1 position reached" : "BALL1 position FAILED");
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 2:
-                    // Move to BALL2
-                    tableServo.setCurrentState(Types.TableState.BALL2);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 3:
-                    // Check if velocity has reached 0 (target reached)
-                    if (Math.abs(tableServo.getVelocity()) < velocityThreshold || testTimer.milliseconds() > 3000) {
-                        boolean targetReached = Math.abs(tableServo.getVelocity()) < velocityThreshold;
-                        testRunning = false;
-                        testPassed = targetReached;
-                        telemetry.addData("Target Test", targetReached ? "BALL2 position reached" : "BALL2 position FAILED");
-                        telemetry.addData("Test", testPassed ? "PASSED - Turntable working correctly!" : "FAILED - Target positions not reached!");
-                    }
-                    break;
-            }
-        }
-    }
-
-    public static class MotorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private Flywheel flywheel;
-        private TeleOpMecanumDrive drivetrain;
-        private IntakeMotor intakeMotor;
-        private ElapsedTime testTimer;
-        private boolean testRunning = false;
-        private int testStep = 0;
-
-        // Current readings
-        private double flywheelCurrentStart = 0;
-        private double flywheelCurrentEnd = 0;
-        private double driveCurrentStart = 0;
-        private double driveCurrentEnd = 0;
-        private double intakeCurrentStart = 0;
-        private double intakeCurrentEnd = 0;
-
-        @Override
-        public void RevAmpedInit() {
-            flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
-            drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(
-                    DcMotorSimple.Direction.FORWARD,
-                    DcMotorSimple.Direction.FORWARD,
-                    DcMotorSimple.Direction.FORWARD,
-                    DcMotorSimple.Direction.FORWARD
-            ));
-            intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
-            intakeMotor.setVoltageCompensation();
-            testTimer = new ElapsedTime();
-            testRunning = true;
-            testStep = 0;
-            testTimer.reset();
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            flywheel.update();
-            intakeMotor.update();
-
-            // Run automated test
-            if (testRunning) {
-                runTest();
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("MOTOR TESTER", "");
-            telemetry.addData("Flywheel State", flywheel.getCurrentState().toString());
-            telemetry.addData("Flywheel Current", String.format(Locale.US, "%.2f", flywheel.getCurrentAmps()) + "A");
-            telemetry.addData("Flywheel Power", String.format(Locale.US, "%.2f", flywheel.getPower()));
-            telemetry.addData("Drive Current", String.format(Locale.US, "%.2f",
-                    (drivetrain.leftFront.getCurrent(CurrentUnit.AMPS) +
-                            drivetrain.leftRear.getCurrent(CurrentUnit.AMPS) +
-                            drivetrain.rightFront.getCurrent(CurrentUnit.AMPS) +
-                            drivetrain.rightRear.getCurrent(CurrentUnit.AMPS)) / 4.0) + "A");
-            telemetry.addData("Intake State", intakeMotor.getCurrentState().toString());
-            telemetry.addData("Intake Current", String.format(Locale.US, "%.2f", intakeMotor.getCurrentAmps()) + "A");
-            telemetry.addData("Intake Power", String.format(Locale.US, "%.2f", intakeMotor.getPower()));
-
-            if (testRunning) {
-                telemetry.addData("Test", "Running Step " + (testStep + 1) + "/4");
-                telemetry.addData("Time", String.format(Locale.US, "%.1f", testTimer.seconds()) + "s");
-            } else {
-                telemetry.addData("Test", "Test Complete");
-            }
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {}
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-
-        private void runTest() {
-            switch (testStep) {
-                case 0:
-                    // Test flywheel
-                    if (testTimer.milliseconds() < 1000) {
-                        // Initial current
-                        flywheelCurrentStart = flywheel.getCurrentAmps();
-                    } else if (testTimer.milliseconds() < 2000) {
-                        // Run flywheel
-                        flywheel.setCurrentState(Types.FlywheelState.RUNNING);
-                        flywheel.setPower(0.2f);
-                    } else if (testTimer.milliseconds() > 3000) {
-                        // Final current
-                        flywheelCurrentEnd = flywheel.getCurrentAmps();
-                        flywheel.setCurrentState(Types.FlywheelState.STOPPED);
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-
-                case 1:
-                    // Test drivetrain
-                    if (testTimer.milliseconds() < 1000) {
-                        // Initial current
-                        driveCurrentStart = (drivetrain.leftFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.leftRear.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightRear.getCurrent(CurrentUnit.AMPS)) / 4.0;
-                    } else if (testTimer.milliseconds() < 2000) {
-                        // Drivetrain power
-                        drivetrain.setPowers(0.2f, 0.2f, 0.2f, 0.2f);
-                    } else if (testTimer.milliseconds() > 3000) {
-                        // Final current
-                        driveCurrentEnd = (drivetrain.leftFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.leftRear.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightRear.getCurrent(CurrentUnit.AMPS)) / 4.0;
-                        drivetrain.setPowers(0f, 0f, 0f, 0f);
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-
-                case 2:
-                    // Test intake motor
-                    if (testTimer.milliseconds() < 1000) {
-                        // Initial current
-                        intakeCurrentStart = intakeMotor.getCurrentAmps();
-                    } else if (testTimer.milliseconds() < 2000) {
-                        // Run intake motor
-                        intakeMotor.setCurrentState(Types.IntakeState.INTAKE);
-                    } else if (testTimer.milliseconds() > 3000) {
-                        // Final current
-                        intakeCurrentEnd = intakeMotor.getCurrentAmps();
-                        intakeMotor.setCurrentState(Types.IntakeState.STOP);
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-
-                case 3:
-                    // Results - Display and validate collected data
-                    if (testTimer.milliseconds() > 2000) {
-                        testRunning = false;
-                        telemetry.addData("Test", "Complete - Results:");
-                        telemetry.addData("Flywheel Start Current", String.format(Locale.US, "%.2f", flywheelCurrentStart) + "A");
-                        telemetry.addData("Flywheel End Current", String.format(Locale.US, "%.2f", flywheelCurrentEnd) + "A");
-                        telemetry.addData("Flywheel Current Change", String.format(Locale.US, "%.2f", flywheelCurrentEnd - flywheelCurrentStart) + "A");
-                        telemetry.addData("Drive Start Current", String.format(Locale.US, "%.2f", driveCurrentStart) + "A");
-                        telemetry.addData("Drive End Current", String.format(Locale.US, "%.2f", driveCurrentEnd) + "A");
-                        telemetry.addData("Drive Current Change", String.format(Locale.US, "%.2f", driveCurrentEnd - driveCurrentStart) + "A");
-                        telemetry.addData("Intake Start Current", String.format(Locale.US, "%.2f", intakeCurrentStart) + "A");
-                        telemetry.addData("Intake End Current", String.format(Locale.US, "%.2f", intakeCurrentEnd) + "A");
-                        telemetry.addData("Intake Current Change", String.format(Locale.US, "%.2f", intakeCurrentEnd - intakeCurrentStart) + "A");
-
-                        // Basic validation - check if motors are drawing reasonable current
-                        boolean flywheelWorking = Math.abs(flywheelCurrentEnd - flywheelCurrentStart) > 0.1;
-                        boolean driveWorking = Math.abs(driveCurrentEnd - driveCurrentStart) > 0.1;
-                        boolean intakeWorking = Math.abs(intakeCurrentEnd - intakeCurrentStart) > 0.1;
-
-                        telemetry.addData("Flywheel Status", flywheelWorking ? "PASS" : "FAIL - No current change");
-                        telemetry.addData("Drive Status", driveWorking ? "PASS" : "FAIL - No current change");
-                        telemetry.addData("Intake Status", intakeWorking ? "PASS" : "FAIL - No current change");
-                    }
-                    break;
-            }
-        }
-    }
-
-    public static class FullTestSequence extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private Popper popper;
-        private IntakeColor leftColorSensor;
-        private IntakeColor rightColorSensor;
-        private TableServo tableServo;
-        private IntakeMotor intakeMotor;
-        private Flywheel flywheel;
-        private TeleOpMecanumDrive drivetrain;
-
-        private ElapsedTime testTimer;
-        private boolean testRunning = false;
-        private int currentTest = 0;
-        private int testStep = 0;
-        private boolean testPassed = false;
-        private boolean allTestsPassed = true;
-
-        // Test results
-        private boolean popperTestPassed = false;
-        private boolean colorTestPassed = false;
-        private boolean turntableTestPassed = false;
-        private boolean motorTestPassed = false;
-
-        // Motor test variables
-        private double flywheelCurrentStart = 0;
-        private double flywheelCurrentEnd = 0.05;
-        private double driveCurrentStart = 0;
-        private double driveCurrentEnd = 0.05;
-        private double intakeCurrentStart = 0;
-        private double intakeCurrentEnd = 0.05;
-
-        @Override
-        public void RevAmpedInit() {
-            // Initialize all components
-            popper = new Popper(hardwareMap, false);
-            leftColorSensor = new IntakeColor(hardwareMap, "color_left", 0.0);
-            rightColorSensor = new IntakeColor(hardwareMap, "color_right", 0.0);
-            intakeMotor = new IntakeMotor(hardwareMap, Types.IntakeState.STOP, new HwVoltageSensor(hardwareMap));
-            intakeMotor.setVoltageCompensation();
-            tableServo = new TableServo(hardwareMap, Types.TableState.BALL1, Encoder.external(intakeMotor));
-            flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED);
-            drivetrain = new TeleOpMecanumDrive(this, Arrays.asList(
-                    DcMotorSimple.Direction.FORWARD,
-                    DcMotorSimple.Direction.FORWARD,
-                    DcMotorSimple.Direction.FORWARD,
-                    DcMotorSimple.Direction.FORWARD
-            ));
-
-            testTimer = new ElapsedTime();
-            testRunning = true;
-            currentTest = 0;
-            testStep = 0;
-            allTestsPassed = true;
-            testTimer.reset();
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            // Update all components
-            popper.update();
-            leftColorSensor.update();
-            rightColorSensor.update();
-            intakeMotor.update();
-            tableServo.update();
-            flywheel.update();
-
-            // Run test sequence
-            if (testRunning) {
-                runTestSequence();
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("FULL TEST SEQUENCE", "");
-
-            if (testRunning) {
-                String[] testNames = {"Popper Test", "Color Sensor Test", "Turntable Test", "Motor Test"};
-                telemetry.addData("Current Test", testNames[currentTest] + " - Step " + (testStep + 1));
-                telemetry.addData("Time", String.format(Locale.US, "%.1f", testTimer.seconds()) + "s");
-            } else if (allTestsPassed && testTimer.milliseconds() > 0) {
-                telemetry.addData("Status", "ALL TESTS PASSED!");
-                telemetry.addData("Popper Test", popperTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Color Test", colorTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Turntable Test", turntableTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Motor Test", motorTestPassed ? "PASS" : "FAIL");
-            } else if (testTimer.milliseconds() > 0) {
-                telemetry.addData("Status", "SOME TESTS FAILED!");
-                telemetry.addData("Popper Test", popperTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Color Test", colorTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Turntable Test", turntableTestPassed ? "PASS" : "FAIL");
-                telemetry.addData("Motor Test", motorTestPassed ? "PASS" : "FAIL");
-            } else {
-                telemetry.addData("Status", "All tests completed.");
-            }
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {}
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-
-        private void runTestSequence() {
-            switch (currentTest) {
-                case 0: // Popper Test
-                    runPopperTest();
-                    break;
-                case 1: // Color Sensor Test
-                    runColorTest();
-                    break;
-                case 2: // Turntable Test
-                    runTurntableTest();
-                    break;
-                case 3: // Motor Test
-                    runMotorTest();
-                    break;
-            }
-        }
-
-        private void runPopperTest() {
-            switch (testStep) {
-                /*
-                case 0:
-                    popper.setCurrentState(Types.PopperState.POP);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 1:
-                    boolean upVoltageReached = popper.reached(Types.PopperVoltageState.FULLY_UP);
-                    if (upVoltageReached || testTimer.milliseconds() > 3000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 2:
-                    popper.setCurrentState(Types.PopperState.NEUTRAL);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 3:
-                    boolean downVoltageReached = popper.reached(Types.PopperVoltageState.FULLY_DOWN);
-                    if (downVoltageReached || testTimer.milliseconds() > 3000) {
-                        popperTestPassed = downVoltageReached;
-                        allTestsPassed &= popperTestPassed;
-                        currentTest++;
-                        testStep = 0;
-                        testTimer.reset();
-                    }
-                    break;
-
-                 */
-            }
-        }
-
-        private void runColorTest() {
-            switch (testStep) {
-                case 0:
-                    if (testTimer.milliseconds() > 2000) {
-                        //boolean leftTest = leftColorSensor.testResponse();
-                        //boolean rightTest = rightColorSensor.testResponse();
-                        //colorTestPassed = leftTest && rightTest;
-                        allTestsPassed &= colorTestPassed;
-                        currentTest++;
-                        testStep = 0;
-                        testTimer.reset();
-                    }
-                    break;
-            }
-        }
-
-        private void runTurntableTest() {
-            switch (testStep) {
-                case 0:
-                    tableServo.setCurrentState(Types.TableState.BALL1);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 1:
-                    if (Math.abs(tableServo.getVelocity()) < 0.1 || testTimer.milliseconds() > 3000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 2:
-                    tableServo.setCurrentState(Types.TableState.BALL2);
-                    if (testTimer.milliseconds() > 2000) {
-                        testStep++;
-                        testTimer.reset();
-                    }
-                    break;
-                case 3:
-                    if (Math.abs(tableServo.getVelocity()) < 0.1 || testTimer.milliseconds() > 3000) {
-                        turntableTestPassed = Math.abs(tableServo.getVelocity()) < 0.1;
-                        allTestsPassed &= turntableTestPassed;
-                        currentTest++;
-                        testStep = 0;
-                        testTimer.reset();
-                    }
-                    break;
-            }
-        }
-
-        private void runMotorTest() {
-            switch (testStep) {
-                case 0:
-                    if (testTimer.milliseconds() < 1000) {
-                        flywheelCurrentStart = flywheel.getCurrentAmps();
-                        driveCurrentStart = (drivetrain.leftFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.leftRear.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightRear.getCurrent(CurrentUnit.AMPS)) / 4.0;
-                        intakeCurrentStart = intakeMotor.getCurrentAmps();
-                    } else if (testTimer.milliseconds() < 2000) {
-                        flywheel.setCurrentState(Types.FlywheelState.RUNNING);
-                        flywheel.setPower(0.2f);
-                        drivetrain.setPowers(0.2f, 0.2f, 0.2f, 0.2f);
-                        intakeMotor.setCurrentState(Types.IntakeState.INTAKE);
-                    } else if (testTimer.milliseconds() > 3000) {
-                        flywheelCurrentEnd = flywheel.getCurrentAmps();
-                        driveCurrentEnd = (drivetrain.leftFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.leftRear.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightFront.getCurrent(CurrentUnit.AMPS) +
-                                drivetrain.rightRear.getCurrent(CurrentUnit.AMPS)) / 4.0;
-                        intakeCurrentEnd = intakeMotor.getCurrentAmps();
-
-                        flywheel.setCurrentState(Types.FlywheelState.STOPPED);
-                        drivetrain.setPowers(0f, 0f, 0f, 0f);
-                        intakeMotor.setCurrentState(Types.IntakeState.STOP);
-
-                        boolean flywheelWorking = Math.abs(flywheelCurrentEnd - flywheelCurrentStart) > 0.1;
-                        boolean driveWorking = Math.abs(driveCurrentEnd - driveCurrentStart) > 0.1;
-                        boolean intakeWorking = Math.abs(intakeCurrentEnd - intakeCurrentStart) > 0.1;
-
-                        motorTestPassed = flywheelWorking && driveWorking && intakeWorking;
-                        allTestsPassed &= motorTestPassed;
-                        testRunning = false;
-                    }
-                    break;
-            }
-        }
-    }
-
-    public static class IsolatedMotorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private HwMotor testMotor;
-        private RevAmpedGamepad gp1;
-        private String motorName = "intake"; // Default motor name, can be changed via config
-
-        @Override
-        public void RevAmpedInit() {
-            gp1 = new RevAmpedGamepad(gamepad1);
-            testMotor = new HwMotor(hardwareMap, motorName, DcMotor.Direction.FORWARD);
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            // Manual control - A for forward, B for reverse
-            if (gp1.a.isTrue()) {
-                testMotor.setPower(0.3f);
-            } else if (gp1.b.isTrue()) {
-                testMotor.setPower(-0.3f);
-            } else {
-                testMotor.setPower(0f);
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("ISOLATED MOTOR TESTER", "");
-            telemetry.addData("Motor Name", motorName);
-            telemetry.addData("Motor Current", String.format(Locale.US, "%.2f", testMotor.getCurrentAmps()) + "A");
-            telemetry.addData("Motor Power", String.format(Locale.US, "%.2f", testMotor.getPower()));
-            telemetry.addData("Motor Position", testMotor.getCurrentPosition());
-            telemetry.addData("Motor Velocity", String.format(Locale.US, "%.2f", testMotor.getVelocity()));
-            telemetry.addData("Controls", "A: Forward | B: Reverse");
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {
-            gp1.update();
-        }
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-    }
-
-    public static class IsolatedServoTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private HwServo testServo;
-        private RevAmpedGamepad gp1;
-        private String servoName = "servo0"; // Default servo name, can be changed via config
-
-        @Override
-        public void RevAmpedInit() {
-            gp1 = new RevAmpedGamepad(gamepad1);
-            testServo = new HwServo(hardwareMap, servoName, 0.5f);
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            // Manual control - A: 0.0, B: 0.5, X: 1.0, Y: initial position
-            if (gp1.a.isPress()) {
-                testServo.setPosition(0.0f);
-            }
-            if (gp1.b.isPress()) {
-                testServo.setPosition(0.5f);
-            }
-            if (gp1.x.isPress()) {
-                testServo.setPosition(1.0f);
-            }
-            if (gp1.y.isPress()) {
-                testServo.setPosition(testServo.getInitialPosition());
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("ISOLATED SERVO TESTER", "");
-            telemetry.addData("Servo Name", servoName);
-            telemetry.addData("Servo Position", String.format(Locale.US, "%.3f", testServo.getPosition()));
-            telemetry.addData("Initial Position", String.format(Locale.US, "%.3f", testServo.getInitialPosition()));
-            telemetry.addData("Controls", "A: 0.0 | B: 0.5 | X: 1.0 | Y: Initial");
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {
-            gp1.update();
-        }
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-    }
-
-    public static class IsolatedSensorTest extends org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode {
-        private HwColorSensor colorSensor;
-        private HwSwitch digitalSwitch;
-        private String sensorType = "color"; // "color" or "switch"
-        private String sensorName = "color_left"; // Default sensor name
-
-        @Override
-        public void RevAmpedInit() {
-            // Initialize sensor based on type - adjust sensorType and sensorName as needed
-            if (sensorType.equals("color")) {
-                colorSensor = new HwColorSensor(hardwareMap, sensorName);
-            } else if (sensorType.equals("switch")) {
-                digitalSwitch = new HwSwitch(hardwareMap, sensorName, true, false);
-            }
-        }
-
-        @Override
-        public void RevAmpedLoop() {
-            // Update sensors
-            if (colorSensor != null) {
-                colorSensor.update();
-            }
-            if (digitalSwitch != null) {
-                digitalSwitch.update();
-            }
-
-            // Display telemetry
-            telemetry.clear();
-            telemetry.addData("ISOLATED SENSOR TESTER", "");
-            telemetry.addData("Sensor Type", sensorType.toUpperCase());
-            telemetry.addData("Sensor Name", sensorName);
-
-            if (sensorType.equals("color") && colorSensor != null) {
-                telemetry.addData("Hue", String.format(Locale.US, "%.1f", colorSensor.getHSVValues().getH()));
-                telemetry.addData("Saturation", String.format(Locale.US, "%.1f", colorSensor.getHSVValues().getS()));
-                telemetry.addData("Value", String.format(Locale.US, "%.1f", colorSensor.getHSVValues().getV()));
-                telemetry.addData("Distance", String.format(Locale.US, "%.1f", colorSensor.getDistanceMM()) + "mm");
-                telemetry.addData("RGB", String.format(Locale.US, "R:%.0f G:%.0f B:%.0f",
-                        colorSensor.getRGBValues().getR(),
-                        colorSensor.getRGBValues().getG(),
-                        colorSensor.getRGBValues().getB()));
-            } else if (sensorType.equals("switch") && digitalSwitch != null) {
-                telemetry.addData("Switch State", digitalSwitch.isTouch() ? "PRESSED" : "RELEASED");
-            }
-
-            telemetry.update();
-        }
-
-        @Override
-        public void update() {}
-
-        @Override
-        public org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType getOpModeType() {
-            return Robot.OpModeType.TEST;
-        }
-    }
 }
-
-//UDPATES
