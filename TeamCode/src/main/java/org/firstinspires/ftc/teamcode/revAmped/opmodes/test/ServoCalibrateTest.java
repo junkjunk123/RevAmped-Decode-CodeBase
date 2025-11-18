@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BinaryOperator;
+import java.util.function.ToDoubleFunction;
 
 @Config
 @TeleOp(name = "ServoCalibrateTest", group = "Test")
@@ -34,10 +35,15 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
     private int selectedPort = 0;
     private List<String> servos;
     private String currentServo;
-    private boolean selecting = true;
     //private AnalogInput voltage;
     private final HashMap<String, Integer> calibratedPositions = new HashMap<>();
     private Prompter prompter;
+
+    private enum TestState {
+        SELECT,
+        CALIBRATE
+    }
+    private TestState testState = TestState.SELECT;
 
     @Override
     public void RevAmpedInit() {
@@ -52,7 +58,8 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
                         "Select a servo -- press right bumper to select",
                         servos.toArray(new String[0])
                 ))
-                .onComplete(() -> currentServo = prompter.get("servo"));
+                .onComplete(() -> {currentServo = prompter.get("servo"); testState = TestState.CALIBRATE;})
+                .thenDisplay(() -> "Selected servo: " + currentServo);
     }
 
     @Override
@@ -75,84 +82,96 @@ public class ServoCalibrateTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        if (!singleTickMode) {
-            if (gamepad1.x && Button.BTN_MINUS.canPress4Short(timeStamp)) {
-                posJoy1 -= TICK_CHANGE;
-            } else if (gamepad1.b && Button.BTN_PLUS.canPress4Short(timeStamp)) {
-                posJoy1 += TICK_CHANGE;
+        switch (testState) {
+            case CALIBRATE -> {
+                gamepad_1.update();
+                timeStamp = System.currentTimeMillis();
+                if (calibratedPositions.containsKey(currentServo))
+                    calibratedPositions.replace(currentServo, posJoy1);
+                if (!singleTickMode) {
+                    if (gamepad1.x && Button.BTN_MINUS.canPress4Short(timeStamp)) {
+                        posJoy1 -= TICK_CHANGE;
+                    } else if (gamepad1.b && Button.BTN_PLUS.canPress4Short(timeStamp)) {
+                        posJoy1 += TICK_CHANGE;
+                    }
+                } else {
+                    if (gamepad1.x && Button.BTN_MINUS.canPress(timeStamp)) {
+                        posJoy1 -= TICK_CHANGE;
+                    } else if (gamepad1.b && Button.BTN_PLUS.canPress(timeStamp)) {
+                        posJoy1 += TICK_CHANGE;
+                    }
+                }
+
+                if (gamepad1.y && Button.BTN_MAX.canPress(timeStamp)) {
+                    singleTickMode = !singleTickMode;
+                } else if (gamepad1.right_stick_button && Button.BTN_MID.canPress(timeStamp)) {
+                    posJoy1 = 128;
+                }
+
+                posJoy1 = Range.clip(posJoy1, 0, denominator);
+                servo.setPosition((float) posJoy1 / denominator);
+
+                if (gamepad_1.right_bumper.isPress()) {
+                    TICK_CHANGE += 5;
+                    TICK_CHANGE = Range.clip(TICK_CHANGE, 1, 100);
+                } else if (gamepad_1.left_bumper.isPress()) {
+                    TICK_CHANGE -= 5;
+                    TICK_CHANGE = Range.clip(TICK_CHANGE, 1, 100);
+                } else if (gamepad_1.right_stick_button.isPress()) {
+                    TICK_CHANGE = 1;
+                }
+
+                if (gamepad_1.back.isPress() || gamepad_1.a.isPress())
+                    setTestState(TestState.SELECT);
+
+                telemetryA.addData("Servo", currentServo);
+                calibratedPositions.forEach((u, v) -> telemetryA.addData(u, Integer.toString(v)));
+                telemetryA.addData("singleTickMode", singleTickMode);
+                telemetryA.addData("TICK_CHANGE", TICK_CHANGE);
+                telemetry.addData("PWM",
+                        Integer.toString((int) (posJoy1 * 1805.2 / 255f + 591.68)));
+                telemetryA.update();
             }
-        } else {
-            if (gamepad1.x && Button.BTN_MINUS.canPress(timeStamp)) {
-                posJoy1 -= TICK_CHANGE;
-            } else if (gamepad1.b && Button.BTN_PLUS.canPress(timeStamp)) {
-                posJoy1 += TICK_CHANGE;
-            }
+            case SELECT -> prompter.run();
         }
-
-        if (gamepad1.y && Button.BTN_MAX.canPress(timeStamp)) {
-            singleTickMode = !singleTickMode;
-        } else if (gamepad1.right_stick_button && Button.BTN_MID.canPress(timeStamp)) {
-            posJoy1 = 128;
-        }
-
-        posJoy1 = Range.clip(posJoy1, 0, denominator);
-        servo.setPosition((float) posJoy1 / denominator);
-
-        if (gamepad_1.right_bumper.isPress()) {
-            TICK_CHANGE += 5;
-            TICK_CHANGE = Range.clip(TICK_CHANGE, 1, 100);
-        } else if (gamepad_1.left_bumper.isPress()) {
-            TICK_CHANGE -= 5;
-            TICK_CHANGE = Range.clip(TICK_CHANGE, 1, 100);
-        } else if (gamepad_1.right_stick_button.isPress()) {
-            TICK_CHANGE = 1;
-        }
-
-        if (gamepad_1.dpad_up.isPress()) {
-            selectedPort++;
-            selectedPort %= servos.size();
-            if (selectedPort < 0) {
-                selectedPort += servos.size();
-            }
-            currentServo = servos.get(selectedPort);
-            if (selecting && !calibratedPositions.containsKey(currentServo)) getServo();
-        }
-
-        if (gamepad_1.dpad_down.isPress()) {
-            selectedPort--;
-            selectedPort %= servos.size();
-            if (selectedPort < 0) {
-                selectedPort += servos.size();
-            }
-            currentServo = servos.get(selectedPort);
-            if (selecting && !calibratedPositions.containsKey(currentServo)) getServo();
-        }
-
-        if (gamepad_1.left_stick_button.isPress()) {
-            selecting = !selecting;
-        }
-
-        telemetryA.addData("Servo", currentServo);
-        calibratedPositions.forEach((u, v) -> telemetryA.addData(u, Integer.toString(v)));
-        telemetryA.addData("singleTickMode",singleTickMode);
-        telemetryA.addData("selecting",selecting);
-        telemetryA.addData("TICK_CHANGE",TICK_CHANGE);
-        telemetry.addData("PWM",
-                Integer.toString((int) (posJoy1*1805.2/255f+591.68)));
         //telemetryA.addData("Voltage",voltage.getVoltage());
-        telemetryA.update();
-    }
-
-    public void getServo() {
-        servo = hardwareMap.get(ServoImplEx.class, currentServo);
-        calibratedPositions.put(currentServo, posJoy1);
     }
 
     @Override
-    public void update() {
-        gamepad_1.update();
-        timeStamp = System.currentTimeMillis();
-        if (calibratedPositions.containsKey(currentServo)) calibratedPositions.replace(currentServo, posJoy1);
+    public void update() {}
+
+    private void setTestState(TestState state) {
+        this.testState = state;
+
+        switch (state) {
+            case CALIBRATE -> {
+                selectedPort = servos.indexOf(currentServo);
+                servo = hardwareMap.get(ServoImplEx.class, currentServo);
+
+                if (calibratedPositions.containsKey(currentServo)) {
+                    posJoy1 = calibratedPositions.get(currentServo);
+                } else {
+                    int initialPos = (int) servo.getPosition() * 255;
+                    if (initialPos == 0) {
+                        posJoy1 = denominator / 2;
+                    } else {
+                        posJoy1 = initialPos;
+                    }
+                    calibratedPositions.put(currentServo, posJoy1);
+                }
+            }
+            case SELECT -> {
+                prompter = new Prompter(this, gamepad_1)
+                        .prompt("servo", new OptionPrompt<>(
+                                "Select a servo -- press right bumper to select",
+                                servos.toArray(new String[0])
+                        ))
+                        .onComplete(() -> {
+                            currentServo = prompter.get("servo");
+                            setTestState(TestState.CALIBRATE);
+                        });
+            }
+        }
     }
 
     @Override

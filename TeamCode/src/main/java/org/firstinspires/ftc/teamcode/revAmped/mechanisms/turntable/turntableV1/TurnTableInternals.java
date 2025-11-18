@@ -104,7 +104,7 @@ public final class TurnTableInternals {
         private void cycleStateInitAction() {
             if (cycleState == TurnTableCycleState.INTAKE) {
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-                scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(100, () -> {
+                scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(200, () -> {
                     hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
                     compartmentManager.startIntake(internalState);
                 }))).setMaxTimeToRun(3500));

@@ -92,7 +92,7 @@ public class TurretMotor extends Turret<TurretState> {
         }
     }
 
-    private PresetState presetState=PresetState.RESET;
+    private PresetState presetState = PresetState.RESET;
 
     @Override
     public int ticksPerRotation() {

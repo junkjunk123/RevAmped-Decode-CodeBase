@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
 @Config
 public class Shooter implements ShootingMechanism<ShooterState> {
     public final Scheduler scheduler;
-    public static boolean trackHood = false;
-    public static boolean trackTurret = false;
+    public static boolean trackHood;
+    public static boolean trackTurret;
 
     public final ShooterHardwareComponents hardware;
 
@@ -35,8 +35,10 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static double FLYWHEEL_MAX_VELOCITY;
     public static double LAUNCH_HEIGHT;
-    public static Pose APRIL_TAG_POSE_RED = new Pose(144, 144);
-    public static Pose APRIL_TAG_POSE_BLUE = new Pose(0, 144);
+    public static Pose APRIL_TAG_POSE_RED;
+    public static Pose APRIL_TAG_POSE_BLUE_POSITIVE;
+    public static Pose APRIL_TAG_POSE_RED_NEGATIVE;
+    public static Pose APRIL_TAG_POSE_BLUE;
     public static Vector3D BLUE_SHOOT_ZONE;
 
     public static double BALL_MASS = 0.057152639; //kg
@@ -45,9 +47,18 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static boolean velocityCompensationOnTurret;
 
-    private PoseDifferentiator robotAcceleration;
+    private final PoseDifferentiator robotAcceleration;
 
     private Localizer pinpoint;
+
+    public static double bluePositiveX = 6;
+    public static double bluePositiveY = 149;
+    public static double blueNegativeX = -3;
+    public static double blueNegativeY = 133;
+    public static double redPositiveX = 119;
+    public static double redPositiveY = 133;
+    public static double redNegativeX = 151;
+    public static double redNegativeY = 180;
 
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler, HwVoltageSensor voltageSensor) {
         this.scheduler = scheduler;
@@ -56,12 +67,17 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED, voltageSensor);
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
-        trackTurret = false;
+        trackTurret = true;
         velocityCompensationOnTurret = false;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
         robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());
         flywheel.setVoltageCompensation(true);
+
+        APRIL_TAG_POSE_BLUE = new Pose(blueNegativeX, blueNegativeY);
+        APRIL_TAG_POSE_BLUE_POSITIVE = new Pose(bluePositiveX, bluePositiveY);
+        APRIL_TAG_POSE_RED = new Pose(redPositiveX, redPositiveY);
+        APRIL_TAG_POSE_RED_NEGATIVE = new Pose(redNegativeX, redNegativeY);
     }
 
     public Localizer pinpoint() {
@@ -93,6 +109,14 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     }
 
     public void update() {
+        /*
+        APRIL_TAG_POSE_BLUE = new Pose(blueNegativeX, blueNegativeY);
+        APRIL_TAG_POSE_BLUE_POSITIVE = new Pose(bluePositiveX, bluePositiveY);
+        APRIL_TAG_POSE_RED = new Pose(redPositiveX, redPositiveY);
+        APRIL_TAG_POSE_RED_NEGATIVE = new Pose(redNegativeX, redNegativeY);
+        
+         */
+
         hardware.update();
         robotAcceleration.update();
 
@@ -108,24 +132,21 @@ public class Shooter implements ShootingMechanism<ShooterState> {
             double deltaAngle;
 
             if (trackTurret) {
-                if (robotVelocity.getMagnitude() < 8) {
-                    Vector offset = new Vector();
-                    offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
-                    Globals.telemetry.addData("offset", offset);
-                    double targetAngle = offset.getTheta() + Math.PI;
-                    Globals.telemetry.addData("targetAngle", targetAngle);
-                    double currentAngle = pinpoint().getPose().getHeading();
-                    Globals.telemetry.addData("currentAngle", currentAngle);
-                    deltaAngle = MathUtil.normalizeAnglePi(targetAngle - currentAngle);
-                    deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
-                    Globals.telemetry.addData("deltaAngle", deltaAngle);
+                if (!velocityCompensationOnTurret || robotVelocity.getMagnitude() < 8) {
+                    Globals.AllianceColor allianceColor = Globals.allianceColor == Globals.AllianceColor.Red ? Globals.AllianceColor.Red : Globals.AllianceColor.Blue;
+                    deltaAngle = angleTurretTo(currentPos, targetPos);
+
+                    if ((deltaAngle > 0 && allianceColor == Globals.AllianceColor.Blue) || (deltaAngle < 0 && allianceColor == Globals.AllianceColor.Red)) {
+                        Pose targetCorrectedPose = Globals.allianceColor == Globals.AllianceColor.Red ? APRIL_TAG_POSE_RED_NEGATIVE : APRIL_TAG_POSE_BLUE_POSITIVE;
+                        deltaAngle = angleTurretTo(currentPos, targetCorrectedPose);
+                    }
+
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else if (velocityCompensationOnTurret && (hardware().flywheel().getCurrentState() == Types.FlywheelState.RUNNING || Robot.INSTANCE.getOpModeType().isTest())) {
                     Pose adjustedRobotPose = currentPos.plus(robotVelPose.scale(BALL_LAUNCH_MS / 1000.0)).plus(
                             robotAcceleration.scale(0.5 * Math.pow(BALL_LAUNCH_MS / 1000.0, 2))
                     );
                     Vector offset = targetPos.minus(adjustedRobotPose).getAsVector();
-                    Globals.telemetry.addData("offset", offset);
 
                     Vector iHat = offset.normalize();
                     Vector jHat = new Vector();
@@ -146,14 +167,10 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                             {jHat.getXComponent(), jHat.getYComponent()}
                     });
                     double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta() + Math.PI;
-                    Globals.telemetry.addData("targetAngle", targetAngle);
                     double currentAngle = pinpoint().getPose().getHeading();
-                    Globals.telemetry.addData("currentAngle", currentAngle);
                     double projectedAngle = currentAngle + robotVelPose.getHeading() * (BALL_LAUNCH_MS / 1000.0);
-                    Globals.telemetry.addData("projectedAngle", projectedAngle);
                     deltaAngle = MathUtil.normalizeAnglePi(targetAngle - projectedAngle);
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
-                    Globals.telemetry.addData("deltaAngle", deltaAngle);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else {
                     deltaAngle = hardware.turretMotor().getPrevFineTuneAngle();
@@ -216,13 +233,22 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                 //double dist = targetPos.distanceFrom(targetPos);
                 //hardware.hoodServo().setPreset(dist);
 
-                if (trackTurret)
+                if (trackTurret && hardware.turretMotor().getPresetState() == TurretMotor.PresetState.RESET)
                     hardware.turretMotor().setCurrentState(Types.TurretState.TRACKING);
 
                 if (hardware.flywheel().getCurrentState() != Types.FlywheelState.RUNNING)
                     hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
             }
         }
+    }
+
+    private double angleTurretTo(Pose currentPos, Pose targetPos) {
+        Vector offset = new Vector();
+        offset.setOrthogonalComponents(targetPos.getX() - currentPos.getX(), targetPos.getY() - currentPos.getY());
+        double targetAngle = offset.getTheta() + Math.PI;
+        double currentAngle = pinpoint().getPose().getHeading();
+        double deltaAngle = MathUtil.normalizeAnglePi(targetAngle - currentAngle);
+        return Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
     }
 
     public void setCurrentState(ShooterState currentState, boolean init) {
@@ -306,5 +332,6 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         currentState = ShooterState.REST;
         hardware().hoodServo().setCurrentState(Types.HoodState.REST);
         hardware().turretMotor().resetTurret();
+        hardware.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
     }
 }

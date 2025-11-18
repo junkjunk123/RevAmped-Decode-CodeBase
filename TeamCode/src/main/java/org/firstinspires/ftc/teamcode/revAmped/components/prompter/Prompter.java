@@ -23,6 +23,7 @@ public class Prompter {
     private boolean isCompleted = false;
 
     private String finalMessage;
+    private Supplier<String> finalMessageSupplier;
 
     public Prompter(RevAmpedOpMode opMode, RevAmpedGamepad gamepad) {
         this.opmode = opMode;
@@ -86,6 +87,9 @@ public class Prompter {
         if (finished) {
             isCompleted = true;
             completeFunc.run();
+
+            if (finalMessageSupplier != null)
+                finalMessage = finalMessageSupplier.get();
         }
     }
 
@@ -180,6 +184,11 @@ public class Prompter {
 
     public Prompter thenDisplay(String line) {
         this.finalMessage = line;
+        return this;
+    }
+
+    public Prompter thenDisplay(Supplier<String> finalMessageSupplier) {
+        this.finalMessageSupplier = finalMessageSupplier;
         return this;
     }
 

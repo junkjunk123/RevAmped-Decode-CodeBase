@@ -65,7 +65,9 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                 .setLocalizer(new PinpointLocalizer(hardwareMap, Constants.localizerConstants))
                 .build();
         prompter = new Prompter(this, gamepad_1)
+                .prompt("alliance", new OptionPrompt<>("Select alliance color", Globals.AllianceColor.values()))
                 .prompt("motif", new OptionPrompt<>("Select motif", Globals.RandomizationState.values()));
+
         tsh = new TeleOpStateHandler<>(CycleState.INTAKE, scheduler);
 
         new RevAmpedGamepad.CustomButtonCreator("right_trigger_button", () -> gamepad_2.right_trigger)
@@ -81,6 +83,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedStart() {
         Globals.randomizationState = prompter.getOrDefault("motif", Globals.randomizationState);
+        Globals.allianceColor = prompter.getOrDefault("alliance", Globals.allianceColor);
         robot.teleopInitialize();
     }
 

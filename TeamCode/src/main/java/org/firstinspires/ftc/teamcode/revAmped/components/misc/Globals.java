@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.misc;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
@@ -13,6 +15,8 @@ import java.util.List;
  * This class is used to store configuration settings such as alliance color,
  * testing mode, and telemetry instance.
  */
+
+@Config
 public final class Globals {
     // Prevent instantiation
 

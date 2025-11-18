@@ -123,7 +123,7 @@ public class DAM {
                 currentIteration = Globals.aae.currentIterationNumber();
                 if (currentIteration == 2) robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY + 50);
                 scheduler.add(new Delay(robot.tableServo()::reached,
-                        () -> scheduler.add(new Delay(100, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)))).setMaxTimeToRun(1500));
+                        () -> scheduler.add(new Delay(200, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)))).setMaxTimeToRun(1500));
                 scheduler.add(new Delay(500, () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 1)));
             }
 

@@ -1,7 +1,4 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
-
-import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.testing;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -60,7 +57,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         if (state != currentState) {
             encoder.reset();
             finishedAccelerating = false;
-            Scheduler.getInstance().add(new Delay(150, () -> finishedAccelerating = true));
+            Scheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
         }
 
         super.setCurrentState(state, position);
@@ -71,7 +68,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         if (state != currentState) {
             encoder.reset();
             finishedAccelerating = false;
-            Scheduler.getInstance().add(new Delay(150, () -> finishedAccelerating = true));
+            Scheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
         }
         super.setCurrentState(state);
     }
