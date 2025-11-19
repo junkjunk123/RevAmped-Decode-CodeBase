@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+@Disabled
 @TeleOp(name = "DecodeTester")
 public class DecodeTester extends DecodeRevAmpedOpMode {
     private Robot robot;
@@ -64,8 +66,8 @@ public class DecodeTester extends DecodeRevAmpedOpMode {
         }
         
         // Initialize pose tracking
-        prevPose.setX(follower.getPose().getX());
-        prevPose.setY(follower.getPose().getY());
+        //prevPose.setX(follower.getPose().getX());
+        //prevPose.setY(follower.getPose().getY());
         prevPose.setHeading(follower.getPose().getHeading());
     }
     
@@ -228,8 +230,8 @@ public class DecodeTester extends DecodeRevAmpedOpMode {
                     Pose curPose = follower.getPose();
                     forwardDisp += (curPose.getX() - prevPose.getX()) * Math.cos(curPose.getHeading());
                     lateralDisp += (curPose.getY() - prevPose.getY()) * Math.sin(curPose.getHeading());
-                    prevPose.setX(curPose.getX());
-                    prevPose.setY(curPose.getY());
+                    //prevPose.setX(curPose.getX());
+                    //prevPose.setY(curPose.getY());
                     prevPose.setHeading(curPose.getHeading());
                 } else {
                     driveTestState++;
