@@ -21,32 +21,40 @@ public class FusionLocalizer implements Localizer {
     private Pose currentPosition;
     private Pose currentVelocity;
     private Matrix P;      // Covariance
-    private final Matrix Q; // Process noise
+    private final Matrix Q; // Process noise, and in the nonlinear dynamics, twist noise
     private final Matrix R; // Measurement noise
     private long lastUpdateTime = -1;
 
     private final NavigableMap<Long, Pose> poseHistory = new TreeMap<>();
     private final NavigableMap<Long, Pose> twistHistory = new TreeMap<>();
     private final int bufferSize;
+    private final boolean useNonlinearDynamics;
 
     public FusionLocalizer(
             Localizer deadReckoning,
-            double[] processStdDevs,
-            double[] measurementStdDevs,
-            int bufferSize
+            double[] P, //initial uncertainty in odometry estimate (inch, rad)
+            double[] processVariance, //uncertainty in odometry estimates (drift in inch/s, rad/s)
+            double[] measurementVariance, //uncertainty in vision estimates (drift in inch/s, rad/s)
+            int bufferSize,
+            boolean useNonlinearDynamics
     ) {
         this.deadReckoning = deadReckoning;
+        this.useNonlinearDynamics = useNonlinearDynamics;
         this.currentPosition = new Pose();
-        this.P = MathUtil.identity(3);
+        this.P = MathUtil.diagonal3(
+                P[0],
+                P[1],
+                P[2]
+        );
         this.Q = MathUtil.diagonal3(
-                processStdDevs[0]*processStdDevs[0],
-                processStdDevs[1]*processStdDevs[1],
-                processStdDevs[2]*processStdDevs[2]
+                processVariance[0],
+                processVariance[1],
+                processVariance[2]
         );
         this.R = MathUtil.diagonal3(
-                measurementStdDevs[0]*measurementStdDevs[0],
-                measurementStdDevs[1]*measurementStdDevs[1],
-                measurementStdDevs[2]*measurementStdDevs[2]
+                measurementVariance[0],
+                measurementVariance[1],
+                measurementVariance[2]
         );
         this.bufferSize = bufferSize;
     }
@@ -75,7 +83,32 @@ public class FusionLocalizer implements Localizer {
         );
 
         // Covariance propagation
-        P = P.plus(Q.multiply(dt));
+        if (!useNonlinearDynamics)
+            P = P.plus(Q.multiply(dt));
+        else {
+            double theta = currentPosition.getHeading();
+            double cos = Math.cos(theta);
+            double sin = Math.sin(theta);
+            double xVel = currentVelocity.getX();
+            double yVel = currentVelocity.getY();
+
+            Matrix A = new Matrix(new double[][]{
+                    {0, 0, -xVel * sin - yVel * cos},
+                    {0, 0, xVel * cos - yVel * sin},
+                    {0, 0, 0}
+            });
+
+            Matrix B = new Matrix(new double[][]{
+                    {cos, -sin, 0},
+                    {sin, cos, 0},
+                    {0, 0, 1}
+            });
+
+            Matrix F = MathUtil.identity(3).plus(A.multiply(dt));
+            Matrix G = B.multiply(dt);
+            Matrix Q_d = G.multiply(Q).multiply(G.transposed());
+            P = F.multiply(P).multiply(F.transposed()).plus(Q_d);
+        }
 
         // Add to history
         poseHistory.put(now, currentPosition.copy());
@@ -167,25 +200,41 @@ public class FusionLocalizer implements Localizer {
     }
 
     @Override
-    public double getTotalHeading() { return currentPosition.getHeading(); }
+    public double getTotalHeading() {
+        return currentPosition.getHeading();
+    }
 
     @Override
-    public double getForwardMultiplier() { return deadReckoning.getForwardMultiplier(); }
+    public double getForwardMultiplier() {
+        return deadReckoning.getForwardMultiplier();
+    }
 
     @Override
-    public double getLateralMultiplier() { return deadReckoning.getLateralMultiplier(); }
+    public double getLateralMultiplier() {
+        return deadReckoning.getLateralMultiplier();
+    }
 
     @Override
-    public double getTurningMultiplier() { return deadReckoning.getTurningMultiplier(); }
+    public double getTurningMultiplier() {
+        return deadReckoning.getTurningMultiplier();
+    }
 
     @Override
-    public void resetIMU() throws InterruptedException { deadReckoning.resetIMU(); }
+    public void resetIMU() throws InterruptedException {
+        deadReckoning.resetIMU();
+    }
 
     @Override
-    public double getIMUHeading() { return deadReckoning.getIMUHeading(); }
+    public double getIMUHeading() {
+        return deadReckoning.getIMUHeading();
+    }
 
     @Override
     public boolean isNAN() {
         return Double.isNaN(currentPosition.getX()) || Double.isNaN(currentPosition.getY()) || Double.isNaN(currentPosition.getHeading());
+    }
+
+    public boolean isUseNonlinearDynamics() {
+        return useNonlinearDynamics;
     }
 }
