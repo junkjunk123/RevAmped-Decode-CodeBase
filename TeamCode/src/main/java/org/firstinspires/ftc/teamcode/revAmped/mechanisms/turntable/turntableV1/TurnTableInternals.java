@@ -103,10 +103,15 @@ public final class TurnTableInternals {
 
         private void cycleStateInitAction() {
             if (cycleState == TurnTableCycleState.INTAKE) {
-                hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-                scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(200, () -> {
+                //turns off intake when resetting turntable & popper
+                hardware.intakeMotor().setCurrentState(Types.IntakeState.STOP);
+                //delay until turntable resets position
+                scheduler.add(new Delay(hardware.tableServo()::reached, () -> scheduler.add(new Delay(500, () -> {
+                    //retract popper
                     hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
                     compartmentManager.startIntake(internalState);
+                    //turns intake back on after popper & turnable is reset
+                    hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
                 }))).setMaxTimeToRun(3500));
             }
         }

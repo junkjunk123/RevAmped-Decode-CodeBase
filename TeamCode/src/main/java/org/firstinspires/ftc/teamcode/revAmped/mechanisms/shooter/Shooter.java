@@ -51,9 +51,9 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     private Localizer pinpoint;
 
-    public static double bluePositiveX = 6;
-    public static double bluePositiveY = 149;
-    public static double blueNegativeX = -3;
+    public static double bluePositiveX = 14; //added 8 inch
+    public static double bluePositiveY = 145; //subtracted 4 inch
+    public static double blueNegativeX = 15; //added 18 inch
     public static double blueNegativeY = 133;
     public static double redPositiveX = 119;
     public static double redPositiveY = 133;
