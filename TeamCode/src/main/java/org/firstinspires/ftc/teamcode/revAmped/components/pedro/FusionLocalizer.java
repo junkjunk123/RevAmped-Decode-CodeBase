@@ -27,6 +27,7 @@ public class FusionLocalizer implements Localizer {
 
     private final NavigableMap<Long, Pose> poseHistory = new TreeMap<>();
     private final NavigableMap<Long, Pose> twistHistory = new TreeMap<>();
+    private final NavigableMap<Long, Matrix> covarianceHistory = new TreeMap<>();
     private final int bufferSize;
     private final boolean useNonlinearDynamics;
 
@@ -83,6 +84,18 @@ public class FusionLocalizer implements Localizer {
         );
 
         // Covariance propagation
+        updateCovariance(dt);
+
+        // Add to history
+        poseHistory.put(now, currentPosition.copy());
+        covarianceHistory.put(now, P.copy());
+        if (poseHistory.size() > bufferSize) poseHistory.pollFirstEntry();
+        if (twistHistory.size() > bufferSize) twistHistory.pollFirstEntry();
+        if (covarianceHistory.size() > bufferSize) covarianceHistory.pollFirstEntry();
+    }
+
+    private void updateCovariance(double dt) {
+        // Covariance propagation
         if (!useNonlinearDynamics)
             P = P.plus(Q.multiply(dt));
         else {
@@ -109,11 +122,6 @@ public class FusionLocalizer implements Localizer {
             Matrix Q_d = G.multiply(Q).multiply(G.transposed());
             P = F.multiply(P).multiply(F.transposed()).plus(Q_d);
         }
-
-        // Add to history
-        poseHistory.put(now, currentPosition.copy());
-        if (poseHistory.size() > bufferSize) poseHistory.pollFirstEntry();
-        if (twistHistory.size() > bufferSize) twistHistory.pollFirstEntry();
     }
 
     /**
@@ -135,8 +143,9 @@ public class FusionLocalizer implements Localizer {
         });
 
         // --- 2. Compute Kalman gain ---
-        Matrix S = P.plus(R);
-        Matrix K = P.multiply(MathUtil.invert3x3(S));
+        Matrix pastCovariance = covarianceHistory.floorEntry(timestamp).getValue();
+        Matrix S = pastCovariance.plus(R);
+        Matrix K = pastCovariance.multiply(MathUtil.invert3x3(S));
 
         // --- 3. Update past pose ---
         Matrix K_y = K.multiply(y);
@@ -150,12 +159,13 @@ public class FusionLocalizer implements Localizer {
         // --- 4. Propagate update forward using stored twists ---
         long previousTime = timestamp;
         Pose previousPose = updatedPast;
+        double dt = 0;
         for (NavigableMap.Entry<Long, Pose> entry : poseHistory.tailMap(timestamp, false).entrySet()) {
             long t = entry.getKey();
-            Pose twist = interpolate(timestamp, twistHistory); // use the twist applied at previous time
+            Pose twist = interpolate(t, twistHistory); // use the twist applied at previous time
             if (twist == null)
                 twist = getVelocity();
-            double dt = (t - previousTime) / 1e9;
+            dt = (t - previousTime) / 1e9;
             Pose nextPose = integrate(previousPose, twist, dt);
             poseHistory.put(t, nextPose);
             previousPose = nextPose;
@@ -164,6 +174,8 @@ public class FusionLocalizer implements Localizer {
 
         // --- 5. Update current state ---
         currentPosition = poseHistory.lastEntry().getValue();
+        updateCovariance(dt);
+        covarianceHistory.put(previousTime, P.copy());
     }
 
     private static Pose interpolate(long timestamp, NavigableMap<Long, Pose> history) {
