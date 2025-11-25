@@ -55,16 +55,6 @@ public class LimelightLocalizer implements Localizer {
      * @param timestamp when the Limelight measurement was taken
      */
     public void addVisionMeasurement(Pose measuredPose, long timestamp) {
-        // 1. Correct the past pose with the Limelight estimate
-        if (!poseHistory.containsKey(timestamp)) return;
-
-        // Get the predicted pose at the time of the Limelight measurement
-        Pose predictedPose = poseHistory.get(timestamp);
-
-        // Latency correction: calculate time delta
-        long timeDelta = System.nanoTime() - timestamp;
-        double timeSec = timeDelta / 1e9;
-
         // Now apply the Limelight pose correction (based on the time delta)
         currentPosition = new Pose(
                 measuredPose.getX(),
@@ -88,6 +78,30 @@ public class LimelightLocalizer implements Localizer {
             previousPose = nextPose;
             previousTime = t;
         }
+    }
+
+    private static Pose interpolate(long timestamp, NavigableMap<Long, Pose> history) {
+        Long lowerKey = history.floorKey(timestamp);
+        Long upperKey = history.ceilingKey(timestamp);
+
+        if (lowerKey == null || upperKey == null) {
+            return null; // Cannot interpolate
+        }
+        if (lowerKey.equals(upperKey)) {
+            return history.get(lowerKey).copy(); // Exact match
+        }
+
+        Pose lowerPose = history.get(lowerKey);
+        Pose upperPose = history.get(upperKey);
+
+        double ratio = (double) (timestamp - lowerKey) / (upperKey - lowerKey);
+
+        double x = lowerPose.getX() + ratio * (upperPose.getX() - lowerPose.getX());
+        double y = lowerPose.getY() + ratio * (upperPose.getY() - lowerPose.getY());
+        double headingDiff = MathFunctions.getSmallestAngleDifference(upperPose.getHeading(), lowerPose.getHeading());
+        double heading = MathFunctions.normalizeAngle(lowerPose.getHeading() + ratio * headingDiff);
+
+        return new Pose(x, y, heading);
     }
 
     private Pose integrate(Pose previousPose, Pose twist, double dt) {
