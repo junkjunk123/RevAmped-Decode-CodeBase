@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor;
+package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;

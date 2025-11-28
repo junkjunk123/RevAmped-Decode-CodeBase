@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.util.Artifact;
 
 import java.util.ArrayList;

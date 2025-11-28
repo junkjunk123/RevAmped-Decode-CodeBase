@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.robotcore.external.Supplier;
 
 public interface Encoder {

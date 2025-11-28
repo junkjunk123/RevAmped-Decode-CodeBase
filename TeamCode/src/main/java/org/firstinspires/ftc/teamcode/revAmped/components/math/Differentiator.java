@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.revAmped.components.math;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 
 import java.util.function.Supplier;
 

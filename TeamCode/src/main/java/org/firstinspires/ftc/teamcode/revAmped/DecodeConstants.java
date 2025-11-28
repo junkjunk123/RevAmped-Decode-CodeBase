@@ -7,11 +7,10 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.IntakeThread;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 
@@ -69,6 +68,6 @@ public final class DecodeConstants implements Constants {
         ColorManager.maxGreenHueOne = 165.0f; ColorManager.minGreenHueOne = 155.0f;
         ColorManager.maxGreenHueTwo = 165.0f; ColorManager.minGreenHueTwo = 155.0f;
 
-        IntakeUltrasonic.DISTANCE_THRESHOLD = 0.5f;
+        IntakeDistance.THRESHOLD_DISTANCE.set(0.5f);
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor;
+package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;

@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
@@ -6,6 +7,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunicati
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM1AutoPaths;
+
 import java.util.Arrays;
 
 @Autonomous

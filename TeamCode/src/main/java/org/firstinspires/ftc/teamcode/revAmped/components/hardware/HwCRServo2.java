@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.revAmped.components.hardware;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
-
 public abstract class HwCRServo2<T extends Enum<T> & CRServoInternal.ServoState> extends CRServoInternal<T> {
     protected HwCRServo2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, T motorState, Encoder encoder) throws IllegalArgumentException {
         super(hardwareMap, id, direction, motorState, encoder);

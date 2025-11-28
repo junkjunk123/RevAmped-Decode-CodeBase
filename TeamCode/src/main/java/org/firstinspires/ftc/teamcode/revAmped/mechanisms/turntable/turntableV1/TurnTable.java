@@ -4,9 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
@@ -14,10 +12,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.ArtifactQueuer;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor.ArtifactColor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor.ArtifactColor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableState;
@@ -46,7 +44,7 @@ public class TurnTable implements ArtifactQueuer {
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor, ultrasonic);
         compartments = new TableCompartmentManager(
                 hardware.intakeColor(),
-                hardware.ultrasonic(),
+                hardware.intakeDistance(),
                 (ball, compartments) -> {},
                 ball -> setCurrentState(TurnTableInternalState.values()[ball]),
                 () -> {

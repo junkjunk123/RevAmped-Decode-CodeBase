@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Hood;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 
@@ -252,13 +252,13 @@ public interface Types {
         }
     }
 
-    record QueuerHardwareComponents(TableServoV2 tableServo, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeUltrasonic ultrasonic) {
+    record QueuerHardwareComponents(TableServoV2 tableServo, HwServo2<Types.PopperState> popper, HwMotor2<Types.IntakeState> intakeMotor, ColorManager intakeColor, IntakeDistance intakeDistance) {
         public void update() {
             intakeColor.update();
             intakeMotor.update();
             tableServo.update();
             popper.update();
-            ultrasonic.update();
+            intakeDistance.update();
         }
     }
 }

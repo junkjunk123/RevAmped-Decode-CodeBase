@@ -2,15 +2,13 @@ package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.ColoredDecodePose;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
+
 import java.util.List;
 
 @Config

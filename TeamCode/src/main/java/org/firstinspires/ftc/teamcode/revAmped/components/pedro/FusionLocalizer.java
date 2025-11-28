@@ -4,7 +4,6 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Matrix;
-import com.pedropathing.math.MatrixUtil;
 import com.pedropathing.math.Vector;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;

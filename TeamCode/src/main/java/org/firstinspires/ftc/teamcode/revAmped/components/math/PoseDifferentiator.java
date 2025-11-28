@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.revAmped.components.math;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo;
-
 import java.util.function.Supplier;
 
 public class PoseDifferentiator {

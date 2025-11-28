@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor;
+package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor;
 
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager.maxGreenDistanceTwo;
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager.maxGreenHueTwo;
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager.maxPurpleDistanceTwo;
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager.maxPurpleHueTwo;
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager.minGreenHueTwo;
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager.minPurpleHueTwo;
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager.maxGreenDistanceTwo;
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager.maxGreenHueTwo;
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager.maxPurpleDistanceTwo;
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager.maxPurpleHueTwo;
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager.minGreenHueTwo;
+import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager.minPurpleHueTwo;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 

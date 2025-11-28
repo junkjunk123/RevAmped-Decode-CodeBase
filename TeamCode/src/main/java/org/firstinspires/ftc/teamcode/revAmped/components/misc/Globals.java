@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.DecodeConstants;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.DecodeAutonomousActionExecutor;
 
 import java.util.List;

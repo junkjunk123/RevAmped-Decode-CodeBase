@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +23,7 @@ public class TableCompartmentManager {
     private final Runnable toggleCycleState;
     private final IntakeThread intakeThread;
 
-    public TableCompartmentManager(ColorManager colorManager, IntakeUltrasonic ultrasonicSensor, BiConsumer<Integer, TableCompartment[]> uponIntake, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
+    public TableCompartmentManager(ColorManager colorManager, IntakeDistance ultrasonicSensor, BiConsumer<Integer, TableCompartment[]> uponIntake, Consumer<Integer> switchPopState, Runnable toggleCycleState) {
         this.switchPopState = switchPopState;
         this.uponIntake = uponIntake;
         this.toggleCycleState = toggleCycleState;

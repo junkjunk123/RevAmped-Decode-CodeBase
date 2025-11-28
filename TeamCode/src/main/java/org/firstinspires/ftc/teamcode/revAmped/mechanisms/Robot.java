@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwMotor2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceColor;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
@@ -22,10 +22,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.ShootingMechanism;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
@@ -73,14 +73,7 @@ public class Robot {
 
     public final EnumMap<HwDevice.DeviceType, HashSet<HwDevice>> allDevices = new EnumMap<>(HwDevice.DeviceType.class);
 
-    public enum CycleState {
-        UNKNOWN,
-        INTAKE,
-        SHOOT
-    }
-    public static CycleState cycleState = CycleState.UNKNOWN;
-
-    private OpModeType opModeType;
+    private final OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
         opModeType = (OpModeType) opMode.getOpModeType();
@@ -133,7 +126,8 @@ public class Robot {
         allDevices.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(
                 List.of(
                         turnTable.hardware().intakeColor().getSensorOne(),
-                        turnTable.hardware().intakeColor().getSensorTwo()
+                        turnTable.hardware().intakeColor().getSensorTwo(),
+                        turnTable.hardware().intakeColor().getSensorZero()
                 )
         ));
 
@@ -217,6 +211,10 @@ public class Robot {
         return turnTable.hardware().popper();
     }
 
+    public IntakeDistance intakeDistance() {
+        return turnTable.hardware.intakeDistance();
+    }
+
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {
         EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> map = new EnumMap<>(HwDevice.DeviceType.class);
         map.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(List.of(DecodeColorSensor.class)));
@@ -228,8 +226,8 @@ public class Robot {
 
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> buildIDMap() {
         HashMap<Class<? extends HwDevice>, HashSet<String>> map = new HashMap<>();
-        map.put(DecodeColorSensor.class, new HashSet<>(List.of("colorOne", "colorTwo")));
-        map.put(IntakeUltrasonic.class, new HashSet<>(List.of("intake_ultrasonic")));
+        map.put(DecodeColorSensor.class, new HashSet<>(List.of("colorOne", "colorTwo", "colorZero")));
+        map.put(IntakeDistance.class, new HashSet<>(List.of("intake_ultrasonic")));
         map.put(Flywheel.class, new HashSet<>(List.of("flywheel1", "flywheel2")));
         map.put(TurretMotor.class, new HashSet<>(List.of("turret")));
         map.put(IntakeMotor.class, new HashSet<>(List.of("intake")));

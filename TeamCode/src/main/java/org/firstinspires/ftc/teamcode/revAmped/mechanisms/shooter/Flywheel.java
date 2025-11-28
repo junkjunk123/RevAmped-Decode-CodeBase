@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFCo
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.TwoMotorMechanism;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.FlywheelState;
 

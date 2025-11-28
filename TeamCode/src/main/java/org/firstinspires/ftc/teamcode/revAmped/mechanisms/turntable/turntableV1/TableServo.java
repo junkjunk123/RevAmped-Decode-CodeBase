@@ -6,18 +6,15 @@ import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwCRServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
-import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
 

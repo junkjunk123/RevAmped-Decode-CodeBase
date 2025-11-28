@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
+package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,9 +7,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwUltrasonicS
 import org.firstinspires.ftc.teamcode.revAmped.components.math.LinearFunction;
 
 @Config
-public class IntakeUltrasonic extends HwUltrasonicSensor {
-    public static float DISTANCE_THRESHOLD;
-
+public class IntakeUltrasonic extends HwUltrasonicSensor implements IntakeDistance {
     public IntakeUltrasonic(HardwareMap hardwareMap) {
         super(hardwareMap, "intakeUltrasonic", new LinearFunction(1, 0));
     }

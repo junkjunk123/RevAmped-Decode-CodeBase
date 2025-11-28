@@ -4,15 +4,9 @@ import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.te
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Supplier;
-import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 /**
  * Created by zwang on 2/7/2016.

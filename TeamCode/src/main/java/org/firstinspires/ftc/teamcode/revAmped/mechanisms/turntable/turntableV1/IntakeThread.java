@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
+
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 import org.firstinspires.ftc.teamcode.revAmped.util.Lockable;
 
 import java.util.List;
@@ -16,22 +16,23 @@ import java.util.function.Supplier;
 @Config
 public class IntakeThread extends Lockable {
     private final ColorManager colorManager;
-    private final IntakeUltrasonic intakeUltrasonic;
+    private final IntakeDistance intakeDistance;
     public static int INTAKE_DELAY;
     private final TableCompartmentManager.TableCompartment[] compartments;
     public List<Supplier<Vector2D>> sensors;
     private boolean intookBall;
     private final BiConsumer<Integer, TableCompartmentManager.TableCompartment[]> uponIntake;
     private TableCompartmentManager.TableCompartment[] transformedCompartments;
+    private int curBall = 1;
 
-    public IntakeThread(ColorManager colorManager, IntakeUltrasonic intakeUltrasonic, TableCompartmentManager.TableCompartment[] compartments, BiConsumer<Integer, TableCompartmentManager.TableCompartment[]> uponIntake) {
+    public IntakeThread(ColorManager colorManager, IntakeDistance intakeDistance, TableCompartmentManager.TableCompartment[] compartments, BiConsumer<Integer, TableCompartmentManager.TableCompartment[]> uponIntake) {
         this.colorManager = colorManager;
-        this.intakeUltrasonic = intakeUltrasonic;
+        this.intakeDistance = intakeDistance;
         this.compartments = compartments;
         this.uponIntake = uponIntake;
 
-        sensors = List.of(
-                () -> new Vector2D(Math.sqrt((double) 1 / 3), Math.sqrt((double) 2 / 3)),
+        sensors = List.of (
+                () -> this.colorManager.getCompartmentZeroColor().amplitudes(),
                 () -> this.colorManager.getCompartmentOneColor().amplitudes(),
                 () -> this.colorManager.getCompartmentTwoColor().amplitudes()
         );
@@ -41,41 +42,29 @@ public class IntakeThread extends Lockable {
 
     @Override
     public void update() {
-        if (intakeUltrasonic.hasArtifact()) {
+        if (intakeDistance.hasArtifact()) {
             intookBall = true;
             lock();
 
-            switch (getEmptyIndices().length) {
-                case 3 -> Scheduler.getInstance().add(new Delay(INTAKE_DELAY, () -> {
-                    updateColors(transformedCompartments);
-                    unlock();
-                    intookBall = false;
-                }));
-                case 2 -> {
-                    if (transformedCompartments[1].isNone()) {
-                        Scheduler.getInstance().add(new Delay(() -> sensors.get(1).get().magnitude() > 0.1, () -> {
-                            transformedCompartments[1].setColor(sensors.get(1).get());
-                            unlock();
-                            intookBall = false;
-                            uponIntake.accept(1, compartments);
-                        }));
-                    } else {
-                        Scheduler.getInstance().add(new Delay(() -> sensors.get(2).get().magnitude() > 0.1, () -> {
-                            transformedCompartments[2].setColor(sensors.get(2).get());
-                            unlock();
-                            intookBall = false;
-                            uponIntake.accept(2, compartments);
-                        }));
-                    }
-                }
-                case 1 -> {
-                    setColor(0, new Vector2D(Math.sqrt((double) 1 / 3), Math.sqrt((double) 2 / 3)));
-                    intookBall = false;
-                }
-                default -> {}
-            }
+            Scheduler.getInstance().add(new Delay(() -> sensors.get(curBall).get().magnitude() > 0.1, () -> {
+                transformedCompartments[curBall].setColor(sensors.get(curBall).get());
+                unlock();
+                intookBall = false;
+                uponIntake.accept(curBall, compartments);
+
+                if (curBall != 0)
+                    curBall = (curBall + 1) % 3;
+            }));
         } else {
             intookBall = false;
+        }
+    }
+
+    private void calcCurBall() {
+        switch (getEmptyIndices().length) {
+            case 2 -> curBall = 1;
+            case 3 -> curBall = 2;
+            default -> curBall = 0;
         }
     }
 
@@ -95,8 +84,8 @@ public class IntakeThread extends Lockable {
             setColor(2, sensors.get(2).get());
 
         //Compartment 1
-        if (!compartments[1].isNone() && !compartments[2].isNone() && intakeUltrasonic.hasArtifact())
-            setColor(0, new Vector2D(Math.sqrt((double) 2 /3), Math.sqrt((double) 1 / 3)));
+        if (!compartments[1].isNone() && !compartments[2].isNone() && intakeDistance.hasArtifact())
+            setColor(0, sensors.get(0).get());
     }
 
     public void updateColors(TurnTableInternals.TurnTableInternalState state) {
@@ -121,6 +110,8 @@ public class IntakeThread extends Lockable {
         for (int i = 0; i < 3; i++) {
             transformedCompartments[i] = compartments[(i + state.ordinal()) % 3];
         }
+
+        calcCurBall();
     }
 
     public static TableCompartmentManager.TableCompartment[] getTransformation(TurnTableInternals.TurnTableInternalState state, TableCompartmentManager.TableCompartment[] compartments) {
@@ -131,20 +122,6 @@ public class IntakeThread extends Lockable {
         }
 
         return transformedCompartments;
-    }
-
-    public HwDevice.Sensor<?> getSensor(int sensor) {
-        switch (sensor) {
-            case 1 -> {
-                return colorManager.getSensorOne();
-            }
-            case 2 -> {
-                return colorManager.getSensorTwo();
-            }
-            default -> {
-                return intakeUltrasonic;
-            }
-        }
     }
 
     public TableCompartmentManager.TableCompartment[] getCompartments() {

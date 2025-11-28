@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor;
+package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwColorSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
+
 import java.util.EnumMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;

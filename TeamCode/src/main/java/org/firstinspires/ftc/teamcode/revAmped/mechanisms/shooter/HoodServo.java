@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.HoodState;
 
 @Config

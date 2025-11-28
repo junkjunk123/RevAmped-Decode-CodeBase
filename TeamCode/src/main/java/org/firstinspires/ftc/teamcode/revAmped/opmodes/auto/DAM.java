@@ -1,25 +1,20 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
-import com.pedropathing.geometry.BezierPoint;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AutonomousEnumeratedAction;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.FiniteFailsafeDelay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorManager;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.DecodeColorSensor;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM1AutoPaths;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.stream.IntStream;
 
 public class DAM {
     public static Robot robot;

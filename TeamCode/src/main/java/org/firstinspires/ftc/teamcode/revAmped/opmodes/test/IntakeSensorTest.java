@@ -8,9 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeUltrasonic;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorOne;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.colorsensor.ColorTwo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorOne;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorTwo;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 public class IntakeSensorTest extends DecodeRevAmpedOpMode {
     private ColorOne colorOne;
     private ColorTwo colorTwo;
-    private IntakeUltrasonic intakeUltrasonic;
+    private IntakeDistance intakeUltrasonic;
     private IntakeMotor intakeMotor;
 
     @Override

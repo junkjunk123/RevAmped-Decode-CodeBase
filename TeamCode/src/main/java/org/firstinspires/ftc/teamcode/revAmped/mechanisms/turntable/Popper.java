@@ -2,12 +2,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwAnalogEncoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServoWithVoltage;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.PopperState;
 
 public class Popper extends HwServo2<PopperState> {
