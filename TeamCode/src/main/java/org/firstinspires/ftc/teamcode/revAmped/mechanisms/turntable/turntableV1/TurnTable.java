@@ -191,13 +191,20 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     @Override
-    public void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh) {
+    public void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action) {
         tsh.runTransition(TeleOpStateHandler.TransitionCommand.fromRunnable(() -> {
             int i = getNumberOfBalls();
+
             if (slow)
-                tsh.runTransition(t -> shootAllSlow(() -> t.accept(true), i), DCTeleOpV2.CycleState.INTAKE, 3500);
+                tsh.runTransition(t -> shootAllSlow(() -> {
+                    t.accept(true);
+                    action.run();
+                }, i), DCTeleOpV2.CycleState.INTAKE, 3500);
             else
-                tsh.runTransition(t -> shootAll(() -> t.accept(true), i), DCTeleOpV2.CycleState.INTAKE, 3500);
+                tsh.runTransition(t -> shootAll(() -> {
+                    t.accept(true);
+                    action.run();
+                }, i), DCTeleOpV2.CycleState.INTAKE, 3500);
         }), DCTeleOpV2.CycleState.SHOOTING);
     }
 

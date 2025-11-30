@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.revAmped.components.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -301,5 +304,13 @@ public class RevAmpedGamepad {
 
     public Button2 getLastButton() {
         return lastButton;
+    }
+
+    public Vector2D leftJoystickVector() {
+        return new Vector2D(gamepad.left_stick_x, -gamepad.left_stick_y);
+    }
+
+    public double leftStickMagnitude() {
+        return leftJoystickVector().magnitude();
     }
 }

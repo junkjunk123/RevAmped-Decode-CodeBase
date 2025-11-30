@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
-@TeleOp(name = "DCTeleOpRedesign", group = "TeleOp")
+@TeleOp(name = "DCTeleOp", group = "TeleOp")
 public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;
@@ -103,7 +103,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                 );
             }
         }
-        if(gamepad_2.dpad_right.isPress()){
+
+        if (gamepad_2.dpad_right.isPress()){
             robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
 //            robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
 //            scheduler.add(new Delay(BIG_INTAKE_DELAY, () -> {
@@ -133,7 +134,6 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.a.isPress()) {
-            //no tsh needed
             robot.intakeMotor().setCurrentState(Types.IntakeState.STOP);
         }
 
@@ -151,11 +151,13 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_2.dpad_up.isPress()) {
-            robot.turnTable.launch(false, tsh);
+            drivetrain.startHoldPose();
+            robot.turnTable.launch(false, tsh, drivetrain::stopHoldPose);
         }
 
         if (gamepad_2.dpad_down.isPress()) {
-            robot.turnTable.launch(true, tsh);
+            drivetrain.startHoldPose();
+            robot.turnTable.launch(true, tsh, drivetrain::stopHoldPose);
         }
 
         if (gamepad_1.dpad_up.isPress()) {

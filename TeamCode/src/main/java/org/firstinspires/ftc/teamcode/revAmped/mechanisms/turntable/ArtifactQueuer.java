@@ -10,13 +10,15 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 public interface ArtifactQueuer {
     void preparePurple();
     void prepareGreen();
-    void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh);
     Vector2D[] getBallColors();
     DecodeColorSensor.ArtifactColor[] getPredictedBallColors();
     void intake();
     void update();
     boolean isMotifMode();
     void setMotifMode(boolean mode);
+
+    void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action);
+
     void switchStateToPop();
 
     default void toggleMotifMode() {

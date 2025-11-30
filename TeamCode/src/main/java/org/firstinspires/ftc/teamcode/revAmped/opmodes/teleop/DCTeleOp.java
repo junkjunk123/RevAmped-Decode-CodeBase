@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 @Disabled
-@TeleOp(name = "DCTeleOp", group = "TeleOp")
+@TeleOp(name = "DCTeleOpOld", group = "TeleOp")
 public class DCTeleOp extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;

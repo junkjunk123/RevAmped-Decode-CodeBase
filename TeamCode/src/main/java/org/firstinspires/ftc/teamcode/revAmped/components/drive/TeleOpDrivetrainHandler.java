@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.drive;
-
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
+import com.pedropathing.math.MathFunctions;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepad;
 
 import java.util.List;
@@ -18,8 +21,14 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     public static float MAX_POWER = 1.0f;
     private boolean slowMode = false;
     private boolean invertedControls = false;
+    private boolean holdingPose = false;
+    private Pose targetPose = initialPose;
     private Localizer localizer;
     private static Pose initialPose = new Pose(72, 72, Math.toRadians(90));
+    private final PIDFController smallTranslationalController = new PIDFController(Constants.secondaryTranslationalPIDFCoefficients);
+    private final PIDFController translationalController = new PIDFController(Constants.translationalPIDFCoefficients);
+    private final PIDFController headingController = new PIDFController(Constants.headingPIDFCoefficients);
+    private final PIDFController smallHeadingController = new PIDFController(Constants.secondaryHeadingPIDFCoefficients);
 
     public TeleOpDrivetrainHandler(OpMode op, List<DcMotorSimple.Direction> directions) {
         super(op, directions);
@@ -27,8 +36,71 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     }
 
     public void arcadeDrive() {
-        if (!invertedControls) arcadeDrive(gamepad_1, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
-        else arcadeDrive(-gamepad_1.left_stick_x, -gamepad_1.left_stick_y, gamepad_1.right_stick_x, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
+        if (!holdingPose || gamepad_1.leftStickMagnitude() > 0.5 || gamepad_1.right_stick_x > 0.5) {
+            if (!invertedControls)
+                arcadeDrive(gamepad_1, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
+            else
+                arcadeDrive(-gamepad_1.left_stick_x, -gamepad_1.left_stick_y, gamepad_1.right_stick_x, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
+            return;
+        }
+
+        Pose currentPose = localizer.getPose();
+        Vector translationalError = targetPose.minus(currentPose).getAsVector();
+        double headingGoal = targetPose.getHeading();
+        double turnDirection = MathFunctions.getTurnDirection(currentPose.getHeading(), headingGoal);
+        double headingError = turnDirection * MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), headingGoal);
+        Vector translationalCorrection = getTranslationalCorrection(translationalError);
+        double headingCorrection = getHeadingCorrection(turnDirection, headingError);
+        translationalCorrection.rotateVector(-currentPose.getHeading());
+        arcadeDrive(translationalCorrection.getXComponent(), translationalCorrection.getYComponent(), headingCorrection);
+    }
+
+    public void arcadeDrive(double x, double negatedY, double rx) {
+        arcadeDrive(x, negatedY, rx, slowMode, SLOW_MULT, MAGNITUDE_ZERO, ANGLE_ZERO, MAX_POWER);
+    }
+
+    private Vector getTranslationalCorrection(Vector translationalError) {
+        double errorMag = translationalError.getMagnitude();
+        Vector direction = translationalError.normalize();
+
+        if (errorMag < Constants.translationalPIDFSwitch) {
+            smallTranslationalController.updateFeedForwardInput(1);
+            return direction.times(Math.clamp(smallTranslationalController.runWithError(errorMag), -1, 1));
+        }
+
+        translationalController.updateFeedForwardInput(1);
+        return direction.times(Math.clamp(translationalController.runWithError(errorMag), -1, 1));
+    }
+
+    private double getHeadingCorrection(double turnDirection, double headingError) {
+        if (headingError < Constants.headingPIDFSwitch) {
+            smallHeadingController.updateFeedForwardInput(turnDirection);
+            return Math.clamp(smallHeadingController.runWithError(headingError), -1, 1);
+        }
+
+        headingController.updateFeedForwardInput(turnDirection);
+        return Math.clamp(smallHeadingController.runWithError(headingError), -1, 1);
+    }
+
+    public void stopHoldPose() {
+        holdingPose = false;
+    }
+
+    private void resetControllers() {
+        smallHeadingController.reset();
+        smallTranslationalController.reset();
+        translationalController.reset();
+        headingController.reset();
+    }
+
+    public void startHoldPose(Pose pose) {
+        holdingPose = true;
+        targetPose = pose;
+        resetControllers();
+    }
+
+    public void startHoldPose() {
+        startHoldPose(localizer.getPose());
     }
 
     public void updateLocalization() {
@@ -72,6 +144,10 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
 
     public void setInvertedControls(boolean invertedControls) {
         this.invertedControls = invertedControls;
+    }
+
+    public void setHoldingPose(boolean holdingPose) {
+        this.holdingPose = holdingPose;
     }
 
     public static class TeleOpDrivetrainBuilder {

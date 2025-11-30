@@ -13,19 +13,22 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
+    public static PIDFCoefficients secondaryHeadingPIDFCoefficients = new PIDFCoefficients(1.5, 0, 0.1, 0.0005);
+    public static PIDFCoefficients headingPIDFCoefficients = new PIDFCoefficients(0.8, 0, 0, 0.01);
+    public static PIDFCoefficients translationalPIDFCoefficients = new PIDFCoefficients(0.08, 0, 0.005, 0.0006);
+    public static PIDFCoefficients secondaryTranslationalPIDFCoefficients = new PIDFCoefficients(0.08, 0, 0.005, 0.0006);
+    public static double translationalPIDFSwitch = 4.0;
+    public static double headingPIDFSwitch = Math.PI / 20;
+
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(12.4)
             .forwardZeroPowerAcceleration(-29.08)
             .lateralZeroPowerAcceleration(-69)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.03, 0, 0, 0.015))
-            .translationalPIDFSwitch(4)
-            .secondaryTranslationalPIDFCoefficients(
-                    new PIDFCoefficients(0.08, 0, 0.005, 0.0006)
-            )
-            .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0, 0.01))
-            .secondaryHeadingPIDFCoefficients(
-                    new PIDFCoefficients(1.5, 0, 0.1, 0.0005)
-            )
+            .translationalPIDFCoefficients(translationalPIDFCoefficients)
+            .translationalPIDFSwitch(translationalPIDFSwitch)
+            .secondaryTranslationalPIDFCoefficients(secondaryTranslationalPIDFCoefficients)
+            .headingPIDFCoefficients(headingPIDFCoefficients)
+            .secondaryHeadingPIDFCoefficients(secondaryHeadingPIDFCoefficients)
             .drivePIDFCoefficients(
                     new FilteredPIDFCoefficients(0.03, 0, 0.0004, 0.6,0.015)
             )

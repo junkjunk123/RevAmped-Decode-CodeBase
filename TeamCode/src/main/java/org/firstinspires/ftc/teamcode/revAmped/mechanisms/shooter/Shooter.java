@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSens
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.PoseDifferentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.ProjectileMathWithDrag;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.RobotKinematicsCalculator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector3D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
@@ -45,7 +46,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static double BALL_LAUNCH_MS = 400; //not including pop time
     private double confidence;
 
-    public static boolean velocityCompensationOnTurret;
+    public static boolean velocityCompensation;
 
     private final PoseDifferentiator robotAcceleration;
 
@@ -68,7 +69,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
         trackTurret = true;
-        velocityCompensationOnTurret = false;
+        velocityCompensation = false;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
         robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());
@@ -123,16 +124,20 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         if (currentState == ShooterState.TRACKING) {
             Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
             Pose currentPos = pinpoint().getPose();
-            //double dist = offset.getMagnitude();
-            Vector robotVelocity = pinpoint.getVelocityVector();
             Pose robotVelPose = pinpoint.getVelocity();
+            Vector robotVelocity = robotVelPose.getAsVector();
             Pose robotAcceleration = this.robotAcceleration.calculate(robotVelPose);
-            //if (robotVelocity.getMagnitude() < 4) hardware.flywheel().updateTargetVelocity(dist);
+            Pose projectedRobotPose = RobotKinematicsCalculator.getProjectedPoseWithConstantLinearAcceleration(
+                    currentPos,
+                    BALL_LAUNCH_MS / 1000.0,
+                    robotVelPose,
+                    robotAcceleration
+            );
 
             double deltaAngle;
 
             if (trackTurret) {
-                if (!velocityCompensationOnTurret || robotVelocity.getMagnitude() < 8) {
+                if (!velocityCompensation || robotVelocity.getMagnitude() < 8) {
                     Globals.AllianceColor allianceColor = Globals.allianceColor == Globals.AllianceColor.Red ? Globals.AllianceColor.Red : Globals.AllianceColor.Blue;
                     deltaAngle = angleTurretTo(currentPos, targetPos);
 
@@ -142,18 +147,14 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     }
 
                     hardware.turretMotor().finetuneAngle(deltaAngle);
-                } else if (velocityCompensationOnTurret && (hardware().flywheel().getCurrentState() == Types.FlywheelState.RUNNING || Robot.INSTANCE.getOpModeType().isTest())) {
-                    Pose adjustedRobotPose = currentPos.plus(robotVelPose.scale(BALL_LAUNCH_MS / 1000.0)).plus(
-                            robotAcceleration.scale(0.5 * Math.pow(BALL_LAUNCH_MS / 1000.0, 2))
-                    );
-                    Vector offset = targetPos.minus(adjustedRobotPose).getAsVector();
-
+                } else if (velocityCompensation && (hardware().flywheel().getCurrentState() == Types.FlywheelState.RUNNING || Robot.INSTANCE.getOpModeType().isTest())) {
+                    Vector offset = targetPos.minus(projectedRobotPose).getAsVector();
                     Vector iHat = offset.normalize();
                     Vector jHat = new Vector();
                     jHat.setOrthogonalComponents(-iHat.getYComponent(), iHat.getXComponent());
                     double flywheelLaunchSpeed = hardware.flywheel().getTheoreticalLaunchVelocity();
-                    if (hardware.flywheel().getCurrentState() == Types.FlywheelState.STOPPED) flywheelLaunchSpeed = Flywheel.FLYWHEEL_MEDIUM_VELOCITY;
-                    //Globals.telemetry.addData("flywheelLaunchSpeed", flywheelLaunchSpeed);
+                    if (hardware.flywheel().getCurrentState() == Types.FlywheelState.STOPPED)
+                        flywheelLaunchSpeed = Flywheel.FLYWHEEL_MEDIUM_VELOCITY;
                     Vector invertediHat = new Vector();
                     invertediHat.setOrthogonalComponents(iHat.getYComponent(), iHat.getXComponent());
                     double normalizedTurretNormalComponent = Range.clip(robotVelocity.dot(invertediHat) / flywheelLaunchSpeed, -1, 1);
@@ -167,9 +168,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                             {jHat.getXComponent(), jHat.getYComponent()}
                     });
                     double targetAngle = flywheelDirectionVector.transform(inverseRotMatrix).getTheta() + Math.PI;
-                    double currentAngle = pinpoint().getPose().getHeading();
-                    double projectedAngle = currentAngle + robotVelPose.getHeading() * (BALL_LAUNCH_MS / 1000.0);
-                    deltaAngle = MathUtil.normalizeAnglePi(targetAngle - projectedAngle);
+                    deltaAngle = MathUtil.normalizeAnglePi(targetAngle - projectedRobotPose.getHeading());
                     deltaAngle = Range.clip(deltaAngle, -TurretMotor.TURRET_RAD_LIMIT, TurretMotor.TURRET_RAD_LIMIT);
                     hardware.turretMotor().finetuneAngle(deltaAngle);
                 } else {
@@ -181,8 +180,9 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
             if (trackHood) {
                 Vector3D target = getTargetLaunchPos();
+                Pose robotPose = velocityCompensation? projectedRobotPose : currentPos;
                 Vector2D targetDisplacements = new Vector2D (
-                        pinpoint.getPose().distanceFrom(new Pose(target.getX(), target.getY())),
+                        robotPose.distanceFrom(new Pose(target.getX(), target.getY())),
                         target.getZ() - LAUNCH_HEIGHT
                 );
                 double initialVelocity = calcInitialLaunchVelocity(deltaAngle);
@@ -208,8 +208,6 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                     );
                     hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING, hoodAngle);
                 }
-            } else {
-                //if (robotVelocity.getMagnitude() < 4) hardware.hoodServo().updatePreset(dist);
             }
         }
     }
