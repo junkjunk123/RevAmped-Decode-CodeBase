@@ -104,7 +104,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             }
         }
 
-        if (gamepad_2.dpad_right.isPress()){
+        if (gamepad_2.dpad_right.isPress()) {
             robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
 //            robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
 //            scheduler.add(new Delay(BIG_INTAKE_DELAY, () -> {
@@ -221,7 +221,6 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
-        telemetry.addData("currentPos", (int) (robot.tableServo().getPosition() * 255f));
         telemetry.update();
     }
 

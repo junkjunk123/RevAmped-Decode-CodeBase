@@ -31,10 +31,10 @@ public final class DecodeConstants implements Constants {
         Popper.POP = 13/255f; Popper.NEUTRAL = 102/255f;
 
         //Flywheel Constants
-        Flywheel.kStatic = 0.05;
-        Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.0003);
-        Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.0008);
-        Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.0003);
+        Flywheel.kVSmall = 0.0008; Flywheel.kVMedium = 0.0003; Flywheel.kVLarge = 0.0003;
+        Flywheel.largeCoefficients = new PIDFCoefficients(0.004, 0, 0.0000002, 0.05);
+        Flywheel.smallCoefficients = new PIDFCoefficients(0.008, 0, 0.00002, 0.05);
+        Flywheel.mediumCoefficients = new PIDFCoefficients(0.005, 0, 0.00002, 0.05);
         Flywheel.FLYWHEEL_FAR_VELOCITY = 1150; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 950; Flywheel.GEAR_RATIO = 57/93;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.75; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;

@@ -16,9 +16,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
-@Disabled
 @Config
-@TeleOp
 public class FlywheelPIDTuner extends DecodeRevAmpedOpMode {
     private DcMotorEx flywheel1;
     private DcMotorEx flywheel2;

@@ -62,6 +62,9 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
     public static double VELOCITY_ERROR_THRESHOLD;
     public static double kStatic;
+    public static double kVLarge;
+    public static double kVMedium;
+    public static double kVSmall;
     private boolean updateLock = false;
     private boolean voltageCompensation = false;
 
@@ -85,19 +88,39 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     }
 
     public double controllerOutput() {
-        if (targetVelocity <= 600) return runController(controllerSmall, targetVelocity - getVelocityImperial());
-        else if (targetVelocity <= 1200) return runController(controllerMedium, targetVelocity - getVelocityImperial());
-        else return runController(controllerLarge, targetVelocity - getVelocityImperial());
+        if (targetVelocity <= 600)
+            return runController(targetVelocity - getVelocityImperial());
+        else if (targetVelocity <= 1200)
+            return runController(targetVelocity - getVelocityImperial());
+        else
+            return runController(targetVelocity - getVelocityImperial());
     }
 
-    public double runController(PIDFController controller, double error) {
+    public double runController(double error) {
+        PIDFController controller;
+        double kV;
+
+        if (error > FLYWHEEL_FAR_VELOCITY - 400) {
+            kV = kVLarge;
+            controller = controllerLarge;
+        }
+        else if (error > FLYWHEEL_MEDIUM_VELOCITY - 400) {
+            kV = kVMedium;
+            controller = controllerMedium;
+        } else {
+            kV = kVSmall;
+            controller = controllerSmall;
+        }
+
         controller.updateError(error);
-        controller.updateFeedForwardInput(targetVelocity);
+        controller.updateFeedForwardInput(1);
+
+        double controllerOutput = controller.runPIDF() + kV * targetVelocity;
 
         if (voltageCompensation && voltageSensor != null)
-            return (controller.runPIDF() + kStatic) * voltageSensor.getVoltageNormalized(12.75f);
+            return controllerOutput * voltageSensor.getVoltageNormalized(12.75f);
         else
-            return controller.runPIDF() + kStatic;
+            return controllerOutput;
     }
 
     public void setVoltageCompensation(boolean voltageCompensation) {
