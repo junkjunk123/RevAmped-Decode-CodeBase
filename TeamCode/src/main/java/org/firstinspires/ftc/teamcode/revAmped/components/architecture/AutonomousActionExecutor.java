@@ -24,7 +24,7 @@ public abstract class AutonomousActionExecutor {
     /**
      * List of identifiers for the actions, used to track and manage the actions.
      */
-    private ArrayList<String> identifiers;
+    private final ArrayList<String> identifiers;
 
     /**
      * The current state of the autonomous actions, represented as an index in the actions list.

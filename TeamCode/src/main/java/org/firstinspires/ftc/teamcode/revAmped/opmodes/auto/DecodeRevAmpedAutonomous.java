@@ -80,13 +80,13 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
         DAM.close();
     }
 
-    private void setAutoState(int autoState) {
+    protected void setAutoState(int autoState) {
         scheduler.clear();
         followerManager.followPath(autoState);
         aee.setAutoState(autoState);
     }
 
-    private void setNextState() {
+    protected void setNextState() {
         int current = aee.getAutoState();
         int next = aee.getAutoStateAction(current).nextStateGenerator().nextState(current);
 

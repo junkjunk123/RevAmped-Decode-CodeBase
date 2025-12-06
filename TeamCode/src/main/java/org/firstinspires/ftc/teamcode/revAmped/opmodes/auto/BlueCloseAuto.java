@@ -6,16 +6,16 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.LM1AutoPaths;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.CloseAutoPaths;
 
 import java.util.Arrays;
 
 @Autonomous
-public class LM1BlueAuto extends DecodeRevAmpedAutonomous {
+public class BlueCloseAuto extends DecodeRevAmpedAutonomous {
 
     @Override
     public void setPaths() {
-        paths = new LM1AutoPaths();
+        paths = new CloseAutoPaths();
     }
 
     @Override

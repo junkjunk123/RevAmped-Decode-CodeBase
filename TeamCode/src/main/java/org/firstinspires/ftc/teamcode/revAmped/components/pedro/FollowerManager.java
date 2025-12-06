@@ -256,4 +256,8 @@ public class FollowerManager {
     public boolean velocityCondition() {
         return follower.getVelocity().getMagnitude() < getCurrentPath().getPathEndVelocityConstraint();
     }
+
+    public boolean velocityCondition(double dist) {
+        return !follower.isBusy() || (distanceFromTarget() < dist && velocityCondition());
+    }
 }

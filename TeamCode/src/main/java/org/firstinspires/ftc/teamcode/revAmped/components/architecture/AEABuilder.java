@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.architecture;
 
+import com.pedropathing.follower.Follower;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
+import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * AEABuilder is a utility class for creating instances of AutonomousEnumeratedAction.
@@ -197,5 +203,49 @@ public class AEABuilder {
      */
     public AutonomousEnumeratedAction build() {
         return AEABuilder.createAction(init, loop, finishedDriving, nextStateGenerator, identifier);
+    }
+
+    public static AutonomousEnumeratedAction drive(Function<FollowerManager, Boolean> finishedDriving) {
+        return new AutonomousEnumeratedAction() {
+            @Override
+            protected void init() {
+
+            }
+
+            @Override
+            protected void loop() {
+                if (finishedDriving())
+                    completed = true;
+            }
+
+            @Override
+            public boolean isFinishedDriving() {
+                return finishedDriving.apply(Globals.followerManager);
+            }
+        };
+    }
+
+    public static AutonomousEnumeratedAction drive(Function<FollowerManager, Boolean> finishedDriving, String identifier) {
+        return new AutonomousEnumeratedAction() {
+            @Override
+            protected void init() {
+
+            }
+
+            @Override
+            protected void loop() {
+
+            }
+
+            @Override
+            public boolean isFinishedDriving() {
+                return finishedDriving.apply(Globals.followerManager);
+            }
+
+            @Override
+            public String identifier() {
+                return identifier;
+            }
+        };
     }
 }

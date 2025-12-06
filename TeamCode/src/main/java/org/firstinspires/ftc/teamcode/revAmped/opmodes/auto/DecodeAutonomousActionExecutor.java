@@ -8,23 +8,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 public abstract class DecodeAutonomousActionExecutor extends AutonomousActionExecutor {
     public DecodeAutonomousParameters parameters;
 
-    public static class DecodeAutonomousParameters {
-        private final Robot robot;
-        private final FollowerManager followerManager;
-
-        public DecodeAutonomousParameters(Robot robot, FollowerManager follower) {
-            this.robot = robot;
-            this.followerManager = follower;
-        }
-
-        public FollowerManager getFollowerManager() {
-            return followerManager;
-        }
-
-        public Robot getRobot() {
-            return robot;
-        }
-    }
+    public record DecodeAutonomousParameters(Robot robot, FollowerManager followerManager) {}
 
     public DecodeAutonomousActionExecutor(DecodeAutonomousParameters parameters) {
         super();

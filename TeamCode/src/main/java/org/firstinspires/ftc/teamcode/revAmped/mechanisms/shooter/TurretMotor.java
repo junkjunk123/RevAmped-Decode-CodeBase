@@ -27,7 +27,7 @@ public class TurretMotor extends Turret<TurretState> {
     public TurretMotor(HardwareMap hardwareMap, TurretState motorState) throws IllegalArgumentException {
         super(hardwareMap, "turret", DcMotorSimple.Direction.REVERSE, motorState);
         if (useTurretSwitch)
-            this.limitSwitch = new HwSwitch(hardwareMap, "turret_switch", true, false);
+            this.limitSwitch = new HwSwitch(hardwareMap, "turret_switch", true, true);
         else this.limitSwitch = null;
         controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
     }
@@ -40,6 +40,7 @@ public class TurretMotor extends Turret<TurretState> {
     public static int AUTO_SET_1;
     public static int AUTO_SET_2;
     public static int AUTO_SET_3;
+    public static int FAR_AUTO;
     public static float LL_DETECTION_RED;
     public static float LL_DETECTION_BLUE;
     public static boolean TURRET_LIMITS_ENABLED;

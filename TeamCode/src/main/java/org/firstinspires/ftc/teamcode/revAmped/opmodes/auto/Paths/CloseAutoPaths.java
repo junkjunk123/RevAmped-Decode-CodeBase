@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
 import java.util.List;
 
 @Config
-public class LM1AutoPaths implements PathSupplier {
+public class CloseAutoPaths implements PathSupplier {
     public static ColoredDecodePose START_POSE = new ColoredDecodePose(34.5, 136, Math.toRadians(-90));
     public static ColoredDecodePose SHOOT_PRELOADS = new ColoredDecodePose(60, 102, Math.toRadians(249));
     public static ColoredDecodePose FIRST_INTAKE_START = new ColoredDecodePose(56, 83, Math.toRadians(180));
