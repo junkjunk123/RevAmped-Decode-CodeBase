@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.controller.PIDF.PIDFCo
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Turret;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.CalcHandler;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
@@ -30,6 +31,7 @@ public class TurretMotor extends Turret<TurretState> {
             this.limitSwitch = new HwSwitch(hardwareMap, "turret_switch", true, true);
         else this.limitSwitch = null;
         controller = new PIDFController(TURRET_PIDF_COEFFICIENTS);
+        velocityCalculator = new Differentiator(() -> 0.0, () -> (double) getCurrentPosition());
     }
 
     public static PIDFCoefficients TURRET_PIDF_COEFFICIENTS;
@@ -50,6 +52,7 @@ public class TurretMotor extends Turret<TurretState> {
     public final HwSwitch limitSwitch;
     private double prevFineTuneAngle = 0;
     public static boolean useTurretSwitch = true;
+    private final Differentiator velocityCalculator;
 
     public enum PresetState {
         LEFT_135,
@@ -121,6 +124,7 @@ public class TurretMotor extends Turret<TurretState> {
         super.setCurrentState(motorState);
         targetPosition = motorState.getPos();
         controller.reset();
+        velocityCalculator.reset();
         prevFineTuneAngle = 0;
         presetState = PresetState.RESET;
     }
@@ -141,6 +145,7 @@ public class TurretMotor extends Turret<TurretState> {
         super.setCurrentState(motorState);
         this.targetPosition = targetPosition;
         controller.reset();
+        velocityCalculator.reset();
         prevFineTuneAngle = 0;
         presetState = PresetState.RESET;
     }
@@ -183,6 +188,7 @@ public class TurretMotor extends Turret<TurretState> {
     @Override
     public void update() {
         limitSwitch.update();
+        velocityCalculator.update();
         super.update();
     }
 
@@ -239,5 +245,10 @@ public class TurretMotor extends Turret<TurretState> {
                 return integrator.getIntegral() > 0.08;
             }
         });
+    }
+
+    @Override
+    public double getVelocity() {
+        return velocityCalculator.calculate();
     }
 }

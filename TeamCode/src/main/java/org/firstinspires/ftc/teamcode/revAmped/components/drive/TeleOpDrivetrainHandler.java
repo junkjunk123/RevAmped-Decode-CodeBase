@@ -30,6 +30,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     private boolean slowMode = false;
     private boolean invertedControls = false;
     private boolean holdingPose = false;
+    private boolean canHoldPose = true;
     private Localizer localizer;
     private static Pose initialPose = new Pose(72, 72, Math.toRadians(90));
     private Follower follower;
@@ -59,6 +60,8 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     }
 
     public void startHoldPose(Pose pose) {
+        if (!canHoldPose)
+            return;
         holdingPose = true;
         follower.update();
         follower.holdPoint(new BezierPoint(pose), pose.getHeading(), false);

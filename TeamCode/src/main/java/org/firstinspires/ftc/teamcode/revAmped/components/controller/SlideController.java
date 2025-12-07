@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.controller;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.controller.STD.CustomSTDCoefficients;
-
 public interface SlideController {
     /**
      * Updates the constants used by the slide controller.
      * @param constants the new constants to use
      */
     void updateConstants(SlideConstants constants);
-
-    /**
-     * Updates the constants used by the slide controller.
-     * @param constants the new constants to use
-     */
-    void updateConstants(CustomSTDCoefficients constants);
 
     /**
      * Runs the slide to a specified position.

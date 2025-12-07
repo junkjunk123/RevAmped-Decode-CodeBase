@@ -70,9 +70,10 @@ public class DecodeLimelight implements HwDevice {
 
     private void computeLatestResult() {
         LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid())
+        if (result != null && result.isValid()) {
             latestResult = result;
-        lastDetectionTime = result.getControlHubTimeStampNanos();
+            lastDetectionTime = result.getControlHubTimeStampNanos();
+        }
     }
 
     @Override
