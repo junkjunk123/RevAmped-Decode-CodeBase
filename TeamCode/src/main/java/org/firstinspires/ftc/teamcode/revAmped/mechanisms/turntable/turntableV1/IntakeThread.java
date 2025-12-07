@@ -7,14 +7,14 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Del
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
-import org.firstinspires.ftc.teamcode.revAmped.util.Lockable;
+import org.firstinspires.ftc.teamcode.revAmped.util.Locked;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 @Config
-public class IntakeThread extends Lockable {
+public class IntakeThread extends Locked {
     private final ColorManager colorManager;
     private final IntakeDistance intakeDistance;
     public static int INTAKE_DELAY;

@@ -5,6 +5,7 @@ import com.pedropathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.AutonomousCommandAction;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.RunnableTask;
+import org.firstinspires.ftc.teamcode.revAmped.util.Lockable;
 
 import java.util.function.BooleanSupplier;
 
@@ -13,12 +14,13 @@ import java.util.function.BooleanSupplier;
  * in a robot's autonomous mode. It provides methods for initialization, looping through the action,
  * checking if the action is finished driving, and generating the next state.
  */
-public abstract class AutonomousEnumeratedAction {
+public abstract class AutonomousEnumeratedAction implements Lockable {
     protected boolean completed = false;
     protected boolean initCompleted = false;
     protected abstract void init();
     protected abstract void loop();
     public abstract boolean isFinishedDriving();
+    protected boolean locked = false;
 
     /**
      * Checks if the action has finished driving.
@@ -50,6 +52,9 @@ public abstract class AutonomousEnumeratedAction {
      * @return true if the action is completed, false otherwise
      */
     public boolean update() {
+        if (locked)
+            return false;
+
         if (!initCompleted) {
             if (millisToDrive() > 0)
                 Globals.aae.preloadDriveTimer.reset();
@@ -114,5 +119,13 @@ public abstract class AutonomousEnumeratedAction {
                 return parent.nextStateGenerator().nextState(currentState);
             }
         };
+    }
+
+    public void lock() {
+        locked = true;
+    }
+
+    public void unlock() {
+        locked = false;
     }
 }
