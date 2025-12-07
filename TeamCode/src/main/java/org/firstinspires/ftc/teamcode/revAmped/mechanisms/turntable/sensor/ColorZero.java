@@ -13,7 +13,7 @@ import java.util.EnumMap;
 
 public class ColorZero extends DecodeColorV2 {
     public ColorZero(HardwareMap hardwareMap) {
-        super(hardwareMap, "colorOne");
+        super(hardwareMap, "colorZero");
     }
 
     @Override

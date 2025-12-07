@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.IntakeMotor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.Popper;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor.ArtifactColor;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDigitalDistance;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
@@ -40,7 +42,7 @@ public class TurnTable implements ArtifactQueuer {
         TableServoV2 tableServo = new TableServoV2(hardwareMap, setPositions, Types.TableState2.BALL2, Encoder.external(intakeMotor));
         Popper popper = new Popper(hardwareMap, setPositions);
         ColorManager intakeColor = new ColorManager(hardwareMap);
-        IntakeUltrasonic ultrasonic = new IntakeUltrasonic(hardwareMap);
+        IntakeDistance ultrasonic = new IntakeDigitalDistance(hardwareMap);
         hardware = new QueuerHardwareComponents(tableServo, popper, intakeMotor, intakeColor, ultrasonic);
         compartments = new TableCompartmentManager(
                 hardware.intakeColor(),
