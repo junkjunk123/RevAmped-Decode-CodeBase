@@ -125,7 +125,7 @@ public class FusionLocalizer implements Localizer {
 
     /**
      * Adds a delayed measurement and updates past poses.
-     * @param measuredPose measured pose (vision/other sensor)
+     * @param measuredPose measured pose (vision/other sensor), set a pose component to Double.NaN if not measured
      * @param timestamp when the measurement was taken
      */
     public void addMeasurement(Pose measuredPose, long timestamp) {
@@ -136,9 +136,10 @@ public class FusionLocalizer implements Localizer {
         if (pastPose == null)
             pastPose = getPose();
         Matrix y = new Matrix(new double[][]{
-                {measuredPose.getX() - pastPose.getX()},
-                {measuredPose.getY() - pastPose.getY()},
-                {MathFunctions.normalizeAngle(measuredPose.getHeading() - pastPose.getHeading())}
+                {!Double.isNaN(measuredPose.getX()) ? measuredPose.getX() - pastPose.getX() : 0},
+                {!Double.isNaN(measuredPose.getY()) ? measuredPose.getY() - pastPose.getY() : 0},
+                {!Double.isNaN(measuredPose.getHeading()) ?
+                        MathFunctions.normalizeAngle(measuredPose.getHeading() - pastPose.getHeading()) : 0}
         });
 
         // --- 2. Compute Kalman gain ---
