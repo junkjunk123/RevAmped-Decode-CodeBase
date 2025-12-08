@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwSwitch;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TableState;
@@ -202,7 +202,7 @@ public class TableServo extends HwCRServo2<TableState> {
         setCurrentState(TableState.ABSOLUTE_ROTATION);
         setSplitState(SplitTableServo.SplitState.RESETTING);
         absoluteRotationTarget = nextFullRotation(super.getCurrentPosition());
-        Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
+        DelayScheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
                 resetPosition(absoluteRotationTarget);
                 setCurrentState(TableState.BALL1);
                 setSplitState(SplitTableServo.SplitState.USING_ONE);

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 public final class TurnTableInternals {
@@ -12,7 +12,7 @@ public final class TurnTableInternals {
     }
 
     public interface TurnTableStateInterface {
-        void initialize(Types.QueuerHardwareComponents hardwareComponents, Scheduler scheduler);
+        void initialize(Types.QueuerHardwareComponents hardwareComponents, DelayScheduler scheduler);
     }
 
     public enum TurnTableCycleState {
@@ -34,10 +34,10 @@ public final class TurnTableInternals {
         private TurnTableCycleState cycleState;
         private TurnTableInternalState internalState;
         private final Types.QueuerHardwareComponents hardware;
-        private final Scheduler scheduler;
+        private final DelayScheduler scheduler;
         private final TableCompartmentManager compartmentManager;
 
-        public TurnTableState(TurnTableCycleState cycleState, TurnTableInternalState internalState, Types.QueuerHardwareComponents hardware, Scheduler scheduler, TableCompartmentManager compartmentManager) {
+        public TurnTableState(TurnTableCycleState cycleState, TurnTableInternalState internalState, Types.QueuerHardwareComponents hardware, DelayScheduler scheduler, TableCompartmentManager compartmentManager) {
             this.cycleState = cycleState;
             this.internalState = internalState;
             this.hardware = hardware;

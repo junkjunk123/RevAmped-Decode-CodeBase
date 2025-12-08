@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.util;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 
 public abstract class Locked implements Lockable {
     private boolean locked = false;
@@ -12,7 +12,7 @@ public abstract class Locked implements Lockable {
 
     public void lockMillis(double millis) {
         lock();
-        Scheduler.getInstance().add(new Delay(millis, this::unlock));
+        DelayScheduler.getInstance().add(new Delay(millis, this::unlock));
     }
 
     public void unlock() {

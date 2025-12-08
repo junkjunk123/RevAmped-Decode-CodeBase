@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 
 import java.util.function.BooleanSupplier;
 
@@ -83,7 +83,7 @@ public abstract class ArtificialThread<T> {
      */
     public void sleep(double millis) {
         isRunning = false;
-        Scheduler.getInstance().add(new Delay(millis, () -> isRunning = true));
+        DelayScheduler.getInstance().add(new Delay(millis, () -> isRunning = true));
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class ArtificialThread<T> {
      */
     public void sleepUntil(BooleanSupplier condition) {
         isRunning = false;
-        Scheduler.getInstance().add(new Delay(condition, () -> isRunning = true));
+        DelayScheduler.getInstance().add(new Delay(condition, () -> isRunning = true));
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class ArtificialThread<T> {
      */
     public void sleepUntil(DelayedResult<T> condition) {
         isRunning = false;
-        Scheduler.getInstance().add(new Delay(condition::isDone, () -> isRunning = true));
+        DelayScheduler.getInstance().add(new Delay(condition::isDone, () -> isRunning = true));
     }
 
     /**

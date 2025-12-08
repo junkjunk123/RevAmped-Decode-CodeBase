@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util;
 import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -113,7 +113,7 @@ public class DelayedResult<T> {
      * @param action a Consumer that accepts the result of type T
      */
     public void andThen(Consumer<T> action) {
-        Scheduler.getInstance().add(new Delay(this::isDone, () -> {
+        DelayScheduler.getInstance().add(new Delay(this::isDone, () -> {
             try {
                 action.accept(val);
             } catch (Exception e) {
