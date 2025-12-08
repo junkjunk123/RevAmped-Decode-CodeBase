@@ -30,7 +30,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.DecodeRevAmpedAutonomous;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.EnumMap;
@@ -87,7 +86,7 @@ public class Robot {
         this(opMode, Globals.AllianceColor.None);
     }
 
-    public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+    public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
         this.opModeType = opModeType;
         updateOpMode(opMode, allianceColor);
         Globals.OpModeType = opModeType;
@@ -135,6 +134,11 @@ public class Robot {
             shooter.hardware().turretMotor().resetPosition();
         shooter.hardware().flywheel().resetPosition();
         intakeMotor().setVoltageCompensation();
+
+        if (Globals.allianceColor == Globals.AllianceColor.Red) {
+            TurretMotor.AUTO_PRELOADS *= -1;
+            TurretMotor.AUTO_SET_1 *= -1;
+        }
     }
 
     public void update() {

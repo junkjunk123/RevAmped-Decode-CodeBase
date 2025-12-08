@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths;
+package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.paths;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
