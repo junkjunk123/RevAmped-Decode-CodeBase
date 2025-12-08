@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
+import com.pedropathing.ivy.commands.Instant;
+import com.pedropathing.ivy.commands.Wait;
+import com.pedropathing.ivy.commands.WaitUntil;
+import com.pedropathing.ivy.groups.Sequential;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
@@ -17,7 +21,6 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.Color
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.DecodeColorSensor.ArtifactColor;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDigitalDistance;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeUltrasonic;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableCycleState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableInternalState;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals.TurnTableState;
@@ -26,6 +29,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.QueuerHardwareComponents;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.function.Consumer;
 
 public class TurnTable implements ArtifactQueuer {
@@ -181,6 +185,33 @@ public class TurnTable implements ArtifactQueuer {
                 }).setMaxTimeToRun(2500));
             })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
         })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
+    }
+
+    private Sequential shootOne(Types.TableState2 state) {
+        return new Sequential(
+                new WaitUntil(hardware.tableServo()::reached),
+                new Instant(() -> hardware.intakeMotor().stop()),
+                new Wait(250),
+                new Instant(() -> {
+                    hardware.tableServo().setCurrentState(state);
+                    hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+                })
+        );
+    }
+
+    public Sequential shootAllAuto() {
+        AtomicReferenceArray<Types.TableState2> shootSequence =
+                new AtomicReferenceArray<>(hardware.tableServo().getShootStates());
+        return new Sequential(
+                new Instant(() -> {
+                    hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
+                    hardware.tableServo().setCurrentState(shootSequence.get(0));
+                }),
+                shootOne(shootSequence.get(1)),
+                shootOne(shootSequence.get(2)),
+                new WaitUntil(hardware.tableServo()::reached),
+                new Instant(hardware.tableServo()::resetToNeutral)
+        );
     }
 
     public void shootAllAuto(Runnable andThen) {
