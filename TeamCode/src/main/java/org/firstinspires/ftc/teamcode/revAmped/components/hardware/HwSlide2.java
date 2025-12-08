@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedSupplier;
 
@@ -67,14 +67,14 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
         this.slideState = slideState;
         InitActions initActions = initMap.get(slideState);
         initActions.action().run();
-        Scheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(position)));
+        DelayScheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(position)));
     }
 
     public void setCurrentState(T slideState, boolean runToPos) {
         this.slideState = slideState;
         InitActions initActions = initMap.get(slideState);
         initActions.action().run();
-        if (runToPos) Scheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(slideState.position())));
+        if (runToPos) DelayScheduler.getInstance().add(new Delay(initActions.waitMillis(), () -> setTargetPosition(slideState.position())));
     }
 
     protected HwSlide2(HardwareMap hardwareMap, String id, DcMotorSimple.Direction direction, SlideRetractionDetector retractionDetector, T restState) {
@@ -208,7 +208,7 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
 
     public void retract(double timeout) {
         retraction();
-        Scheduler.getInstance().add(new Delay(timeout, () -> {
+        DelayScheduler.getInstance().add(new Delay(timeout, () -> {
             if (isLimSwitch) resetPosition();
             setPower(0f);
             setCurrentState(restState);
@@ -221,7 +221,7 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
 
     public void retract(double timeout, Runnable onTimeout) {
         retraction();
-        Scheduler.getInstance().add(new Delay(timeout, () -> {
+        DelayScheduler.getInstance().add(new Delay(timeout, () -> {
             if (isLimSwitch) resetPosition();
             setPower(0f);
             setCurrentState(restState);
@@ -237,10 +237,10 @@ public abstract class HwSlide2<T extends Enum<T> & HwSlide2.SlideState> extends 
         motor.setPower(0.75);
         AtomicBoolean encoders = new AtomicBoolean(false);
         AtomicBoolean limitSwitch = new AtomicBoolean(false);
-        Scheduler.getInstance().add(new Delay(400, () -> {
+        DelayScheduler.getInstance().add(new Delay(400, () -> {
             encoders.set(motor.getCurrentPosition() > 50);
             retract(800, () -> limitSwitch.set(false));
-            Scheduler.getInstance().add(new Delay(retractionDetector::getReading, () -> limitSwitch.set(true)));
+            DelayScheduler.getInstance().add(new Delay(retractionDetector::getReading, () -> limitSwitch.set(true)));
         }));
         BooleanSupplier set = MathUtil.booleanSupplierfromTimeDelay(1400);
         return new DelayedSupplier<>(() -> limitSwitch.get() || set.getAsBoolean(), () -> {

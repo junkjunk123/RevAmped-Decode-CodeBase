@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.RobotKinematicsCa
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector3D;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types.ShooterState;
 
 @Config
 public class Shooter implements ShootingMechanism<ShooterState> {
-    public final Scheduler scheduler;
+    public final DelayScheduler scheduler;
     public static boolean trackHood;
     public static boolean trackTurret;
 
@@ -61,7 +61,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static double redNegativeX = 151;
     public static double redNegativeY = 180;
 
-    public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler, HwVoltageSensor voltageSensor) {
+    public Shooter(HardwareMap hardwareMap, boolean setPositions, DelayScheduler scheduler, HwVoltageSensor voltageSensor) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
         TurretMotor turretServo = new TurretMotor(hardwareMap, setPositions ? Types.TurretState.HOLD : Types.TurretState.IDLE);

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths;
+package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.paths;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.ColoredDecodePose;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
@@ -71,8 +71,8 @@ public class FarAutoPaths implements PathSupplier {
                 .setConstantHeadingInterpolation(CORNER_ONE.getHeading())
                 .addParametricCallback(1, () -> {
                     Robot.INSTANCE.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
-                    Scheduler.getInstance().add(new Delay(Robot.INSTANCE.tableServo()::reached,
-                            () -> Scheduler.getInstance().add(new Delay(500, () -> Robot.INSTANCE.popper().setCurrentState(Types.PopperState.NEUTRAL))))
+                    DelayScheduler.getInstance().add(new Delay(Robot.INSTANCE.tableServo()::reached,
+                            () -> DelayScheduler.getInstance().add(new Delay(500, () -> Robot.INSTANCE.popper().setCurrentState(Types.PopperState.NEUTRAL))))
                             .setMaxTimeToRun(1500));
                 })
                 .build();

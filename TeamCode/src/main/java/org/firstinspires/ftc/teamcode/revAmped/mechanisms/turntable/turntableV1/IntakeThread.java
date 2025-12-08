@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.ColorManager;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.sensor.IntakeDistance;
 import org.firstinspires.ftc.teamcode.revAmped.util.Locked;
@@ -46,7 +46,7 @@ public class IntakeThread extends Locked {
             intookBall = true;
             lock();
 
-            Scheduler.getInstance().add(new Delay(() -> sensors.get(curBall).get().magnitude() > 0.1, () -> {
+            DelayScheduler.getInstance().add(new Delay(() -> sensors.get(curBall).get().magnitude() > 0.1, () -> {
                 transformedCompartments[curBall].setColor(sensors.get(curBall).get());
                 unlock();
                 intookBall = false;

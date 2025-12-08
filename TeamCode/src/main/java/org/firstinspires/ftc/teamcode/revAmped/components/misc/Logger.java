@@ -7,7 +7,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -130,7 +130,7 @@ public class Logger {
      * @param scheduler The scheduler to add the delay to
      * @param save The AtomicLong to save the elapsed time
      */
-    public static void timeToEvent(BooleanSupplier event, Scheduler scheduler, AtomicLong save) {
+    public static void timeToEvent(BooleanSupplier event, DelayScheduler scheduler, AtomicLong save) {
         long startTime = System.nanoTime();
         scheduler.add(new Delay(event, () -> {
             long elapsedTime = System.nanoTime() - startTime;
@@ -144,7 +144,7 @@ public class Logger {
      * @param scheduler The scheduler to add the delay to
      * @param caption The caption for the logged time
      */
-    public static void logTimeToEvent(BooleanSupplier event, Scheduler scheduler, String caption) {
+    public static void logTimeToEvent(BooleanSupplier event, DelayScheduler scheduler, String caption) {
         AtomicLong save = new AtomicLong();
         timeToEvent(event, scheduler, save);
         scheduler.add(new Delay(() -> save.get() != 0, () -> permaLog(caption, save.get())));

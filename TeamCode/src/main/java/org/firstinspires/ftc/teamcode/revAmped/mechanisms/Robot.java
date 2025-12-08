@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.AllianceC
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Hood;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 public class Robot {
     public static Robot INSTANCE;
     private List<LynxModule> allHubs;
-    private Scheduler scheduler;
+    private DelayScheduler scheduler;
     public TurnTable turnTable;
     public ShootingMechanism<Types.ShooterState> shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeCommunication;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
-import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.CloseAutoPaths;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.paths.CloseAutoPaths;
 
 import java.util.Arrays;
 

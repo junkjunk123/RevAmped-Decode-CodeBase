@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.EncoderImpl;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 @Config
@@ -57,7 +57,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         if (state != currentState) {
             encoder.reset();
             finishedAccelerating = false;
-            Scheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
+            DelayScheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
         }
 
         super.setCurrentState(state, position);
@@ -68,7 +68,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         if (state != currentState) {
             encoder.reset();
             finishedAccelerating = false;
-            Scheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
+            DelayScheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
         }
         super.setCurrentState(state);
     }
