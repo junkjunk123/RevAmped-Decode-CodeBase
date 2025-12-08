@@ -87,7 +87,7 @@ public class Robot {
         this(opMode, Globals.AllianceColor.None);
     }
 
-    public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+    public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
         this.opModeType = opModeType;
         updateOpMode(opMode, allianceColor);
         Globals.OpModeType = opModeType;
