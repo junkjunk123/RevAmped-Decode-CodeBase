@@ -29,6 +29,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
     }
 
     public void RevAmpedInit() {
+        Globals.randomizationState = null;
         setRobot();
         setPaths();
 

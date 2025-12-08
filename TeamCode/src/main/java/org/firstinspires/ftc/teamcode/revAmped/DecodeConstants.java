@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.revAmped;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-import org.firstinspires.ftc.teamcode.revAmped.components.controller.PSF.PSFCoefficients;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Constants;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.HoodServo;
