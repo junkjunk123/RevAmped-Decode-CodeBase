@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.revAmped.components.prompter.ValuePrompt;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.FarAutoPaths;
-
 import java.util.Collections;
 
 @Autonomous

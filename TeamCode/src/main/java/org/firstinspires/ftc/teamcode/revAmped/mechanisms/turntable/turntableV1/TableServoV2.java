@@ -5,12 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.EncoderImpl;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
-import java.util.List;
 
 @Config
 public class TableServoV2 extends HwServo2<Types.TableState2> {
@@ -86,14 +83,5 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
             case BALL2 -> setCurrentState(Types.TableState2.BALL2_END);
             case BALL3 -> setCurrentState(Types.TableState2.BALL3_END);
         }
-    }
-
-    public static Types.TableState2 computeTableRotation() {
-        List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
-        int greenIndex = Globals.randomizationState.getGreenIndex();
-        int curGreenIndex = 1;
-        int index = curGreenIndex - greenIndex;
-        index = (index + 3) % 3;
-        return tableStates.get(index);
     }
 }

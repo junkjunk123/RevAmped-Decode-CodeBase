@@ -8,7 +8,6 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -57,7 +56,6 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
 
     public void stopHoldPose() {
         holdingPose = false;
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //follower.breakFollowing();
     }
 
