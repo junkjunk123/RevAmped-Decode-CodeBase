@@ -5,6 +5,17 @@ repositories {
     maven { url = 'https://maven.brott.dev/' }
     maven { url = 'https://maven.brott.dev/' }
     maven { url= 'https://maven.pedropathing.com/' }
+    maven { url = 'https://central.sonatype.com/repository/maven-snapshots/'}
+    maven {
+        name "dairyReleases"
+        url "https://repo.dairy.foundation/releases"
+    }
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        cacheChangingModulesFor 10, 'minutes'
+    }
 }
 
 dependencies {
@@ -21,5 +32,7 @@ dependencies {
     implementation 'com.pedropathing:ftc:2.0.4'
     implementation 'com.pedropathing:telemetry:0.0.6'
     implementation 'com.bylazar:fullpanels:1.0.2'
+    implementation "dev.frozenmilk.dairy:Util:1.2.0"
+    implementation "dev.frozenmilk.dairy:Core:2.2.4"
+    implementation("dev.frozenmilk.dairy:MercurialFTC:2.0.0-beta4")
 }
-

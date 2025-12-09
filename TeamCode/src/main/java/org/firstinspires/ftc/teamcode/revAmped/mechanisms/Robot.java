@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.revAmped.mechanisms;
 import static org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals.allianceColor;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwDevice;
@@ -87,13 +88,18 @@ public class Robot {
         this(opMode, Globals.AllianceColor.None);
     }
 
-    public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+    public Robot(HardwareMap hardwareMap, Scheduler scheduler, Globals.AllianceColor allianceColor, OpModeType opModeType) {
         this.opModeType = opModeType;
-        updateOpMode(opMode, allianceColor);
         Globals.OpModeType = opModeType;
-        HardwareMap hardwareMap = opMode.hardwareMap;
+        Globals.allianceColor = allianceColor;
+        this.scheduler = scheduler;
+        Globals.OpModeType = opModeType;
         init(hardwareMap);
         INSTANCE = this;
+    }
+
+    public Robot(DecodeRevAmpedAutonomous op, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+        this(op.hardwareMap, op.scheduler, allianceColor, opModeType);
     }
 
     public void updateOpMode(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {

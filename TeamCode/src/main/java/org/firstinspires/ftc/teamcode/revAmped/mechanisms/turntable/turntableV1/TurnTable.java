@@ -1,5 +1,15 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1;
 
+import static dev.frozenmilk.dairy.mercurial.continuations.Continuations.exec;
+import static dev.frozenmilk.dairy.mercurial.continuations.Continuations.scope;
+import static dev.frozenmilk.dairy.mercurial.continuations.Continuations.sequence;
+import static dev.frozenmilk.dairy.mercurial.continuations.Continuations.waitSeconds;
+import static dev.frozenmilk.dairy.mercurial.continuations.Continuations.waitUntil;
+
+import com.pedropathing.ivy.commands.Instant;
+import com.pedropathing.ivy.commands.Wait;
+import com.pedropathing.ivy.commands.WaitUntil;
+import com.pedropathing.ivy.groups.Sequential;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpStateHandler;
@@ -26,7 +36,11 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.QueuerHardwareComponents;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
+
+import dev.frozenmilk.dairy.mercurial.continuations.Closure;
+import dev.frozenmilk.dairy.mercurial.continuations.registers.VarRegister;
 
 public class TurnTable implements ArtifactQueuer {
     public static int SMALL_INTAKE_DELAY;
@@ -181,6 +195,35 @@ public class TurnTable implements ArtifactQueuer {
                 }).setMaxTimeToRun(2500));
             })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
         })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
+    }
+
+    private Closure shootOne(Types.TableState2 state) {
+        return sequence(
+                waitUntil(hardware.tableServo()::reached),
+                exec(() -> hardware.intakeMotor().stop()),
+                waitSeconds(0.25),
+                exec(() -> {
+                    hardware.tableServo().setCurrentState(state);
+                    hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+                })
+        );
+    }
+
+    public Closure shootAllAuto() {
+        return scope( env -> {
+            VarRegister<List<Types.TableState2>> shootSequence = env.variable(
+                    () -> List.of(hardware.tableServo().getShootStates()));
+            return sequence(
+                    exec(() -> {
+                        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
+                        hardware.tableServo().setCurrentState(shootSequence.get().get(0));
+                    }),
+                    shootOne(shootSequence.get().get(1)),
+                    shootOne(shootSequence.get().get(2)),
+                    waitUntil(hardware.tableServo()::reached),
+                    exec(hardware.tableServo()::resetToNeutral)
+            );
+        });
     }
 
     public void shootAllAuto(Runnable andThen) {

@@ -102,7 +102,7 @@ public class DAM {
         };
     }
 
-    private static Types.TableState2 computeTableRotation() {
+    static Types.TableState2 computeTableRotation() {
         List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
         greenIndex = Globals.randomizationState.getGreenIndex();
         int curGreenIndex = 1;
