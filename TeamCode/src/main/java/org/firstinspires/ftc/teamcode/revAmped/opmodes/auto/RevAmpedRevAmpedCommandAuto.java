@@ -1,6 +1,4 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
-import static org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2.computeTableRotation;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.commands.Follow;
@@ -23,8 +21,10 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.paths.CloseAutoPaths;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
+import java.util.List;
+
 @Autonomous
-public class CommandAuto extends OpModeCommand {
+public class RevAmpedRevAmpedCommandAuto extends OpModeCommand {
     private Robot robot;
     private Follower follower;
     private PathManager pathManager;
@@ -34,13 +34,13 @@ public class CommandAuto extends OpModeCommand {
     public void RevAmpedInit() {
         Globals.init(telemetry);
         Logger.reset();
-        robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO);
+        robot = new Robot(this, Globals.AllianceColor.Red);
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(pathManager.getStartingPose());
         pathManager = new PathManager(new CloseAutoPaths());
         limelight = new DecodeLimelight(hardwareMap);
 
-        schedule (
+        schedule(
              new Infinite(() -> {
                  follower.update();
                  robot.update();
@@ -57,7 +57,9 @@ public class CommandAuto extends OpModeCommand {
                                  }
                                  limelight.setCurrentPipeline(DecodeLimelight.Pipeline.OBELISK);
                              })
-                             .setExecute(() -> limelight.update())
+                             .setExecute(
+                                     () -> limelight.update()
+                             )
                              .setDone(() -> Globals.randomizationState != null),
                      new Instant(() -> {
                          robot.tableServo().setCurrentState(computeTableRotation());
@@ -70,5 +72,19 @@ public class CommandAuto extends OpModeCommand {
                      robot.turnTable.shootAllAuto()
              )
         );
+    }
+
+    private static Types.TableState2 computeTableRotation() {
+        List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
+        int greenIndex = Globals.randomizationState.getGreenIndex();
+        int curGreenIndex = 1;
+        int index = curGreenIndex - greenIndex;
+        index = (index + 3) % 3;
+        return tableStates.get(index);
+    }
+
+    @Override
+    public Robot.OpModeType getOpModeType() {
+        return Robot.OpModeType.AUTO;
     }
 }

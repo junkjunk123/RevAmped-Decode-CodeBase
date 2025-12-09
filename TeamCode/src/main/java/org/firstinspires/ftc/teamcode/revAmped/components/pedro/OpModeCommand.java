@@ -5,12 +5,10 @@ import com.pedropathing.ivy.Scheduler;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Logger;
-import org.firstinspires.ftc.teamcode.revAmped.components.misc.OpModeType;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.RevAmpedOpMode;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 
-public class OpModeCommand extends RevAmpedOpMode {
+public abstract class OpModeCommand extends RevAmpedOpMode {
     private final DelayScheduler scheduler = new DelayScheduler();
 
     /**
@@ -36,11 +34,6 @@ public class OpModeCommand extends RevAmpedOpMode {
 
     @Override
     public void update() {}
-
-    @Override
-    public OpModeType getOpModeType() {
-        return Robot.INSTANCE.getOpModeType();
-    }
 
     @Override
     public void RevAmpedLoop() {
