@@ -5,12 +5,12 @@ import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Del
 /**
  * Scheduler is a singleton class that manages delays and delay chains.
  */
-public final class DelayScheduler {
+public final class Scheduler {
     /**
      * The singleton instance of the Scheduler.
      * This is used to ensure that only one instance of Scheduler exists throughout the application.
      */
-    private static DelayScheduler INSTANCE;
+    private static Scheduler INSTANCE;
 
     /**
      * The DelayManager that manages all Delay objects.
@@ -28,7 +28,7 @@ public final class DelayScheduler {
      * Private constructor to prevent instantiation from outside the class.
      * Initializes the DelayManager and DelayChainManager.
      */
-    public DelayScheduler() {
+    public Scheduler() {
         delays = new DelayManager();
         delayChains = new DelayChainManager();
         INSTANCE = this;
@@ -39,8 +39,8 @@ public final class DelayScheduler {
      * If the instance is null, it creates a new instance.
      * @return the singleton instance of Scheduler
      */
-    public static synchronized DelayScheduler getInstance() {
-        if (INSTANCE == null) INSTANCE = new DelayScheduler();
+    public static synchronized Scheduler getInstance() {
+        if (INSTANCE == null) INSTANCE = new Scheduler();
         return INSTANCE;
     }
 

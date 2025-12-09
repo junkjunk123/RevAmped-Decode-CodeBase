@@ -5,7 +5,7 @@ import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 public class ObstacleAvoidanceHandler {
     private final Stuck detectCollision;
@@ -34,7 +34,7 @@ public class ObstacleAvoidanceHandler {
     public void pausePathFollowing(Pose pose) {
         follower.pausePathFollowing();
         follower.holdPoint(new BezierPoint(pose), pose.getHeading(), false);
-        DelayScheduler.getInstance().add(new Delay(() -> follower.getTranslationalError().getMagnitude() < 0.5, this::resumePathFollowing));
+        Scheduler.getInstance().add(new Delay(() -> follower.getTranslationalError().getMagnitude() < 0.5, this::resumePathFollowing));
         navigatingAroundObstacle = true;
     }
 

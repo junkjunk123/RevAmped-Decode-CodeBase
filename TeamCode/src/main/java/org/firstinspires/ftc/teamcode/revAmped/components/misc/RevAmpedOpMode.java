@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ public abstract class RevAmpedOpMode extends LinearOpMode {
     /**
      * Scheduler instance for managing commands.
      */
-    public DelayScheduler scheduler = new DelayScheduler();
+    public Scheduler scheduler = new Scheduler();
 
     @Override
     public void runOpMode() throws InterruptedException {

@@ -61,10 +61,6 @@ public final class Globals {
     public static void init(Telemetry telemetry) {
         constants.build();
         Globals.telemetry = telemetry;
-        Globals.aae = null;
-        Globals.followerManager = null;
-        Globals.testing = false;
-        Globals.disableDrive = false;
     }
 
     public static DecodeAutonomousActionExecutor aae;

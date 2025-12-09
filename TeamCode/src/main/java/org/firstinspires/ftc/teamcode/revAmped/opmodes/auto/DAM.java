@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
@@ -21,7 +21,7 @@ import java.util.function.BooleanSupplier;
 public class DAM {
     public static Robot robot;
     public static FollowerManager followerManager;
-    public static DelayScheduler scheduler;
+    public static Scheduler scheduler;
     public static Telemetry telemetry;
     public static ElapsedTime overallTimer;
     public static ElapsedTime driveTimer;
@@ -30,7 +30,7 @@ public class DAM {
 
     public static void initialize() {
         robot = Globals.aae.parameters.robot();
-        scheduler = DelayScheduler.getInstance();
+        scheduler = Scheduler.getInstance();
         followerManager = Globals.aae.parameters.followerManager();
         telemetry = Globals.telemetry;
         driveTimer = Globals.aae.preloadDriveTimer;
@@ -396,7 +396,7 @@ public class DAM {
             @Override
             protected void loop() {
                 if (finishedDriving()) {
-                    DelayScheduler.getInstance().add(new Delay(500, () -> {
+                    Scheduler.getInstance().add(new Delay(500, () -> {
                         if (Globals.randomizationState != null) {
                             computeTableRotation();
                         }
