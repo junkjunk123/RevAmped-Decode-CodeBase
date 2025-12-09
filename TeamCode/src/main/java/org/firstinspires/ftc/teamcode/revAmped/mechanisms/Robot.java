@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTable;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TurnTableInternals;
+import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.DecodeRevAmpedAutonomous;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.EnumMap;
