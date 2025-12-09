@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class DelayChain implements RunnableTask {
      */
     public DelayChain(String identifier, RunnableTask... delays) {
         this.delays = List.of(delays);
-        DelayScheduler.getInstance().delayChains.add(this, identifier);
+        Scheduler.getInstance().delayChains.add(this, identifier);
     }
 
     /**

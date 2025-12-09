@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.Differentiator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util.DelayedResult;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.TurretState;
@@ -134,7 +134,7 @@ public class TurretMotor extends Turret<TurretState> {
     }
 
     public void resetTurret(int currentPos) {
-        DelayScheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
+        Scheduler.getInstance().add(new Delay(limitSwitch::isTouch, () -> {
             resetPosition();
             setCurrentState(TurretState.HOLD);
         }).setCancellation(1500, () -> setCurrentState(TurretState.HOLD)));

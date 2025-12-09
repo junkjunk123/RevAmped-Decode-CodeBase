@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Util;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -80,7 +80,7 @@ public class DelayedSupplier<T> {
      * @return a DelayedResult that will provide the value after the delay
      */
     public DelayedResult<T> get() {
-        DelayScheduler.getInstance().add(delay);
+        Scheduler.getInstance().add(delay);
         return new DelayedResult<>(() -> value);
     }
 
@@ -91,7 +91,7 @@ public class DelayedSupplier<T> {
      */
     public DelayedResult<T> get(ArtificialThread<?> thread) {
         thread.stop();
-        DelayScheduler.getInstance().add(new Delay(() -> value != null, thread::start));
+        Scheduler.getInstance().add(new Delay(() -> value != null, thread::start));
         return get();
     }
 }

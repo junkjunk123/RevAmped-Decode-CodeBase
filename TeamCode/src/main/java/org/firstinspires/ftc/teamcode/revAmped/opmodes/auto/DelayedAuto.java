@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.gamepad.RevAmpedGamepa
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.Prompter;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 public abstract class DelayedAuto extends DecodeRevAmpedAutonomous {
     private boolean locked = false;
@@ -24,7 +24,7 @@ public abstract class DelayedAuto extends DecodeRevAmpedAutonomous {
 
         locked = true;
         scheduler.clear();
-        DelayScheduler.getInstance().add(new Delay(MathUtil.booleanSupplierfromTimeDelay(delay), () -> {
+        Scheduler.getInstance().add(new Delay(MathUtil.booleanSupplierfromTimeDelay(delay), () -> {
             locked = false;
             super.setAutoState(autoState);
         }));

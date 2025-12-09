@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.math.FiniteFieldVector
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Matrix;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
-import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.DelayScheduler;
+import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +39,7 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
     /**
      * The scheduler used to manage the execution of transitions and delays.
      */
-    private final DelayScheduler scheduler;
+    private final Scheduler scheduler;
 
     /**
      * The next transition operator that is pending execution.
@@ -182,8 +182,8 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
          */
        static TransitionCommand fromDelayChain(String chainIdentifier) {
             return setComplete -> {
-                DelayScheduler.getInstance().run(chainIdentifier);
-                DelayScheduler.getInstance().whenFinished(chainIdentifier, () -> setComplete.accept(true));
+                Scheduler.getInstance().run(chainIdentifier);
+                Scheduler.getInstance().whenFinished(chainIdentifier, () -> setComplete.accept(true));
             };
         }
 
@@ -229,7 +229,7 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
          */
         public void run() {
             if (transition.timeout() > 0) {
-                DelayScheduler.getInstance().add(new Delay(transition.timeout(), () -> setComplete.accept(null)));
+                Scheduler.getInstance().add(new Delay(transition.timeout(), () -> setComplete.accept(null)));
             }
 
             transition.run(setComplete);
@@ -307,7 +307,7 @@ public class TeleOpStateHandler<T extends Enum<T> & TeleOpStateHandler.State> {
      * @param initialState the initial state of the teleoperated mode
      * @param scheduler the scheduler used to manage transitions and delays
      */
-    public TeleOpStateHandler(T initialState, DelayScheduler scheduler) {
+    public TeleOpStateHandler(T initialState, Scheduler scheduler) {
         this.currentGraphElement = initialState;
         this.enumClass = initialState.getDeclaringClass();
         this.scheduler = scheduler;
