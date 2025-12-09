@@ -22,6 +22,7 @@ public abstract class Drivetrain {
     public final DcMotorEx leftFront, leftRear, rightRear, rightFront;
     protected final List<DcMotorEx> motors;
     protected volatile boolean prevVelZero = true;
+    private DcMotor.ZeroPowerBehavior zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE;
 
     /**
      * Constructs a Drivetrain with specified motor directions.
@@ -131,6 +132,11 @@ public abstract class Drivetrain {
         for (DcMotorEx motor : motors) {
             motor.setZeroPowerBehavior(zeroPowerBehavior);
         }
+        this.zeroPowerBehavior = zeroPowerBehavior;
+    }
+
+    public DcMotor.ZeroPowerBehavior getZeroPowerBehavior() {
+        return zeroPowerBehavior;
     }
 
     /**

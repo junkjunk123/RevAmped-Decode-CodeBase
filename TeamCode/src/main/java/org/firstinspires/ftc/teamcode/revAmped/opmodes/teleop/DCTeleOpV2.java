@@ -106,15 +106,10 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_right.isPress()) {
             robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
-//            robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE);
-//            scheduler.add(new Delay(BIG_INTAKE_DELAY, () -> {
-//                robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-//                scheduler.add(new Delay(BIG_INTAKE_DELAY, robot.intakeMotor()::stop));
-//            }));
         }
 
         if (gamepad_1.y.isPress()) {
-            tsh.setForce(!tsh.isForce());
+            drivetrain.toggleZeroPowerBehavior();
         }
 
         if (gamepad_2.customButtons.get(0).isPress()) {
@@ -179,6 +174,10 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                 robot.hoodServo().setCurrentState(Types.HoodState.MED_PRESET);
                 robot.flywheel().run(Flywheel.FLYWHEEL_MEDIUM_VELOCITY);
             });
+        }
+
+        if (gamepad_1.dpad_right.isPress()) {
+            drivetrain.toggleHoldPose();
         }
 
         if (gamepad_1.left_trigger > 0.3) {

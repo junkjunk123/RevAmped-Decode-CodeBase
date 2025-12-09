@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.controller.PSF.PSFCoefficients;
+import org.firstinspires.ftc.teamcode.revAmped.components.controller.PSF.PSFLCoefficients;
 import org.firstinspires.ftc.teamcode.revAmped.components.controller.PSF.PSFController;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.TwoMotorMechanism;
@@ -17,6 +17,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double P;
     public static double K_static;
     public static double K_V;
+    public static double L;
     public PSFController controller;
     private final Differentiator currentAcceleration;
     private final Differentiator currentVelocity;
@@ -27,7 +28,8 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         this.voltageSensor = null;
         currentVelocity = new Differentiator(() -> 0.0, () -> (double) getCurrentPosition());
         currentAcceleration = new Differentiator(() -> 0.0, this::getVelocity);
-        controller = new PSFController(new PSFCoefficients(P, K_static, K_V));
+        controller = new PSFController(new PSFLCoefficients(P, K_static, K_V, L));
+        controller.setUseFilter(true);
     }
 
     public Flywheel(HardwareMap hardwareMap, FlywheelState motorState, HwVoltageSensor voltageSensor) throws IllegalArgumentException {
@@ -35,7 +37,8 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         this.voltageSensor = voltageSensor;
         currentVelocity = new Differentiator(() -> 0.0, () -> (double) getCurrentPosition());
         currentAcceleration = new Differentiator(() -> 0.0, this::getVelocity);
-        controller = new PSFController(new PSFCoefficients(P, K_static, K_V));
+        controller = new PSFController(new PSFLCoefficients(P, K_static, K_V, L));
+        controller.setUseFilter(true);
     }
 
     public static double FLYWHEEL_FAR_VELOCITY;
@@ -65,7 +68,11 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     }
 
     public void run(double targetVelocity) {
-        this.targetVelocity = targetVelocity;
+        if (Math.abs(targetVelocity - this.targetVelocity) > 15) {
+            controller.reset(targetVelocity - getVelocity());
+            this.targetVelocity = targetVelocity;
+        }
+
         if (getCurrentState() != FlywheelState.RUNNING) {
             currentAcceleration.reset();
             currentVelocity.reset();
@@ -91,6 +98,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         if (dist <= 50) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
         else if (50 < dist && dist < 100) targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
         else targetVelocity = FLYWHEEL_FAR_VELOCITY;
+        controller.reset(targetVelocity - getVelocity());
     }
 
     @Override
@@ -104,6 +112,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
         if (motorState == FlywheelState.RUNNING) {
             targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
+            controller.reset(targetVelocity - getVelocity());
         }
     }
 
@@ -118,6 +127,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
             if (dist <= 50) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
             else if (50 < dist && dist < 100) targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
             else targetVelocity = FLYWHEEL_FAR_VELOCITY;
+            controller.reset(targetVelocity - getVelocity());
         }
     }
 
@@ -189,6 +199,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public boolean isUpdateLock() {
         return updateLock;
+    }
+
+    public void updateConstants(PSFLCoefficients coefficients) {
+        controller.setCoefficients(coefficients);
     }
 
     @Override

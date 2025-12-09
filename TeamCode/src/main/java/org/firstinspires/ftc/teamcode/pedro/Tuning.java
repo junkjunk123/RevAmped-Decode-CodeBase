@@ -16,6 +16,7 @@ import com.bylazar.field.Style;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.drivetrains.Mecanum;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -27,6 +28,8 @@ import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.PoseHistory;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -559,7 +562,7 @@ class ForwardZeroPowerAccelerationTuner extends OpMode {
     /** This starts the OpMode by setting the drive motors to run forward at full power. */
     @Override
     public void start() {
-        follower.startTeleopDrive(false);
+        follower.startTeleopDrive(true);
         follower.update();
         follower.setTeleOpDrive(1,0,0,true);
     }
@@ -661,7 +664,7 @@ class LateralZeroPowerAccelerationTuner extends OpMode {
     /** This starts the OpMode by setting the drive motors to run forward at full power. */
     @Override
     public void start() {
-        follower.startTeleopDrive(false);
+        follower.startTeleopDrive(true);
         follower.update();
         follower.setTeleOpDrive(0,1,0,true);
     }
@@ -945,11 +948,14 @@ class Line extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
 
-    private Path forwards;
-    private Path backwards;
+    private PathChain forwards;
+    private PathChain backwards;
+    private List<DcMotorEx> motors = new ArrayList<>();
 
     @Override
-    public void init() {}
+    public void init() {
+        motors = ((Mecanum) (follower.drivetrain)).getMotors();
+    }
 
     /** This initializes the Follower and creates the forward and backward Paths. */
     @Override
@@ -965,11 +971,20 @@ class Line extends OpMode {
     @Override
     public void start() {
         follower.activateAllPIDFs();
-        forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
-        forwards.setConstantHeadingInterpolation(0);
-        backwards = new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)));
-        backwards.setConstantHeadingInterpolation(0);
+        forwards = follower.pathBuilder()
+                .addPath(new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0))))
+                .setConstantHeadingInterpolation(0)
+                .setGlobalDeceleration(0.5)
+                .build();
+        backwards = follower.pathBuilder()
+                .addPath(new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0))))
+                .setConstantHeadingInterpolation(0)
+                .setGlobalDeceleration(0.5)
+                .build();
         follower.followPath(forwards);
+
+        follower.constants.forwardZeroPowerAcceleration = 62;
+        follower.constants.lateralZeroPowerAcceleration = 95;
     }
 
     /** This runs the OpMode, updating the Follower as well as printing out the debug statements to the Telemetry */
@@ -977,6 +992,11 @@ class Line extends OpMode {
     public void loop() {
         follower.update();
         drawCurrentAndHistory();
+
+        if (follower.errorCalculator.getRawDriveError() > 0) {
+            for (DcMotorEx motor : motors)
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         if (!follower.isBusy()) {
             if (forward) {
@@ -986,6 +1006,9 @@ class Line extends OpMode {
                 forward = true;
                 follower.followPath(forwards);
             }
+
+            for (DcMotorEx motor : motors)
+                motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
         telemetryM.debug("Driving Forward?: " + forward);

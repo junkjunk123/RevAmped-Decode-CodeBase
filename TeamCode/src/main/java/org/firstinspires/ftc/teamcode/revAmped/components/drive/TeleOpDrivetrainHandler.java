@@ -8,6 +8,7 @@ import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.revAmped.opmodes.test.HoldPoseTest;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     public static TeleOpDrivetrainHandler INSTANCE;
@@ -176,5 +178,25 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
 
     public static Pose getInitialPose() {
         return initialPose;
+    }
+
+    @Override
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        super.setZeroPowerBehavior(zeroPowerBehavior);
+    }
+
+    public void toggleZeroPowerBehavior() {
+        if (getZeroPowerBehavior() == DcMotor.ZeroPowerBehavior.BRAKE) {
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        } else {
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    public void toggleHoldPose() {
+        if (!holdingPose)
+            startHoldPose();
+        else
+            stopHoldPose();
     }
 }
