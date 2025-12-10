@@ -225,10 +225,10 @@ public interface Types {
                     return TableServoV2.BALL3_END;
                 }
                 case BALL1_REV2 -> {
-                    return TableServoV2.BALL1 - fullRotation();
+                    return TableServoV2.BALL1 + fullRotation();
                 }
                 case BALL2_REV2 -> {
-                    return TableServoV2.BALL2 - fullRotation();
+                    return TableServoV2.BALL2 + fullRotation();
                 }
             }
 

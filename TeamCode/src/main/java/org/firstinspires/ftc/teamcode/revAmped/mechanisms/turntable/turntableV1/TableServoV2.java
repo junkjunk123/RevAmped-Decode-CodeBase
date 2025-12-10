@@ -33,7 +33,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     public Types.TableState2[] getShootStates() {
         switch (currentState) {
             case BALL1 -> {
-                return new Types.TableState2[] {Types.TableState2.BALL2, Types.TableState2.BALL3, Types.TableState2.BALL3_END};
+                return new Types.TableState2[] {Types.TableState2.BALL2, Types.TableState2.BALL3, Types.TableState2.BALL1_END};
             }
             case BALL2 -> {
                 return new Types.TableState2[] {Types.TableState2.BALL3, Types.TableState2.BALL1_REV2, Types.TableState2.BALL2_END};

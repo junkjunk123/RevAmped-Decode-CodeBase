@@ -64,7 +64,7 @@ public class DAM {
                         robot.turretMotor().limelightDetection();
                         scheduler.add(new Delay(() -> Globals.randomizationState != null,
                                 () -> {
-                                    robot.tableServo().setCurrentState(computeTableRotation());
+                                    robot.tableServo().setCurrentState(computeTableRotation(2));
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
                                     scheduler.add(new Delay(robot.tableServo()::reached, () -> {
                                         scheduler.add(new Delay(800,
@@ -102,10 +102,9 @@ public class DAM {
         };
     }
 
-    private static Types.TableState2 computeTableRotation() {
+    private static Types.TableState2 computeTableRotation(int curGreenIndex) {
         List<Types.TableState2> tableStates = List.of(Types.TableState2.BALL1, Types.TableState2.BALL2, Types.TableState2.BALL3);
         greenIndex = Globals.randomizationState.getGreenIndex();
-        int curGreenIndex = 1;
         int index = curGreenIndex - greenIndex;
         index = (index + 3) % 3;
         return tableStates.get(index);
@@ -231,11 +230,11 @@ public class DAM {
 
             private int getGreenIndex() {
                 if (currentIteration == 0)
-                    return 1;
-                else if (currentIteration == 1)
-                    return 0;
-                else
                     return 2;
+                else if (currentIteration == 1)
+                    return 1;
+                else
+                    return 0;
             }
 
             private void computeTableRotation() {
@@ -331,7 +330,7 @@ public class DAM {
                 robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
 
                 if (Globals.randomizationState != null) {
-                    robot.tableServo().setCurrentState(computeTableRotation());
+                    robot.tableServo().setCurrentState(computeTableRotation(2));
                     scheduler.add(new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
                         robot.popper().setCurrentState(Types.PopperState.POP);
                         scheduler.add(new Delay(650, () -> popperIn = true));
@@ -398,7 +397,7 @@ public class DAM {
                 if (finishedDriving()) {
                     Scheduler.getInstance().add(new Delay(500, () -> {
                         if (Globals.randomizationState != null) {
-                            computeTableRotation();
+                            computeTableRotation(2);
                         }
 
                         scheduler.addOptionalDelay(Globals.randomizationState == null,
