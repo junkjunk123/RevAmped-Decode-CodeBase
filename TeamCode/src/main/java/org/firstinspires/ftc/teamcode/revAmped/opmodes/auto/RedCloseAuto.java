@@ -33,7 +33,6 @@ public class RedCloseAuto extends DecodeRevAmpedAutonomous {
     public void setRobot() {
         DecodeLimelight.usingLimelight = true;
         robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO);
-
     }
 
     @Override
