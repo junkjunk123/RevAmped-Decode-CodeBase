@@ -18,7 +18,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double K_static;
     public static double K_V;
     public static double L;
-    public PSFController controller;
+    public final PSFController controller;
     private final Differentiator currentAcceleration;
     private final Differentiator currentVelocity;
     private final HwVoltageSensor voltageSensor;
@@ -70,7 +70,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public void run(double targetVelocity) {
         if (Math.abs(targetVelocity - this.targetVelocity) > 15) {
-            controller.reset(targetVelocity - getVelocity());
+            controller.resetFilter(targetVelocity - getVelocity());
             this.targetVelocity = targetVelocity;
         }
 
@@ -99,7 +99,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         if (dist <= 50) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
         else if (50 < dist && dist < 100) targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
         else targetVelocity = FLYWHEEL_FAR_VELOCITY;
-        controller.reset(targetVelocity - getVelocity());
+        controller.resetFilter(targetVelocity - getVelocity());
     }
 
     @Override
@@ -113,7 +113,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
         if (motorState == FlywheelState.RUNNING) {
             targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
-            controller.reset(targetVelocity - getVelocity());
+            controller.resetFilter(targetVelocity - getVelocity());
         }
     }
 
@@ -128,7 +128,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
             if (dist <= 50) targetVelocity = FLYWHEEL_NEAR_VELOCITY;
             else if (50 < dist && dist < 100) targetVelocity = FLYWHEEL_MEDIUM_VELOCITY;
             else targetVelocity = FLYWHEEL_FAR_VELOCITY;
-            controller.reset(targetVelocity - getVelocity());
+            controller.resetFilter(targetVelocity - getVelocity());
         }
     }
 
@@ -206,8 +206,8 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         controller.setCoefficients(coefficients);
     }
 
-    public void resetLowPass() {
-        controller.reset(controller.getPrevError());
+    public double getTargetVelocity() {
+        return targetVelocity;
     }
 
     @Override

@@ -139,6 +139,9 @@ public class Robot {
         if (Globals.allianceColor == Globals.AllianceColor.Red) {
             TurretMotor.AUTO_PRELOADS *= -1;
             TurretMotor.AUTO_SET_1 *= -1;
+            TurretMotor.AUTO_SET_2 *= -1;
+            TurretMotor.AUTO_SET_3 *= -1;
+            TurretMotor.FAR_AUTO *= -1;
         }
     }
 

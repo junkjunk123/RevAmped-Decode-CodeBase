@@ -40,7 +40,8 @@ public class PSFController {
         this.useFilter = useFilter;
     }
 
-    public void reset(double error) {
+    public void resetFilter(double error) {
+        setUseFilter(true);
         lowPassFilter.reset(error, 0, 0);
         prevError = error;
         prevPrevError = error;

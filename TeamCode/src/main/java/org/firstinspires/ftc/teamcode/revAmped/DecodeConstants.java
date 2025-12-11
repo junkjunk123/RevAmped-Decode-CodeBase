@@ -31,7 +31,7 @@ public final class DecodeConstants implements Constants {
 
         //Flywheel Constants
         Flywheel.P = 0.0001; Flywheel.K_static = 0.05; Flywheel.K_V = 0.00042; Flywheel.L = 0.35;
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1150; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 950; Flywheel.FLYWHEEL_AUTO_VELOCITY = 850; Flywheel.GEAR_RATIO = 57/93;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1150; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 950; Flywheel.FLYWHEEL_AUTO_VELOCITY = 850; Flywheel.GEAR_RATIO = 57/93f;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.75; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
@@ -47,12 +47,13 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
-        TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 523; TurretMotor.AUTO_SET_2 = 523; TurretMotor.AUTO_SET_3 = 523;
+        TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 523; TurretMotor.AUTO_SET_2 = 523; TurretMotor.AUTO_SET_3 = 563;
+        TurretMotor.FAR_AUTO = 118;
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
 
         //Table Constants
-        TableServoV2.BALL2 = 203/255f; TableServoV2.BALL3 = 166/255f; TableServoV2.BALL1 = 240/255f;
-        TableServoV2.BALL2_END = 49/255f; TableServoV2.BALL3_END = 12/255f; TableServoV2.BALL1_END = 86/255f;
+        TableServoV2.BALL2 = 205/255f; TableServoV2.BALL3 = 168/255f; TableServoV2.BALL1 = 242/255f;
+        TableServoV2.BALL2_END = 51/255f; TableServoV2.BALL3_END = 14/255f; TableServoV2.BALL1_END = 88/255f;
         TurnTable.SMALL_INTAKE_DELAY = 60; TurnTable.BIG_INTAKE_DELAY = 800;
         IntakeThread.INTAKE_DELAY = 400;
 

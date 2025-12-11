@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.revAmped.components.prompter.ValuePrompt;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.FarAutoPaths;
-import java.util.Collections;
+
+import java.util.List;
 
 @Autonomous
 public class BlueFarAuto extends DelayedAuto {
@@ -22,10 +23,7 @@ public class BlueFarAuto extends DelayedAuto {
 
     @Override
     public void buildAutoActions() {
-        if (useLimelight)
-            autoActions.add(DAM.obeliskDetectionFar());
-        Collections.addAll(autoActions, DAM.obeliskDetectionFar(), DAM.shootPreloadsFar(),
-                AEABuilder.drive(f -> DAM.notBusy()),
+        autoActions = List.of(DAM.shootPreloadsFar(), AEABuilder.drive(f -> DAM.notBusy()),
                 AEABuilder.drive(f -> f.velocityCondition(4)),
                 DAM.intakeFar(), DAM.shootFar(), DAM.park());
     }
@@ -38,7 +36,7 @@ public class BlueFarAuto extends DelayedAuto {
 
     @Override
     public void initPrompter(Double[] delays) {
-        prompter.prompt("useLimelight", new OptionPrompt<>("useLimelight", useLimelight));
+        prompter.prompt("useLimelight", new OptionPrompt<>("useLimelight", useLimelight, false, true));
 
         for (String path : paths)
             prompter.prompt(path, new ValuePrompt(path, 0, 0.5));
@@ -48,7 +46,7 @@ public class BlueFarAuto extends DelayedAuto {
 
     @Override
     public void extractValuesFromPrompter(Double[] delays) {
-        useLimelight = prompter.getOrDefault("useLimelight", false);
+        useLimelight = prompter.getOrDefault("useLimelight", true);
 
         if (useLimelight)
             delays = new Double[paths.length];

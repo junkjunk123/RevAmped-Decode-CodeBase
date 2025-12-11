@@ -125,17 +125,17 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     private void shootAllSlow(Runnable andThen, int numBalls) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
         Types.TableState2[] shootSequence = hardware.tableServo().getShootStates();
         hardware.tableServo().setCurrentState(shootSequence[0]);
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
         scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(250, () -> {
             hardware.tableServo().setCurrentState(shootSequence[1]);
-            hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+            hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
             scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(250, () -> {
-                hardware.tableServo().setCurrentState(shootSequence[2]);
-                hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+                hardware.tableServo().setCurrentState(shootSequence[2], shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
+                hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
                 scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
                     for (int j = 0; j < numBalls; j++) {
                         compartments.pop(false);
@@ -152,7 +152,7 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     private void shootAll(Runnable andThen, int numBalls) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
         hardware.tableServo().fullRotation();
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
@@ -166,26 +166,28 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     public void shootAllAuto(Runnable andThen, double flywheelDelay) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
         Types.TableState2[] shootSequence = hardware.tableServo().getShootStates();
         hardware.tableServo().setCurrentState(shootSequence[0]);
         scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+            Robot.INSTANCE.flywheel().controller.setUseFilter(false);
             hardware.tableServo().setCurrentState(shootSequence[1]);
-            hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+            hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
             scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
-                hardware.tableServo().setCurrentState(shootSequence[2]);
-                hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.5f);
+                hardware.tableServo().setCurrentState(shootSequence[2] , shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
+                //hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
                 scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
                     hardware.tableServo().resetToNeutral();
                     andThen.run();
                 }).setMaxTimeToRun(2500));
-            })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
+            })); hardware.intakeMotor().setCurrentState(Types.IntakeState.VERY_SLOW_INTAKE);}).setMaxTimeToRun(1000));
         })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
     }
 
     public void shootAllAuto(Runnable andThen) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 0.4f);
+        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
         hardware.tableServo().fullRotation();
+        Robot.INSTANCE.flywheel().controller.setUseFilter(false);
         scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
             hardware.tableServo().resetToNeutral();
             scheduler.add(new Delay(hardware.tableServo()::reached, andThen).setMaxTimeToRun(500));

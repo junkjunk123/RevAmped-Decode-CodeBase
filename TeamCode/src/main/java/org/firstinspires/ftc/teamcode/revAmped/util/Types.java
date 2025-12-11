@@ -21,6 +21,8 @@ import java.util.List;
 public interface Types {
     enum IntakeState implements HwMotor2.MotorState {
         INTAKE(1.0f),
+        SLOW_INTAKE(0.5f),
+        VERY_SLOW_INTAKE(0.25f),
         STOP(0.0f),
         OUTTAKE(-0.5f),
         SLOW_OUTTAKE(-0.3f);

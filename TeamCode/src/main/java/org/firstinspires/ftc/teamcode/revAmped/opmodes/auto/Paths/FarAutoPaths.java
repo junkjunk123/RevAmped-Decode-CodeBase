@@ -27,7 +27,7 @@ public class FarAutoPaths implements PathSupplier {
     public static ColoredDecodePose DETECT_OBELISK = new ColoredDecodePose(55, 60, -Math.PI / 2);
     public static ColoredDecodePose CORNER_ONE = new ColoredDecodePose(55, 23.5, -Math.PI / 2);
     public static ColoredDecodePose CORNER_TWO = new ColoredDecodePose(7, 23.5, -Math.PI / 2);
-    public static ColoredDecodePose CORNER_THREE = new ColoredDecodePose(7, 23.5, -Math.PI / 2);
+    public static ColoredDecodePose CORNER_THREE = new ColoredDecodePose(7, 7.5, -Math.PI / 2);
     public static ColoredDecodePose SHOOT_POSE = new ColoredDecodePose(55, 7.5, -Math.PI / 2);
     public static ColoredDecodePose PARK = new ColoredDecodePose(55, 55, -Math.PI / 2);
 
