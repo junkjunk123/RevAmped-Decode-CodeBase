@@ -45,4 +45,8 @@ public class PSFController {
         prevError = error;
         prevPrevError = error;
     }
+
+    public double getPrevError() {
+        return prevError;
+    }
 }

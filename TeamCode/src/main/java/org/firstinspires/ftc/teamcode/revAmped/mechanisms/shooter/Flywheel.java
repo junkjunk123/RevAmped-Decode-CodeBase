@@ -59,7 +59,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double LAUNCH_ETA; //Motor energy transfer slip and speed loss from ball jamming
     public static double VELOCITY_ERROR_THRESHOLD;
     private boolean updateLock = false;
-    private boolean voltageCompensation = false;
+    private boolean voltageCompensation = true;
 
     @Override
     public void buildStatePowerMap() {
@@ -203,6 +203,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public void updateConstants(PSFLCoefficients coefficients) {
         controller.setCoefficients(coefficients);
+    }
+
+    public void resetLowPass() {
+        controller.reset(controller.getPrevError());
     }
 
     @Override

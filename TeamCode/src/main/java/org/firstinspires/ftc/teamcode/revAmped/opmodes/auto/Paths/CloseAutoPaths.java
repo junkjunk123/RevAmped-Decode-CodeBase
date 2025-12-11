@@ -49,7 +49,7 @@ public class CloseAutoPaths implements PathSupplier {
                 .build();
         PathChain shootFirstSet = follower.pathBuilder()
                 .addPath(ColoredDecodePose.makeBezier(FIRST_INTAKE_END, FIRST_SHOOT))
-                .setConstantHeadingInterpolation(FIRST_SHOOT.getHeading())
+                .setLinearHeadingInterpolation(FIRST_INTAKE_END.getHeading(), FIRST_SHOOT.getHeading(), 0.8)
                 .build();
         PathChain intakeSecondSet = follower.pathBuilder()
                 .addPath(ColoredDecodePose.makeBezier(FIRST_SHOOT, SECOND_INTAKE_START))
@@ -61,6 +61,7 @@ public class CloseAutoPaths implements PathSupplier {
                 .build();
         PathChain shootSecondSet = follower.pathBuilder()
                 .addPath(ColoredDecodePose.makeBezier(SECOND_INTAKE_END, SECOND_SHOOT))
+                .setLinearHeadingInterpolation(SECOND_INTAKE_START.getHeading(), SECOND_SHOOT.getHeading(), 0.8)
                 .setConstantHeadingInterpolation(SECOND_SHOOT.getHeading())
                 .build();
         PathChain intakeThirdSet = follower.pathBuilder()
