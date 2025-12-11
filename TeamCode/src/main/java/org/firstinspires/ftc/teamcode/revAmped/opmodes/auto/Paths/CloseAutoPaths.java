@@ -18,8 +18,8 @@ public class CloseAutoPaths implements PathSupplier {
     public static ColoredDecodePose FIRST_INTAKE_START = new ColoredDecodePose(56, 83, Math.toRadians(180));
     public static ColoredDecodePose FIRST_INTAKE_END = new ColoredDecodePose(28, 83, Math.toRadians(180));
     public static ColoredDecodePose FIRST_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
-    public static ColoredDecodePose SECOND_INTAKE_START = new ColoredDecodePose(53, 58, Math.toRadians(180));
-    public static ColoredDecodePose SECOND_INTAKE_END = new ColoredDecodePose(25, 58, Math.toRadians(180));
+    public static ColoredDecodePose SECOND_INTAKE_START = new ColoredDecodePose(53, 64, Math.toRadians(180));
+    public static ColoredDecodePose SECOND_INTAKE_END = new ColoredDecodePose(25, 52, Math.toRadians(180));
     public static ColoredDecodePose SECOND_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
     public static ColoredDecodePose THIRD_INTAKE_START = new ColoredDecodePose(52, 36, Math.toRadians(180));
     public static ColoredDecodePose THIRD_INTAKE_END = new ColoredDecodePose(24, 36, Math.toRadians(180));

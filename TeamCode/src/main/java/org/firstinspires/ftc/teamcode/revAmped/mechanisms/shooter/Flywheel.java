@@ -44,6 +44,7 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
     public static double FLYWHEEL_FAR_VELOCITY;
     public static double FLYWHEEL_NEAR_VELOCITY;
     public static double FLYWHEEL_MEDIUM_VELOCITY;
+    public static double FLYWHEEL_AUTO_VELOCITY;
     private double targetVelocity;
     public static float AUTO_PRELOADS;
     public static float AUTO_SET_1;

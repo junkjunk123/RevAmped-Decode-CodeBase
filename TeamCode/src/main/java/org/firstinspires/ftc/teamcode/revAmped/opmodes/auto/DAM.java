@@ -45,11 +45,11 @@ public class DAM {
         return new AutonomousEnumeratedAction() {
             @Override
             protected void init() {
-                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+                robot.flywheel().run(Flywheel.FLYWHEEL_AUTO_VELOCITY);
                 robot.hoodServo().setCurrentState(Types.HoodState.NEAR_PRESET);
                 if (Globals.allianceColor == Globals.AllianceColor.Red) {
-                    TurretMotor.AUTO_PRELOADS *= -1;
-                    TurretMotor.AUTO_SET_1 *= -1;
+                    TurretMotor.AUTO_PRELOADS *= 1;
+                    TurretMotor.AUTO_SET_1 *= 1;
                 }
             }
 
@@ -119,7 +119,7 @@ public class DAM {
                 currentIteration = Globals.aae.currentIterationNumber();
                 robot.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
                 scheduler.add(new Delay(robot.tableServo()::reached,
-                        () -> scheduler.add(new Delay(500, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)))).setMaxTimeToRun(1500));
+                        () -> scheduler.add(new Delay(500, () -> robot.popper().setCurrentState(Types.PopperState.NEUTRAL)))).setMaxTimeToRun(500));
                 scheduler.add(new Delay(500, () -> robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE, 1)));
             }
 
@@ -190,7 +190,7 @@ public class DAM {
             @Override
             protected void init() {
                 currentIteration = Globals.aae.currentIterationNumber();
-                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+                robot.flywheel().run(Flywheel.FLYWHEEL_AUTO_VELOCITY);
                 boolean firstIteration = currentIteration == 0;
 
                 if (!firstIteration)
