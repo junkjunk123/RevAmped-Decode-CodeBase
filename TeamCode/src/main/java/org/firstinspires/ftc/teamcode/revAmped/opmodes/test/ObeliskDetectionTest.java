@@ -28,8 +28,17 @@ public class ObeliskDetectionTest extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedLoop() {
-        telemetry.addData("motif", Globals.randomizationState);
-        manager.addData("motif", Globals.randomizationState);
+        if (Globals.randomizationState != null) {
+            telemetry.addData("motif", Globals.randomizationState);
+            manager.addData("motif", Globals.randomizationState);
+        } else {
+            telemetry.addData("motif", "none");
+            manager.addData("motif", "none");
+        }
+
+        if (limelight.getCurrentPipeline() == DecodeLimelight.Pipeline.NONE)
+            limelight.setCurrentPipeline(DecodeLimelight.Pipeline.OBELISK);
+
         telemetry.update();
         manager.update();
     }
