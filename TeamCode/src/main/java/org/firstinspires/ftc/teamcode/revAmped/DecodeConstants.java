@@ -30,8 +30,8 @@ public final class DecodeConstants implements Constants {
         Popper.POP = 22/255f; Popper.NEUTRAL = 102/255f;
 
         //Flywheel Constants
-        Flywheel.P = 0.0001; Flywheel.K_static = 0.05; Flywheel.K_V = 0.00042; Flywheel.L = 0.35;
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1150; Flywheel.FLYWHEEL_NEAR_VELOCITY = 800; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 950; Flywheel.FLYWHEEL_AUTO_VELOCITY = 850; Flywheel.GEAR_RATIO = 57/93f;
+        Flywheel.P = 0.0005; Flywheel.K_static = 0.05; Flywheel.K_V = 0.00045; Flywheel.L = 0.35;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1095; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 875; Flywheel.FLYWHEEL_AUTO_VELOCITY = 780; Flywheel.GEAR_RATIO = 57/93f;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.75; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
@@ -41,13 +41,13 @@ public final class DecodeConstants implements Constants {
         HoodServo.HOOD_REST = 200/255f; HoodServo.HOOD_MAX_POS = 0f; HoodServo.HOOD_MIN_POS = 0f; HoodServo.HOOD_MAX_RAD = 0f; HoodServo.HOOD_MIN_RAD = 0f;
         HoodServo.AUTO_PRELOADS = 0f; HoodServo.AUTO_SET_1 = 0f; HoodServo.AUTO_SET_2 = 0f; HoodServo.AUTO_SET_3 = 0f;
         //HOOD POSITIONS FOR TELEOP
-        HoodServo.TELE_FAR_PRESET = 210/255f; HoodServo.TELE_NEAR_PRESET = 150/255f; HoodServo.TELE_MED_PRESET = 200/255f;
+        HoodServo.TELE_FAR_PRESET = 220/255f; HoodServo.TELE_NEAR_PRESET = 190/255f; HoodServo.TELE_MED_PRESET = 220/255f;
 
         //Turret Constants
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
-        TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 523; TurretMotor.AUTO_SET_2 = 523; TurretMotor.AUTO_SET_3 = 563;
+        TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 513; TurretMotor.AUTO_SET_2 = 513; TurretMotor.AUTO_SET_3 = 563;
         TurretMotor.FAR_AUTO = 118;
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
 

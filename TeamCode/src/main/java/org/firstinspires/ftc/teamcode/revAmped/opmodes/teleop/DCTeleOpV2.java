@@ -147,12 +147,16 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_up.isPress()) {
             drivetrain.startHoldPose();
-            robot.turnTable.launch(false, tsh, drivetrain::stopHoldPose);
+            if(robot.hoodServo().getCurrentState() == Types.HoodState.FAR_PRESET){
+                robot.turnTable.launch(100, tsh, drivetrain::stopHoldPose);
+            }else {
+                robot.turnTable.launch(0, tsh, drivetrain::stopHoldPose);
+            }
         }
 
         if (gamepad_2.dpad_down.isPress()) {
             drivetrain.startHoldPose();
-            robot.turnTable.launch(true, tsh, drivetrain::stopHoldPose);
+            robot.turnTable.launch(250, tsh, drivetrain::stopHoldPose);
         }
 
         if (gamepad_1.dpad_up.isPress()) {
@@ -191,11 +195,27 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
         }
 
         if (gamepad_1.right_bumper.isPress()) {
-            robot.turretMotor().nextPresetState();
+            if (robot.hoodServo().getCurrentState() == Types.HoodState.FAR_PRESET){
+                if (robot.getAllianceColor() == Globals.AllianceColor.Blue) {
+                    robot.turretMotor().toggleFarPresetBlue();
+                } else if (robot.getAllianceColor() == Globals.AllianceColor.Red) {
+                    robot.turretMotor().toggleFarPresetRed();
+                }
+            }else {
+                robot.turretMotor().nextPresetState();
+            }
         }
 
         if (gamepad_1.left_bumper.isPress()) {
-            robot.turretMotor().previousPresetState();
+            if (robot.hoodServo().getCurrentState() == Types.HoodState.FAR_PRESET) {
+                if (robot.getAllianceColor() == Globals.AllianceColor.Blue) {
+                    robot.turretMotor().toggleFarPresetBlue();
+                } else if (robot.getAllianceColor() == Globals.AllianceColor.Red) {
+                    robot.turretMotor().toggleFarPresetRed();
+                }
+            }else {
+                robot.turretMotor().previousPresetState();
+            }
         }
 
         if (gamepad_1.b.isPress()) {
