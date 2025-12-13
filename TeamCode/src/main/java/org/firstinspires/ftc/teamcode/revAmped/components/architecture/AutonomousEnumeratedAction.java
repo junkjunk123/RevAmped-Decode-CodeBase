@@ -21,6 +21,7 @@ public abstract class AutonomousEnumeratedAction implements Lockable {
     protected abstract void loop();
     public abstract boolean isFinishedDriving();
     protected boolean locked = false;
+    private double millisToDrive = -1;
 
     /**
      * Checks if the action has finished driving.
@@ -90,7 +91,7 @@ public abstract class AutonomousEnumeratedAction implements Lockable {
      * @return the number of milliseconds to drive, or -1 if not specified
      */
     public double millisToDrive() {
-        return -1;
+        return millisToDrive;
     }
 
     /**
@@ -127,5 +128,10 @@ public abstract class AutonomousEnumeratedAction implements Lockable {
 
     public void unlock() {
         locked = false;
+    }
+
+    public AutonomousEnumeratedAction setMillisToDrive(double millisToDrive) {
+        this.millisToDrive = millisToDrive;
+        return this;
     }
 }

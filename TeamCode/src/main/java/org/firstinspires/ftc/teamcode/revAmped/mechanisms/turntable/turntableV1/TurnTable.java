@@ -167,7 +167,7 @@ public class TurnTable implements ArtifactQueuer {
         }).setMaxTimeToRun(3500));
     }
 
-    public void shootAllAuto(Runnable andThen, double flywheelDelay) {
+    public void shootAllAuto(Runnable andThen, double flywheelDelay, boolean resetTable) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
         Types.TableState2[] shootSequence = hardware.tableServo().getShootStates();
         hardware.tableServo().setCurrentState(shootSequence[0]);
@@ -179,19 +179,25 @@ public class TurnTable implements ArtifactQueuer {
                 hardware.tableServo().setCurrentState(shootSequence[2] , shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
                 //hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
                 scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
-                    hardware.tableServo().resetToNeutral();
+                    if (resetTable)
+                        hardware.tableServo().resetToNeutral();
+                    else
+                        hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
                     andThen.run();
                 }).setMaxTimeToRun(2500));
             })); hardware.intakeMotor().setCurrentState(Types.IntakeState.VERY_SLOW_INTAKE);}).setMaxTimeToRun(1000));
         })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
     }
 
-    public void shootAllAuto(Runnable andThen) {
+    public void shootAllAuto(Runnable andThen, boolean resetTable) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
         hardware.tableServo().fullRotation();
         Robot.INSTANCE.flywheel().controller.setUseFilter(false);
         scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
-            hardware.tableServo().resetToNeutral();
+            if (resetTable)
+                scheduler.add(new Delay(250, () -> hardware.tableServo().resetToNeutral()));
+            else
+                hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
             scheduler.add(new Delay(hardware.tableServo()::reached, andThen).setMaxTimeToRun(500));
         }).setMaxTimeToRun(3500));
     }

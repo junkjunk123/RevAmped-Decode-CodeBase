@@ -20,9 +20,9 @@ public class CloseAutoPaths implements PathSupplier {
     public static ColoredDecodePose FIRST_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
     public static ColoredDecodePose SECOND_INTAKE_START = new ColoredDecodePose(53, 62, Math.toRadians(180));
     public static ColoredDecodePose SECOND_INTAKE_END = new ColoredDecodePose(25, 52, Math.toRadians(180));
-    public static ColoredDecodePose SECOND_SHOOT = new ColoredDecodePose(55, 97, Math.toRadians(240));
-    public static ColoredDecodePose THIRD_INTAKE_START = new ColoredDecodePose(69, 33, Math.toRadians(180));
-    public static ColoredDecodePose THIRD_INTAKE_END = new ColoredDecodePose(28, 33, Math.toRadians(180));
+    public static ColoredDecodePose SECOND_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
+    public static ColoredDecodePose THIRD_INTAKE_START = new ColoredDecodePose(60, 41, Math.toRadians(180));
+    public static ColoredDecodePose THIRD_INTAKE_END = new ColoredDecodePose(25, 33, Math.toRadians(180));
     public static ColoredDecodePose THIRD_SHOOT = new ColoredDecodePose(66, 108, Math.toRadians(240));
     public static ColoredDecodePose PARK = new ColoredDecodePose(52, 120, Math.toRadians(240));
 
@@ -57,7 +57,7 @@ public class CloseAutoPaths implements PathSupplier {
                 .setVelocityConstraint(0.5)
                 .addPath(ColoredDecodePose.makeBezier(SECOND_INTAKE_START, SECOND_INTAKE_END))
                 .setConstantHeadingInterpolation(SECOND_INTAKE_END.getHeading())
-                .addParametricCallback(0, () -> follower.setMaxPower(0.5))
+                .addParametricCallback(0, () -> follower.setMaxPower(0.75))
                 .addParametricCallback(0.95, () -> follower.setMaxPower(1.0))
                 .setVelocityConstraint(0.5)
                 .setGlobalDeceleration()
@@ -72,7 +72,7 @@ public class CloseAutoPaths implements PathSupplier {
                 .setLinearHeadingInterpolation(SECOND_SHOOT.getHeading(), THIRD_INTAKE_END.getHeading(), 0.8)
                 .addPath(ColoredDecodePose.makeBezier(THIRD_INTAKE_START, THIRD_INTAKE_END))
                 .setConstantHeadingInterpolation(THIRD_INTAKE_END.getHeading())
-                .addParametricCallback(0, () -> follower.setMaxPower(0.5))
+                .addParametricCallback(0, () -> follower.setMaxPower(0.75))
                 .addParametricCallback(0.95, () -> follower.setMaxPower(1.0))
                 .setGlobalDeceleration(0.75)
                 .build();

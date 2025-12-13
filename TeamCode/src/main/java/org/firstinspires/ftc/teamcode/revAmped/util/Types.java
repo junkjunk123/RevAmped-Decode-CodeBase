@@ -25,7 +25,7 @@ public interface Types {
         VERY_SLOW_INTAKE(0.25f),
         STOP(0.0f),
         OUTTAKE(-0.5f),
-        SLOW_OUTTAKE(-0.3f);
+        SLOW_OUTTAKE(-0.4f);
 
         final float power;
 

@@ -145,6 +145,11 @@ public class Delay implements RunnableTask {
         return this;
     }
 
+    public Delay addRunCondition(BooleanSupplier condition) {
+        setCancellation(condition, action);
+        return this;
+    }
+
     /**
      * Sets the maximum time to run the delay before it is automatically cancelled.
      * @param millis the maximum time in milliseconds to run the delay

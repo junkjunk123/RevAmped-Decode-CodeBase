@@ -23,13 +23,13 @@ import java.util.List;
 public class FarAutoPaths implements PathSupplier {
     private final boolean detectObelisk;
 
-    public static ColoredDecodePose START_POSE = new ColoredDecodePose(55, 7.5, -Math.PI / 2);
+    public static ColoredDecodePose START_POSE = new ColoredDecodePose(55, 7.5, Math.PI);
     public static ColoredDecodePose DETECT_OBELISK = new ColoredDecodePose(55, 60, -Math.PI / 2);
-    public static ColoredDecodePose CORNER_ONE = new ColoredDecodePose(55, 23.5, -Math.PI / 2);
-    public static ColoredDecodePose CORNER_TWO = new ColoredDecodePose(7, 23.5, -Math.PI / 2);
-    public static ColoredDecodePose CORNER_THREE = new ColoredDecodePose(7, 7.5, -Math.PI / 2);
-    public static ColoredDecodePose SHOOT_POSE = new ColoredDecodePose(55, 7.5, -Math.PI / 2);
-    public static ColoredDecodePose PARK = new ColoredDecodePose(55, 55, -Math.PI / 2);
+    public static ColoredDecodePose INTAKE_START = new ColoredDecodePose(12.5, 23, Math.toRadians(205));
+    public static ColoredDecodePose INTAKE_END = new ColoredDecodePose(9.5, 16, Math.toRadians(205));
+    public static ColoredDecodePose INTAKE_RETRIAL = new ColoredDecodePose(20, 9, Math.toRadians(180));
+    public static ColoredDecodePose SHOOT_POSE = new ColoredDecodePose(55, 7.5, Math.PI);
+    public static ColoredDecodePose PARK = new ColoredDecodePose(12, 9, Math.PI);
 
     public FarAutoPaths(boolean detectObelisk) {
         this.detectObelisk = detectObelisk;
@@ -66,39 +66,38 @@ public class FarAutoPaths implements PathSupplier {
             pathChains.add(shootInitial);
         }
 
-        PathChain cornerOne = follower.pathBuilder()
-                .addPath(new BezierLine(START_POSE, CORNER_ONE))
-                .setConstantHeadingInterpolation(CORNER_ONE.getHeading())
-                .addParametricCallback(1, () -> {
-                    Robot.INSTANCE.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
-                    Scheduler.getInstance().add(new Delay(Robot.INSTANCE.tableServo()::reached,
-                            () -> Scheduler.getInstance().add(new Delay(500, () -> Robot.INSTANCE.popper().setCurrentState(Types.PopperState.NEUTRAL))))
-                            .setMaxTimeToRun(1500));
-                })
-                .build();
-
         PathChain cornerTwo = follower.pathBuilder()
-                .addPath(new BezierLine(CORNER_ONE, CORNER_TWO))
-                .setConstantHeadingInterpolation(CORNER_TWO.getHeading())
+                .addPath(new BezierLine(START_POSE, INTAKE_START))
+                .setLinearHeadingInterpolation(START_POSE.getHeading(), INTAKE_START.getHeading(), 0.8)
                 .addParametricCallback(0.5, () -> Robot.INSTANCE.intakeMotor().setCurrentState(Types.IntakeState.INTAKE))
                 .build();
 
         PathChain intake = follower.pathBuilder()
-                .addPath(new BezierLine(CORNER_TWO, CORNER_THREE))
-                .setConstantHeadingInterpolation(CORNER_THREE.getHeading())
+                .addPath(new BezierLine(INTAKE_START, INTAKE_END))
+                .setConstantHeadingInterpolation(INTAKE_END.getHeading())
+                .build();
+
+        PathChain intakeRetrial = follower.pathBuilder()
+                .addPath(new BezierLine(INTAKE_END, INTAKE_RETRIAL))
+                .setConstantHeadingInterpolation(INTAKE_RETRIAL.getHeading())
+                .build();
+
+        PathChain intakeRetrial2 = follower.pathBuilder()
+                .addPath(new BezierLine(INTAKE_RETRIAL, PARK))
+                .setConstantHeadingInterpolation(PARK.getHeading())
                 .build();
 
         PathChain shoot = follower.pathBuilder()
-                .addPath(new BezierLine(CORNER_THREE, SHOOT_POSE))
-                .setConstantHeadingInterpolation(SHOOT_POSE.getHeading())
+                .addPath(new BezierLine(PARK, SHOOT_POSE))
+                .setLinearHeadingInterpolation(INTAKE_END.getHeading(), SHOOT_POSE.getHeading(), 0.8)
                 .build();
 
         PathChain park = follower.pathBuilder()
                 .addPath(new BezierLine(SHOOT_POSE, PARK))
-                .setReversed()
+                .setLinearHeadingInterpolation(SHOOT_POSE.getHeading(), PARK.getHeading())
                 .build();
 
-        Collections.addAll(pathChains, cornerOne, cornerTwo, intake, shoot, park);
+        Collections.addAll(pathChains, cornerTwo, intake, intakeRetrial, intakeRetrial2, shoot, park);
         return pathChains;
     }
 }

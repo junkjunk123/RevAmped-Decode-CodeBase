@@ -19,14 +19,15 @@ public class BlueFarAutoUndelayed extends DecodeRevAmpedAutonomous{
 
     @Override
     public void buildAutoActions() {
-        DecodeLimelight.usingLimelight = false;
-        autoActions = List.of(DAM.shootPreloadsFar(), AEABuilder.drive(f -> DAM.notBusy()),
-                AEABuilder.drive(f -> f.velocityCondition(4)),
-                DAM.intakeFar(), DAM.shootFar(), DAM.park());
+        autoActions = List.of(DAM.shootPreloadsFar(), DAM.driveToIntake(), DAM.intakeFar().setMillisToDrive(3000),
+                AEABuilder.drive(f -> f.velocityCondition(4)).setMillisToDrive(1500),
+                AEABuilder.drive(f -> f.velocityCondition(4)).setMillisToDrive(1500),
+                DAM.shootFar().setMillisToDrive(2000), DAM.park());
     }
 
     @Override
     public void setRobot() {
+        DecodeLimelight.usingLimelight = false;
         robot = new Robot(this, Globals.AllianceColor.Blue, Robot.OpModeType.AUTO);
     }
 }

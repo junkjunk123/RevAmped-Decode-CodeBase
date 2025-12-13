@@ -48,7 +48,7 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
         TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 513; TurretMotor.AUTO_SET_2 = 513; TurretMotor.AUTO_SET_3 = 563;
-        TurretMotor.FAR_AUTO = 118;
+        TurretMotor.FAR_AUTO = 691;
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
 
         //Table Constants

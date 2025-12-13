@@ -27,6 +27,10 @@ public interface PathSupplier {
         return null;
     }
 
+    default List<Boolean> holdEnd() {
+        return null;
+    }
+
     static ArrayList<Pose> mirror(boolean mirrorX, boolean mirrorY, ArrayList<Pose> points) {
         ArrayList<Pose> point = new ArrayList<>(points);
         for (int i = 0; i < points.size(); i++) {

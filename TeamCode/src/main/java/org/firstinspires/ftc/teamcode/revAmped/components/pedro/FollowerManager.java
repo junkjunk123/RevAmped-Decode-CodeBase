@@ -26,6 +26,8 @@ public class FollowerManager {
      */
     protected List<PathChain> pathChains = new ArrayList<>();
 
+    protected List<Boolean> holdEnd = new ArrayList<>();
+
     /**
      * The index of the current pathChain
      */
@@ -123,7 +125,10 @@ public class FollowerManager {
      * @param i the index of the path chain to follow
      */
     public void followPath(int i) {
-        followPath(i, true);
+        if (holdEnd.size() - 1 < i)
+            followPath(i, true);
+        else
+            followPath(i, holdEnd.get(i));
     }
 
     /**
@@ -210,6 +215,9 @@ public class FollowerManager {
      */
     private void buildPaths() {
         pathChains = pathSupplier.buildPaths();
+
+        if (pathSupplier.holdEnd() != null)
+            holdEnd = pathSupplier.holdEnd();
     }
 
     /**
@@ -254,7 +262,8 @@ public class FollowerManager {
     }
 
     public boolean velocityCondition() {
-        return follower.getVelocity().getMagnitude() < getCurrentPath().getPathEndVelocityConstraint();
+        return !follower.isBusy() || (follower.getVelocity().dot(follower.getClosestPointTangentVector().normalize())
+                < getCurrentPath().getPathEndVelocityConstraint());
     }
 
     public boolean velocityCondition(double dist) {
