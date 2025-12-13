@@ -118,22 +118,23 @@ public class TurnTable implements ArtifactQueuer {
 
     public void launch(boolean all, boolean forwardRotation) {
         if (!all) {
-            shootAllSlow(() -> {}, getNumberOfBalls());
+            shootAllSlow(() -> {}, getNumberOfBalls(),250);
         } else {
             shootAll(() -> {}, getNumberOfBalls());
         }
     }
 
-    private void shootAllSlow(Runnable andThen, int numBalls) {
+    private void shootAllSlow(Runnable andThen, int numBalls,int delay) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
         Types.TableState2[] shootSequence = hardware.tableServo().getShootStates();
         hardware.tableServo().setCurrentState(shootSequence[0]);
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
-        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(250, () -> {
+        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(delay, () -> {
+            Robot.INSTANCE.flywheel().controller.setUseFilter(false);
             hardware.tableServo().setCurrentState(shootSequence[1]);
             hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
-            scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(250, () -> {
+            scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(delay, () -> {
                 hardware.tableServo().setCurrentState(shootSequence[2], shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
                 hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
                 scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
@@ -153,6 +154,7 @@ public class TurnTable implements ArtifactQueuer {
 
     private void shootAll(Runnable andThen, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+        Robot.INSTANCE.flywheel().controller.setUseFilter(false);
         hardware.tableServo().fullRotation();
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
@@ -195,15 +197,15 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     @Override
-    public void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action) {
+    public void launch(int delay, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action) {
         tsh.runTransition(TeleOpStateHandler.TransitionCommand.fromRunnable(() -> {
             int i = getNumberOfBalls();
 
-            if (slow)
+            if (delay != 0)
                 tsh.runTransition(t -> shootAllSlow(() -> {
                     t.accept(true);
                     action.run();
-                }, i), DCTeleOpV2.CycleState.INTAKE, 3500);
+                }, i,delay), DCTeleOpV2.CycleState.INTAKE, 3500);
             else
                 tsh.runTransition(t -> shootAll(() -> {
                     t.accept(true);

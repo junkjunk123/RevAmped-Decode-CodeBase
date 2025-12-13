@@ -201,7 +201,7 @@ public class DAM {
 
                 double offset = 0;
                 if (currentIteration == 2)
-                    offset = 50;
+                    offset = 10;
 
                 robot.flywheel().run(Flywheel.FLYWHEEL_AUTO_VELOCITY + offset);
 

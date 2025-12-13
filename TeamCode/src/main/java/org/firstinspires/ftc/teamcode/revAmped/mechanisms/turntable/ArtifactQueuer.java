@@ -17,7 +17,7 @@ public interface ArtifactQueuer {
     boolean isMotifMode();
     void setMotifMode(boolean mode);
 
-    void launch(boolean slow, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action);
+    void launch(int delay, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action);
 
     void switchStateToPop();
 

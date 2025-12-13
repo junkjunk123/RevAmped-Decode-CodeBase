@@ -54,7 +54,35 @@ public class TurretMotor extends Turret<TurretState> {
     public static boolean useTurretSwitch = true;
     private final Differentiator velocityCalculator;
 
+    public enum PresetStateFar{
+        LEFT_FAR_RED,
+        LEFT_FAR_BLUE,
+        RESET,
+        RIGHT_FAR_RED,
+        RIGHT_FAR_BLUE;
+
+        public int pos() {
+            switch (this){
+                case LEFT_FAR_BLUE -> {
+                    return 375;
+                }
+                case LEFT_FAR_RED -> {
+                    return -375;
+                }
+                case RIGHT_FAR_BLUE -> {
+                    return -736;
+                }
+                case RIGHT_FAR_RED -> {
+                    return 736;
+                }
+                default ->{
+                    return 0;
+                }
+            }
+        }
+    }
     public enum PresetState {
+
         LEFT_135,
         LEFT_90,
         LEFT_45,
@@ -62,6 +90,7 @@ public class TurretMotor extends Turret<TurretState> {
         RIGHT_45,
         RIGHT_90,
         RIGHT_135;
+
 
         public int pos() {
             switch (this) {
@@ -97,6 +126,7 @@ public class TurretMotor extends Turret<TurretState> {
     }
 
     private PresetState presetState = PresetState.RESET;
+    private PresetStateFar presetStateFar = PresetStateFar.RESET;
 
     @Override
     public int ticksPerRotation() {
@@ -127,6 +157,7 @@ public class TurretMotor extends Turret<TurretState> {
         velocityCalculator.reset();
         prevFineTuneAngle = 0;
         presetState = PresetState.RESET;
+        presetStateFar = PresetStateFar.RESET;
     }
 
     public void resetTurret() {
@@ -148,6 +179,7 @@ public class TurretMotor extends Turret<TurretState> {
         velocityCalculator.reset();
         prevFineTuneAngle = 0;
         presetState = PresetState.RESET;
+        presetStateFar = PresetStateFar.RESET;
     }
     
     public void finetuneAngle(double rad) {
@@ -184,6 +216,7 @@ public class TurretMotor extends Turret<TurretState> {
     public PresetState getPresetState() {
         return presetState;
     }
+    public PresetStateFar getPresetStateFar(){return presetStateFar;}
 
     @Override
     public void update() {
@@ -205,6 +238,20 @@ public class TurretMotor extends Turret<TurretState> {
         this.presetState = presetState;
     }
 
+    public void setPresetStateFar(PresetStateFar presetStateFar){
+        if (motorState == TurretState.HOLD)
+            targetPosition = presetStateFar.pos();
+        else
+            setCurrentState(TurretState.HOLD, targetPosition);
+        this.presetStateFar = presetStateFar;
+    }
+
+    public void toggleFarPresetBlue(){
+        setPresetStateFar(getPresetStateFar() == PresetStateFar.RIGHT_FAR_BLUE ? PresetStateFar.LEFT_FAR_BLUE : PresetStateFar.RIGHT_FAR_BLUE);
+    }
+    public void toggleFarPresetRed(){
+        setPresetStateFar(getPresetStateFar() == PresetStateFar.RIGHT_FAR_RED ? PresetStateFar.LEFT_FAR_RED : PresetStateFar.RIGHT_FAR_RED);
+    }
     public void nextPresetState() {
         if (presetState != PresetState.RIGHT_135)
             setPresetState(PresetState.values()[(presetState.ordinal() + 1) % PresetState.values().length]);
