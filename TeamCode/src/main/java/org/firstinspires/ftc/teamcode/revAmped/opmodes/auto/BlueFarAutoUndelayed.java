@@ -14,12 +14,12 @@ import java.util.List;
 public class BlueFarAutoUndelayed extends DecodeRevAmpedAutonomous{
     @Override
     public void setPaths() {
-        paths = new FarAutoPaths(true);
+        paths = new FarAutoPaths(false);
     }
 
     @Override
     public void buildAutoActions() {
-        DecodeLimelight.usingLimelight = true;
+        DecodeLimelight.usingLimelight = false;
         autoActions = List.of(DAM.shootPreloadsFar(), AEABuilder.drive(f -> DAM.notBusy()),
                 AEABuilder.drive(f -> f.velocityCondition(4)),
                 DAM.intakeFar(), DAM.shootFar(), DAM.park());

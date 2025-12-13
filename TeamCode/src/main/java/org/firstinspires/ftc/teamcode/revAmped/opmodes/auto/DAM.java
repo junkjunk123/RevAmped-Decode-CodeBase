@@ -417,6 +417,7 @@ public class DAM {
             @Override
             protected void loop() {
                 if (finishedDriving()) {
+                    /*
                     scheduler.add(new Delay(500, () -> {
                         if (Globals.randomizationState != null) {
                             computeTableRotation();
@@ -428,6 +429,14 @@ public class DAM {
                                     scheduler.add(new Delay(650, () -> popperIn = true));
                                 }))).setMaxTimeToRun(1500));
                         robot.shooter.hardware().turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
+                    }));
+
+                     */
+
+                    scheduler.add(new Delay(500, () -> {
+                        robot.popper().setCurrentState(Types.PopperState.POP);
+                        scheduler.add(new Delay(650, () -> popperIn = true));
+                        robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
                     }));
                 }
 
@@ -444,6 +453,11 @@ public class DAM {
             @Override
             public boolean isFinishedDriving() {
                 return notBusy();
+            }
+
+            @Override
+            public double millisToDrive() {
+                return 4000;
             }
         };
     }

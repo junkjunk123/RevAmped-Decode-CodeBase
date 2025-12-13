@@ -14,12 +14,12 @@ import java.util.List;
 public class RedFarAutoUndelayed extends DecodeRevAmpedAutonomous{
     @Override
     public void setPaths() {
-        paths = new FarAutoPaths(true);
+        paths = new FarAutoPaths(false);
     }
 
     @Override
     public void buildAutoActions() {
-        autoActions = List.of(DAM.obeliskDetectionFar(), DAM.shootPreloadsFar(), AEABuilder.drive(f -> DAM.notBusy()),
+        autoActions = List.of(DAM.shootPreloadsFar(), AEABuilder.drive(f -> DAM.notBusy()),
                 AEABuilder.drive(f -> f.velocityCondition(4)),
                 DAM.intakeFar(), DAM.shootFar(), DAM.park());
     }

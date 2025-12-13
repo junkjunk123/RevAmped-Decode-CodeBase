@@ -35,7 +35,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     private boolean canHoldPose = false;
     private Localizer localizer;
     private static Pose initialPose = new Pose(72, 72, Math.toRadians(90));
-    private Follower follower;
+    //private Follower follower;
 
     public TeleOpDrivetrainHandler(OpMode op, List<DcMotorSimple.Direction> directions) {
         super(op, directions);
@@ -53,7 +53,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
             return;
         }
 
-        follower.update();
+        //follower.update();
     }
 
     public void stopHoldPose() {
@@ -65,8 +65,8 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
         if (!canHoldPose)
             return;
         holdingPose = true;
-        follower.update();
-        follower.holdPoint(new BezierPoint(pose), pose.getHeading(), false);
+        //follower.update();
+        //follower.holdPoint(new BezierPoint(pose), pose.getHeading(), false);
     }
 
     public void startHoldPose() {
@@ -89,12 +89,12 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
     }
 
     public void makeFollower(HardwareMap hardwareMap) {
-        follower = new FollowerBuilder(Constants.followerConstants, hardwareMap)
-                .mecanumDrivetrain(Constants.driveConstants)
-                .setLocalizer(localizer)
-                .pathConstraints(Constants.pathConstraints)
-                .build();
-        follower.setPose(initialPose);
+        //follower = new FollowerBuilder(Constants.followerConstants, hardwareMap)
+        //        .mecanumDrivetrain(Constants.driveConstants)
+        //        .setLocalizer(localizer)
+        //        .pathConstraints(Constants.pathConstraints)
+        //        .build();
+        //follower.setPose(initialPose);
     }
 
     public void setGamepad_1(RevAmpedGamepad gamepad_1) {
@@ -167,7 +167,7 @@ public class TeleOpDrivetrainHandler extends TeleOpMecanumDrive {
             localizer.setStartPose(initialPose);
             dt.setLocalizer(localizer);
             dt.setInvertedControls(invertedControls);
-            dt.makeFollower(op.hardwareMap);
+            //dt.makeFollower(op.hardwareMap);
             return dt;
         }
     }

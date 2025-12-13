@@ -69,7 +69,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         Flywheel flywheel = new Flywheel(hardwareMap, Types.FlywheelState.STOPPED, voltageSensor);
         hardware = new ShooterHardwareComponents(hoodServo, turretServo, flywheel);
         trackHood = false;
-        trackTurret = true;
+        trackTurret = false;
         velocityCompensation = false;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
@@ -122,7 +122,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         hardware.update();
         robotAcceleration.update();
 
-        if (currentState == ShooterState.TRACKING) {
+        if (currentState == ShooterState.TRACKING && (trackHood || trackTurret)) {
             Pose targetPos = Globals.allianceColor == Globals.AllianceColor.Red ? Shooter.APRIL_TAG_POSE_RED : Shooter.APRIL_TAG_POSE_BLUE;
             Pose currentPos = pinpoint().getPose();
             Pose robotVelPose = pinpoint.getVelocity();
