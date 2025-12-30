@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.controller.PSF;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.LowPassFilter;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 
+@Config
 public class PSFController {
     private PSFLCoefficients coefficients;
     private final LowPassFilter lowPassFilter;

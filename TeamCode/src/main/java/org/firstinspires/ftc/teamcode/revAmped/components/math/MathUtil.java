@@ -235,4 +235,14 @@ public class MathUtil {
         inv.set(2,2, (a*e - b*d)/det);
         return inv;
     }
+
+    public static Matrix rotMatrix(double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        double[][] vals = new double[][] {
+                {cos, -sin},
+                {-sin, cos}
+        };
+        return new Matrix(vals);
+    }
 }
