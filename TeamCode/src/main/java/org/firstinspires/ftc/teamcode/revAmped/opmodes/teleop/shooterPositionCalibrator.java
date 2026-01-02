@@ -77,7 +77,7 @@ public class shooterPositionCalibrator extends DecodeRevAmpedOpMode {
             robot.turnTable.intake();
         }
         if (gamepad_1.dpad_right.isPress()) {
-            robot.turnTable.shootAllAuto(()->{}, true);
+            robot.shootAllAuto(()->{}, true);
         }
         if(gamepad_1.y.isPress()){
             robot.flywheel().setCurrentState(Types.FlywheelState.STOPPED);

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.revAmped.components.math;
 import org.firstinspires.ftc.teamcode.revAmped.util.Range;
 
 public class ProjectileMathWithDrag {
-    private static final double g = -386.0885; // gravity in in/s^2
+    private static final double g = 386.0885; // gravity in in/s^2
     private static final double rho = 0.0023769; // air density in slugs/in^3 (~1.225 kg/m^3 converted)
-    private static final double CD = 0.4; // drag coefficient, adjust for whiffle ball
+    private static final double CD = 1.3;
     private static final double radius = 5; // ball radius in inches
     private static final double A = Math.PI * radius * radius; // cross-sectional area in in^2
     private static final double massBall = 0.057152639 * 0.0685218; // ball mass in slugs (0.05 kg -> slugs), 1 kg ≈ 0.0685 slugs
@@ -27,7 +27,7 @@ public class ProjectileMathWithDrag {
 
         // Vertical motion with approximate quadratic drag
         double vy0 = v_0 * Math.sin(convertedTheta);
-        double y = h_0 + (vy0 / k) * Math.log(1 + k * vy0 * time) - 0.5 * g * time * time;
+        double y = h_0 + (vy0 / k) * Math.log(1 + k * vy0 * time) + 0.5 * g * time * time;
 
         return new Vector2D(x, y);
     }
@@ -54,7 +54,7 @@ public class ProjectileMathWithDrag {
      *     <li>All distances are in inches; velocity in inches per second.</li>
      * </ul>
      */
-    public static double solveTheta(Vector2D distances, double v0) {
+    public static double solveTheta(Vector2D distances, double v0, double currentHoodRad) {
         // Relative coordinates of the control point from launch
         double dx = distances.getX(); // in inches
         double dy = distances.getY(); // in inches
@@ -63,14 +63,15 @@ public class ProjectileMathWithDrag {
         double E = Math.exp(k * dx) - 1;
 
         // Quadratic coefficients for tan(theta)
-        double a = -g * E * E;
+        double a = g * E * E;
         double b = -2 * k * E * v0 * v0;
-        double c = -g * E * E + 2 * k * k * v0 * v0 * dy;
+        double c = g * E * E + 2 * k * k * v0 * v0 * dy;
 
         double discriminant = b * b - 4 * a * c;
+
         if (discriminant < 0) {
             // No real solution: speed too low to reach control point
-            return Double.NaN;
+            return currentHoodRad;
         }
 
         // Two possible solutions: low arc (T1) and high arc (T2)
@@ -93,7 +94,7 @@ public class ProjectileMathWithDrag {
         double v_ox = v_0 * Math.cos(theta_0);
         double v_x = v_ox / (1 + k * v_ox * t);
         double v_oy = v_0 * Math.sin(theta_0);
-        double v_y = g * t + v_oy;
+        double v_y = -g * t + v_oy;
         return new Vector2D(v_x, v_y);
     }
 

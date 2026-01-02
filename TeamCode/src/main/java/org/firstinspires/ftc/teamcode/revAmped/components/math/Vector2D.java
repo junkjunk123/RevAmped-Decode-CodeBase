@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.math;
 
+import androidx.annotation.NonNull;
+
 /**
  * A class representing a 2D vector with various operations.
  */
@@ -81,5 +83,11 @@ public class Vector2D extends Vector {
 
     public double getY() {
         return get(1);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "(" + getX() + ", " + getY() + ")";
     }
 }

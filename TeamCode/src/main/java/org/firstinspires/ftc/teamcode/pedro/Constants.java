@@ -63,6 +63,8 @@ public class Constants {
             1
     );
 
+    public static FusionConstants fusionConstants = new FusionConstants();
+
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .mecanumDrivetrain(driveConstants)

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.controller;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.Range;
 import com.pedropathing.control.KalmanFilterParameters;
 
@@ -10,6 +11,7 @@ import org.opencv.core.Mat;
  * Triple-mode hybrid flywheel controller using enum for mode,
  * with SPINUP hysteresis, REGEN hysteresis, and HOLD mode.
  */
+@Config
 public class FlywheelController {
     public enum Mode {
         SPINUP,
@@ -18,9 +20,11 @@ public class FlywheelController {
     }
 
     // --- PSF gains ---
-    public static double GAIN = 0.0005;
-    public static double VELOCITY_FEEDFORWARD = 0.0008;
-    public static double STATIC_FEEDFORWARD = 0.05;
+    public static double GAIN = 0.0006;
+    public static double VELOCITY_FEEDFORWARD = 0.00072;
+    public static double SECONDARY_VEL_FEEDFORWARD = 0.0008;
+    public static double SECONDARY_SWITCH = 800;
+    public static double STATIC_FEEDFORWARD = 0.055;
 
     // --- Spin-up settings ---
     public static double KICK_POWER = 1.0;
@@ -83,11 +87,16 @@ public class FlywheelController {
         return switch (mode) {
             case SPINUP -> KICK_POWER * Math.signum(error);
             case REGEN -> {
+                double velFF = targetVelocity < SECONDARY_SWITCH ? targetVelocity * SECONDARY_VEL_FEEDFORWARD
+                        : targetVelocity * VELOCITY_FEEDFORWARD;
                 double staticFF = (STATIC_FEEDFORWARD + REGEN_KICK) * Math.signum(error);
-                yield REGEN_GAIN * error + VELOCITY_FEEDFORWARD * targetVelocity + staticFF;
+                yield REGEN_GAIN * error + velFF + staticFF;
             }
-            default ->
-                    GAIN * error + VELOCITY_FEEDFORWARD * targetVelocity + STATIC_FEEDFORWARD * Math.signum(error);
+            default -> {
+                double velFF = targetVelocity < SECONDARY_SWITCH ? targetVelocity * SECONDARY_VEL_FEEDFORWARD
+                        : targetVelocity * VELOCITY_FEEDFORWARD;
+                yield GAIN * error + velFF + STATIC_FEEDFORWARD * Math.signum(error);
+            }
         };
     }
 

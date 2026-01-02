@@ -30,15 +30,18 @@ public class DCTeleOp extends DecodeRevAmpedOpMode {
 
     @Override
     public void RevAmpedInit() {
-        robot = new Robot(this, Globals.allianceColor);
         gamepad_1 = new RevAmpedGamepad(gamepad1);
         gamepad_2 = new RevAmpedGamepad(gamepad2);
-        drivetrain = new TeleOpDrivetrainHandler.TeleOpDrivetrainBuilder()
+        robot = new Robot (
+                this,
+                Globals.allianceColor,
+                () -> drivetrain = new TeleOpDrivetrainHandler.TeleOpDrivetrainBuilder()
                 .setOpMode(this)
                 .setGamepad(gamepad_1)
                 .setDirections(DecodeConstants.DRIVE_DIRECTIONS)
                 .setLocalizer(new PinpointLocalizer(hardwareMap, Constants.localizerConstants))
-                .build();
+                .build()
+        );
         prompter = new Prompter(this, gamepad_1)
                 .prompt("motif", new OptionPrompt<>("Select motif", Globals.RandomizationState.values()));
     }

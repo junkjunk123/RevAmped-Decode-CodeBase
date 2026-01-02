@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AEABuilder;
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.vision.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.FarAutoPaths;
 
@@ -26,8 +26,8 @@ public class RedFarAutoUndelayed extends DecodeRevAmpedAutonomous {
     }
 
     @Override
-    public void setRobot() {
+    public void setRobot(Runnable initFollower) {
         DecodeLimelight.usingLimelight = false;
-        robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO);
+        robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO, initFollower);
     }
 }

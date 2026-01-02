@@ -48,6 +48,7 @@ public class TurretMotor extends Turret<TurretState> {
     public static boolean TURRET_LIMITS_ENABLED;
     public static int TURRET_POSITIVE_LIMIT_TICKS;
     public static int TURRET_NEGATIVE_LIMIT_TICKS;
+    public static int FULL_ROTATION;
     public static double TURRET_RAD_LIMIT;
     public final HwSwitch limitSwitch;
     private double prevFineTuneAngle = 0;
@@ -95,27 +96,27 @@ public class TurretMotor extends Turret<TurretState> {
         public int pos() {
             switch (this) {
                 case LEFT_90 -> {
-                    return TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS;
+                    return -TurretMotor.FULL_ROTATION / 4;
                 }
 
                 case LEFT_45 -> {
-                    return TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS / 2;
+                    return -TurretMotor.FULL_ROTATION / 8;
                 }
 
                 case RIGHT_45 -> {
-                    return TurretMotor.TURRET_POSITIVE_LIMIT_TICKS / 2;
+                    return TurretMotor.FULL_ROTATION / 8;
                 }
 
                 case RIGHT_90 -> {
-                    return TurretMotor.TURRET_POSITIVE_LIMIT_TICKS;
+                    return TurretMotor.FULL_ROTATION / 4;
                 }
 
                 case LEFT_135 -> {
-                    return (int) (TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS * 1.5);
+                    return (int) (-TurretMotor.FULL_ROTATION / 360.0 * 135.0);
                 }
 
                 case RIGHT_135 -> {
-                    return (int) (TurretMotor.TURRET_POSITIVE_LIMIT_TICKS * 1.5);
+                    return (int) (TurretMotor.FULL_ROTATION / 360.0 * 135.0);
                 }
 
                 default -> {

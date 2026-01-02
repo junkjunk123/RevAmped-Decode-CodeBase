@@ -147,11 +147,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_up.isPress()) {
             drivetrain.startHoldPose();
-            if(robot.hoodServo().getCurrentState() == Types.HoodState.FAR_PRESET){
-                robot.turnTable.launch(100, tsh, drivetrain::stopHoldPose);
-            }else {
-                robot.turnTable.launch(0, tsh, drivetrain::stopHoldPose);
-            }
+            robot.turnTable.launch(0, tsh, drivetrain::stopHoldPose);
         }
 
         if (gamepad_2.dpad_down.isPress()) {

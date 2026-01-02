@@ -88,6 +88,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         return getVelocity() / ticksPerInch();
     }
 
+    public double getFilteredVelocity() {
+        return controller.getFilteredVelocity();
+    }
+
     @Override
     public void update() {
         super.update();
@@ -105,16 +109,12 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
         return Math.PI * 2 * getVelocity() / COUNTS_PER_REVOLUTION;
     }
 
-    public double getBallLaunchVelocity() {
-        return getAngularVelocity() * RADIUS * LAUNCH_ETA;
-    }
-
     public double getTheoreticalLaunchVelocity() {
-        return targetVelocity * LAUNCH_ETA;
+        return targetVelocity / RADIUS * 1.417 * LAUNCH_ETA;
     }
 
     public boolean canShoot() {
-        return Math.abs(getVelocityImperial() - targetVelocity) < VELOCITY_ERROR_THRESHOLD;
+        return Math.abs(controller.getError()) < VELOCITY_ERROR_THRESHOLD;
     }
 
     public static double ticksPerInch() {
@@ -131,6 +131,10 @@ public class Flywheel extends TwoMotorMechanism<FlywheelState> {
 
     public double getTargetVelocity() {
         return targetVelocity;
+    }
+
+    public double getError() {
+        return controller.getError();
     }
 
     @Override

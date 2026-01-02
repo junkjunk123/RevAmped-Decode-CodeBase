@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.PoseDifferentiator;
+import org.firstinspires.ftc.teamcode.revAmped.components.math.ProjectileMath;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.ProjectileMathWithDrag;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.RobotKinematicsCalculator;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
@@ -40,7 +41,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static Pose APRIL_TAG_POSE_BLUE_POSITIVE;
     public static Pose APRIL_TAG_POSE_RED_NEGATIVE;
     public static Pose APRIL_TAG_POSE_BLUE;
-    public static Vector3D BLUE_SHOOT_ZONE;
+    public static Vector3D BLUE_SHOOT_ZONE = new Vector3D(12, 144-12, 43.5);
 
     public static double BALL_MASS = 0.057152639; //kg
     public static double BALL_LAUNCH_MS = 250;
@@ -48,6 +49,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     public static boolean velocityCompensation;
     public static boolean simpleVelComp = true;
+    public static boolean useDrag = true;
 
     private final PoseDifferentiator robotAcceleration;
 
@@ -62,6 +64,8 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static double redNegativeX = 151;
     public static double redNegativeY = 180;
 
+    private double prevHoodRad;
+
     public Shooter(HardwareMap hardwareMap, boolean setPositions, Scheduler scheduler, HwVoltageSensor voltageSensor) {
         this.scheduler = scheduler;
         HoodServo hoodServo = new HoodServo(hardwareMap, setPositions);
@@ -71,10 +75,11 @@ public class Shooter implements ShootingMechanism<ShooterState> {
         trackHood = false;
         trackTurret = true;
         velocityCompensation = false;
+        useDrag = true;
+        simpleVelComp = true;
         hoodServo.setUpdateLock(true);
         flywheel.setUpdateLock(true);
         robotAcceleration = new PoseDifferentiator(Pose::new, () -> pinpoint().getVelocity());
-        flywheel.setVoltageCompensation(true);
 
         APRIL_TAG_POSE_BLUE = new Pose(blueNegativeX, blueNegativeY);
         APRIL_TAG_POSE_BLUE_POSITIVE = new Pose(bluePositiveX, bluePositiveY);
@@ -187,11 +192,17 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                         robotPose.distanceFrom(new Pose(target.getX(), target.getY())),
                         target.getZ() - LAUNCH_HEIGHT
                 );
-                double initialVelocity = calcInitialLaunchVelocity(robotVelocity, hardware.flywheel().getTargetVelocity(), deltaAngle);
+                double initialVelocity = calcInitialLaunchVelocity(robotVelocity, hardware.flywheel().getTheoreticalLaunchVelocity(),
+                        deltaAngle);
 
-                double theta = ProjectileMathWithDrag.solveTheta(
+                double theta = useDrag ? ProjectileMathWithDrag.solveTheta(
                         targetDisplacements,
-                        initialVelocity
+                        initialVelocity,
+                        prevHoodRad
+                ) : ProjectileMath.solveTheta(
+                        targetDisplacements,
+                        initialVelocity,
+                        prevHoodRad
                 );
 
                 confidence = ProjectileMathWithDrag.getConfidence(
@@ -209,6 +220,7 @@ public class Shooter implements ShootingMechanism<ShooterState> {
                             HoodServo.HOOD_MAX_POS
                     );
                     hardware.hoodServo().setCurrentState(Types.HoodState.TRACKING, hoodAngle);
+                    prevHoodRad = theta;
                 }
             }
         }
@@ -238,6 +250,13 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
                 if (hardware.flywheel().getCurrentState() != Types.FlywheelState.RUNNING)
                     hardware.flywheel().setCurrentState(Types.FlywheelState.RUNNING);
+                prevHoodRad = HwServo2.getPositionFromRad(
+                        hardware.hoodServo().getPosition(),
+                        HoodServo.HOOD_MIN_RAD,
+                        HoodServo.HOOD_MAX_RAD,
+                        HoodServo.HOOD_MIN_POS,
+                        HoodServo.HOOD_MAX_POS
+                );
             }
         }
     }
@@ -311,11 +330,11 @@ public class Shooter implements ShootingMechanism<ShooterState> {
 
     private double calcInitialLaunchVelocity(Vector robotVelocity, double flywheelVelocity, double turretAngleOffset) {
         double robotSpeed = robotVelocity.getMagnitude() * Math.cos(turretAngleOffset);
-        return robotSpeed + flywheelVelocity * Flywheel.LAUNCH_ETA;
+        return robotSpeed + flywheelVelocity;
     }
 
     public static Vector3D getTargetLaunchPos() {
-        return Globals.allianceColor == Globals.AllianceColor.Red ? new Vector3D(144 - BLUE_SHOOT_ZONE.getX(), BLUE_SHOOT_ZONE.getY(), BLUE_SHOOT_ZONE.getY()) : BLUE_SHOOT_ZONE;
+        return Globals.allianceColor == Globals.AllianceColor.Red ? new Vector3D(144 - BLUE_SHOOT_ZONE.getX(), BLUE_SHOOT_ZONE.getY(), BLUE_SHOOT_ZONE.getZ()) : BLUE_SHOOT_ZONE;
     }
 
     public void toggleState() {

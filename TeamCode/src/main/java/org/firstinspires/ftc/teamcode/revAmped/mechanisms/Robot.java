@@ -45,7 +45,7 @@ public class Robot {
     private List<LynxModule> allHubs;
     private Scheduler scheduler;
     public TurnTable turnTable;
-    public ShootingMechanism<Types.ShooterState> shooter;
+    public Shooter shooter;
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> allHardwareClasses = buildHardwareClassMap();
     public static HashMap<Class<? extends HwDevice>, HashSet<String>> idMap = buildIDMap();
     public HwVoltageSensor voltageSensor;
@@ -76,10 +76,14 @@ public class Robot {
     private final OpModeType opModeType;
 
     public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor) {
+        this(opMode, allianceColor, () -> {});
+    }
+
+    public Robot(RevAmpedOpMode opMode, Globals.AllianceColor allianceColor, Runnable initDTSubsystem) {
         opModeType = (OpModeType) opMode.getOpModeType();
         updateOpMode(opMode, allianceColor);
         HardwareMap hardwareMap = opMode.hardwareMap;
-        init(hardwareMap);
+        init(hardwareMap, initDTSubsystem);
         INSTANCE = this;
     }
 
@@ -88,11 +92,15 @@ public class Robot {
     }
 
     public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType) {
+        this(opMode, allianceColor, opModeType, () -> {});
+    }
+
+    public Robot(DecodeRevAmpedAutonomous opMode, Globals.AllianceColor allianceColor, OpModeType opModeType, Runnable initDTSubsystem) {
         this.opModeType = opModeType;
         updateOpMode(opMode, allianceColor);
         Globals.OpModeType = opModeType;
         HardwareMap hardwareMap = opMode.hardwareMap;
-        init(hardwareMap);
+        init(hardwareMap, initDTSubsystem);
         INSTANCE = this;
     }
 
@@ -102,9 +110,7 @@ public class Robot {
         scheduler = opMode.scheduler;
     }
 
-    public void init(HardwareMap hardwareMap) {
-        allHubs = hardwareMap.getAll(LynxModule.class);
-        setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
+    public void init(HardwareMap hardwareMap, Runnable initDTSubsystem) {
         voltageSensor = new HwVoltageSensor(hardwareMap);
         boolean setPositions = !opModeType.isTeleOp();
         shooter = new Shooter(hardwareMap, setPositions, scheduler, voltageSensor);
@@ -123,6 +129,7 @@ public class Robot {
                         shooter.hardware().hoodServo()
                 )
         ));
+        /*
         allDevices.put(HwDevice.DeviceType.COLOR_SENSOR, new HashSet<>(
                 List.of(
                         turnTable.hardware().intakeColor().getSensorOne(),
@@ -130,6 +137,7 @@ public class Robot {
                         turnTable.hardware().intakeColor().getSensorZero()
                 )
         ));
+         */
 
         if (opModeType.isAuto())
             shooter.hardware().turretMotor().resetPosition();
@@ -143,6 +151,11 @@ public class Robot {
             TurretMotor.AUTO_SET_3 *= -1;
             TurretMotor.FAR_AUTO *= -1;
         }
+
+        initDTSubsystem.run();
+
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        setBulkReadMode(LynxModule.BulkCachingMode.MANUAL);
     }
 
     public void update() {
@@ -220,7 +233,7 @@ public class Robot {
     }
 
     public IntakeDistance intakeDistance() {
-        return turnTable.hardware.intakeDistance();
+        return turnTable.hardware().intakeDistance();
     }
 
     public static EnumMap<HwDevice.DeviceType, HashSet<Class<? extends HwDevice>>> buildHardwareClassMap() {
@@ -284,5 +297,38 @@ public class Robot {
                     .setCancellation(() -> shooter.pinpoint().getVelocityVector().getMagnitude() > 6);
         }
         return delay;
+    }
+
+    public void shootAllAuto(Runnable andThen, double flywheelDelay, boolean resetTable) {
+        intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
+        Types.TableState2[] shootSequence = tableServo().getShootStates();
+        tableServo().setCurrentState(shootSequence[0]);
+        scheduler.add(new Delay(tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+            tableServo().setCurrentState(shootSequence[1]);
+            intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
+            scheduler.add(new Delay(tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+                tableServo().setCurrentState(shootSequence[2] , shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
+                //intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
+                scheduler.add(new Delay(tableServo()::reached, () -> {
+                    if (resetTable)
+                        tableServo().resetToNeutral();
+                    else
+                        popper().setCurrentState(Types.PopperState.NEUTRAL);
+                    andThen.run();
+                }).setMaxTimeToRun(2500));
+            })); intakeMotor().setCurrentState(Types.IntakeState.VERY_SLOW_INTAKE);}).setMaxTimeToRun(1000));
+        })); intakeMotor().stop();}).setMaxTimeToRun(1000));
+    }
+
+    public void shootAllAuto(Runnable andThen, boolean resetTable) {
+        intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+        tableServo().fullRotation();
+        scheduler.add(new Delay(tableServo()::reached, () -> {
+            if (resetTable)
+                scheduler.add(new Delay(250, () -> tableServo().resetToNeutral()));
+            else
+                popper().setCurrentState(Types.PopperState.NEUTRAL);
+            andThen.run();
+        }).setMaxTimeToRun(3500));
     }
 }

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.revAmped.opmodes.auto;
 
+import static org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.FarAutoPathsV2.PARK;
+
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,7 +12,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.vision.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.shooter.TurretMotor;
@@ -35,6 +38,11 @@ public class DAM {
         telemetry = Globals.telemetry;
         driveTimer = Globals.aae.preloadDriveTimer;
         overallTimer = Globals.aae.overallTimer;
+    }
+
+    public static void initialize(ElapsedTime preloadDriveTimer, ElapsedTime overallTimer) {
+        robot = Robot.INSTANCE;
+
     }
 
     public static boolean notBusy() {
@@ -71,18 +79,18 @@ public class DAM {
                                     scheduler.add(new Delay(robot.tableServo()::reached, () -> {
                                         scheduler.add(new Delay(800,
                                                 () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
-                                                () -> robot.turnTable.shootAllAuto(this::setComplete, 175, thirdSlot)).setMaxTimeToRun(250))));
+                                                () -> robot.shootAllAuto(this::setComplete, 175, thirdSlot)).setMaxTimeToRun(250))));
                                         scheduler.add(new Delay(150, () -> robot.popper().setCurrentState(Types.PopperState.POP)));
                                     }).setMaxTimeToRun(1500));
                                 }).setCancellation(4000, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
-                                    scheduler.add(new Delay(500, () -> robot.turnTable.shootAllAuto(this::setComplete, thirdSlot)));
+                                    scheduler.add(new Delay(500, () -> robot.shootAllAuto(this::setComplete, thirdSlot)));
                                 }));
                     } else {
                         robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
                         robot.popper().setCurrentState(Types.PopperState.POP);
-                        scheduler.add(new Delay(1500, () -> robot.turnTable.shootAllAuto(this::setComplete, thirdSlot)));
+                        scheduler.add(new Delay(1500, () -> robot.shootAllAuto(this::setComplete, thirdSlot)));
                     }
                 }
             }
@@ -243,9 +251,9 @@ public class DAM {
             protected void loop() {
                 if (finishedDriving()) {
                     if (currentIteration != 2 && Globals.randomizationState != null)
-                        scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, 175, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
+                        scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, 175, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
                     else
-                        scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
+                        scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
                 }
             }
 
@@ -391,9 +399,9 @@ public class DAM {
                 if (finishedDriving()) {
                     scheduler.add(new Delay(() -> popperIn, () -> {
                         if (Globals.randomizationState != null)
-                            scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, 250, true)));
+                            scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, 250, true)));
                         else
-                            scheduler.add(new Delay(() -> popperIn, () -> robot.turnTable.shootAllAuto(() -> completed = true, 100, true)));
+                            scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, 100, true)));
                     }));
                 }
             }
@@ -476,7 +484,7 @@ public class DAM {
 
             @Override
             protected void init() {
-                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY);
+                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 25);
             }
 
             @Override
@@ -509,9 +517,9 @@ public class DAM {
                     popperIn = false;
 
                     if (Globals.randomizationState != null)
-                        robot.turnTable.shootAllAuto(() -> completed = true, 250, true);
+                        robot.shootAllAuto(() -> completed = true, 250, true);
                     else
-                        robot.turnTable.shootAllAuto(() -> completed = true, 100, true);
+                        robot.shootAllAuto(() -> completed = true, 100, true);
                 }
             }
 
@@ -523,6 +531,141 @@ public class DAM {
             @Override
             public double millisToDrive() {
                 return 4000;
+            }
+        };
+    }
+
+    public static AutonomousEnumeratedAction preloadsWTIFar() {
+        return new AutonomousEnumeratedAction() {
+            @Override
+            protected void init() {
+                //robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
+                robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
+                robot.popper().setCurrentState(Types.PopperState.POP);
+                scheduler.add(new Delay(1000, () -> robot.shootAllAuto(() -> completed = true, false)));
+                robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
+            }
+
+            @Override
+            protected void loop() {
+                Globals.telemetry.addData("pose", followerManager.follower.getPose());
+            }
+
+            @Override
+            public boolean isFinishedDriving() {
+                return true;
+            }
+
+            @Override
+            public double millisToDrive() {
+                return 800;
+            }
+        };
+    }
+
+    public static AutonomousEnumeratedAction intakeWTIFar() {
+        return new AutonomousEnumeratedAction() {
+            boolean park;
+            boolean stop = false;
+            int index;
+
+            @Override
+            protected void init() {
+                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+                scheduler.add(new Delay(250, () -> robot.tableServo().resetToNeutral()));
+                /*
+                robot.shooter.setCurrentState(Types.ShooterState.TRACKING, false);
+                Shooter.trackHood = false;
+                Shooter.trackTurret = true;
+                Shooter.velocityCompensation = false;
+                Shooter.simpleVelComp = false;
+                 */
+                index = Globals.aae.getAutoState();
+            }
+
+            @Override
+            protected void loop() {
+                if (overallTimer.seconds() > 28) {
+                    park = true;
+                    completed = true;
+
+                    Pose robotPose = followerManager.follower.getPose();
+                    if (!(robotPose.getX() > PARK.getPose(Globals.AllianceColor.Blue).getX()
+                            && robotPose.getX() < PARK.getPose(Globals.AllianceColor.Red).getX())) stop = true;
+                }
+
+                if (finishedDriving())
+                    scheduler.add(new Delay(index == 1 ? 1150 : 650, () -> completed = true));
+
+                Globals.telemetry.addData("pose", followerManager.follower.getPose());
+            }
+
+            @Override
+            public boolean isFinishedDriving() {
+                return followerManager.velocityCondition(5) || followerManager.follower.atParametricEnd();
+            }
+
+            @Override
+            public NextStateGenerator nextStateGenerator() {
+                return i -> {
+                    if (!park) return i + 1;
+                    if (!stop) return followerManager.size() - 1;
+                    return followerManager.size();
+                };
+            }
+        };
+    }
+
+    public static AutonomousEnumeratedAction shootWTIFar() {
+        return new AutonomousEnumeratedAction() {
+            boolean canShoot = false;
+            boolean stop = false;
+            boolean park;
+
+            @Override
+            protected void init() {
+                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() < 0.5,
+                        () -> scheduler.add(new Delay(250,
+                                () -> robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE)))));
+            }
+
+            @Override
+            protected void loop() {
+                if (finishedDriving()) {
+                    robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                    robot.popper().setCurrentState(Types.PopperState.POP);
+                    scheduler.add(new Delay(800, () -> {
+                        robot.shootAllAuto(() -> completed = true, false);
+                        canShoot = true;
+                    }));
+                }
+
+                if (overallTimer.seconds() > 28) {
+                    if (!canShoot || overallTimer.seconds() > 29) {
+                        park = true;
+                        completed = true;
+                    } else {
+                        park = true;
+                    }
+                }
+
+                Globals.telemetry.addData("pose", followerManager.follower.getPose());
+            }
+
+            @Override
+            public boolean isFinishedDriving() {
+                return followerManager.velocityCondition(4);
+            }
+
+            @Override
+            public NextStateGenerator nextStateGenerator() {
+                return i -> {
+                    if (!park) return i + 1;
+                    if (!stop) return followerManager.size() - 1;
+                    return followerManager.size();
+                };
             }
         };
     }

@@ -31,28 +31,31 @@ public class ColorManager {
     public static float maxGreenDistanceTwo = 100;
 
     public ColorManager(HardwareMap hardwareMap) {
-        compartmentZeroColor = new ColorZero(hardwareMap);
-        compartmentOneColor = new ColorOne(hardwareMap);
-        compartmentTwoColor = new ColorTwo(hardwareMap);
+        compartmentOneColor = null;
+        compartmentZeroColor = null;
+        compartmentTwoColor = null;
+        //compartmentZeroColor = new ColorZero(hardwareMap);
+        //compartmentOneColor = new ColorOne(hardwareMap);
+        //compartmentTwoColor = new ColorTwo(hardwareMap);
     }
 
     public void update() {
         currentSensor = (currentSensor % 2) + 1;
-        compartmentZeroColor.update();
-        compartmentOneColor.update();
-        compartmentTwoColor.update();
+        //compartmentZeroColor.update();
+        //compartmentOneColor.update();
+        //compartmentTwoColor.update();
     }
 
     public DecodeColorSensor.ArtifactColor getCompartmentOneColor() {
-        return compartmentOneColor.getColor();
+        return DecodeColorSensor.ArtifactColor.NONE; //compartmentOneColor.getColor();
     }
 
     public DecodeColorSensor.ArtifactColor getCompartmentTwoColor() {
-        return compartmentTwoColor.getColor();
+        return DecodeColorSensor.ArtifactColor.NONE; //compartmentTwoColor.getColor();
     }
 
     public DecodeColorSensor.ArtifactColor getCompartmentZeroColor() {
-        return compartmentZeroColor.getColor();
+        return DecodeColorSensor.ArtifactColor.NONE; //compartmentZeroColor.getColor();
     }
 
     public DecodeColorV2 getSensorOne() {

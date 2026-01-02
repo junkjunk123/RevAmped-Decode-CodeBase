@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.drive.TeleOpDrivetrain
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.FollowerManager;
 import org.firstinspires.ftc.teamcode.revAmped.components.pedro.PathSupplier;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.vision.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.DecodeRevAmpedOpMode;
 
@@ -21,24 +21,24 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
 
     public abstract void setPaths();
     public abstract void buildAutoActions();
-    public abstract void setRobot();
+    public abstract void setRobot(Runnable initFollower);
 
     public Robot.OpModeType getOpModeType() {
-        if (robot == null) setRobot();
+        if (robot == null) setRobot(() -> followerManager = new FollowerManager(hardwareMap, paths));
         return robot.getOpModeType();
     }
 
     public void RevAmpedInit() {
         Globals.randomizationState = null;
-        setRobot();
         setPaths();
+
+        setRobot(() -> followerManager = new FollowerManager(hardwareMap, paths));
 
         if (DecodeLimelight.usingLimelight)
             DAM.limelight = new DecodeLimelight(hardwareMap);
 
-        followerManager = new FollowerManager(hardwareMap, paths);
-
-        DecodeAutonomousActionExecutor.DecodeAutonomousParameters parameters = new DecodeAutonomousActionExecutor.DecodeAutonomousParameters(robot, followerManager);
+        DecodeAutonomousActionExecutor.DecodeAutonomousParameters parameters =
+                new DecodeAutonomousActionExecutor.DecodeAutonomousParameters(robot, followerManager);
 
         aee = new DecodeAutonomousActionExecutor(parameters) {
             @Override

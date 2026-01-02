@@ -4,138 +4,123 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
 import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Matrix;
+import com.pedropathing.math.MatrixUtil;
 import com.pedropathing.math.Vector;
 
+import org.firstinspires.ftc.teamcode.pedro.FusionConstants;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.MathUtil;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-/**
- * Full Pedro Pathing FusionLocalizer implementation.
- * Predicts pose with twist integration and corrects with delayed measurements.
- */
 public class FusionLocalizer implements Localizer {
     private final Localizer deadReckoning;
     private Pose currentPosition;
     private Pose currentVelocity;
-    private Matrix P;      // Covariance
-    private final Matrix Q; // Process noise, and in the nonlinear dynamics, twist noise
-    private final Matrix R; // Measurement noise
+    private Matrix P; //State Covariance
+    private final Matrix Q; //Process Noise Covariance
+    private final Matrix R; //Measurement Noise Covariance
     private long lastUpdateTime = -1;
-
     private final NavigableMap<Long, Pose> poseHistory = new TreeMap<>();
     private final NavigableMap<Long, Pose> twistHistory = new TreeMap<>();
     private final NavigableMap<Long, Matrix> covarianceHistory = new TreeMap<>();
-    private final int bufferSize;
-    private final boolean useNonlinearDynamics;
 
     public FusionLocalizer(
             Localizer deadReckoning,
-            double[] P, //initial uncertainty in odometry estimate (inch, rad)
-            double[] processVariance, //uncertainty in odometry estimates (drift in inch/s, rad/s)
-            double[] measurementVariance, //uncertainty in vision estimates (drift in inch/s, rad/s)
-            int bufferSize,
-            boolean useNonlinearDynamics
+            double[] P,
+            double[] processVariance,
+            double[] measurementVariance
     ) {
         this.deadReckoning = deadReckoning;
-        this.useNonlinearDynamics = useNonlinearDynamics;
         this.currentPosition = new Pose();
-        this.P = MathUtil.diagonal3(
-                P[0],
-                P[1],
-                P[2]
-        );
-        this.Q = MathUtil.diagonal3(
-                processVariance[0],
-                processVariance[1],
-                processVariance[2]
-        );
-        this.R = MathUtil.diagonal3(
-                measurementVariance[0],
-                measurementVariance[1],
-                measurementVariance[2]
-        );
-        this.bufferSize = bufferSize;
+
+        //Standard Deviations for Kalman Filter
+        this.P = MatrixUtil.diag(P[0], P[1], P[2]);
+        this.Q = MatrixUtil.diag(processVariance[0], processVariance[1], processVariance[2]);
+        this.R = MatrixUtil.diag(measurementVariance[0], measurementVariance[1], measurementVariance[2]);
+        twistHistory.put(0L, new Pose());
+    }
+
+    public FusionLocalizer(Localizer deadReckoning, FusionConstants fusionConstants) {
+        this(deadReckoning, new double[] {
+                fusionConstants.pinpointXCovariance,
+                fusionConstants.processYCovariance,
+                fusionConstants.pinpointHeadingCovariance
+        }, new double[] {
+                fusionConstants.externalSensorXCovariance,
+                fusionConstants.externalSensorYCovariance,
+                fusionConstants.externalSensorHeadingCovariance
+        }, new double[] {
+           fusionConstants.processXCovariance,
+           fusionConstants.processYCovariance,
+           fusionConstants.processHeadingCovariance
+        });
     }
 
     @Override
     public void update() {
+        //Updates odometry
         deadReckoning.update();
         long now = System.nanoTime();
         double dt = lastUpdateTime < 0 ? 0 : (now - lastUpdateTime) / 1e9;
         lastUpdateTime = now;
 
-        // --- 1. Predict step via twist integration ---
+        //Updates twist, note that the dead reckoning localizer returns world-frame twist
         Pose twist = deadReckoning.getVelocity();
         twistHistory.put(now, twist.copy());
         currentVelocity = twist.copy();
 
-        double cosH = Math.cos(currentPosition.getHeading());
-        double sinH = Math.sin(currentPosition.getHeading());
-        double dx = (twist.getX() * cosH - twist.getY() * sinH) * dt;
-        double dy = (twist.getX() * sinH + twist.getY() * cosH) * dt;
-        double dTheta = twist.getHeading() * dt;
+        //Perform twist integration to propagate the fused position estimate based on how the odometry thinks the robot has moved
+        currentPosition = integrate(currentPosition, twist, dt);
 
-        currentPosition = new Pose(
-                currentPosition.getX() + dx,
-                currentPosition.getY() + dy,
-                MathFunctions.normalizeAngle(currentPosition.getHeading() + dTheta)
-        );
-
-        // Covariance propagation
+        //Update Kalman Filter
         updateCovariance(dt);
 
-        // Add to history
         poseHistory.put(now, currentPosition.copy());
         covarianceHistory.put(now, P.copy());
-        if (poseHistory.size() > bufferSize) poseHistory.pollFirstEntry();
-        if (twistHistory.size() > bufferSize) twistHistory.pollFirstEntry();
-        if (covarianceHistory.size() > bufferSize) covarianceHistory.pollFirstEntry();
-    }
-
-    private void updateCovariance(double dt) {
-        // Covariance propagation
-        if (!useNonlinearDynamics)
-            P = P.plus(Q.multiply(dt));
-        else {
-            double theta = currentPosition.getHeading();
-            double cos = Math.cos(theta);
-            double sin = Math.sin(theta);
-            double xVel = currentVelocity.getX();
-            double yVel = currentVelocity.getY();
-
-            Matrix A = new Matrix(new double[][]{
-                    {0, 0, -xVel * sin - yVel * cos},
-                    {0, 0, xVel * cos - yVel * sin},
-                    {0, 0, 0}
-            });
-
-            Matrix B = new Matrix(new double[][]{
-                    {cos, -sin, 0},
-                    {sin, cos, 0},
-                    {0, 0, 1}
-            });
-
-            Matrix F = MathUtil.identity(3).plus(A.multiply(dt));
-            Matrix G = B.multiply(dt);
-            Matrix Q_d = G.multiply(Q).multiply(G.transposed());
-            P = F.multiply(P).multiply(F.transposed()).plus(Q_d);
-        }
     }
 
     /**
-     * Adds a delayed measurement and updates past poses.
-     * @param measuredPose measured pose (vision/other sensor), set a pose component to Double.NaN if not measured
-     * @param timestamp when the measurement was taken
+     * Consider the system xₖ₊₁ = xₖ + (f(xₖ, uₖ) + wₖ) * Δt.
+     * <p>
+     * wₖ is the noise in the system caused by sensor uncertainty, a zero-mean random vector with covariance Q.
+     * <p>
+     * The Kalman Filter update step is given by:
+     * <pre>
+     *     Pₖ₊₁ = F * Pₖ * Fᵀ + G * Q * Gᵀ
+     * </pre>
+     * Here F and G represent the State Transition Matrix and Control-to-State Matrix respectively.
+     * <p>
+     * The State Transition Matrix F is given by I + ∂f/∂x.
+     * We computed our twist integration using a first-order forward-Euler approximation.
+     * Therefore, f only depends on the twist, not on x, so ∂f/∂x = 0 and F = I.
+     * <p>
+     * The Control-to-State Matrix G is given by ∂xₖ₊₁ / ∂wₖ.
+     * Here this is simply I * Δt.
+     * <p>
+     * The Kalman update is Pₖ₊₁ = F * Pₖ * Fᵀ + G * Q * Gᵀ.
+     * With F = I and G = I * Δt, we get Pₖ₊₁ = Q * Δt².
+     *
+     * @param dt the time step Δt in seconds
+     */
+    private void updateCovariance(double dt) {
+        P = P.plus(Q.multiply(dt*dt));
+    }
+
+    /**
+     * Adds a vision measurement
+     * @param measuredPose the measured position by the camera, enter NaN to a specific axis if the camera couldn't measure that axis
+     * @param timestamp the timestamp of the measurement
      */
     public void addMeasurement(Pose measuredPose, long timestamp) {
         if (!poseHistory.containsKey(timestamp)) return;
 
-        // --- 1. Compute innovation ---
         Pose pastPose = interpolate(timestamp, poseHistory);
         if (pastPose == null)
             pastPose = getPose();
+
+        //Computes the innovation matrix yₖ = zₖ - xₖ|ₖ₋₁, where zₖ is the camera's measured pose at discrete timestamp k
+        //Checking for NaN allows for single dimension measurements, if the camera isn't able to measure a certain axis
         Matrix y = new Matrix(new double[][]{
                 {!Double.isNaN(measuredPose.getX()) ? measuredPose.getX() - pastPose.getX() : 0},
                 {!Double.isNaN(measuredPose.getY()) ? measuredPose.getY() - pastPose.getY() : 0},
@@ -143,12 +128,16 @@ public class FusionLocalizer implements Localizer {
                         MathFunctions.normalizeAngle(measuredPose.getHeading() - pastPose.getHeading()) : 0}
         });
 
-        // --- 2. Compute Kalman gain ---
+        //Gets the covariance at the timestamp
         Matrix pastCovariance = covarianceHistory.floorEntry(timestamp).getValue();
-        Matrix S = pastCovariance.plus(R);
-        Matrix K = pastCovariance.multiply(MathUtil.invert3x3(S));
 
-        // --- 3. Update past pose ---
+        //Computes the innovation covariance matrix, Sₖ = Pₖ|ₖ₋₁ + R
+        Matrix S = pastCovariance.plus(R);
+
+        //The Kalman Gain is typically computed as follows: Kₖ = Pₖ|ₖ₋₁ * S⁻¹
+        Matrix K = pastCovariance.multiply(invert(S));
+
+        //Update the state using xₖ|ₖ = xₖ|ₖ₋₁ + Kₖ * yₖ
         Matrix K_y = K.multiply(y);
         Pose updatedPast = new Pose(
                 pastPose.getX() + K_y.get(0,0),
@@ -157,38 +146,57 @@ public class FusionLocalizer implements Localizer {
         );
         poseHistory.put(timestamp, updatedPast);
 
-        // --- 4. Propagate update forward using stored twists ---
+        //Update the covariance using Pₖ|ₖ = Pₖ|ₖ₋₁ - Kₖ * Pₖ|ₖ₋₁
+        Matrix covarianceUpdate = K.multiply(pastCovariance);
+        covarianceHistory.put(timestamp, pastCovariance.minus(covarianceUpdate));
+
+        //Forward propagation on all further states beyond that timestamp
+        //Allows us to use the new state estimate in the past to generate a new state estimate in the present
         long previousTime = timestamp;
         Pose previousPose = updatedPast;
         double dt = 0;
+
         for (NavigableMap.Entry<Long, Pose> entry : poseHistory.tailMap(timestamp, false).entrySet()) {
             long t = entry.getKey();
-            Pose twist = interpolate(t, twistHistory); // use the twist applied at previous time
+            Pose twist = interpolate(t, twistHistory);
             if (twist == null)
                 twist = getVelocity();
             dt = (t - previousTime) / 1e9;
+
+            //Computes the new position based on the old position
             Pose nextPose = integrate(previousPose, twist, dt);
             poseHistory.put(t, nextPose);
+
+            //We also update the covariance
+            covarianceHistory.compute(t, (k, prevCovariance) -> prevCovariance.minus(covarianceUpdate));
+
             previousPose = nextPose;
             previousTime = t;
         }
 
-        // --- 5. Update current state ---
-        currentPosition = poseHistory.lastEntry().getValue();
-        updateCovariance(dt);
-        covarianceHistory.put(previousTime, P.copy());
+        currentPosition = poseHistory.lastEntry().getValue().copy();
+        P = covarianceHistory.lastEntry().getValue().copy();
     }
 
+    //Inverts a matrix
+    private Matrix invert(Matrix m) {
+        if (m.getRows() != m.getColumns())
+            throw new IllegalStateException("Matrix must be square");
+
+        Matrix I = MathUtil.identity(m.getRows());
+        Matrix[] r = Matrix.rref(m, I);
+
+        if (!r[1].equals(I)) throw new IllegalArgumentException("matrix not invertible");
+        return r[1];
+    }
+
+    //Performs linear interpolation inside the history map for the value at a given timestamp
     private static Pose interpolate(long timestamp, NavigableMap<Long, Pose> history) {
         Long lowerKey = history.floorKey(timestamp);
         Long upperKey = history.ceilingKey(timestamp);
 
-        if (lowerKey == null || upperKey == null) {
-            return null; // Cannot interpolate
-        }
-        if (lowerKey.equals(upperKey)) {
-            return history.get(lowerKey).copy(); // Exact match
-        }
+        if (lowerKey == null || upperKey == null) return null;
+        if (lowerKey.equals(upperKey)) return history.get(lowerKey).copy();
 
         Pose lowerPose = history.get(lowerKey);
         Pose upperPose = history.get(upperKey);
@@ -204,10 +212,9 @@ public class FusionLocalizer implements Localizer {
     }
 
     private Pose integrate(Pose previousPose, Pose twist, double dt) {
-        double cosH = Math.cos(previousPose.getHeading());
-        double sinH = Math.sin(previousPose.getHeading());
-        double dx = (twist.getX() * cosH - twist.getY() * sinH) * dt;
-        double dy = (twist.getX() * sinH + twist.getY() * cosH) * dt;
+        //Standard forward-Euler first-order approximation for twist integration
+        double dx = twist.getX() * dt;
+        double dy = twist.getY() * dt;
         double dTheta = twist.getHeading() * dt;
 
         return new Pose(
@@ -231,51 +238,40 @@ public class FusionLocalizer implements Localizer {
     @Override
     public void setStartPose(Pose setStart) {
         deadReckoning.setStartPose(setStart);
+        poseHistory.put(0L, setStart);
     }
 
     @Override
     public void setPose(Pose setPose) {
         currentPosition = setPose.copy();
         deadReckoning.setPose(setPose);
-        poseHistory.lastEntry().setValue(setPose.copy());
+
+        if (poseHistory.lastEntry() != null)
+            poseHistory.lastEntry().setValue(setPose.copy());
+        else
+            setStartPose(setPose);
     }
 
     @Override
-    public double getTotalHeading() {
-        return currentPosition.getHeading();
-    }
+    public double getTotalHeading() { return currentPosition.getHeading(); }
 
     @Override
-    public double getForwardMultiplier() {
-        return deadReckoning.getForwardMultiplier();
-    }
+    public double getForwardMultiplier() { return deadReckoning.getForwardMultiplier(); }
 
     @Override
-    public double getLateralMultiplier() {
-        return deadReckoning.getLateralMultiplier();
-    }
+    public double getLateralMultiplier() { return deadReckoning.getLateralMultiplier(); }
 
     @Override
-    public double getTurningMultiplier() {
-        return deadReckoning.getTurningMultiplier();
-    }
+    public double getTurningMultiplier() { return deadReckoning.getTurningMultiplier(); }
 
     @Override
-    public void resetIMU() throws InterruptedException {
-        deadReckoning.resetIMU();
-    }
+    public void resetIMU() throws InterruptedException { deadReckoning.resetIMU(); }
 
     @Override
-    public double getIMUHeading() {
-        return deadReckoning.getIMUHeading();
-    }
+    public double getIMUHeading() { return deadReckoning.getIMUHeading(); }
 
     @Override
     public boolean isNAN() {
         return Double.isNaN(currentPosition.getX()) || Double.isNaN(currentPosition.getY()) || Double.isNaN(currentPosition.getHeading());
-    }
-
-    public boolean isUseNonlinearDynamics() {
-        return useNonlinearDynamics;
     }
 }

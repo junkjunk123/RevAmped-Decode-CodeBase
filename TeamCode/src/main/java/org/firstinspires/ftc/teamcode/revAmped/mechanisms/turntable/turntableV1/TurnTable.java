@@ -131,7 +131,6 @@ public class TurnTable implements ArtifactQueuer {
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
         scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(delay, () -> {
-            Robot.INSTANCE.flywheel().controller.setUseFilter(false);
             hardware.tableServo().setCurrentState(shootSequence[1]);
             hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
             scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(delay, () -> {
@@ -154,7 +153,6 @@ public class TurnTable implements ArtifactQueuer {
 
     private void shootAll(Runnable andThen, int numBalls) {
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-        Robot.INSTANCE.flywheel().controller.setUseFilter(false);
         hardware.tableServo().fullRotation();
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
@@ -167,47 +165,12 @@ public class TurnTable implements ArtifactQueuer {
         }).setMaxTimeToRun(3500));
     }
 
-    public void shootAllAuto(Runnable andThen, double flywheelDelay, boolean resetTable) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
-        Types.TableState2[] shootSequence = hardware.tableServo().getShootStates();
-        hardware.tableServo().setCurrentState(shootSequence[0]);
-        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
-            Robot.INSTANCE.flywheel().controller.setUseFilter(false);
-            hardware.tableServo().setCurrentState(shootSequence[1]);
-            hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
-            scheduler.add(new Delay(hardware.tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
-                hardware.tableServo().setCurrentState(shootSequence[2] , shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
-                //hardware.intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
-                scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
-                    if (resetTable)
-                        hardware.tableServo().resetToNeutral();
-                    else
-                        hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
-                    andThen.run();
-                }).setMaxTimeToRun(2500));
-            })); hardware.intakeMotor().setCurrentState(Types.IntakeState.VERY_SLOW_INTAKE);}).setMaxTimeToRun(1000));
-        })); hardware.intakeMotor().stop();}).setMaxTimeToRun(1000));
-    }
-
-    public void shootAllAuto(Runnable andThen, boolean resetTable) {
-        hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-        hardware.tableServo().fullRotation();
-        Robot.INSTANCE.flywheel().controller.setUseFilter(false);
-        scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
-            if (resetTable)
-                scheduler.add(new Delay(250, () -> hardware.tableServo().resetToNeutral()));
-            else
-                hardware.popper().setCurrentState(Types.PopperState.NEUTRAL);
-            scheduler.add(new Delay(hardware.tableServo()::reached, andThen).setMaxTimeToRun(500));
-        }).setMaxTimeToRun(3500));
-    }
-
     @Override
     public void launch(int delay, TeleOpStateHandler<DCTeleOpV2.CycleState> tsh, Runnable action) {
         tsh.runTransition(TeleOpStateHandler.TransitionCommand.fromRunnable(() -> {
             int i = getNumberOfBalls();
 
-            if (delay != 0)
+            if (delay > 10)
                 tsh.runTransition(t -> shootAllSlow(() -> {
                     t.accept(true);
                     action.run();

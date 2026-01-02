@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.revAmped.mechanisms;
+package org.firstinspires.ftc.teamcode.revAmped.mechanisms.vision;
 
 import androidx.annotation.NonNull;
 

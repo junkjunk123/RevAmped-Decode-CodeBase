@@ -39,8 +39,7 @@ public class FlywheelPIDTuner extends DecodeRevAmpedOpMode {
     @Override
     public void RevAmpedLoop() {
         flywheel.run(targetVelocity);
-        double vel = flywheel.getVelocityImperial();
-        flywheel.updateConstants(new PSFLCoefficients(P, K_static, K_V, L));
+        double vel = flywheel.getVelocityImperial();;
         sampleAmount++;
         telemetry.addData("error", targetVelocity - vel);
         telemetry.addData("power",flywheel.motor.getPower());

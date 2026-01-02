@@ -27,13 +27,11 @@ public final class DecodeConstants implements Constants {
     );
     public void build() {
         //Popper Constants
-        Popper.POP = 27/255f; Popper.NEUTRAL = 102/255f;
+        Popper.POP = 243/255f; Popper.NEUTRAL = 161/255f;
 
-        //Flywheel Constants
-        Flywheel.P = 0.0005; Flywheel.K_static = 0.05; Flywheel.K_V = 0.00045; Flywheel.L = 0.35;
         Flywheel.FLYWHEEL_FAR_VELOCITY = 1095; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 875; Flywheel.FLYWHEEL_AUTO_VELOCITY = 780; Flywheel.GEAR_RATIO = 57/93f;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
-        Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.85; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
+        Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.49; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
         Flywheel.VELOCITY_ERROR_THRESHOLD = 0.5;
 
@@ -48,12 +46,15 @@ public final class DecodeConstants implements Constants {
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
         TurretMotor.AUTO_PRELOADS = 438; TurretMotor.AUTO_SET_1 = 513; TurretMotor.AUTO_SET_2 = 513; TurretMotor.AUTO_SET_3 = 563;
-        TurretMotor.FAR_AUTO = 691;
-        TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -560; TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = 560; TurretMotor.TURRET_RAD_LIMIT = Math.PI / 2;
+        TurretMotor.FAR_AUTO = 720;
+        TurretMotor.FULL_ROTATION = 2240;
+        TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -(int) (TurretMotor.FULL_ROTATION * 135.0 / 360);
+        TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = (int) (TurretMotor.FULL_ROTATION * 135.0 / 360);
+        TurretMotor.TURRET_RAD_LIMIT = Math.toRadians(135);
 
         //Table Constants
-        TableServoV2.BALL2 = 205/255f; TableServoV2.BALL3 = 168/255f; TableServoV2.BALL1 = 242/255f;
-        TableServoV2.BALL2_END = 51/255f; TableServoV2.BALL3_END = 14/255f; TableServoV2.BALL1_END = 88/255f;
+        TableServoV2.BALL2 = 203/255f; TableServoV2.BALL3 = 154/255f; TableServoV2.BALL1 = 249/255f;
+        TableServoV2.BALL2_END = 54/255f; TableServoV2.BALL3_END = 5/255f; TableServoV2.BALL1_END = 101/255f;
         TurnTable.SMALL_INTAKE_DELAY = 60; TurnTable.BIG_INTAKE_DELAY = 800;
         IntakeThread.INTAKE_DELAY = 400;
 

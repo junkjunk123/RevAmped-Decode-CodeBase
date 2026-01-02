@@ -232,6 +232,18 @@ public abstract class HwServo2<T extends Enum<T> & HwServo2.ServoState> implemen
         return (maxRadPos - pos) + minRadPos;
     }
 
+    public static double getRadFromPosition(double pos, double minRad, double maxRad, double minRadPos, double maxRadPos) {
+        if (minRadPos < maxRadPos) {
+            float rad = (float) Range.scale(pos, minRadPos, maxRadPos, minRad, maxRad);
+            if (minRad < maxRad) return rad;
+            else return (minRad - rad) + maxRad;
+        }
+
+        float rad = (float) Range.scale(pos, maxRadPos, minRadPos, maxRad, minRad);
+        if (maxRad < minRad) return rad;
+        return (maxRad - rad) + minRad;
+    }
+
     @NonNull
     @Override
     public String toString() {

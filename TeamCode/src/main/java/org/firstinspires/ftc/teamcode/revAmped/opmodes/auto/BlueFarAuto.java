@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.architecture.AEABuilde
 import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.OptionPrompt;
 import org.firstinspires.ftc.teamcode.revAmped.components.prompter.ValuePrompt;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.DecodeLimelight;
+import org.firstinspires.ftc.teamcode.revAmped.mechanisms.vision.DecodeLimelight;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
 import org.firstinspires.ftc.teamcode.revAmped.opmodes.auto.Paths.FarAutoPaths;
 
@@ -29,9 +29,9 @@ public class BlueFarAuto extends DelayedAuto {
     }
 
     @Override
-    public void setRobot() {
+    public void setRobot(Runnable initFollower) {
         DecodeLimelight.usingLimelight = useLimelight;
-        robot = new Robot(this, Globals.AllianceColor.Blue, Robot.OpModeType.AUTO);
+        robot = new Robot(this, Globals.AllianceColor.Blue, Robot.OpModeType.AUTO, initFollower);
     }
 
     @Override

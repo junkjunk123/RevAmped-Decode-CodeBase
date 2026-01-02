@@ -27,7 +27,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
 
     @Override
     public boolean reached() {
-        return finishedAccelerating && encoder.getVelocity() < 10;
+        return finishedAccelerating && encoder.getVelocity() < 5;
     }
 
     public Types.TableState2[] getShootStates() {
