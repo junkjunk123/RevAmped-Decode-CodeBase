@@ -39,7 +39,7 @@ public final class DecodeConstants implements Constants {
         HoodServo.HOOD_REST = 140/255f; HoodServo.HOOD_MAX_POS = 0f; HoodServo.HOOD_MIN_POS = 0f; HoodServo.HOOD_MAX_RAD = 0f; HoodServo.HOOD_MIN_RAD = 0f;
         HoodServo.AUTO_PRELOADS = 0f; HoodServo.AUTO_SET_1 = 0f; HoodServo.AUTO_SET_2 = 0f; HoodServo.AUTO_SET_3 = 0f;
         //HOOD POSITIONS FOR TELEOP
-        HoodServo.TELE_FAR_PRESET = 140/255f; HoodServo.TELE_NEAR_PRESET = 40/255f; HoodServo.TELE_MED_PRESET = 140/255f;
+        HoodServo.TELE_FAR_PRESET = 135/255f; HoodServo.TELE_NEAR_PRESET = 40/255f; HoodServo.TELE_MED_PRESET = 130/255f;
 
         //Turret Constants
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
