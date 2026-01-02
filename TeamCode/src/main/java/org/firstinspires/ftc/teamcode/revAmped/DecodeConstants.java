@@ -29,7 +29,7 @@ public final class DecodeConstants implements Constants {
         //Popper Constants
         Popper.POP = 243/255f; Popper.NEUTRAL = 161/255f;
 
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1140; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 875; Flywheel.FLYWHEEL_AUTO_VELOCITY = 780; Flywheel.GEAR_RATIO = 57/93f;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1095; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 900; Flywheel.FLYWHEEL_AUTO_VELOCITY = 780; Flywheel.GEAR_RATIO = 57/93f;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.49; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
@@ -39,7 +39,7 @@ public final class DecodeConstants implements Constants {
         HoodServo.HOOD_REST = 140/255f; HoodServo.HOOD_MAX_POS = 0f; HoodServo.HOOD_MIN_POS = 0f; HoodServo.HOOD_MAX_RAD = 0f; HoodServo.HOOD_MIN_RAD = 0f;
         HoodServo.AUTO_PRELOADS = 0f; HoodServo.AUTO_SET_1 = 0f; HoodServo.AUTO_SET_2 = 0f; HoodServo.AUTO_SET_3 = 0f;
         //HOOD POSITIONS FOR TELEOP
-        HoodServo.TELE_FAR_PRESET = 135/255f; HoodServo.TELE_NEAR_PRESET = 40/255f; HoodServo.TELE_MED_PRESET = 130/255f;
+        HoodServo.TELE_FAR_PRESET = 130/255f; HoodServo.TELE_NEAR_PRESET = 40/255f; HoodServo.TELE_MED_PRESET = 130/255f;
 
         //Turret Constants
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
