@@ -23,12 +23,12 @@ public class shooterPositionCalibrator extends DecodeRevAmpedOpMode {
     private Robot robot;
     private RevAmpedGamepad gamepad_1;
     private RevAmpedGamepad gamepad_2;
-    public static float hoodPositionFar = 158; //input the amount of ticks (1 = 1/255)
-    public static float hoodPositionMedium = 90;
-    public static float hoodPositionClose = 10;
-    public static double motorVelocityFar = 1200;
-    public static double motorVelocityMedium = 1100;
-    public static double motorVelocityClose = 900;
+    public static float hoodPositionFar = 140; //input the amount of ticks (1 = 1/255)
+    public static float hoodPositionMedium = 140;
+    public static float hoodPositionClose = 70;
+    public static double motorVelocityFar = 1140;
+    public static double motorVelocityMedium = 875;
+    public static double motorVelocityClose = 725;
 
     @Override
     public void RevAmpedInit() {
