@@ -37,12 +37,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
-import org.firstinspires.ftc.teamcode.revAmped.components.hardware.EncoderImpl;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServo;
-import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.TableServoV2;
-import org.firstinspires.ftc.teamcode.revAmped.util.Types;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -966,8 +960,6 @@ class Line extends OpMode {
     private PathChain backwards;
     private List<DcMotorEx> motors = new ArrayList<>();
 
-    private TableServoV2 tableServo;
-
     @Override
     public void init() {
         motors = ((Mecanum) (follower.drivetrain)).getMotors();
@@ -976,17 +968,6 @@ class Line extends OpMode {
     /** This initializes the Follower and creates the forward and backward Paths. */
     @Override
     public void init_loop() {
-        tableServo = new TableServoV2(hardwareMap, true, Types.TableState2.BALL2, new Encoder() {
-            @Override
-            public int getPosition() {
-                return 0;
-            }
-
-            @Override
-            public double getVelocity() {
-                return 11;
-            }
-        });
         telemetryM.debug("This will activate all the PIDF(s)");
         telemetryM.debug("The robot will go forward and backward continuously along the path while correcting.");
         telemetryM.debug("You can adjust the PIDF values to tune the robot's drive PIDF(s).");
@@ -1027,11 +1008,9 @@ class Line extends OpMode {
 
         if (!follower.isBusy()) {
             if (forward) {
-                tableServo.setCurrentState(Types.TableState2.BALL2_END);
                 forward = false;
                 follower.followPath(backwards);
             } else {
-                tableServo.resetToNeutral();
                 forward = true;
                 follower.followPath(forwards);
             }
@@ -1065,8 +1044,6 @@ class CentripetalTuner extends OpMode {
     private Path forwards;
     private Path backwards;
 
-    private TableServoV2 tableServo;
-
     @Override
     public void init() {}
 
@@ -1076,17 +1053,6 @@ class CentripetalTuner extends OpMode {
      */
     @Override
     public void init_loop() {
-        tableServo = new TableServoV2(hardwareMap, true, Types.TableState2.BALL2, new Encoder() {
-            @Override
-            public int getPosition() {
-                return 0;
-            }
-
-            @Override
-            public double getVelocity() {
-                return 11;
-            }
-        });
         telemetryM.debug("This will run the robot in a curve going " + DISTANCE + " inches to the left and the same number of inches forward.");
         telemetryM.debug("The robot will go continuously along the path.");
         telemetryM.debug("Make sure you have enough room.");
@@ -1117,11 +1083,9 @@ class CentripetalTuner extends OpMode {
         drawCurrentAndHistory();
         if (!follower.isBusy()) {
             if (forward) {
-                tableServo.setCurrentState(Types.TableState2.BALL2_END);
                 forward = false;
                 follower.followPath(backwards);
             } else {
-                tableServo.resetToNeutral();
                 forward = true;
                 follower.followPath(forwards);
             }
