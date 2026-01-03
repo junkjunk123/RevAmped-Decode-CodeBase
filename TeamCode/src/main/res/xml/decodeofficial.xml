@@ -6,7 +6,6 @@
             <goBILDA5202SeriesMotor name="flywheel_left" port="2"/>
             <goBILDA5202SeriesMotor name="turret" port="0"/>
             <Servo name="table" port="2"/>
-            <Servo name="popper" port="1"/>
             <Servo name="hood" port="5"/>
             <DigitalDevice name="turret_switch" port="0"/>
         </LynxModule>
@@ -15,6 +14,7 @@
             <goBILDA5202SeriesMotor name="motor_lb" port="1"/>
             <goBILDA5202SeriesMotor name="motor_rb" port="2"/>
             <goBILDA5202SeriesMotor name="motor_rf" port="3"/>
+            <Servo name="popper" port="0"/>
             <goBILDAPinpoint name="pinpoint" port="0" bus="2"/>
             <DigitalDevice name="intakeDistance" port="1"/>
         </LynxModule>
