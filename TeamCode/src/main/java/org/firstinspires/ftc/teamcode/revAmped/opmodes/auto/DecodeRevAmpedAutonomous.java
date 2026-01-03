@@ -63,6 +63,7 @@ public abstract class DecodeRevAmpedAutonomous extends DecodeRevAmpedOpMode {
         if (Globals.randomizationState != null)
             telemetry.addData("motif", Globals.randomizationState);
         else telemetry.addData("motif detected", false);
+        telemetry.addData("heading",followerManager.follower.getHeading());
         telemetry.update();
         followerManager.update();
         robot.update();

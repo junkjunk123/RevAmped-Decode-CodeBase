@@ -540,8 +540,8 @@ public class DAM {
             @Override
             protected void init() {
                 //robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
-                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
-                robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
+//                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
+//                robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
                 robot.popper().setCurrentState(Types.PopperState.POP);
                 scheduler.add(new Delay(1000, () -> robot.shootAllAuto(() -> completed = true, false)));
                 robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
@@ -572,7 +572,7 @@ public class DAM {
 
             @Override
             protected void init() {
-                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+//                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
                 scheduler.add(new Delay(250, () -> robot.tableServo().resetToNeutral()));
                 /*
                 robot.shooter.setCurrentState(Types.ShooterState.TRACKING, false);
@@ -625,19 +625,20 @@ public class DAM {
 
             @Override
             protected void init() {
-                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() < 0.5,
-                        () -> scheduler.add(new Delay(250,
-                                () -> robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE)))));
+//                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() < 0.5,
+//                        () -> scheduler.add(new Delay(250,
+//                                () -> robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE)))));
             }
 
             @Override
             protected void loop() {
                 if (finishedDriving()) {
-                    robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
-                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+//                    robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
+//                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
                     robot.popper().setCurrentState(Types.PopperState.POP);
                     scheduler.add(new Delay(800, () -> {
                         robot.shootAllAuto(() -> completed = true, false);
+                        completed = true;
                         canShoot = true;
                     }));
                 }

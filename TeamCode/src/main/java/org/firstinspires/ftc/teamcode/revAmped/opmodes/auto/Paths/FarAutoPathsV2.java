@@ -39,12 +39,12 @@ public class FarAutoPathsV2 implements PathSupplier {
 
         PathChain initialShoot = follower.pathBuilder()
                 .addPath(ColoredDecodePose.makeBezier(START_POSE))
-                .setConstantHeadingInterpolation(INTAKE_PRELOADS_1.getHeading())
+                .setConstantHeadingInterpolation(START_POSE.getHeading())
                 .build();
 
         PathChain firstPreloadIntake = follower.pathBuilder()
                 .addPath(ColoredDecodePose.makeBezier(START_POSE, INTAKE_PRELOADS_1))
-                .setConstantHeadingInterpolation(SHOOT_POSE.getHeading())
+                .setConstantHeadingInterpolation(INTAKE_PRELOADS_1.getHeading())
                 .setGlobalDeceleration(0.75)
                 .build();
 
