@@ -34,7 +34,7 @@ public class WTIFarAutoBlue extends DecodeRevAmpedAutonomous {
     @Override
     public void setRobot(Runnable initFollower) {
         DecodeLimelight.usingLimelight = false;
-        robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO, initFollower);
+        robot = new Robot(this, Globals.AllianceColor.Blue, Robot.OpModeType.AUTO, initFollower);
     }
 
     @Override
