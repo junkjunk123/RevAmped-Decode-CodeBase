@@ -32,7 +32,6 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         this.table2 = new HwServo(hardwareMap, "table2", Types.TableState2.BALL2.getPosition());
     }
 
-
     @Override
     public boolean reached() {
         return finishedAccelerating && encoder.getVelocity() < 5;
