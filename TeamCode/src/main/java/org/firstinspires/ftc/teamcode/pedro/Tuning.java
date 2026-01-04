@@ -17,6 +17,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ftc.drivetrains.Mecanum;
+import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -25,11 +26,16 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.telemetry.SelectableOpMode;
+import com.pedropathing.util.NanoTimer;
 import com.pedropathing.util.PoseHistory;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.EncoderImpl;
@@ -38,7 +44,9 @@ import org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable.turntableV1.
 import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the Tuning class. It contains a selection menu for various tuning OpModes.
@@ -1238,6 +1246,116 @@ class Circle extends OpMode {
         if (follower.atParametricEnd()) {
             follower.followPath(circle);
         }
+    }
+}
+
+class HeadingAutoTuner extends OpMode {
+    private static final double ALPHA_LARGE = 1.2;
+    private static final double ALPHA_SMALL = 1.8;
+
+    private static final double POWER = 0.4;
+    private static final double RUNTIME = 5;
+    private static final int SAMPLES = 15;
+
+    private double tau;
+    private double lambda_small;
+    private double lambda_large;
+    private double K;
+    private final List<Double> times = new ArrayList<>();
+    private final List<Double> angularVelocities = new ArrayList<>();
+    private final NanoTimer timer = new NanoTimer();
+    private boolean done = false;
+
+    @Override
+    public void init() {
+        PinpointLocalizer localizer = ((PinpointLocalizer) follower.getPoseTracker().getLocalizer());
+
+        double TICKS_PER_INCH = 0;
+        double totalX = localizer.getPinpoint().getEncoderX() * TICKS_PER_INCH;
+        double totalY = localizer.getPinpoint().getEncoderY() * TICKS_PER_INCH;
+        double totalHeading = localizer.getPinpoint().getHeading(UnnormalizedAngleUnit.RADIANS);
+
+        double forwardPodY = -totalX / totalHeading;
+        double strafePodX = totalY / totalHeading;
+    }
+
+    @Override
+    public void start() {
+        timer.resetTimer();
+        follower.startTeleOpDrive(true);
+        follower.setTeleOpDrive(0,0, POWER);
+        drawCurrent();
+    }
+
+    @Override
+    public void loop() {
+        if (gamepad1.bWasPressed()) {
+            stopRobot();
+            requestOpModeStop();
+        }
+
+        follower.update();
+        telemetryM.update();
+        drawCurrentAndHistory();
+
+        if (!done) {
+            times.add(timer.getElapsedTime() * 1e-9);
+            angularVelocities.add(follower.getAngularVelocity());
+
+            if (timer.getElapsedTime(TimeUnit.SECONDS) >= RUNTIME) {
+                done = true;
+                systemIdentification();
+            }
+
+            else return;
+        }
+
+        double numPlusLarge = tau + lambda_large / 2;
+        double numPlusSmall = tau + lambda_small / 2;
+        double numMinusLarge = lambda_large - tau / 2;
+        double numMinusSmall = lambda_small - tau / 2;
+        double denomLarge = (lambda_large + tau / 2) * K;
+        double denomSmall = (lambda_small + tau / 2) * K;
+
+        double kPLarge = numPlusLarge / denomLarge;
+        double kPSmall = numPlusSmall / denomSmall;
+        double kDLarge = tau * numMinusLarge / denomLarge;
+        double kDSmall = tau * numMinusSmall / denomSmall;
+
+        telemetryM.addData("Large Coefficients", "kP = " + kPLarge + ", kD = " + kDLarge);
+        telemetryM.addData("Small Coefficients", "kP = " + kPSmall + ", kD = " + kDSmall);
+    }
+
+    private void systemIdentification() {
+        double sum = 0;
+        int start = Math.max(0, angularVelocities.size() - SAMPLES);
+
+        for (int j = start; j < angularVelocities.size(); j++)
+            sum += angularVelocities.get(j);
+
+        int count = angularVelocities.size() - start;
+        double avg = sum / count;
+        K = avg / POWER;
+
+        double timeSum = 0;
+        double weightedTimeSum = 0;
+
+        for (int k = 0; k < times.size(); k++) {
+            double ratio = angularVelocities.get(k) / (K * POWER);
+            ratio = Math.min(ratio, 0.999);
+
+            if (ratio > 0.2 && ratio < 0.8) {
+                double t = times.get(k);
+                double y = Math.log(1 - ratio);
+                timeSum += t * t;
+                weightedTimeSum += t * y;
+            }
+        }
+
+        tau = - timeSum / weightedTimeSum;
+
+        lambda_small = tau * ALPHA_SMALL;
+        lambda_large = tau * ALPHA_LARGE;
     }
 }
 

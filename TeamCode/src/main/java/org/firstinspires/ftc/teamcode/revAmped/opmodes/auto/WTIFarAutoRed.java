@@ -35,13 +35,12 @@ public class WTIFarAutoRed extends DecodeRevAmpedAutonomous {
     public void setRobot(Runnable initFollower) {
         DecodeLimelight.usingLimelight = false;
         Globals.allianceColor = Globals.AllianceColor.Red;
-        initFollower.run();
-        //robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO, initFollower);
+        robot = new Robot(this, Globals.AllianceColor.Red, Robot.OpModeType.AUTO, initFollower);
     }
 
     @Override
     public void RevAmpedInit() {
         super.RevAmpedInit();
-        //robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
+        robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
     }
 }

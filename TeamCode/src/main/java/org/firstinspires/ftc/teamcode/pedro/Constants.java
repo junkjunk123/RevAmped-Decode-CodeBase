@@ -7,10 +7,14 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
+import com.pedropathing.ftc.localization.constants.TwoWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
@@ -22,9 +26,7 @@ public class Constants {
             .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.08, 0, 0.005, 0.0006))
             .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0, 0.01))
             .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.0005))
-            .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.03, 0, 0.0004, 0.6,0.015)
-            )
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015, 0, 0.0004, 0.6,0.015))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(
                     0.005,
                     0,

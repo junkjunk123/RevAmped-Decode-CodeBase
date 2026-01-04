@@ -142,7 +142,7 @@ public class Robot {
         if (opModeType.isAuto())
             shooter.hardware().turretMotor().resetPosition();
         shooter.hardware().flywheel().resetPosition();
-        intakeMotor().setVoltageCompensation();
+        //intakeMotor().setVoltageCompensation();
 
         if (Globals.allianceColor == Globals.AllianceColor.Red) {
             TurretMotor.AUTO_PRELOADS *= -1;
