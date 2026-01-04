@@ -29,7 +29,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         this.encoder = new EncoderImpl(encoder);
 
         // Initialize the second servo as HwServo2
-        this.table2 = new HwServo(hardwareMap, "table2", Types.TableState2.BALL2.getPosition());
+        this.table2 = new HwServo(hardwareMap, "table_right", Types.TableState2.BALL2.getPosition());
     }
 
     @Override
@@ -58,7 +58,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
         encoder.update();
         super.update();
         // Update the second servo as well
-        table2.update();
+        this.table2.update();
     }
 
     @Override
@@ -79,7 +79,6 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
             finishedAccelerating = false;
             Scheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
         }
-
         super.setCurrentState(state);
     }
 
@@ -98,6 +97,9 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     @Override
     public void setPosition(float position) {
         super.setPosition(position);
-        table2.setPosition(position);
+
+        if (table2 != null) {
+            this.table2.setPosition(position);
+        }
     }
 }

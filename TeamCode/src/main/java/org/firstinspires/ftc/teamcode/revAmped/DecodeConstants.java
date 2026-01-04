@@ -19,6 +19,12 @@ public final class DecodeConstants implements Constants {
     /**
      * List of motor directions for the drive motors in the order: front left, back left, back right, front right
      */
+    public static List<DcMotorSimple.Direction> REDESIGN_DRIVE_DIRECTIONS = List.of (
+            DcMotorSimple.Direction.REVERSE,
+            DcMotorSimple.Direction.REVERSE,
+            DcMotorSimple.Direction.FORWARD,
+            DcMotorSimple.Direction.FORWARD
+    );
     public static List<DcMotorSimple.Direction> DRIVE_DIRECTIONS = List.of (
             DcMotorSimple.Direction.REVERSE,
             DcMotorSimple.Direction.REVERSE,
