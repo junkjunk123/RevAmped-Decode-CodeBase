@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.EncoderImpl;
+import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
@@ -20,10 +21,17 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     private final EncoderImpl encoder;
     private boolean finishedAccelerating = false;
 
+    // Second servo as HwServo2
+    private final HwServo table2;
+
     public TableServoV2(HardwareMap hardwareMap, boolean setPosition, Types.TableState2 initialState, Encoder encoder) throws IllegalArgumentException {
         super(hardwareMap, "table", setPosition, initialState, ServoBrand.GOBILDA_SUPERSPEED);
         this.encoder = new EncoderImpl(encoder);
+
+        // Initialize the second servo as HwServo2
+        this.table2 = new HwServo(hardwareMap, "table2", Types.TableState2.BALL2.getPosition());
     }
+
 
     @Override
     public boolean reached() {
@@ -50,6 +58,8 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     public void update() {
         encoder.update();
         super.update();
+        // Update the second servo as well
+        table2.update();
     }
 
     @Override
@@ -70,6 +80,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
             finishedAccelerating = false;
             Scheduler.getInstance().add(new Delay(250, () -> finishedAccelerating = true));
         }
+
         super.setCurrentState(state);
     }
 
@@ -83,5 +94,11 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
             case BALL2 -> setCurrentState(Types.TableState2.BALL2_END);
             case BALL3 -> setCurrentState(Types.TableState2.BALL3_END);
         }
+    }
+
+    @Override
+    public void setPosition(float position) {
+        super.setPosition(position);
+        table2.setPosition(position);
     }
 }
