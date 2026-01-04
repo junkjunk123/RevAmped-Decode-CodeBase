@@ -25,7 +25,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     private final HwServo table2;
 
     public TableServoV2(HardwareMap hardwareMap, boolean setPosition, Types.TableState2 initialState, Encoder encoder) throws IllegalArgumentException {
-        super(hardwareMap, "table", setPosition, initialState, ServoBrand.GOBILDA_SUPERSPEED);
+        super(hardwareMap, "table_left", setPosition, initialState, ServoBrand.GOBILDA_SUPERSPEED);
         this.encoder = new EncoderImpl(encoder);
 
         // Initialize the second servo as HwServo2

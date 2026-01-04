@@ -236,6 +236,8 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
+        telemetry.addData("pose",drivetrain.getPose());
+
         telemetry.update();
     }
 
