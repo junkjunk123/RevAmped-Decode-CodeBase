@@ -534,28 +534,29 @@ public class DAM {
         return new AutonomousEnumeratedAction() {
             @Override
             protected void init() {
-                //robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
-//                robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
-//                robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
-                //robot.popper().setCurrentState(Types.PopperState.POP);
-                //scheduler.add(new Delay(1000, () -> robot.shootAllAuto(() -> completed = true, false)));
-                //robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
-                completed = true;
+                robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.FAR_AUTO);
+                robot.popper().setCurrentState(Types.PopperState.POP);
+                robot.hoodServo().setCurrentState(Types.HoodState.FAR_PRESET);
             }
 
             @Override
             protected void loop() {
+                if (finishedDriving()) {
+                    robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
+                    scheduler.add(new Delay(1000, () -> robot.shootAllAuto(() -> completed = true, false)));
+                }
+
                 Globals.telemetry.addData("pose", followerManager.follower.getPose());
             }
 
             @Override
             public boolean isFinishedDriving() {
-                return true;
+                return followerManager.velocityCondition(4) || followerManager.follower.atParametricEnd();
             }
 
             @Override
             public double millisToDrive() {
-                return 800;
+                return 400;
             }
         };
     }
@@ -568,15 +569,9 @@ public class DAM {
 
             @Override
             protected void init() {
-//                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
-                //scheduler.add(new Delay(250, () -> robot.tableServo().resetToNeutral()));
-                /*
-                robot.shooter.setCurrentState(Types.ShooterState.TRACKING, false);
-                Shooter.trackHood = false;
-                Shooter.trackTurret = true;
-                Shooter.velocityCompensation = false;
-                Shooter.simpleVelComp = false;
-                 */
+                robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                robot.flywheel().run(Flywheel.FLYWHEEL_NEAR_VELOCITY);
+                scheduler.add(new Delay(250, () -> robot.tableServo().resetToNeutral()));
                 index = Globals.aae.getAutoState();
             }
 
@@ -621,21 +616,20 @@ public class DAM {
 
             @Override
             protected void init() {
-//                scheduler.add(new Delay(() -> followerManager.follower.getCurrentTValue() < 0.5,
-//                        () -> scheduler.add(new Delay(250,
-//                                () -> robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE)))));
+                if (Globals.aae.getAutoState() != 2)
+                    scheduler.add(new Delay(() -> followerManager.follower.getPathCompletion() > 0.5,
+                        () -> scheduler.add(new Delay(250,
+                                () -> robot.intakeMotor().setCurrentState(Types.IntakeState.OUTTAKE)))));
             }
 
             @Override
             protected void loop() {
                 if (finishedDriving()) {
-//                    robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
-//                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
-//                    robot.popper().setCurrentState(Types.PopperState.POP);
+                    robot.flywheel().run(Flywheel.FLYWHEEL_FAR_VELOCITY + 75);
+                    robot.popper().setCurrentState(Types.PopperState.POP);
                     scheduler.add(new Delay(800, () -> {
-                        //robot.shootAllAuto(() -> completed = true, false);
-                        //canShoot = true;
-                        completed = true;
+                        robot.shootAllAuto(() -> completed = true, false);
+                        canShoot = true;
                     }));
                 }
 
@@ -646,6 +640,10 @@ public class DAM {
                     } else {
                         park = true;
                     }
+
+                    Pose robotPose = followerManager.follower.getPose();
+                    if (!(robotPose.getX() > PARK.getPose(Globals.AllianceColor.Blue).getX()
+                            && robotPose.getX() < PARK.getPose(Globals.AllianceColor.Red).getX())) stop = true;
                 }
 
                 Globals.telemetry.addData("pose", followerManager.follower.getPose());

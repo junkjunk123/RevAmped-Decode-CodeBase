@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.revAmped.components.pedro;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
@@ -118,6 +119,12 @@ public class FollowerManager {
     public void followPath(int i, boolean holdEnd) {
         currentChainIndex = i;
         if (i < size()) follower.followPath(pathChains.get(currentChainIndex), holdEnd);
+        else {
+            BezierPoint point = new BezierPoint(follower.getPose());
+            Path path = new Path(point);
+            path.setConstantHeadingInterpolation(follower.getHeading());
+            follower.followPath(path);
+        }
     }
 
     /**

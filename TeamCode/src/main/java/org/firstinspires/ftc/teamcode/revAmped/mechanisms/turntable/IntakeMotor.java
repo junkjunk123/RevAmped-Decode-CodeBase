@@ -24,6 +24,11 @@ public class IntakeMotor extends HwMotor2<IntakeState> {
         this.voltageSensor = voltageSensor;
     }
 
+    public IntakeMotor(HardwareMap hardwareMap, IntakeState motorState) {
+        super(hardwareMap, "intake", DcMotorSimple.Direction.REVERSE, motorState);
+        voltageSensor = null;
+    }
+
     @Override
     public void buildStatePowerMap() {
         for (IntakeState state : IntakeState.values()) {

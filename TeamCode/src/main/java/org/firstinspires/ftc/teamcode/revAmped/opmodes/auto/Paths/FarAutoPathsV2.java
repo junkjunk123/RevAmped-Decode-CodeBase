@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 public class FarAutoPathsV2 implements PathSupplier {
     public static ColoredDecodePose START_POSE = new ColoredDecodePose(55, 7.5, Math.PI);
     public static ColoredDecodePose SHOOT_POSE = new ColoredDecodePose(57, 20, Math.PI);
-    public static ColoredDecodePose INTAKE_PRELOADS_1 = new ColoredDecodePose(9.5, 7, Math.toRadians(190));
+    public static ColoredDecodePose INTAKE_PRELOADS_1 = new ColoredDecodePose(9.5, 7.5, Math.toRadians(190));
     public static ColoredDecodePose INTAKE_PRELOADS_2_START = new ColoredDecodePose(37, 34, Math.PI);
     public static ColoredDecodePose INTAKE_PRELOADS_2 = new ColoredDecodePose(9, 36, Math.PI);
     public static ColoredDecodePose FAR_INTAKE_REPEAT = new ColoredDecodePose(10, 20, Math.PI);
@@ -38,12 +38,12 @@ public class FarAutoPathsV2 implements PathSupplier {
         List<PathChain> paths = new ArrayList<>();
 
         PathChain initialShoot = follower.pathBuilder()
-                .addPath(ColoredDecodePose.makeBezier(START_POSE))
+                .addPath(ColoredDecodePose.makeBezier(START_POSE, SHOOT_POSE))
                 .setConstantHeadingInterpolation(START_POSE.getHeading())
                 .build();
 
         PathChain firstPreloadIntake = follower.pathBuilder()
-                .addPath(ColoredDecodePose.makeBezier(START_POSE, INTAKE_PRELOADS_1))
+                .addPath(ColoredDecodePose.makeBezier(SHOOT_POSE, INTAKE_PRELOADS_1))
                 .setConstantHeadingInterpolation(INTAKE_PRELOADS_1.getHeading())
                 .setGlobalDeceleration(0.75)
                 .build();
