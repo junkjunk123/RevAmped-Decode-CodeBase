@@ -71,10 +71,10 @@ public class DAM {
                                         thirdSlot = true;
 
                                     robot.turretMotor().setCurrentState(Types.TurretState.HOLD, TurretMotor.AUTO_PRELOADS);
-                                    scheduler.add(new Delay(robot.tableServo()::reached, () -> {
+                                    scheduler.add(new Delay(robot.tableServo()::autoReached, () -> {
                                         scheduler.add(new Delay(800,
                                                 () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
-                                                () -> robot.shootAllAuto(this::setComplete, 175, thirdSlot)).setMaxTimeToRun(250))));
+                                                () -> robot.shootAllAuto(this::setComplete, 0, thirdSlot)).setMaxTimeToRun(250))));
                                         scheduler.add(new Delay(150, () -> robot.popper().setCurrentState(Types.PopperState.POP)));
                                     }).setMaxTimeToRun(1500));
                                 }).setCancellation(4000, () -> {
@@ -135,7 +135,7 @@ public class DAM {
                 robot.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
 
                 if (robot.popper().getCurrentState() != Types.PopperState.NEUTRAL)
-                    scheduler.add(new Delay(robot.tableServo()::reached, () -> {
+                    scheduler.add(new Delay(robot.tableServo()::autoReached, () -> {
                         robot.popper().setCurrentState(Types.PopperState.NEUTRAL);
                     }).setMaxTimeToRun(800));
                 else
@@ -146,11 +146,11 @@ public class DAM {
             @Override
             protected void loop() {
                 if (finishedDriving()) {
-                    robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
-                    scheduler.add(new Delay(350, () -> {
-                        scheduler.add(new Delay(100, () -> completed = true));
-                        robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+                    scheduler.add(new Delay(250, () -> {robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
+                    completed = true;
                     }));
+
                 }
             }
 
@@ -234,7 +234,7 @@ public class DAM {
                         }
 
                         scheduler.addOptionalDelay(Globals.randomizationState == null || currentIteration == 2,
-                                new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
+                                new Delay(robot.tableServo()::autoReached, () -> scheduler.add(new Delay(150, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     scheduler.add(new Delay(250, () -> popperIn = true));
                                 }))).setMaxTimeToRun(1500));
@@ -246,7 +246,7 @@ public class DAM {
             protected void loop() {
                 if (finishedDriving()) {
                     if (currentIteration != 2 && Globals.randomizationState != null)
-                        scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, 175, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
+                        scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, 0, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
                     else
                         scheduler.add(new Delay(() -> popperIn, () -> robot.shootAllAuto(() -> completed = true, thirdSlot)).setCancellation(() -> overallTimer.seconds() > 28.7));
                 }
@@ -304,12 +304,12 @@ public class DAM {
                 //robot.turretMotor().setCurrentState(Types.TurretState.HOLD);
                 //robot.flywheel().stop();
                 //robot.intakeMotor().stop();
-
+                robot.turretMotor().resetTurret();
                 if (robot.popper().getCurrentState() != Types.PopperState.NEUTRAL) {
                     robot.popper().setCurrentState(Types.PopperState.NEUTRAL);
-                    //scheduler.add(new Delay(250, () -> robot.tableServo().resetToNeutral()));
+                    scheduler.add(new Delay(250, () -> robot.tableServo().resetToNeutral()));
                 } else {
-                    //robot.tableServo().resetToNeutral();
+                    robot.tableServo().resetToNeutral();
                 }
             }
 
@@ -379,7 +379,7 @@ public class DAM {
 
                 if (Globals.randomizationState != null) {
                     robot.tableServo().setCurrentState(computeTableRotation());
-                    scheduler.add(new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
+                    scheduler.add(new Delay(robot.tableServo()::autoReached, () -> scheduler.add(new Delay(150, () -> {
                         robot.popper().setCurrentState(Types.PopperState.POP);
                         scheduler.add(new Delay(650, () -> popperIn = true));
                     }))).setMaxTimeToRun(1500));
@@ -419,14 +419,14 @@ public class DAM {
                 robot.flywheel().setCurrentState(Types.FlywheelState.STOPPED);
 
                 if (robot.popper().getCurrentState() != Types.PopperState.NEUTRAL)
-                    scheduler.add(new Delay(robot.tableServo()::reached, () -> {
+                    scheduler.add(new Delay(robot.tableServo()::autoReached, () -> {
                         robot.popper().setCurrentState(Types.PopperState.NEUTRAL);
                         popperOut = true;
                     }).setMaxTimeToRun(800));
                 else
                     scheduler.add(new Delay(250, () -> {
                         robot.tableServo().resetToNeutral();
-                        scheduler.add(new Delay(robot.tableServo()::reached, () -> {
+                        scheduler.add(new Delay(robot.tableServo()::autoReached, () -> {
                             popperOut = true;
                         }).setMaxTimeToRun(700));
                     }));
@@ -492,7 +492,7 @@ public class DAM {
                         }
 
                         scheduler.addOptionalDelay(Globals.randomizationState == null,
-                                new Delay(robot.tableServo()::reached, () -> scheduler.add(new Delay(150, () -> {
+                                new Delay(robot.tableServo()::autoReached, () -> scheduler.add(new Delay(150, () -> {
                                     robot.popper().setCurrentState(Types.PopperState.POP);
                                     scheduler.add(new Delay(650, () -> popperIn = true));
                                 }))).setMaxTimeToRun(1500));

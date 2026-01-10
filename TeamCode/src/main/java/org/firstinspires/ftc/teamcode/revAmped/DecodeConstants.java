@@ -33,7 +33,7 @@ public final class DecodeConstants implements Constants {
     );
     public void build() {
         //Popper Constants
-        Popper.POP = 243/255f; Popper.NEUTRAL = 161/255f;
+        Popper.POP = 250/255f; Popper.NEUTRAL = 161/255f;
 
         Flywheel.FLYWHEEL_FAR_VELOCITY = 1095; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 900; Flywheel.FLYWHEEL_AUTO_VELOCITY = 780; Flywheel.GEAR_RATIO = 57/93f;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;

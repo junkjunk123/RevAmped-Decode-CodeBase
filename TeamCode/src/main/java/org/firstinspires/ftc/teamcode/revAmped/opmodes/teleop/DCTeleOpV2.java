@@ -137,7 +137,7 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
                 robot.turnTable.updateColors();
                 scheduler.add(new Delay(20, () -> tsh.runTransition(t -> {
                     robot.turnTable.switchStateToPop();
-                    robot.intakeMotor().stop();
+                    robot.intakeMotor().setCurrentState(Types.IntakeState.SLOW_OUTTAKE);
                     robot.shooter.setCurrentState(Types.ShooterState.TRACKING);
                     scheduler.add(new Delay(() -> robot.popper().getCurrentState() == Types.PopperState.POP,
                             () -> scheduler.add(new Delay(300, () -> t.accept(true)))));
@@ -147,7 +147,11 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
 
         if (gamepad_2.dpad_up.isPress()) {
             drivetrain.startHoldPose();
-            robot.turnTable.launch(0, tsh, drivetrain::stopHoldPose);
+            if (robot.hoodServo().getCurrentState() == Types.HoodState.FAR_PRESET){
+                robot.turnTable.launch(11,tsh,drivetrain::stopHoldPose);
+            }else {
+                robot.turnTable.launch(0, tsh, drivetrain::stopHoldPose);
+            }
         }
 
         if (gamepad_2.dpad_down.isPress()) {
@@ -236,8 +240,11 @@ public class DCTeleOpV2 extends DecodeRevAmpedOpMode {
             drivetrain.updateLocalization();
         robot.update();
         drivetrain.arcadeDrive();
+        /*
         telemetry.addData("pose",drivetrain.getPose());
-
+        telemetry.addData("intakestate",robot.intakeMotor().getCurrentState());
+        telemetry.addData("turntablestate",robot.turnTable.getCurrentCycleState());
+        */
         telemetry.update();
     }
 

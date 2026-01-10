@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.revAmped.components.architecture.TeleOpSta
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.Encoder;
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwVoltageSensor;
 import org.firstinspires.ftc.teamcode.revAmped.components.math.Vector2D;
+import org.firstinspires.ftc.teamcode.revAmped.components.misc.Globals;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Commands.Delay;
 import org.firstinspires.ftc.teamcode.revAmped.components.scheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.revAmped.mechanisms.Robot;
@@ -152,11 +153,13 @@ public class TurnTable implements ArtifactQueuer {
     }
 
     private void shootAll(Runnable andThen, int numBalls) {
+        Globals.telemetry.addData("turntable","shooting");
         hardware.intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
         hardware.tableServo().fullRotation();
         setCycleState(TurnTableCycleState.POP);
         Robot.INSTANCE.updateLock();
         scheduler.add(new Delay(hardware.tableServo()::reached, () -> {
+            Globals.telemetry.addData("turntable","reached");
             for (int j = 0; j < numBalls; j++) {
                 compartments.pop(false);
             }

@@ -300,16 +300,16 @@ public class Robot {
     }
 
     public void shootAllAuto(Runnable andThen, double flywheelDelay, boolean resetTable) {
-        intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
+        intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
         Types.TableState2[] shootSequence = tableServo().getShootStates();
         tableServo().setCurrentState(shootSequence[0]);
-        scheduler.add(new Delay(tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+        scheduler.add(new Delay(tableServo()::autoReached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
             tableServo().setCurrentState(shootSequence[1]);
-            intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
-            scheduler.add(new Delay(tableServo()::reached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
+            intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
+            scheduler.add(new Delay(tableServo()::autoReached, () -> {scheduler.add(new Delay(flywheelDelay, () -> {
                 tableServo().setCurrentState(shootSequence[2] , shootSequence[2].getPosition() + Types.TableState2.fullRotation() / 3);
                 //intakeMotor().setCurrentState(Types.IntakeState.SLOW_INTAKE);
-                scheduler.add(new Delay(tableServo()::reached, () -> {
+                scheduler.add(new Delay(tableServo()::autoReached, () -> {
                     if (resetTable)
                         tableServo().resetToNeutral();
                     else
@@ -323,7 +323,7 @@ public class Robot {
     public void shootAllAuto(Runnable andThen, boolean resetTable) {
         intakeMotor().setCurrentState(Types.IntakeState.INTAKE);
         tableServo().fullRotation();
-        scheduler.add(new Delay(tableServo()::reached, () -> {
+        scheduler.add(new Delay(tableServo()::autoReached, () -> {
             if (resetTable)
                 scheduler.add(new Delay(250, () -> tableServo().resetToNeutral()));
             else

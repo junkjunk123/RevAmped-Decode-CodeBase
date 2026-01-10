@@ -20,6 +20,7 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     public static float BALL3_END;
     private final EncoderImpl encoder;
     private boolean finishedAccelerating = false;
+    private boolean minimumShootTrialTimeReached = false;
 
     // Second servo as HwServo2
     private final HwServo table2;
@@ -34,6 +35,10 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
 
     @Override
     public boolean reached() {
+        return finishedAccelerating && minimumShootTrialTimeReached && encoder.getVelocity() < 5;
+    }
+
+    public boolean autoReached(){
         return finishedAccelerating && encoder.getVelocity() < 5;
     }
 
@@ -87,6 +92,8 @@ public class TableServoV2 extends HwServo2<Types.TableState2> {
     }
 
     public void fullRotation() {
+        minimumShootTrialTimeReached = false;
+        Scheduler.getInstance().add(new Delay(600, () -> minimumShootTrialTimeReached = true));
         switch (currentState) {
             case BALL1 -> setCurrentState(Types.TableState2.BALL1_END);
             case BALL2 -> setCurrentState(Types.TableState2.BALL2_END);

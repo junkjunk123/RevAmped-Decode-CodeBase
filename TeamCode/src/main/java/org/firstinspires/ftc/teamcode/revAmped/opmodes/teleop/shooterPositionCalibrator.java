@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.revAmped.util.Types;
 
 @TeleOp(name = "AccuracyMaxxer", group = "TeleOp")
 @Config
+@Disabled
 public class shooterPositionCalibrator extends DecodeRevAmpedOpMode {
     private TeleOpDrivetrainHandler drivetrain;
     private Robot robot;

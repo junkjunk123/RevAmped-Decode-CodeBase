@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.revAmped.mechanisms.turntable;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.revAmped.components.hardware.HwServo2;
 import org.firstinspires.ftc.teamcode.revAmped.util.Types.PopperState;
 
+@Config
 public class Popper extends HwServo2<PopperState> {
     public static double POP_TIME_MILLIS;
 
