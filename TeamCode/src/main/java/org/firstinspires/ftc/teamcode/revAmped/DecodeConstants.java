@@ -35,7 +35,7 @@ public final class DecodeConstants implements Constants {
         //Popper Constants
         Popper.POP = 250/255f; Popper.NEUTRAL = 161/255f;
 
-        Flywheel.FLYWHEEL_FAR_VELOCITY = 1095; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 900; Flywheel.FLYWHEEL_AUTO_VELOCITY = 725; Flywheel.GEAR_RATIO = 57/93f;
+        Flywheel.FLYWHEEL_FAR_VELOCITY = 1095; Flywheel.FLYWHEEL_NEAR_VELOCITY = 725; Flywheel.FLYWHEEL_MEDIUM_VELOCITY = 850; Flywheel.FLYWHEEL_AUTO_VELOCITY = 725; Flywheel.GEAR_RATIO = 57/93f;
         Flywheel.STALL_TORQUE = 1.47; Flywheel.STALL_CURRENT = 9.2; Flywheel.k_T = 0.0980665 * Flywheel.STALL_TORQUE / Flywheel.STALL_CURRENT;
         Flywheel.MOMENT_OF_INERTIA = 0; Flywheel.LAUNCH_ETA = 0.49; Flywheel.COUNTS_PER_REVOLUTION = 43; Flywheel.RADIUS = 4.094;
         Flywheel.AUTO_PRELOADS = 0; Flywheel.AUTO_SET_1 = 0; Flywheel.AUTO_SET_2 = 0; Flywheel.AUTO_SET_3 = 0;
@@ -45,17 +45,18 @@ public final class DecodeConstants implements Constants {
         HoodServo.HOOD_REST = 140/255f; HoodServo.HOOD_MAX_POS = 0f; HoodServo.HOOD_MIN_POS = 0f; HoodServo.HOOD_MAX_RAD = 0f; HoodServo.HOOD_MIN_RAD = 0f;
         HoodServo.AUTO_PRELOADS = 0f; HoodServo.AUTO_SET_1 = 0f; HoodServo.AUTO_SET_2 = 0f; HoodServo.AUTO_SET_3 = 0f;
         //HOOD POSITIONS FOR TELEOP
-        HoodServo.TELE_FAR_PRESET = 130/255f; HoodServo.TELE_NEAR_PRESET = 40/255f; HoodServo.TELE_MED_PRESET = 130/255f;
+        HoodServo.TELE_FAR_PRESET = 105/255f; HoodServo.TELE_NEAR_PRESET = 40/255f; HoodServo.TELE_MED_PRESET = 130/255f;
 
         //Turret Constants
         TurretMotor.TURRET_LIMITS_ENABLED = true; TurretMotor.TURRET_TICKS_PER_ROTATION = 2200;
         TurretMotor.TURRET_PIDF_COEFFICIENTS = new PIDFCoefficients(0.01, 0, 0, 0.01);
         TurretMotor.LL_DETECTION_BLUE = 0; TurretMotor.LL_DETECTION_RED = 0;
-        TurretMotor.AUTO_PRELOADS = 460; TurretMotor.AUTO_SET_1 = 513; TurretMotor.AUTO_SET_2 = 513; TurretMotor.AUTO_SET_3 = 563;
+        TurretMotor.AUTO_PRELOADS = 513; TurretMotor.AUTO_SET_1 = 535; TurretMotor.AUTO_SET_2 = 513; TurretMotor.AUTO_SET_3 = 563;
         TurretMotor.FAR_AUTO = 720;
         TurretMotor.FULL_ROTATION = 2240;
         TurretMotor.TURRET_NEGATIVE_LIMIT_TICKS = -(int) (TurretMotor.FULL_ROTATION * 135.0 / 360);
         TurretMotor.TURRET_POSITIVE_LIMIT_TICKS = (int) (TurretMotor.FULL_ROTATION * 135.0 / 360);
+
         TurretMotor.TURRET_RAD_LIMIT = Math.toRadians(135);
 
         //Table Constants

@@ -74,7 +74,7 @@ public class DAM {
                                     scheduler.add(new Delay(robot.tableServo()::autoReached, () -> {
                                         scheduler.add(new Delay(800,
                                                 () -> scheduler.add(new Delay(() -> Math.abs(robot.turretMotor().getCurrentPosition() - TurretMotor.AUTO_PRELOADS) < 30,
-                                                () -> robot.shootAllAuto(this::setComplete, 0, thirdSlot)).setMaxTimeToRun(250))));
+                                                () -> robot.shootAllAuto(this::setComplete, 100, thirdSlot)).setMaxTimeToRun(250))));
                                         scheduler.add(new Delay(150, () -> robot.popper().setCurrentState(Types.PopperState.POP)));
                                     }).setMaxTimeToRun(1500));
                                 }).setCancellation(4000, () -> {

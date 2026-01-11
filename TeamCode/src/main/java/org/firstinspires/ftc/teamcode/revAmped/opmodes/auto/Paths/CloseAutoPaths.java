@@ -14,7 +14,7 @@ import java.util.List;
 @Config
 public class CloseAutoPaths implements PathSupplier {
     public static ColoredDecodePose START_POSE = new ColoredDecodePose(34.5, 136, Math.toRadians(-90));
-    public static ColoredDecodePose SHOOT_PRELOADS = new ColoredDecodePose(60, 102, Math.toRadians(249));
+    public static ColoredDecodePose SHOOT_PRELOADS = new ColoredDecodePose(60, 102, Math.toRadians(240));
     public static ColoredDecodePose FIRST_INTAKE_START = new ColoredDecodePose(56, 85, Math.toRadians(180));
     public static ColoredDecodePose FIRST_INTAKE_END = new ColoredDecodePose(22, 85, Math.toRadians(180));
 
@@ -23,8 +23,9 @@ public class CloseAutoPaths implements PathSupplier {
     public static ColoredDecodePose SECOND_INTAKE_START = new ColoredDecodePose(53, 66, Math.toRadians(180));
     public static ColoredDecodePose SECOND_INTAKE_END = new ColoredDecodePose(14, 59, Math.toRadians(180));
     public static ColoredDecodePose SECOND_SHOOT = new ColoredDecodePose(60, 102, Math.toRadians(240));
-    public static ColoredDecodePose THIRD_INTAKE_START = new ColoredDecodePose(60, 42, Math.toRadians(180));
-    public static ColoredDecodePose THIRD_INTAKE_END = new ColoredDecodePose(13, 42, Math.toRadians(180));
+    public static ColoredDecodePose THIRD_INTAKE_START = new ColoredDecodePose(60, 45, Math.toRadians(180));
+    public static ColoredDecodePose THIRD_INTAKE_END = new ColoredDecodePose(13, 45
+            , Math.toRadians(180));
     public static ColoredDecodePose THIRD_SHOOT = new ColoredDecodePose(66, 108, Math.toRadians(240));
     public static ColoredDecodePose PARK = new ColoredDecodePose(52, 120, Math.toRadians(240));
 

@@ -59,10 +59,10 @@ public class Shooter implements ShootingMechanism<ShooterState> {
     public static double bluePositiveY = 136;
     public static double blueNegativeX = 10;
     public static double blueNegativeY = 136;
-    public static double redPositiveX = 134;
-    public static double redPositiveY = 136;
-    public static double redNegativeX = 134;
-    public static double redNegativeY = 136;
+    public static double redPositiveX = 133;
+    public static double redPositiveY = 139;
+    public static double redNegativeX = 133;
+    public static double redNegativeY = 139;
 
     private double prevHoodRad;
 
